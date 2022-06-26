@@ -1,0 +1,23 @@
+﻿@*/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================*@
+
+@namespace Blazr.SPA.Components
+@typeparam TValue
+
+@inherits InputBase<TValue>
+<div class="input-group">
+    <input class="@CssClass" type="text" value="@_selectedValue" @onchange="this.OnValueChanged" list="@dataListId" @attributes="this.AdditionalAttributes" />
+    <div class="input-group-append">
+        <div class="@ClearCss" @onclick="ClearValue">X</div>
+    </div>
+</div>
+
+<datalist id="@dataListId">
+    @foreach (var option in this.DataList)
+    {
+        <option value="@option.Value" />
+    }
+</datalist>

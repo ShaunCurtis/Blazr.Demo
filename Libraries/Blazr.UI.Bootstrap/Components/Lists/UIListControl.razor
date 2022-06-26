@@ -1,0 +1,47 @@
+﻿@*/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================
+*@
+
+@namespace Blazr.UI.Bootstrap
+@inherits UIComponentBase
+@typeparam TRecord
+
+@if (this.LoadState == ComponentState.Loaded && this.HasRecords)
+{
+    <table @attributes="this.SplatterAttributes">
+        <thead class="@this.HeaderCss">
+            <CascadingValue Name="IsHeader" Value="true">
+                <tr>
+                    @RowTemplate!(default(TRecord)!)
+                </tr>
+            </CascadingValue>
+        </thead>
+        <tbody>
+            @foreach (var item in this.Records!)
+            {
+                <tr>
+                    @RowTemplate!(item)
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (this.LoadState == ComponentState.Loaded)
+{
+    <div class="alert alert-warning">
+        No Records to Display
+    </div>
+}
+else if (this.LoadState == ComponentState.Loading)
+{
+    <div class="m-2 p-2">Loading...</div>
+}
+else
+{
+    <div class="alert alert-danger">
+        Error Loading the List
+    </div>
+}

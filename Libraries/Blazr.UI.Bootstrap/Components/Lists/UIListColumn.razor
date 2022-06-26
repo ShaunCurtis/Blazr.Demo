@@ -1,0 +1,42 @@
+﻿@*/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================
+*@
+
+@namespace Blazr.UI.Bootstrap
+@inherits UIComponentBase
+
+@if (this.IsHeader)
+{
+    @if(_isSortField)
+    {
+    <th class="@this.HeaderCss" @onclick="SortClick">
+        <span class="@SortIconCss"></span>
+        @((MarkupString)this.HeaderTitle)
+    </th>
+    }
+    else
+    {
+    <th class="@this.HeaderCss">
+        @((MarkupString)this.HeaderTitle)
+    </th>
+    }
+}
+else if (this.isMaxRowColumn)
+{
+    <td class="@this.TDCss" @attributes="this.SplatterAttributes">
+        <div class="grid-overflow">
+            <div class="grid-overflowinner">
+                @ChildContent
+            </div>
+        </div>
+    </td>
+}
+else
+{
+    <td class="@this.TDCss" @attributes="this.SplatterAttributes">
+        @this.ChildContent
+    </td>
+}

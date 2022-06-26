@@ -1,0 +1,19 @@
+﻿@namespace Blazr.UI.Bootstrap
+@inherits ComponentBase
+
+<div class="@this.CardCss">
+    <div class="@this.CardHeaderCss">
+        @this.Header
+        @if (this.IsCollapsible)
+        {
+            <button class="@this.CardHeaderButtonCss" @onclick=this.Toggle>
+                @this.CollapseText
+            </button>
+        }
+    </div>
+    <div class="@this.CardBodyCss">
+        @this.Navigation
+        @this.Body
+        @this.Buttons
+    </div>
+</div>

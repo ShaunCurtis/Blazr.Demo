@@ -1,0 +1,11 @@
+﻿@namespace Blazr.UI
+
+@if (this.Show)
+{
+    @ChildContent
+}
+@code {
+    [Parameter] public bool Show { get; set; } = true;
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

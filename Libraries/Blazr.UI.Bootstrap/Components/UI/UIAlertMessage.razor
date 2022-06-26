@@ -1,0 +1,68 @@
+﻿@*/// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================
+*@
+
+@namespace Blazr.UI.Bootstrap
+@using System.Timers
+
+<UIComponent Show=this.show class="@this.Css">@this.displayMessage</UIComponent>
+@*@if (show)
+    {
+    <div class="@this.Css">@this.displayMessage</div>
+    }
+*@
+@code {
+    [Parameter] public string AlertColour { get; set; } = "alert-info";
+
+    [Parameter] public string Message { get; set; } = string.Empty;
+
+    [Parameter] public Guid Id { get; set; }
+
+    [Parameter] public int TimeOut { get; set; } = 0;
+
+    private System.Timers.Timer _timer = new System.Timers.Timer();
+    private string currentMessage = string.Empty;
+    private bool show => this.currentMessage != string.Empty && !this.hidden;
+    private MarkupString displayMessage => (MarkupString)Message;
+
+    private string Css => new CSSBuilder("alert")
+        .AddClass(this.AlertColour)
+        .AddClass("p-1")
+        .Build();
+
+    private bool hidden = true;
+
+    protected override Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(this.Message) && !this.currentMessage.Equals(this.Message))
+        {
+            this.hidden = false;
+            currentMessage = this.Message;
+        }
+
+        if (!string.IsNullOrWhiteSpace(this.Message) && !this.currentMessage.Equals(this.Message) && this.TimeOut > 0)
+        {
+            _timer.Interval = this.TimeOut;
+            _timer.AutoReset = false;
+            _timer.Elapsed += this.TimerElapsed;
+            _timer.Start();
+        }
+
+        if (string.IsNullOrWhiteSpace(this.Message))
+        {
+            this.hidden = true;
+            this.currentMessage = string.Empty;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private void TimerElapsed(object? sender, ElapsedEventArgs e)
+    {
+        this.hidden = true;
+        this.InvokeAsync(StateHasChanged);
+    }
+}

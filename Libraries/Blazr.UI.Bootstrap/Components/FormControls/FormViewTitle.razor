@@ -1,0 +1,20 @@
+﻿@*/// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================*@
+
+@namespace Blazr.UI.Bootstrap
+
+<UIContainer>
+    <UIFormRow>
+        <UIColumn Columns=12>
+            @if (this.ChildContent != null)
+            {
+                <h2>@ChildContent</h2> }
+            else
+            {
+                <h2>@this.Title</h2>}
+        </UIColumn>
+    </UIFormRow>
+</UIContainer>

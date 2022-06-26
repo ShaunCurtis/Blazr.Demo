@@ -1,0 +1,34 @@
+﻿@*/// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================
+*@
+
+@namespace Blazr.UI.Bootstrap
+@inherits UIComponentBase
+@typeparam TRecord
+
+<table @attributes="this.SplatterAttributes">
+    <thead>
+        <CascadingValue Name="IsHeader" Value="true">
+            <tr>
+                @RowTemplate!(default(TRecord)!)
+            </tr>
+        </CascadingValue>
+    </thead>
+    <tbody>
+        <Virtualize @ref="this.VirtualizeComponent" TItem="TRecord" ItemsProvider="this.GetItems">
+            <ItemContent>
+                <tr>
+                    @RowTemplate!(context)
+                </tr>
+            </ItemContent>
+            <Placeholder>
+                <tr>
+                    <td colspan="@this.Columns">Loading..</td>
+                </tr>
+            </Placeholder>
+        </Virtualize>
+    </tbody>
+</table>

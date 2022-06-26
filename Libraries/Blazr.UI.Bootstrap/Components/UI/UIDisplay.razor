@@ -1,0 +1,29 @@
+﻿@*/// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================*@
+
+@namespace Blazr.UI.Bootstrap
+
+@inherits ComponentBase
+<div class="@this.Css">
+    @ChildContent
+</div>
+<style>
+    .display-on {
+        display: inherit;
+    }
+
+    .display-off {
+        display: none;
+    }
+</style>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public bool Display { get; set; }
+
+    private string Css => this.Display ? "dislpay-on" : "display-off";
+}

@@ -1,0 +1,23 @@
+﻿.data-column {
+    max-width: 30%;
+}
+
+.max-column {
+    width: 50%;
+}
+
+.grid-overflow {
+    display: flex;
+}
+
+.grid-overflowinner {
+    flex: 1;
+    width: 1px;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.header-column-nowrap {
+    white-space: nowrap;
+}
