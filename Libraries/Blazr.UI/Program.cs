@@ -19,4 +19,3 @@ global using System.Diagnostics;
 
 global using Blazr.Routing;
 global using Blazr.Core;
-global using Blazr.Core.Toaster;

@@ -8,6 +8,7 @@ global using Blazr.Core;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.AspNetCore.Components.Web.Virtualization;
 global using Microsoft.EntityFrameworkCore.ChangeTracking;
+global using Microsoft.Extensions.DependencyInjection;
 
 namespace Blazr.Demo.Data;
 

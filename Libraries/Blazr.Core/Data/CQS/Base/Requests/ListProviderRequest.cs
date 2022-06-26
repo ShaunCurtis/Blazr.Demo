@@ -37,4 +37,13 @@ public readonly struct ListProviderRequest
         SortExpression = null;
         FilterExpression = null;
     }
+
+    public ListProviderRequest(ListOptions options)
+    {
+        StartIndex = options.StartIndex;
+        PageSize = options.PageSize;
+        CancellationToken = new CancellationToken();
+        SortExpression = null;
+        FilterExpression = null;
+    }
 }

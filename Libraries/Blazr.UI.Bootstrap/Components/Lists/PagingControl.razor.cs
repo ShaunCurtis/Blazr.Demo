@@ -12,7 +12,7 @@ public partial class PagingControl
 {
     private int Page = 0;
     private int ListCount = 0;
-    private PagingOptions _pagingOptions => new PagingOptions() { PageSize = this.PageSize, StartRecord = this.ReadStartRecord };
+    private PagingOptions _pagingOptions => new PagingOptions() { PageSize = this.PageSize, StartIndex = this.ReadStartRecord };
     private bool hasPages => LastPage > 0;
 
     [Parameter] public int PageSize { get; set; } = 5;
@@ -45,7 +45,7 @@ public partial class PagingControl
             options = await PagingProvider(_pagingOptions);
 
         this.Page = options.Page;
-        this.ListCount = options.ListCount;
+        this.ListCount = options.ListTotalCount;
     }
 
     private void OnPagingReset(object? sender, PagingEventArgs e)

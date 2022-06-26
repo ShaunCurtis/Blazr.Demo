@@ -3,10 +3,10 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-
 namespace Blazr.Demo.Core;
 
-public class DeoWeatherForecast : IEditRecord<DboWeatherForecast>
+public class DeoWeatherForecast 
+    : IEditRecord<DboWeatherForecast>
 {
     private DboWeatherForecast _baseRecord = new DboWeatherForecast();
     private Guid _newId = Guid.NewGuid();
@@ -60,4 +60,26 @@ public class DeoWeatherForecast : IEditRecord<DboWeatherForecast>
             Date = this.Date,
             TemperatureC = this.TemperatureC
         };
+
+    public bool Validate(ValidationMessageStore? validationMessageStore, string? fieldname, object? model = null)
+    {
+        model = model ?? this;
+        bool trip = false;
+
+        this.Date.Validation("Date", model, validationMessageStore)
+            .LessThan(DateTime.Now.AddDays(10))
+            .Validate(ref trip, fieldname);
+
+        this.SummaryId.Validation("SummaryId", model, validationMessageStore)
+            .NotEmpty("Guid can't be empty")
+            .Validate(ref trip, fieldname);
+
+        this.TemperatureC.Validation("TemperatureC", model, validationMessageStore)
+            .GreaterThan(-61, "The minimum Temperatore is -60C")
+            .LessThan(81, "The maximum temperature is 80C")
+            .Validate(ref trip, fieldname);
+
+        return !trip;
+    }
+
 }

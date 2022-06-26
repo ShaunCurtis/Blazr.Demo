@@ -20,10 +20,6 @@ public partial class BaseEditForm<TRecord> : OwningComponentBase
     [Inject] protected IBlazrNavigationManager? NavManager { get; set; }
 
     protected BlazrNavigationManager? BlazrNavManager => NavManager is BlazrNavigationManager ? NavManager as BlazrNavigationManager : null;
-    
-    [Inject] protected ToasterService? toasterService { get; set; }
-
-    [Inject] protected ResponseMessageStore? ResponseMessageStore { get; set; }
 
     [Inject] protected IAuthorizationService? AuthorizationService { get; set; }
 

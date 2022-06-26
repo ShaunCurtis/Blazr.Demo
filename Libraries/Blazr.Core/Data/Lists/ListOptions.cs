@@ -8,40 +8,40 @@ namespace Blazr.Core;
 
 public class ListOptions
 {
-    public string? FilterExpression { get; set; }
+    public string? SortField { get; set; }
 
-    public string? SortExpression { get; set; }
+    public bool SortDescending { get; set; }
 
     public int PageSize { get; set; } = 1000;
 
-    public int StartRecord { get; set; } = 0;
+    public int StartIndex { get; set; } = 0;
 
-    public int ListCount { get; set; } = 0;
+    public int ListTotalCount { get; set; } = 0;
 
     public bool IsPaging => (PageSize > 0);
 
     public void Set(ListOptions options)
     {
         this.PageSize = options.PageSize;
-        this.StartRecord = options.StartRecord;
-        this.SortExpression = options.SortExpression;
-        this.FilterExpression = options.FilterExpression;
+        this.StartIndex = options.StartIndex;
+        this.SortField = options.SortField;
+        this.SortDescending = options.SortDescending;
     }
 
     public void Set(ItemsProviderRequest options)
     {
         this.PageSize = options.Count;
-        this.StartRecord = options.StartIndex;
+        this.StartIndex = options.StartIndex;
     }
 
     public int Page
-        => StartRecord / PageSize;
+        => StartIndex / PageSize;
 
     public PagingOptions PagingOptions => new PagingOptions
     {
         PageSize = PageSize,
-        StartRecord = StartRecord,
-        ListCount = ListCount
+        StartIndex = StartIndex,
+        ListTotalCount = ListTotalCount
     };
 
     public SortOptions SortOptions => SortOptions.GetSortOptions(this);
@@ -49,18 +49,18 @@ public class ListOptions
     public ListOptions GetCopy(int listcount)
     {
         var copy = this.Copy;
-        copy.ListCount = listcount;
+        copy.ListTotalCount = listcount;
         return copy;
     }
 
     public ListOptions Copy
         => new ListOptions()
         {
-            ListCount = this.ListCount,
-            FilterExpression = this.FilterExpression,
-            SortExpression = this.SortExpression,
+            ListTotalCount = this.ListTotalCount,
+            SortDescending = this.SortDescending,
+            SortField = this.SortField,
             PageSize = this.PageSize,
-            StartRecord = this.StartRecord
+            StartIndex = this.StartIndex
         };
 
     public void Load(ListOptions? options)
@@ -68,10 +68,10 @@ public class ListOptions
         if (options is null)
             return;
 
-        this.ListCount = options.ListCount;
-        this.FilterExpression = options.FilterExpression;
-        this.SortExpression = options.SortExpression;
+        this.ListTotalCount = options.ListTotalCount;
+        this.SortField = options.SortField;
+        this.SortDescending = options.SortDescending;
         this.PageSize = options.PageSize;
-        this.StartRecord = options.StartRecord;
+        this.StartIndex = options.StartIndex;
     }
 }

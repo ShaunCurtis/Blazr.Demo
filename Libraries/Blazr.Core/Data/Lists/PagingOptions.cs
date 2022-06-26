@@ -10,9 +10,11 @@ public record PagingOptions
 {
     public int PageSize { get; init; } = 1000;
 
-    public int StartRecord { get; init; } = 0;
+    public int StartIndex { get; init; } = 0;
 
-    public int TotalListCount { get; init; } = 0;
+    public int ListTotalCount { get; init; } = 0;
 
-    public int Page => StartRecord / PageSize;
+    public int Page => StartIndex <= 0
+        ? 0
+        : StartIndex / PageSize;
 }

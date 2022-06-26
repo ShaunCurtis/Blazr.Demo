@@ -34,8 +34,8 @@ public partial class UIListColumn : UIComponentBase
 
         // TODO - currwnt sort issue is here
         SortOptions options = this.IsCurrentSortField()
-            ?  new SortOptions { Descending = true, SortField = this._listContext.ListOptions.SortOptions.SortField }
-            : new SortOptions { Descending = false, SortField = this.SortField };
+            ?  new SortOptions { SortDescending = true, SortField = this._listContext.ListOptions.SortOptions.SortField }
+            : new SortOptions { SortDescending = false, SortField = this.SortField };
 
         this._listContext?.SetSortState(options);
     }
@@ -66,9 +66,8 @@ public partial class UIListColumn : UIComponentBase
     private string SortIconCss
     => _listContext is null || !this.IsCurrentSortField()
         ? UICssClasses.NotSortedClass
-        : this._listContext.ListOptions.SortOptions.Descending
+        : this._listContext.ListOptions.SortOptions.SortDescending
             ? UICssClasses.AscendingClass
             : UICssClasses.DescendingClass;
-
 }
 

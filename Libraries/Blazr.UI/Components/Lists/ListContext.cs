@@ -39,14 +39,14 @@ public class ListContext
         var hasNoState = !this.GetState();
         if (_hasLoaded || hasNoState)
         {
-            this.ListOptions.StartRecord = pagingOptions.StartRecord;
+            this.ListOptions.StartIndex = pagingOptions.StartIndex;
             this.ListOptions.PageSize = pagingOptions.PageSize;
         }
         if (_listProvider is not null)
         {
             var returnOptions = await _listProvider(this.ListOptions);
             if (returnOptions != null)
-                this.ListOptions.ListCount = returnOptions.ListCount;
+                this.ListOptions.ListTotalCount = returnOptions.ListTotalCount;
         }
         _hasLoaded = true;
         this.SaveState();
@@ -61,14 +61,15 @@ public class ListContext
 
         // If we are sorting on a new field then we need to reset the page
         if (isPagingReset ??= false)
-            this.ListOptions.StartRecord = 0;
+            this.ListOptions.StartIndex = 0;
 
-        this.ListOptions.SortExpression = sortOptions.SortExpression;
+        this.ListOptions.SortField = sortOptions.SortField;
+        this.ListOptions.SortDescending = sortOptions.SortDescending;
         if (_listProvider is not null)
         {
             var returnOptions = await _listProvider(this.ListOptions);
             if (returnOptions != null)
-                this.ListOptions.ListCount = returnOptions.ListCount;
+                this.ListOptions.ListTotalCount = returnOptions.ListTotalCount;
         }
         this.SaveState();
         if (isPagingReset ??= false )
