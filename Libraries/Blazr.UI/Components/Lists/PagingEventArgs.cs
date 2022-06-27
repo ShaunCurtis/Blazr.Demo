@@ -8,9 +8,9 @@ namespace Blazr.UI;
 
 public class PagingEventArgs : EventArgs
 {
-    public PagingOptions PagingOptions { get; set; }
+    public PagingState PagingOptions { get; set; }
 
-    public PagingEventArgs(PagingOptions pagingOptions)
+    public PagingEventArgs(PagingState pagingOptions)
         => PagingOptions = pagingOptions;
 }
 

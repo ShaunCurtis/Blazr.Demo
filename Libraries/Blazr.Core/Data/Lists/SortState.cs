@@ -6,7 +6,7 @@
 
 namespace Blazr.Core;
 
-public record SortOptions
+public record SortState
 {
     public string? SortField { get; init; }
 
@@ -14,6 +14,6 @@ public record SortOptions
 
     public bool IsSorting => !string.IsNullOrWhiteSpace(SortField);
 
-    public static SortOptions GetSortOptions(ListOptions options)
-        =>  new SortOptions { SortDescending = options.SortDescending, SortField=options.SortField  };
+    public static SortState GetSortState(ListState options)
+        =>  new SortState { SortDescending = options.SortDescending, SortField=options.SortField  };
 }

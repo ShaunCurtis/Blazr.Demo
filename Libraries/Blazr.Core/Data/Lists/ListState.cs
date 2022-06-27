@@ -6,7 +6,7 @@
 
 namespace Blazr.Core;
 
-public class ListOptions
+public class ListState
 {
     public string? SortField { get; set; }
 
@@ -20,12 +20,12 @@ public class ListOptions
 
     public bool IsPaging => (PageSize > 0);
 
-    public void Set(ListOptions options)
+    public void Set(ListState state)
     {
-        this.PageSize = options.PageSize;
-        this.StartIndex = options.StartIndex;
-        this.SortField = options.SortField;
-        this.SortDescending = options.SortDescending;
+        this.PageSize = state.PageSize;
+        this.StartIndex = state.StartIndex;
+        this.SortField = state.SortField;
+        this.SortDescending = state.SortDescending;
     }
 
     public void Set(ItemsProviderRequest options)
@@ -37,24 +37,24 @@ public class ListOptions
     public int Page
         => StartIndex / PageSize;
 
-    public PagingOptions PagingOptions => new PagingOptions
+    public PagingState PagingState => new PagingState
     {
         PageSize = PageSize,
         StartIndex = StartIndex,
         ListTotalCount = ListTotalCount
     };
 
-    public SortOptions SortOptions => SortOptions.GetSortOptions(this);
+    public SortState SortState => SortState.GetSortState(this);
 
-    public ListOptions GetCopy(int listcount)
+    public ListState GetCopy(int listcount)
     {
         var copy = this.Copy;
         copy.ListTotalCount = listcount;
         return copy;
     }
 
-    public ListOptions Copy
-        => new ListOptions()
+    public ListState Copy
+        => new ListState()
         {
             ListTotalCount = this.ListTotalCount,
             SortDescending = this.SortDescending,
@@ -63,15 +63,15 @@ public class ListOptions
             StartIndex = this.StartIndex
         };
 
-    public void Load(ListOptions? options)
+    public void Load(ListState? state)
     {
-        if (options is null)
+        if (state is null)
             return;
 
-        this.ListTotalCount = options.ListTotalCount;
-        this.SortField = options.SortField;
-        this.SortDescending = options.SortDescending;
-        this.PageSize = options.PageSize;
-        this.StartIndex = options.StartIndex;
+        this.ListTotalCount = state.ListTotalCount;
+        this.SortField = state.SortField;
+        this.SortDescending = state.SortDescending;
+        this.PageSize = state.PageSize;
+        this.StartIndex = state.StartIndex;
     }
 }

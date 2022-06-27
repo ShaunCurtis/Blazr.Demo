@@ -14,7 +14,7 @@ public class ListForm : ComponentBase
 
     [Parameter] [EditorRequired] public ListContext? ListContext { get; set; }
 
-    [Parameter] [EditorRequired] public Func<ListOptions, ValueTask<ListOptions>>? ListProvider { get; set; }
+    [Parameter] [EditorRequired] public Func<ListState, ValueTask<ListState>>? ListProvider { get; set; }
 
     [Inject] private UiStateService? _uiStateService { get; set; }
 
@@ -31,9 +31,9 @@ public class ListForm : ComponentBase
         builder.CloseComponent();
     }
 
-    internal async ValueTask<ListOptions> CallListProvider(ListOptions options)
+    internal async ValueTask<ListState> CallListProvider(ListState options)
     {
-        ListOptions returnOptions = new();
+        ListState returnOptions = new();
         if (ListProvider is not null)
            returnOptions = await ListProvider(options);
         return returnOptions;

@@ -6,7 +6,7 @@
 
 namespace Blazr.Core;
 
-public record PagingOptions
+public record PagingState
 {
     public int PageSize { get; init; } = 1000;
 

@@ -20,10 +20,12 @@ var builder = WebApplication.CreateBuilder(args);
         Services.AddBlazrNavigationManager();
         Services.AddSingleton<ToasterService>();
         Services.AddSingleton<ModalService>();
+        Services.AddSingleton<UiStateService>();
 
         Services.AddWeatherAppServerDataServices();
 
         Services.AddWeatherForecastServices();
+        Services.AddWeatherSummaryServices();
     }
 }
 

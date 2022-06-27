@@ -12,18 +12,18 @@ public class ListContext
     private bool _hasLoaded;
     private UiStateService? _uiStateService;
 
-    public readonly ListOptions ListOptions = new();
+    public readonly ListState ListState = new();
 
-    private Func<ListOptions, ValueTask<ListOptions>>? _listProvider { get; set; }
+    private Func<ListState, ValueTask<ListState>>? _listProvider { get; set; }
 
     public event EventHandler<PagingEventArgs>? PagingReset; 
 
     public ListContext() { }
 
-    public ListContext(ListOptions options)
-        => ListOptions.Load(options);
+    public ListContext(ListState options)
+        => ListState.Load(options);
 
-    internal void Attach(UiStateService? uiStateService, Guid stateId, Func<ListOptions, ValueTask<ListOptions>>? listProvider)
+    internal void Attach(UiStateService? uiStateService, Guid stateId, Func<ListState, ValueTask<ListState>>? listProvider)
     {
         _uiStateService = uiStateService;
         _stateId = stateId;
@@ -34,53 +34,53 @@ public class ListContext
             this.GetState();
     }
 
-    public async ValueTask<PagingOptions> SetPage(PagingOptions pagingOptions)
+    public async ValueTask<PagingState> SetPage(PagingState pagingStatr)
     {
         var hasNoState = !this.GetState();
         if (_hasLoaded || hasNoState)
         {
-            this.ListOptions.StartIndex = pagingOptions.StartIndex;
-            this.ListOptions.PageSize = pagingOptions.PageSize;
+            this.ListState.StartIndex = pagingStatr.StartIndex;
+            this.ListState.PageSize = pagingStatr.PageSize;
         }
         if (_listProvider is not null)
         {
-            var returnOptions = await _listProvider(this.ListOptions);
+            var returnOptions = await _listProvider(this.ListState);
             if (returnOptions != null)
-                this.ListOptions.ListTotalCount = returnOptions.ListTotalCount;
+                this.ListState.ListTotalCount = returnOptions.ListTotalCount;
         }
         _hasLoaded = true;
         this.SaveState();
-        return this.ListOptions.PagingOptions;
+        return this.ListState.PagingState;
     }
 
-    public async ValueTask SetSortState(SortOptions sortOptions)
+    public async ValueTask SetSortState(SortState sortState)
     {
-        var isPagingReset = !sortOptions.SortField?.Equals(this.ListOptions.SortOptions.SortField);
+        var isPagingReset = !sortState.SortField?.Equals(this.ListState.SortState.SortField);
 
         this.GetState();
 
         // If we are sorting on a new field then we need to reset the page
         if (isPagingReset ??= false)
-            this.ListOptions.StartIndex = 0;
+            this.ListState.StartIndex = 0;
 
-        this.ListOptions.SortField = sortOptions.SortField;
-        this.ListOptions.SortDescending = sortOptions.SortDescending;
+        this.ListState.SortField = sortState.SortField;
+        this.ListState.SortDescending = sortState.SortDescending;
         if (_listProvider is not null)
         {
-            var returnOptions = await _listProvider(this.ListOptions);
-            if (returnOptions != null)
-                this.ListOptions.ListTotalCount = returnOptions.ListTotalCount;
+            var returnState = await _listProvider(this.ListState);
+            if (returnState != null)
+                this.ListState.ListTotalCount = returnState.ListTotalCount;
         }
         this.SaveState();
         if (isPagingReset ??= false )
-            PagingReset?.Invoke(this, new PagingEventArgs(ListOptions.PagingOptions));
+            PagingReset?.Invoke(this, new PagingEventArgs(ListState.PagingState));
     }
 
     private bool GetState()
     {
-        if (_stateId != Guid.Empty && _uiStateService is not null && _uiStateService.TryGetStateData<ListOptions>(_stateId, out object? stateOptions) && stateOptions is ListOptions)
+        if (_stateId != Guid.Empty && _uiStateService is not null && _uiStateService.TryGetStateData<ListState>(_stateId, out object? stateOptions) && stateOptions is ListState)
         {
-            this.ListOptions.Load((ListOptions)stateOptions);
+            this.ListState.Load((ListState)stateOptions);
             return true;
         }
         return false;
@@ -89,6 +89,6 @@ public class ListContext
     private void SaveState()
     {
         if (_stateId != Guid.Empty && _uiStateService is not null)
-            _uiStateService.AddStateData(_stateId, this.ListOptions);
+            _uiStateService.AddStateData(_stateId, this.ListState);
     }
 }

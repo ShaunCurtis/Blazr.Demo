@@ -12,14 +12,14 @@ public partial class PagingControl
 {
     private int Page = 0;
     private int ListCount = 0;
-    private PagingOptions _pagingOptions => new PagingOptions() { PageSize = this.PageSize, StartIndex = this.ReadStartRecord };
+    private PagingState _pagingState => new PagingState() { PageSize = this.PageSize, StartIndex = this.ReadStartRecord };
     private bool hasPages => LastPage > 0;
 
     [Parameter] public int PageSize { get; set; } = 5;
 
     [Parameter] public int BlockSize { get; set; } = 10;
 
-    [Parameter] public Func<PagingOptions, ValueTask<PagingOptions>>? PagingProvider { get; set; }
+    [Parameter] public Func<PagingState, ValueTask<PagingState>>? PagingProvider { get; set; }
 
     [Parameter] public bool ShowPageOf { get; set; } = true;
 
@@ -37,15 +37,15 @@ public partial class PagingControl
 
     private async Task SetPage()
     {
-        PagingOptions options = new();
+        PagingState state = new();
         if (this.ListContext is not null)
-            options = await this.ListContext.SetPage(_pagingOptions);
+            state = await this.ListContext.SetPage(_pagingState);
 
         else if (this.PagingProvider is not null)
-            options = await PagingProvider(_pagingOptions);
+            state = await PagingProvider(_pagingState);
 
-        this.Page = options.Page;
-        this.ListCount = options.ListTotalCount;
+        this.Page = state.Page;
+        this.ListCount = state.ListTotalCount;
     }
 
     private void OnPagingReset(object? sender, PagingEventArgs e)

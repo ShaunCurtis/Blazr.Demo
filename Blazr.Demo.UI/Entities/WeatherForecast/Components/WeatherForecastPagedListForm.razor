@@ -20,8 +20,8 @@
 
             <UIListControl TRecord=DvoWeatherForecast Records=this.ListViewService.Records LoadState=this.loadState class="table table-sm table-striped table-hover border-bottom no-margin">
                 <RowTemplate>
-                    <UIListColumn HeaderTitle="ID" SortField="WeatherForecastId">@context.WeatherForecastId</UIListColumn>
-                    <UIListColumn HeaderTitle="Date" SortField="Date">@context.Date</UIListColumn>
+                    <UIListColumn HeaderTitle="ID" SortField="WeatherForecastId">@context.WeatherForecastId.AsShortGuid()</UIListColumn>
+                    <UIListColumn HeaderTitle="Date" SortField="Date">@context.Date.AsGlobalDate()</UIListColumn>
                     <UIListColumn HeaderTitle="Temp C" SortField="TemperstureC">@context.TemperatureC</UIListColumn>
                     <UIListColumn HeaderTitle="Summary" SortField="Summary" IsMaxColumn=true>@context.Summary</UIListColumn>
                     <UIListColumn HeaderTitle="" NoWrap="true" class="text-right text-end">
@@ -42,10 +42,10 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        listContext.ListOptions.SortField = "Date";
+        listContext.ListState.SortField = "Date";
         this.UseModalForms = true;
         this.RecordUrl = "weatherforecasts";
-        //this.ViewControl = typeof(GroupViewForm);
+        this.ViewControl = typeof(WeatherForecastViewForm);
         // TODO - fix form
         //this.EditControl = typeof(GroupEditForm);
     }

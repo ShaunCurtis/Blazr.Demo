@@ -33,18 +33,18 @@ public partial class UIListColumn : UIComponentBase
             return;
 
         // TODO - currwnt sort issue is here
-        SortOptions options = this.IsCurrentSortField()
-            ?  new SortOptions { SortDescending = true, SortField = this._listContext.ListOptions.SortOptions.SortField }
-            : new SortOptions { SortDescending = false, SortField = this.SortField };
+        SortState options = this.IsCurrentSortField()
+            ?  new SortState { SortDescending = true, SortField = this._listContext.ListState.SortState.SortField }
+            : new SortState { SortDescending = false, SortField = this.SortField };
 
         this._listContext?.SetSortState(options);
     }
     private bool IsCurrentSortField()
     {
-        if (this._listContext is null || String.IsNullOrWhiteSpace(_listContext.ListOptions.SortOptions.SortField))
+        if (this._listContext is null || String.IsNullOrWhiteSpace(_listContext.ListState.SortState.SortField))
             return false;
 
-        return _listContext.ListOptions.SortOptions.SortField.Equals(this.SortField);
+        return _listContext.ListState.SortState.SortField.Equals(this.SortField);
     }
 
 
@@ -66,7 +66,7 @@ public partial class UIListColumn : UIComponentBase
     private string SortIconCss
     => _listContext is null || !this.IsCurrentSortField()
         ? UICssClasses.NotSortedClass
-        : this._listContext.ListOptions.SortOptions.SortDescending
+        : this._listContext.ListState.SortState.SortDescending
             ? UICssClasses.AscendingClass
             : UICssClasses.DescendingClass;
 }

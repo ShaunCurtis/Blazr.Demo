@@ -38,7 +38,7 @@ public readonly struct ListProviderRequest
         FilterExpression = null;
     }
 
-    public ListProviderRequest(ListOptions options)
+    public ListProviderRequest(ListState options)
     {
         StartIndex = options.StartIndex;
         PageSize = options.PageSize;

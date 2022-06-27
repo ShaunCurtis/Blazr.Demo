@@ -66,54 +66,64 @@ public class PagedListForm<TRecord, TService>
         this.NotificationService.ListUpdated += this.OnListChanged;
     }
 
-    public virtual async ValueTask<PagingOptions> GetPagedItems(PagingOptions request)
+    public virtual async ValueTask<PagingState> GetPagedItems(PagingState request)
     {
-        var listOptions = new ListOptions { PageSize = request.PageSize, StartIndex = request.StartIndex };
-        listOptions = this.GetState(listOptions);
-        var result = await this.ListViewService.GetRecordsAsync(new ListProviderRequest(listOptions));
-        listOptions.ListTotalCount = result.TotalItemCount;
+        var listState = new ListState { PageSize = request.PageSize, StartIndex = request.StartIndex };
+        listState = this.GetState(listState);
+
+        var result = await this.ListViewService.GetRecordsAsync(new ListProviderRequest(listState));
+        
+        listState.ListTotalCount = result.TotalItemCount;
+        
         await this.OnAfterGetItems();
         await this.InvokeAsync(StateHasChanged);
-        this.SaveState(listOptions);
-        return new PagingOptions { PageSize = listOptions.PageSize, StartIndex = listOptions.StartIndex, ListTotalCount = listOptions.ListTotalCount };
+        
+        this.SaveState(listState);
+        
+        return new PagingState { PageSize = listState.PageSize, StartIndex = listState.StartIndex, ListTotalCount = listState.ListTotalCount };
     }
 
-    public async ValueTask<ListOptions> GetPagedItems(ListOptions request)
+    public async ValueTask<ListState> GetPagedItems(ListState request)
     {
-        var listOptions = this.GetState(request);
-        var result = await this.ListViewService.GetRecordsAsync(new ListProviderRequest(listOptions));
-        listOptions.ListTotalCount = result.TotalItemCount;
+        var listState = this.GetState(request);
+        
+        var result = await this.ListViewService.GetRecordsAsync(new ListProviderRequest(listState));
+        
+        listState.ListTotalCount = result.TotalItemCount;
+        
         await this.OnAfterGetItems();
         await this.InvokeAsync(StateHasChanged);
-        this.SaveState(listOptions);
-        return listOptions;
+        
+        this.SaveState(listState);
+        
+        return listState;
     }
 
     protected virtual Task OnAfterGetItems()
         => Task.CompletedTask;
 
-    protected void SaveState(ListOptions options)
+    protected void SaveState(ListState state)
     {
         if (this.RouteId != Guid.Empty)
-            this.UiStateService.AddStateData(this.RouteId, options);
+            this.UiStateService.AddStateData(this.RouteId, state);
     }
 
-    protected ListOptions GetState(ListOptions options)
+    protected ListState GetState(ListState state)
     {
-        ListOptions? returnOptions = null;
+        ListState? returnState = null;
         // TODO - can reduce this if the new version of TryGetStateData works
-        if (this.RouteId != Guid.Empty && this.UiStateService.TryGetStateData<ListOptions>(this.RouteId, out object? stateOptions) && stateOptions is ListOptions)
+        if (this.RouteId != Guid.Empty && this.UiStateService.TryGetStateData<ListState>(this.RouteId, out object? listState) && listState is ListState)
         {
-            returnOptions = (stateOptions as ListOptions)!.Copy;
+            returnState = (listState as ListState)!.Copy;
             if (!_firstLoad)
             {
-                returnOptions.StartIndex = options.StartIndex;
-                returnOptions.PageSize = options.PageSize;
+                returnState.StartIndex = state.StartIndex;
+                returnState.PageSize = state.PageSize;
             }
         }
         _firstLoad = false;
-        returnOptions ??= options;
-        return returnOptions;
+        returnState ??= state;
+        return returnState;
     }
 
 
@@ -163,23 +173,16 @@ public class PagedListForm<TRecord, TService>
         => options ?? new ModalOptions();
 
     protected virtual void Exit()
-    {
-        this.NavigationManager.NavigateTo("/");
-    }
+        => this.NavigationManager.NavigateTo("/");
 
     protected virtual void ExitTo(string url)
-    {
-        this.NavigationManager.NavigateTo(url);
-    }
+        => this.NavigationManager.NavigateTo(url);
 
     private void OnListChanged(object? sender, EventArgs e)
     {
         this.pagingControl?.NotifyListChangedAsync();
         this.InvokeAsync(this.StateHasChanged);
     }
-
     public virtual void Dispose()
-    {
-        this.NotificationService.ListUpdated += this.OnListChanged;
-    }
+        => this.NotificationService.ListUpdated += this.OnListChanged;
 }
