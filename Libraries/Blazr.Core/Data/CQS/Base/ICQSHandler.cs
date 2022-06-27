@@ -6,8 +6,8 @@
 
 namespace Blazr.Core;
 
-public interface IRequestHandler<in TAction, out TResult>
-    where TAction : IHandlerRequest<TResult>
+public interface ICQSHandler<in TAction, out TResult>
+    where TAction : ICQSRequest<TResult>
 {
     TResult ExecuteAsync();
 }

@@ -9,7 +9,133 @@ Each data action is either a:
 
 Each action has a Command/Query class that defines the action and a Handler class to execute the action.
 
+## Basic Interfaces and Classes
+
+The key to the CQS methodology is a simple premise defined by two interfaces.
+
+`ICQSRequest` defines any request.  It says:
+
+1. The request produces an output defined as `TResult`.
+2. There is a unique `TransactionId` for the request that we can use for tracing purposes if we implement the tracing logic.
+
+```csharp
+public interface ICQSRequest<out TResult>
+{
+    public Guid TransactionId { get;}
+}
+```
+
+`ICQSHandler` defines a handler that will execute a `ICQSRequest`.  It says:
+
+1. The handler takes in a `TAction` which implements the `ICQSRequest` interface.
+2. The handler outputs a `TResult` as defined in the `ICQSRequest` interface.
+3. There is a single method to execute code that takes the Request and produces `TResult`.
+
+```csharp
+public interface ICQSHandler<in TAction, out TResult>
+    where TAction : ICQSRequest<TResult>
+{
+    TResult ExecuteAsync();
+}
+```
+
 ## Queries
+
+Queries are broken down into:
+
+### Record Queries
+
+Record queries are queries for a single record.  These implement `ICQSRequest`.
+
+1. `TRecord` defines the record type for the query.
+2. `TResult` for `ICQSRequest` is defined as `ValueTask<RecordProviderResult<TRecord>>`.  We live in the async world, so our return objects are wrapped in tasks.
+
+```csharp
+public record RecordQuery<TRecord>
+    : ICQSRequest<ValueTask<RecordProviderResult<TRecord>>>
+{
+    public Guid TransactionId { get; } = Guid.NewGuid();
+    public readonly Guid? RecordId;
+
+    public RecordQuery(Guid? recordId)
+        => this.RecordId = recordId;
+}
+```
+
+`RecordProviderResult` is a wrapper class to include both the record and status information on the query execution.
+
+```csharp
+public readonly struct RecordProviderResult<TRecord>
+{
+    public TRecord? Record { get; }
+    public bool Success { get; }
+    public string? Message { get; }
+
+    public RecordProviderResult(TRecord? record, bool success = true, string? message = null)
+    {
+        this.Record = record;
+        this.Success = success;
+        if (record is null)
+            this.Success = false;
+        
+        this.Message = message;
+    }
+}
+```
+
+We can now define any query like this:
+
+```csharp
+var query = new RecordQuery<DvoWeatherForecast>(RecordGuid);
+```
+
+The hander for RecordQuery looks like this:
+
+```csharp
+public class RecordQueryHandler<TRecord>
+    : ICQSHandler<RecordQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
+    where TRecord : class, new()
+{
+    private readonly IWeatherDbContext _dbContext;
+    private readonly RecordQuery<TRecord> _query;
+
+    public RecordQueryHandler(IWeatherDbContext dbContext, RecordQuery<TRecord> query)
+    {
+        _dbContext = dbContext;
+        _query = query;
+    }
+
+    public async ValueTask<RecordProviderResult<TRecord>> ExecuteAsync()
+        => await _executeAsync();
+
+    private async ValueTask<RecordProviderResult<TRecord>> _executeAsync()
+    {
+        TRecord? record = null;
+        if (GetKeyProperty(out PropertyInfo? value) && value is not null)
+        {
+            record = await _dbContext.Set<TRecord>()
+                .SingleOrDefaultAsync(item => GuidCompare(value.GetValue(item)));
+        }
+        return new RecordProviderResult<TRecord>(record);
+    }
+
+    private bool GuidCompare(object? value)
+        => value is Guid && (Guid)value == _query.RecordId;
+
+    private bool GetKeyProperty(out PropertyInfo? value)
+    {
+        var instance = new TRecord();
+        value = instance.GetType()
+            .GetProperties()
+            .FirstOrDefault(prop => prop.GetCustomAttributes(false)
+                .OfType<KeyAttribute>()
+                .Any());
+
+        return value is not null;
+    }
+}
+```
+
 
 Queries implement an interface:
 

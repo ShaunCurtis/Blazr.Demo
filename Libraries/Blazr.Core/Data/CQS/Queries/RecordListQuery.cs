@@ -7,7 +7,7 @@
 namespace Blazr.Core;
 
 public record RecordListQuery<TRecord>
-    : IHandlerRequest<ValueTask<ListProviderResult<TRecord>>>
+    : ICQSRequest<ValueTask<ListProviderResult<TRecord>>>
 {
     public Guid TransactionId { get; } = Guid.NewGuid();
     

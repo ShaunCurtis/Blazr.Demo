@@ -6,8 +6,8 @@
 namespace Blazr.Demo.Data;
 
 public abstract class ListQueryHandlerBase<TAction, TRecord>
-    : IRequestHandler<TAction, ValueTask<ListProviderResult<TRecord>>>
-    where TAction : IHandlerRequest<ValueTask<ListProviderResult<TRecord>>>
+    : ICQSHandler<TAction, ValueTask<ListProviderResult<TRecord>>>
+    where TAction : ICQSRequest<ValueTask<ListProviderResult<TRecord>>>
 {
     protected IEnumerable<TRecord> items = Enumerable.Empty<TRecord>();
     protected int count = 0;

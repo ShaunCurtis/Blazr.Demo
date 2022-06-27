@@ -7,7 +7,7 @@
 namespace Blazr.Core;
 
 public interface IRecordCommand<TRecord> 
-    : IHandlerRequest<ValueTask<CommandResult>>
+    : ICQSRequest<ValueTask<CommandResult>>
 {
     public TRecord Record { get;}
 }

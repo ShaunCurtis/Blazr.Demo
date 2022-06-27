@@ -7,9 +7,9 @@
 namespace Blazr.Demo.Data;
 
 public class WeatherForecastQueryHandler
-    : RecordQueryHandlerBase<DvoWeatherForecast>
+    : RecordQueryHandler<DvoWeatherForecast>
 {
-    public WeatherForecastQueryHandler(IWeatherDbContext dbContext, RecordQuery<DvoWeatherForecast> query)
-        : base(dbContext, query)
+    public WeatherForecastQueryHandler(IDbContextFactory<DbContext> factory, RecordQuery<DvoWeatherForecast> query)
+        : base(factory, query)
     { }
 }

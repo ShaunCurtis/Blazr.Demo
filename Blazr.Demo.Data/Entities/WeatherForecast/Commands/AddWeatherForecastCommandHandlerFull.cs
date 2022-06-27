@@ -7,7 +7,7 @@
 namespace Blazr.Demo.Data;
 
 public class AddWeatherForecastCommandHandlerFull
-    : IRequestHandler<AddWeatherForecastCommand, ValueTask<CommandResult>>
+    : ICQSHandler<AddWeatherForecastCommand, ValueTask<CommandResult>>
 {
     protected readonly IWeatherDbContext dbContext;
     protected readonly AddWeatherForecastCommand command;

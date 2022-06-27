@@ -5,16 +5,18 @@
 /// ============================================================
 namespace Blazr.Demo.Data;
 
-public abstract class RecordQueryHandlerBase<TRecord>
-    : IRequestHandler<RecordQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
-    where TRecord : class, new()
-{
-    private readonly IWeatherDbContext _dbContext;
-    private readonly RecordQuery<TRecord> _query;
+public class RecordQueryHandler<TRecord, TDbContext>
+    : ICQSHandler<RecordQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
+        where TRecord : class, new()
+        where TDbContext : DbContext, IWeatherDbContext
 
-    public RecordQueryHandlerBase(IWeatherDbContext dbContext, RecordQuery<TRecord> query)
+{
+    private readonly RecordQuery<TRecord> _query;
+    private IDbContextFactory<TDbContext> _factory;
+
+    public RecordQueryHandler(IDbContextFactory<TDbContext> factory, RecordQuery<TRecord> query)
     {
-        _dbContext = dbContext;
+        _factory = factory;
         _query = query;
     }
 
@@ -23,6 +25,7 @@ public abstract class RecordQueryHandlerBase<TRecord>
 
     private async ValueTask<RecordProviderResult<TRecord>> _executeAsync()
     {
+        var _dbContext = _factory.CreateDbContext();
         TRecord? record = null;
         if (GetKeyProperty(out PropertyInfo? value) && value is not null)
         {

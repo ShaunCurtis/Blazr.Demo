@@ -8,7 +8,7 @@ namespace Blazr.Demo.Data;
 
 public interface IWeatherForecastCQSDataBroker
 {
-    public ValueTask<ListProviderResult<DvoWeatherForecast>> GetWeatherForecastsAsync(WeatherForecastListQuery query);
+    public ValueTask<ListProviderResult<DvoWeatherForecast>> GetWeatherForecastsAsync(RecordListQuery<DvoWeatherForecast> query)
 
     public ValueTask<RecordProviderResult<DvoWeatherForecast>> GetWeatherForecastAsync(RecordQuery<DvoWeatherForecast> query);
 

@@ -6,27 +6,25 @@
 
 namespace Blazr.Demo.Data;
 
-public class WeatherForecastCQSDataBroker<TContext>
+public class WeatherForecastCQSDataBroker<TDbContext>
     :IWeatherForecastCQSDataBroker
-    where TContext : DbContext, IWeatherDbContext
+    where TDbContext : DbContext, IWeatherDbContext
 {
-    private readonly IDbContextFactory<TContext> _factory;
+    private readonly IDbContextFactory<TDbContext> _factory;
 
-    public WeatherForecastCQSDataBroker(IDbContextFactory<TContext> factory, IServiceProvider serviceProvider)
+    public WeatherForecastCQSDataBroker(IDbContextFactory<TDbContext> factory, IServiceProvider serviceProvider)
         => _factory = factory;
 
-    public async ValueTask<ListProviderResult<DvoWeatherForecast>> GetWeatherForecastsAsync(WeatherForecastListQuery query)
+    public async ValueTask<ListProviderResult<DvoWeatherForecast>> GetWeatherForecastsAsync(RecordListQuery<DvoWeatherForecast> query)
     {
-        using var dbContext = _factory.CreateDbContext();
-        var handler = new WeatherForecastListQueryHandler(dbContext, query);
+        var handler = new RecordListQueryHandler<DvoWeatherForecast,TDbContext>(_factory, query);
         var result = await handler.ExecuteAsync();
         return result;
     }
 
     public async ValueTask<RecordProviderResult<DvoWeatherForecast>> GetWeatherForecastAsync(RecordQuery<DvoWeatherForecast> query)
     {
-        using var dbContext = _factory.CreateDbContext();
-        var handler = new WeatherForecastQueryHandler(dbContext, query);
+        var handler = new RecordQueryHandler<DvoWeatherForecast, TDbContext>(_factory, query);
         var result = await handler.ExecuteAsync();
         return result;
     }

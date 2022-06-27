@@ -6,8 +6,8 @@
 namespace Blazr.Demo.Data;
 
 public abstract class LookupListQueryHandlerBase<TAction, TRecord>
-    : IRequestHandler<TAction, ValueTask<LookupListProviderResult>>
-    where TAction : IHandlerRequest<ValueTask<LookupListProviderResult>>
+    : ICQSHandler<TAction, ValueTask<LookupListProviderResult>>
+    where TAction : ICQSRequest<ValueTask<LookupListProviderResult>>
 {
     protected IEnumerable<TRecord> items = Enumerable.Empty<TRecord>();
     protected int count = 0;

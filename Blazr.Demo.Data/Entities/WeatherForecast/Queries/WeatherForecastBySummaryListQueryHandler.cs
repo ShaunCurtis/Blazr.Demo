@@ -6,7 +6,7 @@
 namespace Blazr.Demo.Data;
 
 public class WeatherForecastBySummaryListQueryHandler
-    : RecordListQueryHandlerBase<WeatherForecastBySummaryListQuery, DvoWeatherForecast>
+    : RecordListQueryHandler<WeatherForecastBySummaryListQuery, DvoWeatherForecast>
 {
     private WeatherForecastBySummaryListQuery? _listquery => this.listQuery as WeatherForecastBySummaryListQuery;
 

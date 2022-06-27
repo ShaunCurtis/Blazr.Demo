@@ -7,8 +7,8 @@
 namespace Blazr.Demo.Data;
 
 public abstract class RecordCommandHandlerBase<TAction, TRecord>
-    : IRequestHandler<TAction, ValueTask<CommandResult>>
-    where TAction : IHandlerRequest<ValueTask<CommandResult>>
+    : ICQSHandler<TAction, ValueTask<CommandResult>>
+    where TAction : ICQSRequest<ValueTask<CommandResult>>
     //IRecordCommand<TRecord>
 {
     protected readonly IWeatherDbContext dbContext;

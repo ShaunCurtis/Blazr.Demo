@@ -7,7 +7,7 @@
 namespace Blazr.Demo.Core;
 
 public class AddWeatherForecastCommand
-    : IHandlerRequest<ValueTask<CommandResult>>
+    : ICQSRequest<ValueTask<CommandResult>>
 {
     public Guid TransactionId { get; } = Guid.NewGuid();
 
