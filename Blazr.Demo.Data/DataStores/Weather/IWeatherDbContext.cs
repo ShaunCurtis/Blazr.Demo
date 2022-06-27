@@ -3,6 +3,7 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
+/// 
 namespace Blazr.Demo.Data;
 
 public interface IWeatherDbContext
@@ -12,6 +13,8 @@ public interface IWeatherDbContext
     public DbSet<DvoWeatherForecast> DvoWeatherForecast { get; set; }
 
     public DbSet<DboWeatherSummary> DboWeatherSummary { get; set; }
+
+    public DbSet<FkWeatherSummaryId> FkWeatherSummaryId { get; set; }
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 

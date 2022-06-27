@@ -66,7 +66,7 @@ public class FormViewControl<TValue> : ComponentBase
         {
             builder.OpenElement(110, "label");
             builder.AddAttribute(130, "class", this.LabelCssClass);
-            builder.AddContent(140, this.Label);
+            builder.AddMarkupContent(140, this.Label);
             builder.CloseElement();
         }
     };

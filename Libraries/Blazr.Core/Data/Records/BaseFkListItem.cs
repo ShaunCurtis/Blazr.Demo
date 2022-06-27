@@ -4,13 +4,12 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.UI;
+namespace Blazr.Core;
 
-public class PagingEventArgs : EventArgs
+public record BaseFkListItem : IFkListItem
 {
-    public PagingState PagingState { get; set; }
+    [Key]
+    public Guid Id { get; init; }
 
-    public PagingEventArgs(PagingState pagingState)
-        => PagingState = pagingState;
+    public string? Name { get; init; }
 }
-

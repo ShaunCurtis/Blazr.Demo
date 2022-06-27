@@ -4,13 +4,6 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.UI;
+namespace Blazr.Demo.Core;
 
-public class PagingEventArgs : EventArgs
-{
-    public PagingState PagingState { get; set; }
-
-    public PagingEventArgs(PagingState pagingState)
-        => PagingState = pagingState;
-}
-
+public record FkWeatherSummaryId : BaseFkListItem { }

@@ -26,6 +26,22 @@ public class InputReadOnlyText : ComponentBase
     }
 }
 
+public class InputReadOnlyDisplay : ComponentBase
+{
+    [Parameter] public object? Value { get; set; }
+
+    [Parameter] public bool AsMarkup { get; set; } = true;
+
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
+    {
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(2, "class", "form-control-plaintext form-control-markup");
+        if (AsMarkup) builder.AddMarkupContent(4, this.Value?.ToString());
+        else builder.AddContent(4, this.Value?.ToString());
+        builder.CloseElement();
+    }
+}
+
 public class InputReadOnlyText<TValue> : ComponentBase
 {
     [Parameter] public TValue? Value { get; set; }

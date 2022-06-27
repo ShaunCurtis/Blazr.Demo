@@ -17,6 +17,11 @@ public static class DisplayExtensions
     public static string AsShortGuid(this Guid value)
         => value.ToString().Substring(0, 13);
 
+    public static MarkupString AsDegC(this int value)
+    => new MarkupString($"{value} &deg;C");
+    public static MarkupString AsDegF(this int value)
+    => new MarkupString($"{((value * 9) / 5) + 32} &deg;F");
+
     public static string AsYesNo(this bool value)
         => value ? "Yes" : "No";
 

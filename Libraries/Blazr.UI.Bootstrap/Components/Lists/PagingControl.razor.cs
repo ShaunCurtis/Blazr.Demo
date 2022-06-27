@@ -50,7 +50,7 @@ public partial class PagingControl
 
     private void OnPagingReset(object? sender, PagingEventArgs e)
     {
-        this.Page = e.PagingOptions.Page;
+        this.Page = e.PagingState.Page;
         this.InvokeAsync(StateHasChanged);
     }
 

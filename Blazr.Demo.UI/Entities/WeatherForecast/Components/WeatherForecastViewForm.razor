@@ -24,7 +24,7 @@
             <UIContainer Size=BootstrapSize.Fluid>
                 <UIFormRow>
                     <UIColumn Columns=12 MediumColumns=6>
-                        <FormViewControl Label="Id" Value="this.ListService.Record!.WeatherForecastId" ControlType="typeof(InputReadOnlyText)" />
+                        <FormViewControl Label="Id" Value="this.ListService.Record!.WeatherForecastId" ControlType="typeof(InputReadOnlyDisplay)" />
                     </UIColumn>
                     <UIColumn Columns=12 MediumColumns=6>
                         <FormViewControl Label="Date" Value="this.ListService.Record!.Date.AsGlobalDate()" ControlType="typeof(InputReadOnlyText)" />
@@ -35,7 +35,7 @@
                         <FormViewControl Label="Summary" Value="this.ListService.Record!.Summary" ControlType="typeof(InputReadOnlyText)" />
                     </UIColumn>
                     <UIColumn Columns=12 MediumColumns=6>
-                        <FormViewControl Label="Temp &deg C" Value="this.ListService.Record!.TemperatureC" ControlType="typeof(InputReadOnlyText)" />
+                        <FormViewControl Label="Temp &deg;C" Value="this.ListService.Record!.TemperatureC" ControlType="typeof(InputReadOnlyDisplay)" />
                     </UIColumn>
                 </UIFormRow>
             </UIContainer>
@@ -48,7 +48,7 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        //this.EditControl = typeof(GroupEditForm);
+        this.EditControl = typeof(WeatherForecastEditForm);
     }
 
     protected override void BaseExit()
