@@ -11,6 +11,4 @@ public interface IQueryDataBroker
     public ValueTask<ListProviderResult<DvoWeatherForecast>> ExecuteAsync(WeatherForecastListQuery query);
 
     public ValueTask<ListProviderResult<DvoWeatherForecast>> ExecuteAsync(WeatherForecastBySummaryListQuery query);
-
-    public ValueTask<FKListProviderResult> ExecuteAsync(WeatherSummaryLookupListQuery query);
 }

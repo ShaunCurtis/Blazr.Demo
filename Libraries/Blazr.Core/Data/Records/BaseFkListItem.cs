@@ -11,5 +11,5 @@ public record BaseFkListItem : IFkListItem
     [Key]
     public Guid Id { get; init; }
 
-    public string? Name { get; init; }
+    public string Name { get; init; } = String.Empty;
 }

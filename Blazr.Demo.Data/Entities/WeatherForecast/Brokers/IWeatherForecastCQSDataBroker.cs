@@ -6,18 +6,15 @@
 
 namespace Blazr.Demo.Data;
 
-public interface ICQSDataBroker
+public interface IWeatherForecastCQSDataBroker
 {
-    public ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordListQuery<TRecord> query) where TRecord : class, new();
+    public ValueTask<ListProviderResult<DvoWeatherForecast>> GetWeatherForecastsAsync(RecordListQuery<DvoWeatherForecast> query);
 
-    public ValueTask<RecordProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordQuery<TRecord> query) where TRecord : class, new();
+    public ValueTask<RecordProviderResult<DvoWeatherForecast>> GetWeatherForecastAsync(RecordQuery<DvoWeatherForecast> query);
 
-    public ValueTask<FKListProviderResult> ExecuteAsync<TRecord>(FKListQuery<TRecord> query) where TRecord : class, IFkListItem, new();
+    public ValueTask<CommandResult> AddWeatherForecastAsync(AddRecordCommand<DboWeatherForecast> command);
 
-    public ValueTask<CommandResult> ExecuteAsync<TRecord>(AddRecordCommand<TRecord> command) where TRecord : class, new();
+    public ValueTask<CommandResult> UpdateWeatherForecastAsync(UpdateRecordCommand<DboWeatherForecast> command);
 
-    public ValueTask<CommandResult> ExecuteAsync<TRecord>(UpdateRecordCommand<TRecord> command) where TRecord : class, new();
-
-    public ValueTask<CommandResult> ExecuteAsync<TRecord>(DeleteRecordCommand<TRecord> command) where TRecord : class, new();
-
+    public ValueTask<CommandResult> DeleteWeatherForecastAsync(DeleteRecordCommand<DboWeatherForecast> command);
 }

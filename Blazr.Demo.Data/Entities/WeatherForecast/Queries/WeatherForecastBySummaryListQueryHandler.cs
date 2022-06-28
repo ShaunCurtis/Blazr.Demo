@@ -5,45 +5,60 @@
 /// ============================================================
 namespace Blazr.Demo.Data;
 
-public class WeatherForecastBySummaryListQueryHandler
-    : RecordListQueryHandler<WeatherForecastBySummaryListQuery, DvoWeatherForecast>
+public class WeatherForecastBySummaryListQueryHandler<TDbContext>
+    :ICQSHandler<WeatherForecastBySummaryListQuery, ValueTask<ListProviderResult<DvoWeatherForecast>>>
+    where TDbContext : DbContext
 {
-    private WeatherForecastBySummaryListQuery? _listquery => this.listQuery as WeatherForecastBySummaryListQuery;
+    private WeatherForecastBySummaryListQuery _listQuery;
+    private readonly IDbContextFactory<TDbContext> _factory;
 
-    public WeatherForecastBySummaryListQueryHandler(DbContext dbContext, WeatherForecastBySummaryListQuery query)
-        : base(dbContext, query)
-    {}
+    private IEnumerable<DvoWeatherForecast> _items = Enumerable.Empty<DvoWeatherForecast>();
+    private int _count;
+    private string _message = string.Empty;
 
-    protected async override ValueTask<bool> GetItemsAsync()
+    public WeatherForecastBySummaryListQueryHandler(IDbContextFactory<TDbContext> factory, WeatherForecastBySummaryListQuery query)
     {
-        if (_listquery is null)
-            return false;
+        _listQuery = query;
+        _factory = factory;
+    }
 
-        IQueryable<DvoWeatherForecast> dbSet = this.dbContext.Set<DvoWeatherForecast>();
+    public async ValueTask<ListProviderResult<DvoWeatherForecast>> ExecuteAsync()
+    {
+        if (await this.GetCountAsync())
+            if (await this.GetItemsAsync())
+                return new ListProviderResult<DvoWeatherForecast>(_items, _count, true, string.Empty);
 
-        if (_listquery!.WeatherSummaryId is not null)
-            dbSet = dbSet.Where(item => item.WeatherSummaryId == _listquery.WeatherSummaryId);
+        return new ListProviderResult<DvoWeatherForecast>(Enumerable.Empty<DvoWeatherForecast>(), 0, false, "Error retrieving records");
+    }
 
-        if (_listquery.Request.PageSize > 0)
+    private async ValueTask<bool> GetItemsAsync()
+    {
+        var dbContext = _factory.CreateDbContext();
+
+        IQueryable<DvoWeatherForecast> dbSet = dbContext.Set<DvoWeatherForecast>();
+
+        if (_listQuery.WeatherSummaryId is not null)
+            dbSet = dbSet.Where(item => item.WeatherSummaryId == _listQuery.WeatherSummaryId);
+
+        if (_listQuery.Request.PageSize > 0)
             dbSet = dbSet
-                .Skip(_listquery.Request.StartIndex)
-                .Take(_listquery.Request.PageSize);
+                .Skip(_listQuery.Request.StartIndex)
+                .Take(_listQuery.Request.PageSize);
 
-        this.items = await dbSet.ToListAsync();
+        this._items = await dbSet.ToListAsync();
         return true;
     }
     
-    protected async override ValueTask<bool> GetCountAsync()
+    private async ValueTask<bool> GetCountAsync()
     {
-        if (_listquery is null)
-            return false;
+        var dbContext = _factory.CreateDbContext();
 
-        IQueryable<DvoWeatherForecast> dbSet = this.dbContext.Set<DvoWeatherForecast>();
+        IQueryable<DvoWeatherForecast> dbSet = dbContext.Set<DvoWeatherForecast>();
 
-        if (_listquery.WeatherSummaryId is not null)
-            dbSet = dbSet.Where(item => item.WeatherSummaryId == _listquery.WeatherSummaryId);
+        if (_listQuery.WeatherSummaryId is not null)
+            dbSet = dbSet.Where(item => item.WeatherSummaryId == _listQuery.WeatherSummaryId);
 
-        this.count = await dbSet.CountAsync();
+        this._count = await dbSet.CountAsync();
 
         return true;
     }

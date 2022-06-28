@@ -29,26 +29,23 @@ public class WeatherForecastCQSDataBroker<TDbContext>
         return result;
     }
 
-    public async ValueTask<CommandResult> AddWeatherForecastAsync(AddRecordCommand<DvoWeatherForecast> command)
+    public async ValueTask<CommandResult> AddWeatherForecastAsync(AddRecordCommand<DboWeatherForecast> command)
     {
-        using var dbContext = _factory.CreateDbContext();
-        var handler = new AddRecordCommandHandlerBase(dbContext, command);
+        var handler = new AddRecordCommandHandler<DboWeatherForecast, TDbContext>(_factory, command);
         var result = await handler.ExecuteAsync();
         return result;
     }
 
-    public async ValueTask<CommandResult> UpdateWeatherForecastAsync(WeatherForecastCommand command)
+    public async ValueTask<CommandResult> UpdateWeatherForecastAsync(UpdateRecordCommand<DboWeatherForecast> command)
     {
-        using var dbContext = _factory.CreateDbContext();
-        var handler = new UpdateWeatherForecastCommandHandler(dbContext, command);
+        var handler = new UpdateRecordCommandHandler<DboWeatherForecast, TDbContext>(_factory, command);
         var result = await handler.ExecuteAsync();
         return result;
     }
 
-    public async ValueTask<CommandResult> DeleteWeatherForecastAsync(WeatherForecastCommand command)
+    public async ValueTask<CommandResult> DeleteWeatherForecastAsync(DeleteRecordCommand<DboWeatherForecast> command)
     {
-        using var dbContext = _factory.CreateDbContext();
-        var handler = new DeleteWeatherForecastCommandHandler(dbContext, command);
+        var handler = new DeleteRecordCommandHandler<DboWeatherForecast, TDbContext>(_factory, command);
         var result = await handler.ExecuteAsync();
         return result;
     }

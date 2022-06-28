@@ -31,11 +31,11 @@ public class WeatherForecastService
     private async Task GetWeatherSummariesAsync()
     {
         _weatherSummaries.Clear();
-        var result = await _queryBroker.ExecuteAsync(new WeatherSummaryLookupListQuery());
+        var result = await _queryBroker.ExecuteAsync(new FKListQuery<DboWeatherSummary>());
         if (result.Success)
         {
             foreach (var item in result.Items)
-                _weatherSummaries.Add(item.Key, item.Value);
+                _weatherSummaries.Add(item.Id, item.Name);
         }
     }
 

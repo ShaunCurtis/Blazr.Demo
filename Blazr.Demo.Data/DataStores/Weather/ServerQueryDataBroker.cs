@@ -10,29 +10,20 @@ public class ServerQueryDataBroker<TDbContext>
     :IQueryDataBroker
     where TDbContext : DbContext
 {
-    protected readonly IDbContextFactory<TDbContext> database;
+    protected readonly IDbContextFactory<TDbContext> factory;
 
-    public ServerQueryDataBroker(IDbContextFactory<TDbContext> db)
-        => this.database = db;
+    public ServerQueryDataBroker(IDbContextFactory<TDbContext> factory)
+        => this.factory = factory;
 
     public async ValueTask<ListProviderResult<DvoWeatherForecast>> ExecuteAsync(WeatherForecastListQuery query)
     {
-        using var context = database.CreateDbContext();
-        var handler = new WeatherForecastListQueryHandler(context, query);
+        var handler = new RecordListQueryHandler<DvoWeatherForecast, TDbContext>(factory, query);
         return await handler.ExecuteAsync();
     }
 
     public async ValueTask<ListProviderResult<DvoWeatherForecast>> ExecuteAsync(WeatherForecastBySummaryListQuery query)
     {
-        using var context = database.CreateDbContext();
-        var handler = new WeatherForecastBySummaryListQueryHandler(context, query);
-        return await handler.ExecuteAsync();
-    }
-
-    public async ValueTask<FKListProviderResult> ExecuteAsync(WeatherSummaryLookupListQuery query)
-    {
-        using var context = database.CreateDbContext();
-        var handler = new WeatherSummaryLookupListQueryHandler(context, query);
+        var handler = new WeatherForecastBySummaryListQueryHandler<TDbContext>(factory, query);
         return await handler.ExecuteAsync();
     }
 }
