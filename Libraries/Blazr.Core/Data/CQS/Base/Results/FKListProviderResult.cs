@@ -6,15 +6,15 @@
 
 namespace Blazr.Core;
 
-public readonly struct LookupListProviderResult
+public readonly struct FKListProviderResult
 {
-    public SortedDictionary<Guid, string> Items { get; }
+    public IEnumerable<IFkListItem> Items { get; }
 
     public bool Success { get; }
 
     public string? Message { get; }
 
-    public LookupListProviderResult(SortedDictionary<Guid, string> items, int totalItemCount, bool success = true, string? message = null)
+    public FKListProviderResult(IEnumerable<IFkListItem> items, bool success = true, string? message = null)
     {
         Items = items;
         Success = success;

@@ -4,9 +4,11 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.Demo.Core;
+namespace Blazr.Core;
 
-public record WeatherSummaryLookupListQuery
-    : FKListQuery<DboWeatherSummary>
+public class AddRecordCommand<TRecord>
+     : RecordCommandBase<TRecord>
 {
+    public AddRecordCommand(TRecord record) : base(record)
+    {}
 }

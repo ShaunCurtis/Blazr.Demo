@@ -7,7 +7,7 @@
 namespace Blazr.Demo.Data;
 
 public class WeatherSummaryLookupListQueryHandler
-    : LookupListQueryHandlerBase<WeatherSummaryLookupListQuery, DboWeatherSummary>
+    : FKListQueryHandler<WeatherSummaryLookupListQuery, DboWeatherSummary>
 {
     private WeatherSummaryLookupListQuery? _listquery => this.listQuery as WeatherSummaryLookupListQuery;
 
@@ -15,7 +15,7 @@ public class WeatherSummaryLookupListQueryHandler
         : base(dbContext, query)
     {}
 
-    public async override ValueTask<LookupListProviderResult> ExecuteAsync()
+    public async override ValueTask<FKListProviderResult> ExecuteAsync()
     {
         IQueryable<DboWeatherSummary> dbSet = this.dbContext.Set<DboWeatherSummary>();
 

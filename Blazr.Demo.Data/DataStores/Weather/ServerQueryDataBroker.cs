@@ -29,7 +29,7 @@ public class ServerQueryDataBroker<TDbContext>
         return await handler.ExecuteAsync();
     }
 
-    public async ValueTask<LookupListProviderResult> ExecuteAsync(WeatherSummaryLookupListQuery query)
+    public async ValueTask<FKListProviderResult> ExecuteAsync(WeatherSummaryLookupListQuery query)
     {
         using var context = database.CreateDbContext();
         var handler = new WeatherSummaryLookupListQueryHandler(context, query);

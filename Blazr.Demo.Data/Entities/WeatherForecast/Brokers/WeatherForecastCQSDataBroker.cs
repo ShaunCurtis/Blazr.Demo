@@ -29,7 +29,7 @@ public class WeatherForecastCQSDataBroker<TDbContext>
         return result;
     }
 
-    public async ValueTask<CommandResult> AddWeatherForecastAsync(WeatherForecastCommand command)
+    public async ValueTask<CommandResult> AddWeatherForecastAsync(AddRecordCommand<DvoWeatherForecast> command)
     {
         using var dbContext = _factory.CreateDbContext();
         var handler = new AddWeatherForecastCommandHandler(dbContext, command);

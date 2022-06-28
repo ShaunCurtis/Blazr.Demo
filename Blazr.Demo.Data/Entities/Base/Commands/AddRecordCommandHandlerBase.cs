@@ -6,13 +6,15 @@
 
 namespace Blazr.Demo.Data;
 
-public abstract class AddRecordCommandHandlerBase<TAction, TRecord>
-    : RecordCommandHandlerBase<TAction, TRecord>
-    where TAction : IRecordCommand<TRecord> 
+public class AddRecordCommandHandlerBase<TRecord, TDbContext>
+    : RecordCommandHandlerBase<AddRecordCommand<TRecord>, TRecord>
+        where TDbContext : DbContext, IWeatherDbContext
 {
+    private IDbContextFactory<TDbContext> _factory;
 
-    public AddRecordCommandHandlerBase(IWeatherDbContext dbContext, IRecordCommand<TRecord> command)
-        : base(dbContext, command)
+    public AddRecordCommandHandlerBase(IDbContextFactory<TDbContext> _factory, IRecordCommand<TRecord> command)
+        : base(command)
+        => _factory = _factory;
     { }
 
     public override void ExecuteCommand()
