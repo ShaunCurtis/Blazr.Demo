@@ -7,7 +7,7 @@ namespace Blazr.Demo.Data;
 
 public class FKListQueryHandler<TRecord, TDbContext>
     : ICQSHandler<FKListQuery<TRecord>, ValueTask<FKListProviderResult>>
-        where TDbContext : DbContext, IWeatherDbContext
+        where TDbContext : DbContext
         where TRecord : class, IFkListItem, new()
 
 {

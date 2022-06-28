@@ -7,7 +7,7 @@
 namespace Blazr.Demo.Data;
 
 public class AddWeatherForecastCommandHandler
-    : AddRecordCommandHandlerBase<WeatherForecastCommand, DboWeatherForecast>
+    : AddRecordCommandHandler<WeatherForecastCommand, DboWeatherForecast>
 {
     public AddWeatherForecastCommandHandler(IWeatherDbContext dbContext, IRecordCommand<DboWeatherForecast> command)
         : base(dbContext,command)

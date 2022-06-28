@@ -8,7 +8,7 @@ namespace Blazr.Demo.Data;
 public class RecordQueryHandler<TRecord, TDbContext>
     : ICQSHandler<RecordQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
         where TRecord : class, new()
-        where TDbContext : DbContext, IWeatherDbContext
+        where TDbContext : DbContext
 
 {
     private readonly RecordQuery<TRecord> _query;

@@ -32,7 +32,7 @@ public class WeatherForecastCQSDataBroker<TDbContext>
     public async ValueTask<CommandResult> AddWeatherForecastAsync(AddRecordCommand<DvoWeatherForecast> command)
     {
         using var dbContext = _factory.CreateDbContext();
-        var handler = new AddWeatherForecastCommandHandler(dbContext, command);
+        var handler = new AddRecordCommandHandlerBase(dbContext, command);
         var result = await handler.ExecuteAsync();
         return result;
     }

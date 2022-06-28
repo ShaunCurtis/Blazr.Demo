@@ -8,7 +8,7 @@ namespace Blazr.Demo.Data;
 public class RecordListQueryHandler<TRecord, TDbContext>
     : ICQSHandler<RecordListQuery<TRecord>, ValueTask<ListProviderResult<TRecord>>>
         where TRecord : class, new()
-        where TDbContext : DbContext, IWeatherDbContext
+        where TDbContext : DbContext
 
 {
     protected IEnumerable<TRecord> items = Enumerable.Empty<TRecord>();
