@@ -15,6 +15,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 	ProjectSection(SolutionItems) = preProject
 		documents\CQSData.md = documents\CQSData.md
 		documents\CRSDataBrokers.md = documents\CRSDataBrokers.md
+		documents\Data.md = documents\Data.md
+		documents\RepositoryDataBrokers.md = documents\RepositoryDataBrokers.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{64BB6A6A-F650-4701-BE1C-6DBDD3B281C8}"
+	ProjectSection(SolutionItems) = preProject
+		readme.md = readme.md
 	EndProjectSection
 EndProject
 Global

@@ -6,13 +6,13 @@
 
 namespace Blazr.Demo.Data;
 
-public class ServerQueryDataBroker<TDbContext>
-    :IQueryDataBroker
+public class ServerCustomCQSDataBroker<TDbContext>
+    :ICustomCQSDataBroker
     where TDbContext : DbContext
 {
     protected readonly IDbContextFactory<TDbContext> factory;
 
-    public ServerQueryDataBroker(IDbContextFactory<TDbContext> factory)
+    public ServerCustomCQSDataBroker(IDbContextFactory<TDbContext> factory)
         => this.factory = factory;
 
     public async ValueTask<ListProviderResult<DvoWeatherForecast>> ExecuteAsync(WeatherForecastListQuery query)

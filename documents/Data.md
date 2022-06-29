@@ -1,9 +1,4 @@
-# Data
-
-There are a multitude of patterns that can be used in data pipelines.  This solution implements two common ones:
-
-1. A Generic Data Broker pattern.
-2. A Command/Query Separation pattern. 
+# Model Data, Data Stores and DBContexts
 
 ## Data Classes
 
@@ -17,37 +12,54 @@ Data classes are core domain objects: they are used throughout the application. 
 6. `GuidExtensions.Null` defines a specific Guid that represents null.  This can be used to test if the record is actually a null record.
 
 ```csharp
-public record DboWeatherLocation 
+public record DboWeatherSummary 
 {
-    [Key]
-    public Guid WeatherLocationId { get; init; } = GuidExtensions.Null;
-    public string? Name { get; init; }
+    [Key] public Guid WeatherSummaryId { get; init; } = Guid.Empty;
+    public string Summary { get; init; } = string.Empty; 
 }
 ```
 
 ```csharp
 public record DboWeatherForecast 
 {
-    [Key]
-    public Guid WeatherForecastId { get; init; } = GuidExtensions.Null;
-    public Guid WeatherLocationId { get; init; } = GuidExtensions.Null;
+    [Key] public Guid WeatherForecastId { get; init; } = Guid.Empty;
+    public Guid WeatherSummaryId { get; init; } = Guid.Empty;
     public DateTimeOffset Date { get; init; }
     public int TemperatureC { get; init; }
-    public string? Summary { get; init; }
 }
 ```
 
 ```csharp
 public record DvoWeatherForecast 
 {
-    [Key]
-    public Guid WeatherForecastId { get; init; }
-    public Guid WeatherLocationId { get; init; }
+    [Key] public Guid WeatherForecastId { get; init; }
+    public Guid WeatherSummaryId { get; init; }
     public DateTimeOffset Date { get; init; }
     public int TemperatureC { get; init; }
-    public string? Summary { get; init; }
-    public string? WeatherLocation { get; init; }
+    public string Summary { get; init; } = String.Empty;
 }
+```
+
+Foreign key lists are implemented with an interface and base class.  FK lists are used in select controls in edit forms.
+
+```csharp
+public interface IFkListItem
+{
+    [Key] public Guid Id { get; }
+    public string Name { get; }
+}
+
+public record BaseFkListItem : IFkListItem
+{
+    [Key] public Guid Id { get; init; }
+    public string Name { get; init; } = String.Empty;
+}
+```
+
+The Weather Summary FK list is then a simple class definition.
+
+```csharp
+public record FkWeatherSummaryId : BaseFkListItem { }
 ```
 
 ## DBContext
@@ -63,9 +75,13 @@ public interface IWeatherDbContext
 {
     public DbSet<DboWeatherForecast> DboWeatherForecast { get; set; }
     public DbSet<DvoWeatherForecast> DvoWeatherForecast { get; set; }
-    public DbSet<DboWeatherLocation> DboWeatherLocation { get; set; }
-
+    public DbSet<DboWeatherSummary> DboWeatherSummary { get; set; }
+    public DbSet<FkWeatherSummaryId> FkWeatherSummaryId { get; set; }
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+    public EntityEntry Add(object entity);
+    public EntityEntry Update(object entity);
+    public EntityEntry Remove(object entity);
+    public DbSet<TEntity> Set<TEntity>() where TEntity : class;
 }
 ```
 
@@ -74,42 +90,50 @@ public interface IWeatherDbContext
 This is the implementation used while developing and testing the application.
 
 ```csharp
-public class InMemoryWeatherDbContext 
+public class InMemoryWeatherDbContext
     : DbContext, IWeatherDbContext
 {
     public DbSet<DboWeatherForecast> DboWeatherForecast { get; set; } = default!;
     public DbSet<DvoWeatherForecast> DvoWeatherForecast { get; set; } = default!;
-    public DbSet<DboWeatherLocation> DboWeatherLocation { get; set; } = default!;
+    public DbSet<DboWeatherSummary> DboWeatherSummary { get; set; } = default!;
+    public DbSet<FkWeatherSummaryId> FkWeatherSummaryId { get; set; } = default!;
 
     public InMemoryWeatherDbContext(DbContextOptions<InMemoryWeatherDbContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<DboWeatherForecast>().ToTable("WeatherForecast");
-        modelBuilder.Entity<DboWeatherLocation>().ToTable("WeatherLocation");
-        
-        modelBuilder.Entity<DvoWeatherForecast>().ToInMemoryQuery(() 
+        modelBuilder.Entity<DboWeatherSummary>().ToTable("WeatherSummary");
+
+        modelBuilder.Entity<DvoWeatherForecast>().ToInMemoryQuery(()
             => from f in this.DboWeatherForecast
-                join l in this.DboWeatherLocation!
-                on f.WeatherLocationId equals l.WeatherLocationId
-                select new DvoWeatherForecast
-                {
-                    WeatherForecastId = f.WeatherForecastId,
-                    WeatherLocationId = l.WeatherLocationId,
-                    Date = f.Date,
-                    Summary = f.Summary,
-                    TemperatureC = f.TemperatureC,
-                    WeatherLocation = l.Name
-                }
-        );
+               join s in this.DboWeatherSummary!
+               on f.WeatherSummaryId equals s.WeatherSummaryId
+               select new DvoWeatherForecast
+               {
+                   WeatherForecastId = f.WeatherForecastId,
+                   WeatherSummaryId = f.WeatherSummaryId,
+                   Date = f.Date,
+                   Summary = s.Summary,
+                   TemperatureC = f.TemperatureC,
+               });
+
+        modelBuilder.Entity<FkWeatherSummaryId>().ToInMemoryQuery(()
+            => from s in this.DboWeatherSummary!
+               select new FkWeatherSummaryId
+               {
+                   Id =s.WeatherSummaryId,
+                   Name = s.Summary
+               });
     }
 }
 ```
 
-It inherits from `DbContext` and implements `IWeatherDbContext`.  It's designed to be used with an Entity Framework `In-Memory` database, so implements the `DvoWeatherForecast` view in the context as an `InMemoryQuery`.  This would point to a real view in a live database:
+It inherits from `DbContext` and implements `IWeatherDbContext`.  It's designed to be used with an Entity Framework `In-Memory` database, so implements the `DvoWeatherForecast` and `FkWeatherSummaryId` views in the context as an `InMemoryQuery`.  This would point to a real view in a live database:
 
 ```csharp
 modelBuilder.Entity<DvoWeatherForecast>().ToView("vw_WeatherForecasts");
+modelBuilder.Entity<FkWeatherSummaryId>().ToView("vw_WeatherSummmaryFkList");
 ```
 
 ## DBContextFactory
@@ -119,6 +143,7 @@ The application implements database access through an IDbContextFactory context 
 ```csharp
 builder.Services.AddDbContextFactory<InMemoryDbContext>(options => options.UseInMemoryDatabase("TestWeatherDatabase"));
 ```
+
 ### Collections
 
 The following general rules are applied to query methods that return collections and properties in classes in the application:
@@ -127,172 +152,93 @@ The following general rules are applied to query methods that return collections
 
 2. Never request unconstrained collections.  All query methods require an `ListProviderRequest`, a derived version of `ItemsProviderRequest`.  For those unfamiliar with `ItemsProviderRequest`, it's part of the list vitualization code, and contains the paging information.
 
-```csharp
-public struct ListProviderRequest
-{
-    public int StartIndex { get; }
-    public int Count { get; }
-    public CancellationToken CancellationToken { get; }
-    public string? SortExpression { get; set; }
-    public string? FilterExpression { get; set; }
-    public ItemsProviderRequest Request => new (this.StartIndex, this.Count, this.CancellationToken);
-
-    public ListProviderRequest(int startIndex, int count, CancellationToken cancellationToken, string? sortExpression = null, string? filterExpression = null )
-    {
-        StartIndex = startIndex;
-        Count = count;
-        CancellationToken = cancellationToken;
-        SortExpression = sortExpression;
-        FilterExpression = filterExpression;
-    }
-
-    public ListProviderRequest(ItemsProviderRequest request)
-    {
-        StartIndex = request.StartIndex;
-        Count = request.Count;
-        CancellationToken = request.CancellationToken;
-        SortExpression = null;
-        FilterExpression = null;
-    }
-}
-```
-
-3. Return `ListProviderResult` objects.  These are derived from the `ItemsProviderResult` object with additional status information
-
-```csharp
-public readonly struct ListProviderResult<TItem>
-{
-    public IEnumerable<TItem> Items { get; }
-    public int TotalItemCount { get; }
-    public bool Success { get; }
-    public string? Message { get; }
-    public ItemsProviderResult<TItem> ItemsProviderResult => new ItemsProviderResult<TItem>(this.Items, this.TotalItemCount);
-
-    public ListProviderResult(IEnumerable<TItem> items, int totalItemCount, bool success = true, string? message = null)
-    {
-        Items = items;
-        TotalItemCount = totalItemCount;
-        Success = success;
-        Message = message;
-    }
-}
-```
-
 ## Return Objects
 
 The application defines a set of return objects that all commands and queries return.
 
-All commands only return status information in `CommandResult`:
-
 ```csharp
-public struct CommandResult
+public readonly struct ListProviderResult<TRecord>
+{
+    public IEnumerable<TRecord> Items { get; }
+    public int TotalItemCount { get; }
+    public bool Success { get; }
+    public string? Message { get; }
+    //....Constructors
+}
+```
+```csaharp
+public readonly struct RecordProviderResult<TRecord>
+{
+    public TRecord? Record { get; }
+    public bool Success { get; }
+    public string? Message { get; }
+    //....Constructors
+}
+```
+```csaharp
+public readonly struct RecordCountProviderResult
+{
+    public int Count { get; }
+    public bool Success { get; }
+    public string? Message { get; }
+    //....Constructors
+}
+```
+```csaharp
+public readonly struct CommandResult
 {
     public Guid NewId { get; init; }
     public bool Success { get; init; }
     public string Message { get; init; }
-
-    public CommandResult( Guid newId, bool success, string message)
-    {
-        NewId = newId;
-        Success = success;
-        Message = message;
-    }
+    //....Constructors
 }
 ```
-
-All collection queries return a `ListProviderResult`:
-
-```csharp
-public readonly struct ListProviderResult<TItem>
+```csaharp
+public readonly struct FKListProviderResult
 {
-    public IEnumerable<TItem> Items { get; }
-
-    public int TotalItemCount { get; }
-
+    public IEnumerable<IFkListItem> Items { get; }
     public bool Success { get; }
-
     public string? Message { get; }
-
-    public ItemsProviderResult<TItem> ItemsProviderResult => new ItemsProviderResult<TItem>(this.Items, this.TotalItemCount);
-
-    public ListProviderResult(IEnumerable<TItem> items, int totalItemCount, bool success = true, string? message = null)
-    {
-        Items = items;
-        TotalItemCount = totalItemCount;
-        Success = success;
-        Message = message;
-    }
-}
-```
-
-All record queries return a `RecordProviderResult`:
-
-```csharp
-public readonly struct RecordProviderResult<TRecord>
-{
-    public TRecord? Record { get; }
-     
-    public bool Success { get; }
-
-    public string? Message { get; }
-
-    public RecordProviderResult(TRecord? record, bool success = true, string? message = null)
-    {
-        Record = record;
-        Success = success;
-        if (record is null)
-            Success = false;
-        
-        Message = message;
-    }
+    //....Constructors
 }
 ```
 
 ## Test Data
 
-We need to generate a data set for testing.  This is implemented through a "Singleton Pattern" class.
+The solution needs a data set for testing.  This is implemented using a "Singleton Pattern" class.
 
-We can load the data sets into the database and refer to them directly in tests.
+Tests can load data sets into the database and refer to them through the DbContext or the test data instance.
 
-for those unsure about the *Singleton pattern*.  The class is code so that you can't create an instance of the class directly: the `New` method is private.  You must call the static method `WeatherTestData GetInstance()` to get the current instance.  It returns the current instance or creates one if one doesn't exists. 
+For those unsure about the *Singleton pattern*.  The class is code so that you can't create an instance of the class directly: the `New` method is private.  You must call the static method `WeatherTestDataProvider.Instance()` to get the current instance.  It returns the current instance or creates one if one doesn't exists. 
 
 ```csharp
-public class WeatherTestData
+public class WeatherTestDataProvider
 {
-    private bool _initialized = false;
     private int RecordsToGenerate;
-    private readonly string[] Summaries = new[]
-    {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
 
-    public IEnumerable<DboWeatherForecast> WeatherForecasts { get; private set; } = new List<DboWeatherForecast>();
+    public IEnumerable<DboWeatherForecast> WeatherForecasts { get; private set; } = Enumerable.Empty<DboWeatherForecast>();
 
-    public IEnumerable<DboWeatherLocation> WeatherLocations { get; private set; } = new List<DboWeatherLocation>();
+    public IEnumerable<DboWeatherSummary> WeatherSummaries { get; private set; } = Enumerable.Empty<DboWeatherSummary>();
 
-    private WeatherTestData()
-    {
+    private WeatherTestDataProvider()
+        => this.Load();
 
-        // We need to populate this In Memory version of the database so we get a test data set from the static class WeatherForecastData
-        if (!_initialized)
-        {
-            this.Load();
-            _initialized = true;
-        }
-    }
-
-    public void LoadDbContext(IDbContextFactory<InMemoryWeatherDbContext> factory)
+    public void LoadDbContext<TDbContext>(IDbContextFactory<TDbContext> factory) where TDbContext : DbContext
     {
         using var dbContext = factory.CreateDbContext();
 
+        var weatherForcasts = dbContext.Set<DboWeatherForecast>();
+        var weatherSummaries = dbContext.Set<DboWeatherSummary>();
+
         // Check if we already have a full data set
         // If not clear down any existing data and start again
-        if (dbContext.DboWeatherLocation.Count() == 0 || dbContext.DboWeatherForecast.Count() == 0)
+        if (WeatherSummaries.Count() == 0 || weatherForcasts.Count() == 0)
         {
-            dbContext.RemoveRange(dbContext.DboWeatherForecast.ToList());
-            dbContext.RemoveRange(dbContext.DboWeatherLocation.ToList());
+
+            dbContext.RemoveRange(weatherSummaries.ToList());
+            dbContext.RemoveRange(weatherForcasts.ToList());
             dbContext.SaveChanges();
-            dbContext.AddRange(this.WeatherLocations);
+            dbContext.AddRange(this.WeatherSummaries);
             dbContext.AddRange(this.WeatherForecasts);
             dbContext.SaveChanges();
         }
@@ -301,83 +247,54 @@ public class WeatherTestData
     public void Load(int records = 100)
     {
         RecordsToGenerate = records;
-        var forecasts = new List<DboWeatherForecast>();
-        var locations = new List<DboWeatherLocation>();
 
-        if (WeatherLocations.Count() == 0)
+        if (WeatherSummaries.Count() == 0)
         {
-            var weatherLocation = new DboWeatherLocation
-            {
-                WeatherLocationId = Guid.NewGuid(),
-                Name = "Barcelona"
-            };
-            forecasts.AddRange(GetForecasts(weatherLocation.WeatherLocationId));
-            locations.Add(weatherLocation);
-
-            weatherLocation = new DboWeatherLocation
-            {
-                WeatherLocationId = Guid.NewGuid(),
-                Name = "Alvor"
-            };
-            forecasts.AddRange(GetForecasts(weatherLocation.WeatherLocationId));
-            locations.Add(weatherLocation);
-
-            weatherLocation = new DboWeatherLocation
-            {
-                WeatherLocationId = Guid.NewGuid(),
-                Name = "Rome"
-            };
-            forecasts.AddRange(GetForecasts(weatherLocation.WeatherLocationId));
-            locations.Add(weatherLocation);
-
-            WeatherForecasts = forecasts;
-            WeatherLocations = locations;
+            this.LoadSummaries();
+            this.LoadForecasts();
         }
     }
 
-    private IEnumerable<DboWeatherForecast> GetForecasts(Guid locationId)
+    private void LoadSummaries()
     {
-        return Enumerable.Range(1, RecordsToGenerate).Select(index => new DboWeatherForecast
+        this.WeatherSummaries = new List<DboWeatherSummary> {
+            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Freezing"},
+            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Bracing"},
+            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Chilly"},
+            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Cool"},
+            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Mild"},
+            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Warm"},
+            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Balmy"},
+            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Hot"},
+            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Sweltering"},
+            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Scorching"},
+        };
+    }
+
+    private void LoadForecasts()
+    {
+        var summaryArray = this.WeatherSummaries.ToArray();
+
+        this.WeatherForecasts = Enumerable.Range(1, RecordsToGenerate).Select(index => new DboWeatherForecast
         {
             WeatherForecastId = Guid.NewGuid(),
-            WeatherLocationId = locationId,
+            WeatherSummaryId = summaryArray[Random.Shared.Next(summaryArray.Length)].WeatherSummaryId,
             Date = DateTime.Now.AddDays(index),
             TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
         }).ToList();
     }
 
     public DboWeatherForecast GetForecast()
     {
-        var id = WeatherLocations.First().WeatherLocationId;
+        var summaryArray = this.WeatherSummaries.ToArray();
+
         return new DboWeatherForecast
         {
             WeatherForecastId = Guid.NewGuid(),
-            WeatherLocationId = id,
-            Date = DateTime.Now,
+            WeatherSummaryId = summaryArray[Random.Shared.Next(summaryArray.Length)].WeatherSummaryId,
+            Date = DateTime.Now.AddDays(-1),
             TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
         };
-    }
-
-    public DvoWeatherForecast? GetDvoWeatherForecast(Guid id)
-    {
-        var rec = WeatherForecasts.FirstOrDefault(item => item.WeatherForecastId == id);
-        if (rec is not null)
-        {
-            var loc = WeatherLocations.FirstOrDefault(item => item.WeatherLocationId == rec.WeatherLocationId);
-            if (loc is not null)
-                return new DvoWeatherForecast
-                {
-                    WeatherForecastId = rec.WeatherForecastId,
-                    WeatherLocationId = rec.WeatherLocationId,
-                    WeatherLocation = loc?.Name ?? String.Empty,
-                    Date = rec.Date,
-                    TemperatureC = rec.TemperatureC,
-                    Summary = rec.Summary
-                };
-        }
-        return null;
     }
 
     public DboWeatherForecast? GetRandomRecord()
@@ -390,12 +307,24 @@ public class WeatherTestData
         return null;
     }
 
-    private static WeatherTestData? _weatherTestData;
-
-    public static WeatherTestData GetInstance()
+    public DvoWeatherForecast GetDvoWeatherForecast(DboWeatherForecast record)
     {
-        if (_weatherTestData == null)
-            _weatherTestData = new WeatherTestData();
+        return new DvoWeatherForecast
+        {
+            WeatherForecastId = record.WeatherForecastId,
+            WeatherSummaryId = record.WeatherSummaryId,
+            Date = record.Date,
+            TemperatureC = record.TemperatureC,
+            Summary = this.WeatherSummaries.SingleOrDefault(item => item.WeatherSummaryId == record.WeatherSummaryId)?.Summary ?? String.Empty
+        };
+    }
+
+    private static WeatherTestDataProvider? _weatherTestData;
+
+    public static WeatherTestDataProvider Instance()
+    {
+        if (_weatherTestData is null)
+            _weatherTestData = new WeatherTestDataProvider();
 
         return _weatherTestData;
     }

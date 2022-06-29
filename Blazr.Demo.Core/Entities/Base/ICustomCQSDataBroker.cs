@@ -6,9 +6,8 @@
 
 namespace Blazr.Demo.Core;
 
-public interface IQueryDataBroker
+public interface ICustomCQSDataBroker
 {
-
     public ValueTask<FKListProviderResult> ExecuteAsync<TRecord>(FKListQuery<TRecord> query) where TRecord : class, IFkListItem, new();
 
     public ValueTask<ListProviderResult<DvoWeatherForecast>> ExecuteAsync(WeatherForecastListQuery query);

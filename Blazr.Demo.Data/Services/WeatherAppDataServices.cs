@@ -12,6 +12,6 @@ public static class WeatherAppDataServices
     {
         services.AddDbContextFactory<InMemoryWeatherDbContext>(options => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));
         services.AddSingleton<IDataBroker, ServerEFInMemoryDataBroker<InMemoryWeatherDbContext>>();
-        services.AddSingleton<IQueryDataBroker, ServerQueryDataBroker<InMemoryWeatherDbContext>>();
+        services.AddSingleton<ICustomCQSDataBroker, ServerCustomCQSDataBroker<InMemoryWeatherDbContext>>();
     }
 }

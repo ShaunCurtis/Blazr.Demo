@@ -1,26 +1,35 @@
 # Building a Command/Query Data Pipeline for Blazor in DotNetCore
 
-This article demonstrates how to build a DotNetCore data pipeline using a succinct CQS based data pipeline.
+This article demonstrates how to build a succinct CQS DotNetCore data pipeline for Blazor applications.
+
+## Repository
+
+You can find the code used in this article in my consolidated **Blazr.Demo** repository here: 
+
+ - [Blazr.Demo Repository](https://github.com/ShaunCurtis/Blazr.Demo)
+
+Note that this repo also contains a generic *Repository* framework data pipeline and several Blazor SPA implementations demonstrating various Blazor concepts and practices.
 
 ## The CQS Pattern
 
-Many smaller projects avoid the CQS Data pipeline framework because it seen as complicated and required a large number of classes to implement.
+Many smaller projects avoid the CQS Data pipeline framework because it seen as complicated and requires a large number of classes to implement.
 
-Each data action is either a:
+Each data action is either:
 
-1. *Command* - an instruction to make a data change.
-2. *Query* - an instruction to get some data.
+1. A *Command* - an instruction to make a data change.
+2. A *Query* - an instruction to get some data.
 
-Each action has a Command/Query class that defines the action and a Handler class to execute the action.
+Each action has a Command/Query class that defines the action and a Handler class to execute the defined action.  Normally there's a one to one relationship.
 
 In essence:
+
 - A *Request* object defines any information a *Handler* needs to execute the request and a *Result* (what it expects as a return value).
 
-- A *Handler* object executes code to obtain the *Result* based on information in the *Request* object.   
+- A *Handler* object executes the necessary code to obtain the *Result* using the data provided in the *Request* object.  
 
-In concept, it's very simple, and relatively easy to implement.  The problem is that most implementations are very verbose: lots of classes repeating the same old code.
+Conceptually it's very simple, and relatively easy to implement.  The problem is that most implementations are very verbose: lots of classes repeating the same old code.  It certainly scared me off when I first investigated it.  I already had a generic `Repository` based generic solution that was just a few classes.
 
-This is an attempt to be succinct!
+This is an attempt to make it succinct!
 
 ## Basic Interfaces and Classes
 
@@ -96,19 +105,20 @@ public class AddWeatherForecastHandler
 }
 ```
 
-Relatively small classes, but think about implementing 3 sets (one each for add, update and delete) for each entity where we have *x* entities.  That's a lot of repetitive code.  The same principles apply to queries.  I see why people avoid using CQS!
+Relatively small classes, but think about implementing 3 sets (one each for add, update and delete) for each entity where we have *x* entities.  That's a lot of repetitive code.  The same principles apply to queries.  It's obvious why people avoid it!
 
 ## A Succinct Implementation
 
 To build a more succinct implementation we need to accept:
 
- - The 80/20 rule.  Not every request can be fulfilled by our standardised implementation.  We need a custom route for these.
- - We need a "compliant" generics based ORM to interface with our data store.  The implementation uses *Entity Framework*. 
+ - The 80/20 rule.  Not every request can be fulfilled by our standard implementation.  We need a custom route for these.
+ - We need a "compliant" generics based ORM to interface with our data store.  This implementation uses *Entity Framework*. 
  - There's going to be some quite complicated generics implemented.
 
 ## Results
 
 Before we dive into requests and handlers, we need to define a set of standard results they return: the `TResult` of the request.  Each is a `struct` containing status information and, if a request, the requested information.  They're self explanatory.
+
 ```csharp
 public readonly struct ListProviderResult<TRecord>
 {
@@ -489,9 +499,11 @@ public class RecordListQueryHandler<TRecord, TDbContext>
     : ICQSHandler<RecordListQuery<TRecord>, ValueTask<ListProviderResult<TRecord>>>
         where TRecord : class, new()
         where TDbContext : DbContext
+
 {
     protected IEnumerable<TRecord> items = Enumerable.Empty<TRecord>();
     protected int count = 0;
+
     protected IDbContextFactory<TDbContext> factory;
     protected readonly RecordListQuery<TRecord> listQuery;
 
@@ -511,30 +523,39 @@ public class RecordListQueryHandler<TRecord, TDbContext>
 
         if (await this.GetItemsAsync())
             await this.GetCountAsync();
-
         return new ListProviderResult<TRecord>(this.items, this.count);
     }
 
     protected virtual async ValueTask<bool> GetItemsAsync()
     {
         var dbContext = this.factory.CreateDbContext();
+
         IQueryable<TRecord> dbSet = dbContext.Set<TRecord>();
+        dbSet = this.GetCustomQueries(dbSet);
+
         if (listQuery.Request.PageSize > 0)
             dbSet = dbSet
                 .Skip(listQuery.Request.StartIndex)
                 .Take(listQuery.Request.PageSize);
 
         this.items = await dbSet.ToListAsync();
+
         return true;
     }
 
     protected virtual async ValueTask<bool> GetCountAsync()
     {
         var dbContext = this.factory.CreateDbContext();
-        IQueryable<DvoWeatherForecast> dbSet = dbContext.Set<DvoWeatherForecast>();
+
+        IQueryable<TRecord> dbSet = dbContext.Set<TRecord>();
+        dbSet = this.GetCustomQueries(dbSet);
+
         count = await dbSet.CountAsync();
         return true;
     }
+
+    protected virtual IQueryable<TRecord> GetCustomQueries(IQueryable<TRecord> query)
+        => query;
 }
 ```
 
@@ -678,5 +699,82 @@ public async void TestUpdateCQSDataBroker()
 
     Assert.True(result.Success);
     Assert.Equal(editedDvoRecord, updatedRecord.Record);
+}
+```
+
+## Custom Requests
+
+How do we implement custom requests?
+
+Here's a simple example.
+
+### WeatherForecasts By Summary
+
+We need an `IEnumerable` collection of `DvoWeatherForcast` filtered by `Summary`.
+
+The Request query looks like this.  Note it inherits from our `RecordListQuery`.
+
+```csharp
+public record WeatherForecastBySummaryListQuery
+    : RecordListQuery<DvoWeatherForecast>
+{
+    public readonly Guid? WeatherSummaryId;
+
+    public WeatherForecastBySummaryListQuery(Guid? weatherSummaryId, ListProviderRequest request)
+        :base(request)
+    { 
+        WeatherSummaryId = weatherSummaryId;
+        Request = request;
+    }
+}
+```
+
+And the Handler which extends the `RecordListQueryHandler` by adding a custom `GetCustomQueries` methods that adds the `WeatherForecastId` filter to the `IQuerable` query.
+
+```csharp
+public class WeatherForecastBySummaryListQueryHandler<TDbContext>
+    :RecordListQueryHandler<DvoWeatherForecast, TDbContext>
+    where TDbContext : DbContext
+{
+    private WeatherForecastBySummaryListQuery _customQuery;
+
+    public WeatherForecastBySummaryListQueryHandler(IDbContextFactory<TDbContext> factory, WeatherForecastBySummaryListQuery query)
+        : base(factory, query)
+        => _customQuery = query;
+
+    protected override IQueryable<DvoWeatherForecast> GetCustomQueries(IQueryable<DvoWeatherForecast> query)
+    {
+        query = query.Where(item => item.WeatherSummaryId == _customQuery.WeatherSummaryId);
+        return query;
+    }
+}
+```
+
+### Factory
+
+How we implement the factory depends on the project size and how many custom queries.  On a small project with relatively few custom requests we can implement a single custom factory.
+
+```csharp
+public interface ICustomCQSDataBroker
+{
+    public ValueTask<ListProviderResult<DvoWeatherForecast>> ExecuteAsync(WeatherForecastBySummaryListQuery query);
+}
+```
+
+```csharp
+public class ServerCustomCQSDataBroker<TDbContext>
+    :ICustomCQSDataBroker
+    where TDbContext : DbContext
+{
+    protected readonly IDbContextFactory<TDbContext> factory;
+
+    public ServerCustomCQSDataBroker(IDbContextFactory<TDbContext> factory)
+        => this.factory = factory;
+
+    public async ValueTask<ListProviderResult<DvoWeatherForecast>> ExecuteAsync(WeatherForecastBySummaryListQuery query)
+    {
+        var handler = new WeatherForecastBySummaryListQueryHandler<TDbContext>(factory, query);
+        return await handler.ExecuteAsync();
+    }
 }
 ```

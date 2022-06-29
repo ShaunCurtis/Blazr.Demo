@@ -10,11 +10,11 @@ public class WeatherForecastService
     : IEntityService
 {
     private SortedDictionary<Guid, string> _weatherSummaries = new SortedDictionary<Guid, string>();
-    private IQueryDataBroker _queryBroker;
+    private ICustomCQSDataBroker _queryBroker;
   private ICQSDataBroker _cqsDataBroker;
     private INotificationService<WeatherSummaryService> _weatherSummaryNotificationService;
 
-    public WeatherForecastService(IQueryDataBroker queryDataBroker, INotificationService<WeatherSummaryService> notificationService, ICQSDataBroker cQSDataBroker)
+    public WeatherForecastService(ICustomCQSDataBroker queryDataBroker, INotificationService<WeatherSummaryService> notificationService, ICQSDataBroker cQSDataBroker)
     { 
         _queryBroker = queryDataBroker;
         _weatherSummaryNotificationService = notificationService;

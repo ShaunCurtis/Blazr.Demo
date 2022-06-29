@@ -41,6 +41,7 @@ public class RecordListQueryHandler<TRecord, TDbContext>
         var dbContext = this.factory.CreateDbContext();
 
         IQueryable<TRecord> dbSet = dbContext.Set<TRecord>();
+        dbSet = this.GetCustomQueries(dbSet);
 
         if (listQuery.Request.PageSize > 0)
             dbSet = dbSet
@@ -56,9 +57,13 @@ public class RecordListQueryHandler<TRecord, TDbContext>
     {
         var dbContext = this.factory.CreateDbContext();
 
-        IQueryable<DvoWeatherForecast> dbSet = dbContext.Set<DvoWeatherForecast>();
+        IQueryable<TRecord> dbSet = dbContext.Set<TRecord>();
+        dbSet = this.GetCustomQueries(dbSet);
 
         count = await dbSet.CountAsync();
         return true;
     }
+
+    protected virtual IQueryable<TRecord> GetCustomQueries(IQueryable<TRecord> query)
+        => query;
 }

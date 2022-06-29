@@ -15,17 +15,17 @@ public class QueryBrokerTests
         _weatherTestDataProvider = WeatherTestDataProvider.Instance();
     }
 
-    private IQueryDataBroker GetServiceProvider()
+    private ICustomCQSDataBroker GetServiceProvider()
     {
         var services = new ServiceCollection();
         services.AddDbContextFactory<InMemoryWeatherDbContext>(options => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));
-        services.AddSingleton<IQueryDataBroker, ServerQueryDataBroker<InMemoryWeatherDbContext>>();
+        services.AddSingleton<ICustomCQSDataBroker, ServerCustomCQSDataBroker<InMemoryWeatherDbContext>>();
         var provider = services.BuildServiceProvider();
 
         var db = provider.GetService<IDbContextFactory<InMemoryWeatherDbContext>>()!;
         _weatherTestDataProvider.LoadDbContext(db);
 
-        return provider.GetService<IQueryDataBroker>()!;
+        return provider.GetService<ICustomCQSDataBroker>()!;
     }
 
     [Fact]

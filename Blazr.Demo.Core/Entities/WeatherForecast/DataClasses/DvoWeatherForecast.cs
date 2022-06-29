@@ -17,6 +17,6 @@ public record DvoWeatherForecast
 
     public int TemperatureC { get; init; }
 
-    public string? Summary { get; init; }
+    public string Summary { get; init; } = String.Empty;
 }
 
