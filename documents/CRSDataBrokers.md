@@ -1,58 +1,84 @@
-# Command/Query Data Brokers
+# Building a Command/Query Data Pipeline for Blazor in DotNetCore
+
+This article demonstrates how to build a DotNetCore data pipeline using a succinct CQS based data pipeline.
 
 ## The CQS Pattern
 
-The CQS pattern is a little more complicated for simple implementations, but comes into it's own in more complex projects.  The principle is to serarate out Command activities from Query Activities and have a Query/Command object and a Handler object for each database activity.
+Many smaller projects avoid the CQS Data pipeline framework because it seen as complicated and required a large number of classes to implement.
+
+Each data action is either a:
+
+1. *Command* - an instruction to make a data change.
+2. *Query* - an instruction to get some data.
+
+Each action has a Command/Query class that defines the action and a Handler class to execute the action.
 
 In essence:
-- The `HandlerRequest` defines any information the handler needs to execute the request and what it expects as a return value,
-- The Handler executes whatever it needs to do to produce the result defined by `HandlerRequest` based on the information provided by the `HandlerRequest`.   
+- A *Request* object defines any information a *Handler* needs to execute the request and a *Result* (what it expects as a return value).
 
-In concept, it's very simple, and relatively easy to implement.  The problem is that in most implementations that implement the based interfaces, there's a lot of code repetition.
+- A *Handler* object executes code to obtain the *Result* based on information in the *Request* object.   
 
-To fix this problem requires some base abstract classes.  At this point it gets a little more complex in the base class boilerplate code, but the result is simple concise record based implementations.
+In concept, it's very simple, and relatively easy to implement.  The problem is that most implementations are very verbose: lots of classes repeating the same old code.
 
-We'll walk through an example to get a better understanding.
+This is an attempt to be succinct!
 
-First the base interfaces.
+## Basic Interfaces and Classes
 
-## HandlerRequests
+The methodology can be defined by two interfaces.
 
-An `IHandlerRequest`: 
-1. Defines the result that the query will return as `TResult`.
-2. Defines a unique Id that can be used for logging and transactional purposes between front end and back end systems. 
+`ICQSRequest` defines any request:
+
+1. It says the request produces an output defined as `TResult`.
+2. It has a unique `TransactionId` to track the transaction (if required and implementated).
 
 ```csharp
-public interface IHandlerRequest<out TResult>
+public interface ICQSRequest<out TResult>
 {
     public Guid TransactionId { get;}
 }
 ```
 
-## Handlers
+`ICQSHandler` defines any handler that executes an `ICQSRequest` instance:
 
-A handler takes an `IHandlerRequest` and gets the `TResult`.  The core pattern looks like this.  `ExecuteAsync` runs the handler and outputs the defined result.
+1. The handler gets a `TAction` which implements the `ICQSRequest` interface.
+2. The handler outputs a `TResult` as defined in the `ICQSRequest` interface.
+3. It has a single `ExecuteAsync` method that returns `TResult`.
 
 ```csharp
-public interface IRecordActionHandler<in TAction, TResult>
-    where TAction : IRecordAction<TResult>
+public interface ICQSHandler<in TAction, out TResult>
+    where TAction : ICQSRequest<TResult>
 {
-    ValueTask<TResult?> ExecuteAsync();
+    TResult ExecuteAsync();
 }
 ```
 
 ## A Classic Implementation
 
-At the implementation level we can define an implementation :
+Here's a classic implementatiion to add a `WeatherForecast` record:
+
+`AddWeatherForecastCommand` is the request :
 
 ```csharp
-public class AddWeatherForecastCommandHandlerFull
-    : IRequestHandler<AddWeatherForecastCommand, ValueTask<CommandResult>>
+public class AddWeatherForecastCommand
+    : ICQSRequest<ValueTask<CommandResult>>
+{
+    public DboWeatherForecast Record { get; private set; } = default!;
+
+    public AddWeatherForecastCommand(DboWeatherForecast record)
+        => this.Record = record;
+}
+```
+
+`AddWeatherForecastHandler` is the handler:
+
+```csharp
+public class AddWeatherForecastHandler
+    : ICQSHandler<AddWeatherForecastCommand, ValueTask<CommandResult>>
 {
     protected readonly IWeatherDbContext dbContext;
     protected readonly AddWeatherForecastCommand command;
 
-    public AddWeatherForecastCommandHandlerFull(IWeatherDbContext dbContext, AddWeatherForecastCommand command)
+    public AddWeatherForecastHandler(IWeatherDbContext dbContext, AddWeatherForecastCommand command)
     {
         this.command = command;
         this.dbContext = dbContext;
@@ -70,46 +96,94 @@ public class AddWeatherForecastCommandHandlerFull
 }
 ```
 
-With `AddWeatherForecastCommand`:
+Relatively small classes, but think about implementing 3 sets (one each for add, update and delete) for each entity where we have *x* entities.  That's a lot of repetitive code.  The same principles apply to queries.  I see why people avoid using CQS!
 
+## A Succinct Implementation
+
+To build a more succinct implementation we need to accept:
+
+ - The 80/20 rule.  Not every request can be fulfilled by our standardised implementation.  We need a custom route for these.
+ - We need a "compliant" generics based ORM to interface with our data store.  The implementation uses *Entity Framework*. 
+ - There's going to be some quite complicated generics implemented.
+
+## Results
+
+Before we dive into requests and handlers, we need to define a set of standard results they return: the `TResult` of the request.  Each is a `struct` containing status information and, if a request, the requested information.  They're self explanatory.
 ```csharp
-public class AddWeatherForecastCommand
-    : IHandlerRequest<ValueTask<CommandResult>>
+public readonly struct ListProviderResult<TRecord>
 {
-    public DboWeatherForecast Record { get; private set; } = default!;
-
-    public AddWeatherForecastCommand(DboWeatherForecast record)
-        => this.Record = record;
+    public IEnumerable<TRecord> Items { get; }
+    public int TotalItemCount { get; }
+    public bool Success { get; }
+    public string? Message { get; }
+    //....Constructors
+}
+```
+```csaharp
+public readonly struct RecordProviderResult<TRecord>
+{
+    public TRecord? Record { get; }
+    public bool Success { get; }
+    public string? Message { get; }
+    //....Constructors
+}
+```
+```csaharp
+public readonly struct RecordCountProviderResult
+{
+    public int Count { get; }
+    public bool Success { get; }
+    public string? Message { get; }
+    //....Constructors
+}
+```
+```csaharp
+public readonly struct CommandResult
+{
+    public Guid NewId { get; init; }
+    public bool Success { get; init; }
+    public string Message { get; init; }
+    //....Constructors
+}
+```
+```csaharp
+public readonly struct FKListProviderResult
+{
+    public IEnumerable<IFkListItem> Items { get; }
+    public bool Success { get; }
+    public string? Message { get; }
+    //....Constructors
 }
 ```
 
-Relatively small classes, but think about implementing 3 sets (one each for add, update and delete) for each entity where we have *x* entities.  That's a lot of repetitive code.  The same principles apply to queries.
+## Base Classes
 
-## Building Base Classes
+`TRecord` represents data classes retrieved from the data store using the ORM.
 
 ### Commands
 
-We can use a generic `TRecord` to represent `DboWeatherForecast`, and everything returns a `CommandResult` so we can fix `TResult`.
+All commands:
 
-First an interface that implements `IHandlerRequest`.  It:
+1. Take a record which we can define as `TRecord`.
+2. Return an async `CommandResult`, so we can fix `TResult`.
 
-1. Fixes `TResult` as `ValueTask<CommandResult>`.
-2. Defines a `TRecord` generic.
-3. Defines a property `Record` of `TRecord`.  This will be the record we add/update/delete.
+First an interface that implements `ICQSRequest` and this functionality.
 
 ```csharp
 public interface IRecordCommand<TRecord> 
-    : IHandlerRequest<ValueTask<CommandResult>>
+    : ICQSRequest<ValueTask<CommandResult>>
 {
     public TRecord Record { get;}
 }
 ```
-Next we create an abstract implementation.
+
+And an abstract implementation.
 
 ```csharp
 public abstract class RecordCommandBase<TRecord>
      : IRecordCommand<TRecord>
-{ 
+{
+    public Guid TransactionId { get; } = Guid.NewGuid(); 
     public TRecord Record { get; protected set; } = default!;
 
     public RecordCommandBase(TRecord record)
@@ -117,97 +191,181 @@ public abstract class RecordCommandBase<TRecord>
 }
 ```
 
-Our Weather Forecast entity implementation now just needs to fix `TRecord` to `DboWeatherForecast`.
+We can now define our Add/Delete/Update specific commands.
 
 ```csharp
-public class WeatherForecastCommand
-    : RecordCommandBase<DboWeatherForecast>
+public class AddRecordCommand<TRecord>
+     : RecordCommandBase<TRecord>
 {
-    public WeatherForecastCommand(DboWeatherForecast record)
-        : base(record) { }
+    public AddRecordCommand(TRecord record) : base(record)
+    {}
+}
+public class DeleteRecordCommand<TRecord>
+     : RecordCommandBase<TRecord>
+{
+    public DeleteRecordCommand(TRecord record) : base(record)
+    {}
+}
+public class UpdateRecordCommand<TRecord>
+     : RecordCommandBase<TRecord>
+{
+    public UpdateRecordCommand(TRecord record) : base(record)
+    {}
 }
 ```
 
-A lot simpler and quicker to implement.
-
 ### The Handler
 
-We create a base abstract implementation.  It defines `TRecord` to represent the record and implements `IRequestHandler`.  It's `New` requires the DbContext to execute the command against, and the `RecordCommand` for it's data.
+There's no benefits in creating interfaces or base classes so we implement Create/Update/Delete commands as three classes.  There are a lot of generics involved.  `TRecord` defines the record class and TDbContext the `DbContext` used in the DI `DbContextFactory`.
+
+We don't need the know the actual `DbContext` class bwcuase we use the generic `Set<TRecord>` method in `DBContext` to find the `DbSet` instances of `TRecord` and the generic `Update<TRecord>`, `Add<TRecord>` and `Delete<TRecord>` methods with `SaveChangesAsync` for the commands. 
 
 ```csharp
-public abstract class RecordCommandHandlerBase<TAction, TRecord>
-    : IRequestHandler<TAction, ValueTask<CommandResult>>
-    where TAction : IHandlerRequest<ValueTask<CommandResult>>
-    //IRecordCommand<TRecord>
+public class AddRecordCommandHandler<TRecord, TDbContext>
+    : ICQSHandler<AddRecordCommand<TRecord>, ValueTask<CommandResult>>
+    where TDbContext : DbContext
+    where TRecord : class, new()
 {
-    protected readonly IWeatherDbContext dbContext;
-    protected readonly IRecordCommand<TRecord> command;
+    protected IDbContextFactory<TDbContext> factory;
+    protected readonly AddRecordCommand<TRecord> command;
 
-    public RecordCommandHandlerBase(IWeatherDbContext dbContext, IRecordCommand<TRecord> command)
+    public AddRecordCommandHandler(IDbContextFactory<TDbContext> _factory, AddRecordCommand<TRecord> command)
     {
         this.command = command;
-        this.dbContext = dbContext;
+        this.factory = _factory;
     }
 
     public async ValueTask<CommandResult> ExecuteAsync()
     {
-        ExecuteCommand();
+        using var dbContext = factory.CreateDbContext();
+        dbContext.Add<TRecord>(command.Record);
         return await dbContext.SaveChangesAsync() == 1
             ? new CommandResult(Guid.Empty, true, "Record Saved")
             : new CommandResult(Guid.Empty, false, "Error saving Record");
     }
+}
+``` 
+```csharp
+public class UpdateRecordCommandHandler<TRecord, TDbContext>
+    : ICQSHandler<UpdateRecordCommand<TRecord>, ValueTask<CommandResult>>
+    where TDbContext : DbContext
+    where TRecord : class, new()
+{
+    protected IDbContextFactory<TDbContext> factory;
+    protected readonly UpdateRecordCommand<TRecord> command;
 
-    public abstract void ExecuteCommand();
+    public UpdateRecordCommandHandler(IDbContextFactory<TDbContext> _factory, UpdateRecordCommand<TRecord> command)
+    {
+        this.command = command;
+        this.factory = _factory;
+    }
+
+    public async ValueTask<CommandResult> ExecuteAsync()
+    {
+        using var dbContext = factory.CreateDbContext();
+        dbContext.Update<TRecord>(command.Record);
+        return await dbContext.SaveChangesAsync() == 1
+            ? new CommandResult(Guid.Empty, true, "Record Saved")
+            : new CommandResult(Guid.Empty, false, "Error saving Record");
+    }
 }
 ```
-
-We can use this base implementation to build a next level abstract class for create/add/delete operations.  Add looks like this.  We just fix the command to execute.  We can pass the `DbContext` a record and it will find the correct `DbSet` and apply the change to the correct record,   
-
 ```csharp
-public abstract class AddRecordCommandHandlerBase<TAction, TRecord>
-    : RecordCommandHandlerBase<TAction, TRecord>
-    where TAction : IRecordCommand<TRecord> 
+public class DeleteRecordCommandHandler<TRecord, TDbContext>
+    : ICQSHandler<DeleteRecordCommand<TRecord>, ValueTask<CommandResult>>
+    where TDbContext : DbContext
+    where TRecord : class, new()
 {
+    protected IDbContextFactory<TDbContext> factory;
+    protected readonly IRecordCommand<TRecord> command;
 
-    public AddRecordCommandHandlerBase(IWeatherDbContext dbContext, IRecordCommand<TRecord> command)
-        : base(dbContext, command)
-    { }
-
-    public override void ExecuteCommand()
+    public DeleteRecordCommandHandler(IDbContextFactory<TDbContext> _factory, IRecordCommand<TRecord> command)
     {
-        if (command.Record is not null)
-         this.dbContext.Add(this.command.Record);
+        this.command = command;
+        this.factory = _factory;
+    }
+
+    public async ValueTask<CommandResult> ExecuteAsync()
+    {
+        using var dbContext = factory.CreateDbContext();
+        dbContext.Remove<TRecord>(command.Record);
+        return await dbContext.SaveChangesAsync() == 1
+            ? new CommandResult(Guid.Empty, true, "Record Saved")
+            : new CommandResult(Guid.Empty, false, "Error saving Record");
     }
 }
 ```
 
-The final implementation just fixes the `TAction` command and the `IRecord`:
+## ICQSDataBroker/CQSDataBroker
+
+We can now define a factory class to abstract the execution of *Requests* against their respective *Handlers*.
 
 ```csharp
-public class AddWeatherForecastCommandHandler
-    : AddRecordCommandHandlerBase<WeatherForecastCommand, DboWeatherForecast>
+public interface ICQSDataBroker
 {
-    public AddWeatherForecastCommandHandler(IWeatherDbContext dbContext, IRecordCommand<DboWeatherForecast> command)
-        : base(dbContext,command)
-    {}
+    public ValueTask<CommandResult> ExecuteAsync<TRecord>(AddRecordCommand<TRecord> command) where TRecord : class, new();
+    public ValueTask<CommandResult> ExecuteAsync<TRecord>(UpdateRecordCommand<TRecord> command) where TRecord : class, new();
+    public ValueTask<CommandResult> ExecuteAsync<TRecord>(DeleteRecordCommand<TRecord> command) where TRecord : class, new();
+    //.... other ExecuteAsyncs
+    public ValueTask<object> ExecuteAsync<TRecord>(object query);
+}
+```
+
+```csharp
+public class CQSDataBroker<TDbContext>
+    :ICQSDataBroker
+    where TDbContext : DbContext
+{
+    private readonly IDbContextFactory<TDbContext> _factory;
+
+    public CQSDataBroker(IDbContextFactory<TDbContext> factory)
+        => _factory = factory;
+
+    public async ValueTask<CommandResult> ExecuteAsync<TRecord>(AddRecordCommand<TRecord> command) where TRecord : class, new()
+    {
+        var handler = new AddRecordCommandHandler<TRecord, TDbContext>(_factory, command);
+        var result = await handler.ExecuteAsync();
+        return result;
+    }
+
+    public async ValueTask<CommandResult> ExecuteAsync<TRecord>(UpdateRecordCommand<TRecord> command) where TRecord : class, new()
+    {
+        var handler = new UpdateRecordCommandHandler<TRecord, TDbContext>(_factory, command);
+        var result = await handler.ExecuteAsync();
+        return result;
+    }
+
+    public async ValueTask<CommandResult> ExecuteAsync<TRecord>(DeleteRecordCommand<TRecord> command) where TRecord : class, new()
+    {
+        var handler = new DeleteRecordCommandHandler<TRecord, TDbContext>(_factory, command);
+        var result = await handler.ExecuteAsync();
+        return result;
+    }
+    //.... other ExecuteAsyncs
+
+    public ValueTask<object> ExecuteAsync<TRecord>(object query)
+        => throw new NotImplementedException();
 }
 ```
 
 ### Queries
 
-Queries present a different challenge.  In the application they either return a record or a collection of records.  
+Queries present a different challenge.
 
-### Record Queries
+1. There are various types of `TResult`.
+2. Specific *Where* and *OrderBy* list queries.
 
-We can define a record query as follows.
+We define three Query requests:
 
-1. We supply the Id - in our case a `Guid`
-2. We return a `RecordProviderResult` based on the `TRecord` generic type wrapped in a `ValueTask`.
+### RecordQuery
+
+This returns a `RecordProviderResult` containing a single record based on a provide Id.
 
 ```csharp
 public record RecordQuery<TRecord>
-    : IHandlerRequest<ValueTask<RecordProviderResult<TRecord>>>
+    : ICQSRequest<ValueTask<RecordProviderResult<TRecord>>>
 {
+    public Guid TransactionId { get; } = Guid.NewGuid();
     public readonly Guid? RecordId;
 
     public RecordQuery(Guid? recordId)
@@ -215,21 +373,63 @@ public record RecordQuery<TRecord>
 }
 ```
 
-### Record Query Handler 
+### RecordListQuery
 
-We can now define an abstract class with all the boilerplate code.  The code uses the `Key` attribute of `TRecord` to get the correct property and then reflection to get the property value in the IQuery iteration. 
+This returns a `ListProviderResult` containing a *paged* `IEnumerable` of `TRecord`.
 
 ```csharp
-public abstract class RecordQueryHandlerBase<TRecord>
-    : IRequestHandler<RecordQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
-    where TRecord : class, new()
+public record RecordListQuery<TRecord>
+    : ICQSRequest<ValueTask<ListProviderResult<TRecord>>>
 {
-    private readonly IWeatherDbContext _dbContext;
-    private readonly RecordQuery<TRecord> _query;
+    public Guid TransactionId { get; } = Guid.NewGuid();
+    public ListProviderRequest Request { get; protected set; }
 
-    public RecordQueryHandlerBase(IWeatherDbContext dbContext, RecordQuery<TRecord> query)
+    public RecordListQuery(ListProviderRequest request)
+        => Request = request;
+}
+```
+
+### FKListQuery
+
+This returns a `FkListProviderResult` containing an `IEnumerable` of `IFkListItem`.  A `FkListItem` is a simple object containing a *Guid/Name* pair that can be used to populate foreign key *Select* controls in the UI.
+
+
+
+```csharp
+public record FKListQuery<TRecord>
+    : ICQSRequest<ValueTask<FKListProviderResult>>
+{
+    public Guid TransactionId { get; } = Guid.NewGuid();
+}
+```
+
+## Handlers
+
+The coresponding handlers are:
+
+### RecordQueryHandler
+
+The key concepts to note her are:
+
+1. The use of *unit of work* `DbContexts` from the `IDbContextFactory`.
+2. `_dbContext.Set<TRecord>()` to get the `DbSet` for `TRecord`.
+3. The use of reflection to get the `Key` property od the data class.
+
+```csharp
+public class RecordQueryHandler<TRecord, TDbContext>
+    : ICQSHandler<RecordQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
+        where TRecord : class, new()
+        where TDbContext : DbContext
+
+{
+    private readonly RecordQuery<TRecord> _query;
+    private IDbContextFactory<TDbContext> _factory;
+    private bool _success = true;
+    private string _message = string.Empty;
+
+    public RecordQueryHandler(IDbContextFactory<TDbContext> factory, RecordQuery<TRecord> query)
     {
-        _dbContext = dbContext;
+        _factory = factory;
         _query = query;
     }
 
@@ -238,13 +438,20 @@ public abstract class RecordQueryHandlerBase<TRecord>
 
     private async ValueTask<RecordProviderResult<TRecord>> _executeAsync()
     {
+        var _dbContext = _factory.CreateDbContext();
         TRecord? record = null;
         if (GetKeyProperty(out PropertyInfo? value) && value is not null)
         {
             record = await _dbContext.Set<TRecord>()
                 .SingleOrDefaultAsync(item => GuidCompare(value.GetValue(item)));
+
+            if (record is null)
+            {
+                _message = "No record retrieved";
+                _success = false;
+            }
         }
-        return new RecordProviderResult<TRecord>(record);
+        return new RecordProviderResult<TRecord>(record, _success, _message);
     }
 
     private bool GuidCompare(object? value)
@@ -258,72 +465,39 @@ public abstract class RecordQueryHandlerBase<TRecord>
             .FirstOrDefault(prop => prop.GetCustomAttributes(false)
                 .OfType<KeyAttribute>()
                 .Any());
+        if (value is null)
+        {
+            _message = "No Key attribute defined for the data set";
+            _success = false;
+        }
 
         return value is not null;
     }
 }
 ```
 
-Our final implementation then looks like this:
+### RecordListQueryHandler
+
+The key concepts to note her are:
+
+1. The use of *unit of work* `DbContexts` from the `IDbContextFactory`.
+2. `_dbContext.Set<TRecord>()` to get the `DbSet` for `TRecord`.
+3. The use of `IQuerable` to build queries before executing them.
 
 ```csharp
-public class WeatherForecastQueryHandler
-    : RecordQueryHandlerBase<DvoWeatherForecast>
+public class RecordListQueryHandler<TRecord, TDbContext>
+    : ICQSHandler<RecordListQuery<TRecord>, ValueTask<ListProviderResult<TRecord>>>
+        where TRecord : class, new()
+        where TDbContext : DbContext
 {
-    public WeatherForecastQueryHandler(IWeatherDbContext dbContext, RecordQuery<DvoWeatherForecast> query)
-        : base(dbContext, query) { }
-}
-```
-### Record Collection Queries
-
-We can define a record collection query as follows.
-
-1. Defines a `ListProviderRequest`.
-2. Returns a `ListProviderResult` based on the `TRecord` generic type wrapped in a `ValueTask`.
-3. It's not abstract.
-
-```csharp
-public record RecordListQuery<TRecord>
-    : IHandlerRequest<ValueTask<ListProviderResult<TRecord>>>
-{
-    public Guid TransactionId { get; } = Guid.NewGuid();
-    public ListProviderRequest Query { get; }
-}
-```
-
-```csharp
-public record WeatherForecastListQuery
-    :RecordListQuery<DvoWeatherForecast>
-{
-    public readonly ListProviderRequest Query;
-    public readonly Guid? DboWeatherLocationId;
-
-    public WeatherForecastListQuery(Guid? weatherLocationId, ListProviderRequest query)
-    { 
-        DboWeatherLocationId = weatherLocationId;
-        Query = query;
-    }
-}
-```
-
-### Record Collection Query Handler 
-
-We can now define an abstract class with all the boilerplate code.  The code calls teo abstract classes that need to be implemented to get the paged record set and the count of the record set. 
-
-```csharp
-public abstract class RecordListQueryHandlerBase<TAction, TRecord>
-    : IRequestHandler<TAction, ValueTask<ListProviderResult<TRecord>>>
-    where TAction : IHandlerRequest<ValueTask<ListProviderResult<TRecord>>>
-{
-    protected IEnumerable<TRecord> items = new List<TRecord>();
-    protected int count;
-
-    protected readonly IWeatherDbContext dbContext;
+    protected IEnumerable<TRecord> items = Enumerable.Empty<TRecord>();
+    protected int count = 0;
+    protected IDbContextFactory<TDbContext> factory;
     protected readonly RecordListQuery<TRecord> listQuery;
 
-    public RecordListQueryHandlerBase(IWeatherDbContext dbContext, RecordListQuery<TRecord> query)
+    public RecordListQueryHandler(IDbContextFactory<TDbContext> factory, RecordListQuery<TRecord> query)
     {
-        this.dbContext = dbContext;
+        this.factory = factory;
         this.listQuery = query;
     }
 
@@ -333,60 +507,176 @@ public abstract class RecordListQueryHandlerBase<TAction, TRecord>
     private async ValueTask<ListProviderResult<TRecord>> _executeAsync()
     {
         if (this.listQuery is null)
-            return new ListProviderResult<TRecord>(new List<TRecord>(), 0);
+            return new ListProviderResult<TRecord>(new List<TRecord>(), 0, false, "No Query Defined");
 
-        this.count = await this.GetCountAsync();
-        this.items = await this.GetItemsAsync();
+        if (await this.GetItemsAsync())
+            await this.GetCountAsync();
+
         return new ListProviderResult<TRecord>(this.items, this.count);
     }
 
-    protected abstract ValueTask<IEnumerable<TRecord>> GetItemsAsync();
+    protected virtual async ValueTask<bool> GetItemsAsync()
+    {
+        var dbContext = this.factory.CreateDbContext();
+        IQueryable<TRecord> dbSet = dbContext.Set<TRecord>();
+        if (listQuery.Request.PageSize > 0)
+            dbSet = dbSet
+                .Skip(listQuery.Request.StartIndex)
+                .Take(listQuery.Request.PageSize);
 
-    protected abstract ValueTask<int> GetCountAsync();
+        this.items = await dbSet.ToListAsync();
+        return true;
+    }
+
+    protected virtual async ValueTask<bool> GetCountAsync()
+    {
+        var dbContext = this.factory.CreateDbContext();
+        IQueryable<DvoWeatherForecast> dbSet = dbContext.Set<DvoWeatherForecast>();
+        count = await dbSet.CountAsync();
+        return true;
+    }
 }
 ```
 
-Our final implementation then looks like this.  It's the most complex because each query is in general unique.  Note the code leverages the `IQueryable` features to build a query before final execution to build the returned `IEnumerable` recod set.
+### FKListQueryHandler
 
 ```csharp
-public class WeatherForecastListQueryHandler
-    : RecordListQueryHandlerBase<WeatherForecastListQuery, DvoWeatherForecast>
+public class FKListQueryHandler<TRecord, TDbContext>
+    : ICQSHandler<FKListQuery<TRecord>, ValueTask<FKListProviderResult>>
+        where TDbContext : DbContext
+        where TRecord : class, IFkListItem, new()
 {
-    private WeatherForecastListQuery? _listquery => this.listQuery as WeatherForecastListQuery;
+    protected IEnumerable<TRecord> items = Enumerable.Empty<TRecord>();
+    protected IDbContextFactory<TDbContext> factory;
+    protected readonly FKListQuery<TRecord> listQuery;
 
-    public WeatherForecastListQueryHandler(IWeatherDbContext dbContext, WeatherForecastListQuery query)
-        : base(dbContext, query)
-    {}
-
-    protected async override ValueTask<IEnumerable<DvoWeatherForecast>> GetItemsAsync()
+    public FKListQueryHandler(IDbContextFactory<TDbContext> factory, FKListQuery<TRecord> query)
     {
-        if (_listquery is null)
-            return new List<DvoWeatherForecast>();
-
-        IQueryable<DvoWeatherForecast> dbSet = this.dbContext.DvoWeatherForecast;
-
-        if (_listquery.DboWeatherLocationId is not null)
-            dbSet = dbSet.Where(item => item.WeatherLocationId == _listquery.DboWeatherLocationId);
-
-        if (_listquery.Query.Count > 0)
-            dbSet = dbSet
-                .Skip(_listquery.Query.StartIndex)
-                .Take(_listquery.Query.Count);
-
-        return await dbSet.ToListAsync();
+        this.factory = factory;
+        this.listQuery = query;
     }
-    
-    protected async override ValueTask<int> GetCountAsync()
+
+    public async ValueTask<FKListProviderResult> ExecuteAsync()
     {
-        if (_listquery is null)
-            return 0;
+        var dbContext = this.factory.CreateDbContext();
+        if (listQuery is null)
+            return new FKListProviderResult(Enumerable.Empty<IFkListItem>(), false, "No Query defined");
 
-        IQueryable<DvoWeatherForecast> dbSet = this.dbContext.DvoWeatherForecast;
-
-        if (_listquery.DboWeatherLocationId is not null)
-            dbSet = dbSet.Where(item => item.WeatherLocationId == _listquery.DboWeatherLocationId);
-
-        return await dbSet.CountAsync();
+        IEnumerable<TRecord> dbSet = await dbContext.Set<TRecord>().ToListAsync();
+        return new FKListProviderResult(dbSet);
     }
+}
+```
+
+## ICQSDataBroker/CQSDataBroker
+
+We can now define a factory class to abstract the execution of *Requests* against their respective *Handlers*.
+
+```csharp
+public interface ICQSDataBroker
+{
+    public ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordListQuery<TRecord> query) where TRecord : class, new();
+    public ValueTask<RecordProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordQuery<TRecord> query) where TRecord : class, new();
+    public ValueTask<FKListProviderResult> ExecuteAsync<TRecord>(FKListQuery<TRecord> query) where TRecord : class, IFkListItem, new();
+    //.... other ExecuteAsyncs
+    public ValueTask<object> ExecuteAsync<TRecord>(object query);
+}
+```
+
+```csharp
+public class CQSDataBroker<TDbContext>
+    :ICQSDataBroker
+    where TDbContext : DbContext
+{
+    private readonly IDbContextFactory<TDbContext> _factory;
+
+    public CQSDataBroker(IDbContextFactory<TDbContext> factory)
+        => _factory = factory;
+
+    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordListQuery<TRecord> query) where TRecord : class, new()
+    {
+        var handler = new RecordListQueryHandler<TRecord,TDbContext>(_factory, query);
+        var result = await handler.ExecuteAsync();
+        return result;
+    }
+
+    public async ValueTask<RecordProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordQuery<TRecord> query) where TRecord : class, new()
+    {
+        var handler = new RecordQueryHandler<TRecord, TDbContext>(_factory, query);
+        var result = await handler.ExecuteAsync();
+        return result;
+    }
+
+    public async ValueTask<FKListProviderResult> ExecuteAsync<TRecord>(FKListQuery<TRecord> query) where TRecord : class, IFkListItem, new()
+    {
+        var handler = new FKListQueryHandler<TRecord, TDbContext>(_factory, query);
+        var result = await handler.ExecuteAsync();
+        return result;
+    }
+    //.... other ExecuteAsyncs
+
+    public ValueTask<object> ExecuteAsync<TRecord>(object query)
+        => throw new NotImplementedException();
+}
+```
+
+## Testing
+
+We can write a set of simple tests to test our pipeline.  These build out a DI service cointainer rather than use Mock. 
+
+Note:
+
+1. WeatherTestDataProvider is a singleton class that provides a set of Test Data
+2. `GetServiceProvider` builds out a DI container with the necessary DI classes loaded.
+
+```csharp
+    private WeatherTestDataProvider _weatherTestData;
+
+    public CQSBrokerTests()
+    {
+        _weatherTestData = WeatherTestDataProvider.Instance();
+    }
+
+    private ServiceProvider GetServiceProvider()
+    {
+        var services = new ServiceCollection();
+        services.AddDbContextFactory<InMemoryWeatherDbContext>(options => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));
+        services.AddSingleton<ICQSDataBroker, CQSDataBroker<InMemoryWeatherDbContext>>();
+        var provider = services.BuildServiceProvider();
+
+        var db = provider.GetService<IDbContextFactory<InMemoryWeatherDbContext>>()!;
+        _weatherTestData.LoadDbContext(db);
+
+        return provider!;
+    }
+```
+
+Here's the Update test method as an example.
+
+```csharp
+[Fact]
+public async void TestUpdateCQSDataBroker()
+{
+    var provider = GetServiceProvider();
+    var broker = provider.GetService<ICQSDataBroker>()!;
+
+    var cancelToken = new CancellationToken();
+    var listRequest = new ListProviderRequest(0, 1000, cancelToken);
+    var query = new RecordListQuery<DvoWeatherForecast>(listRequest);
+
+    var startRecords = await broker.ExecuteAsync(query);
+
+    var editedRecord = _weatherTestData.GetRandomRecord()! with { Date = DateTime.Now.AddDays(10) };
+    var editedDvoRecord = _weatherTestData.GetDvoWeatherForecast(editedRecord);
+    var id = editedRecord.WeatherForecastId;
+
+    var command = new UpdateRecordCommand<DboWeatherForecast>(editedRecord);
+    var result = await broker.ExecuteAsync(command);
+
+    var recordQuery = new RecordQuery<DvoWeatherForecast>(id);
+    var updatedRecord = await broker.ExecuteAsync(recordQuery);
+
+    Assert.True(result.Success);
+    Assert.Equal(editedDvoRecord, updatedRecord.Record);
 }
 ```

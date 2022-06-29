@@ -11,6 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.Tests", "Blazr.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Core", "Libraries\Blazr.Core\Blazr.Core.csproj", "{C1B7F294-94BE-4A3D-9692-73BED5804ACB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{FFAB6BE5-60C9-45E9-A9E0-699CDC9B4C44}"
+	ProjectSection(SolutionItems) = preProject
+		documents\CQSData.md = documents\CQSData.md
+		documents\CRSDataBrokers.md = documents\CRSDataBrokers.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

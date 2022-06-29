@@ -13,6 +13,8 @@ public class RecordQueryHandler<TRecord, TDbContext>
 {
     private readonly RecordQuery<TRecord> _query;
     private IDbContextFactory<TDbContext> _factory;
+    private bool _success = true;
+    private string _message = string.Empty;
 
     public RecordQueryHandler(IDbContextFactory<TDbContext> factory, RecordQuery<TRecord> query)
     {
@@ -31,8 +33,14 @@ public class RecordQueryHandler<TRecord, TDbContext>
         {
             record = await _dbContext.Set<TRecord>()
                 .SingleOrDefaultAsync(item => GuidCompare(value.GetValue(item)));
+
+            if (record is null)
+            {
+                _message = "No record retrieved";
+                _success = false;
+            }
         }
-        return new RecordProviderResult<TRecord>(record);
+        return new RecordProviderResult<TRecord>(record, _success, _message);
     }
 
     private bool GuidCompare(object? value)
@@ -46,6 +54,11 @@ public class RecordQueryHandler<TRecord, TDbContext>
             .FirstOrDefault(prop => prop.GetCustomAttributes(false)
                 .OfType<KeyAttribute>()
                 .Any());
+        if (value is null)
+        {
+            _message = "No Key attribute defined for the data set";
+            _success = false;
+        }
 
         return value is not null;
     }

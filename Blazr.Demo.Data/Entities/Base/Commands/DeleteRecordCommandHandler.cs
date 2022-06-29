@@ -28,5 +28,4 @@ public class DeleteRecordCommandHandler<TRecord, TDbContext>
             ? new CommandResult(Guid.Empty, true, "Record Saved")
             : new CommandResult(Guid.Empty, false, "Error saving Record");
     }
-
 }

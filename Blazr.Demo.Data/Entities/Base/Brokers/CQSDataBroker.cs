@@ -29,6 +29,13 @@ public class CQSDataBroker<TDbContext>
         return result;
     }
 
+    public async ValueTask<FKListProviderResult> ExecuteAsync<TRecord>(FKListQuery<TRecord> query) where TRecord : class, IFkListItem, new()
+    {
+        var handler = new FKListQueryHandler<TRecord, TDbContext>(_factory, query);
+        var result = await handler.ExecuteAsync();
+        return result;
+    }
+
     public async ValueTask<CommandResult> ExecuteAsync<TRecord>(AddRecordCommand<TRecord> command) where TRecord : class, new()
     {
         var handler = new AddRecordCommandHandler<TRecord, TDbContext>(_factory, command);
@@ -50,10 +57,6 @@ public class CQSDataBroker<TDbContext>
         return result;
     }
 
-    public async ValueTask<FKListProviderResult> ExecuteAsync<TRecord>(FKListQuery<TRecord> query) where TRecord : class, IFkListItem, new()
-    {
-        var handler = new FKListQueryHandler<TRecord, TDbContext>(_factory, query);
-        var result = await handler.ExecuteAsync();
-        return result;
-    }
+    public ValueTask<object> ExecuteAsync<TRecord>(object query)
+        => throw new NotImplementedException();
 }

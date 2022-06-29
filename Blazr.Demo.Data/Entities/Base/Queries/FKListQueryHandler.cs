@@ -9,11 +9,8 @@ public class FKListQueryHandler<TRecord, TDbContext>
     : ICQSHandler<FKListQuery<TRecord>, ValueTask<FKListProviderResult>>
         where TDbContext : DbContext
         where TRecord : class, IFkListItem, new()
-
 {
     protected IEnumerable<TRecord> items = Enumerable.Empty<TRecord>();
-    protected int count = 0;
-
     protected IDbContextFactory<TDbContext> factory;
     protected readonly FKListQuery<TRecord> listQuery;
 
@@ -30,7 +27,7 @@ public class FKListQueryHandler<TRecord, TDbContext>
             return new FKListProviderResult(Enumerable.Empty<IFkListItem>(), false, "No Query defined");
 
         IEnumerable<TRecord> dbSet = await dbContext.Set<TRecord>().ToListAsync();
-        return new FKListProviderResult(dbSet);
 
+        return new FKListProviderResult(dbSet);
     }
 }

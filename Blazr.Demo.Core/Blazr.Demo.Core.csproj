@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Libraries\Blazr.Core\Blazr.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\WeatherSummary\CQS\" />
+  </ItemGroup>
+
 </Project>

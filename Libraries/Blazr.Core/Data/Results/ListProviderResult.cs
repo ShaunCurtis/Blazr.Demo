@@ -6,9 +6,9 @@
 
 namespace Blazr.Core;
 
-public readonly struct ListProviderResult<TItem>
+public readonly struct ListProviderResult<TRecord>
 {
-    public IEnumerable<TItem> Items { get; }
+    public IEnumerable<TRecord> Items { get; }
 
     public int TotalItemCount { get; }
 
@@ -16,9 +16,9 @@ public readonly struct ListProviderResult<TItem>
 
     public string? Message { get; }
 
-    public ItemsProviderResult<TItem> ItemsProviderResult => new ItemsProviderResult<TItem>(this.Items, this.TotalItemCount);
+    public ItemsProviderResult<TRecord> ItemsProviderResult => new ItemsProviderResult<TRecord>(this.Items, this.TotalItemCount);
 
-    public ListProviderResult(IEnumerable<TItem> items, int totalItemCount, bool success = true, string? message = null)
+    public ListProviderResult(IEnumerable<TRecord> items, int totalItemCount, bool success = true, string? message = null)
     {
         Items = items;
         TotalItemCount = totalItemCount;

@@ -6,7 +6,7 @@
 
 namespace Blazr.Core;
 
-public struct CommandResult
+public readonly struct CommandResult
 {
     public Guid NewId { get; init; }
     public bool Success { get; init; }

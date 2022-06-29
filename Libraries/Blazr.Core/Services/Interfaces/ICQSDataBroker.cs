@@ -20,4 +20,5 @@ public interface ICQSDataBroker
 
     public ValueTask<CommandResult> ExecuteAsync<TRecord>(DeleteRecordCommand<TRecord> command) where TRecord : class, new();
 
+    public ValueTask<object> ExecuteAsync<TRecord>(object query);
 }

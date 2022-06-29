@@ -42,7 +42,20 @@ public class CQSBrokerTests
 
         Assert.True(result.Success);
         Assert.Equal(10, result.Items.Count());
-        Assert.True(result.TotalItemCount >= 100);
+        Assert.True(result.TotalItemCount == 100);
+    }
+
+    [Fact]
+    public async void TestFKCQSDataBroker()
+    {
+        var provider = GetServiceProvider();
+        var broker = provider.GetService<ICQSDataBroker>()!;
+
+        var query = new FKListQuery<FkWeatherSummaryId>();
+        var result = await broker.ExecuteAsync<FkWeatherSummaryId>(query);
+
+        Assert.True(result.Success);
+        Assert.Equal(_weatherTestData.WeatherSummaries.Count(), result.Items.Count());
     }
 
     [Fact]
@@ -64,7 +77,7 @@ public class CQSBrokerTests
 
 
     [Fact]
-    public async void TestAddRepositoryDataBroker()
+    public async void TestAddCQSDataBroker()
     {
         var provider = GetServiceProvider();
         var broker = provider.GetService<ICQSDataBroker>()!;
@@ -91,7 +104,7 @@ public class CQSBrokerTests
     }
 
     [Fact]
-    public async void TestDeleteRepositoryDataBroker()
+    public async void TestDeleteCQSDataBroker()
     {
         var provider = GetServiceProvider();
         var broker = provider.GetService<ICQSDataBroker>()!;
@@ -115,7 +128,7 @@ public class CQSBrokerTests
     }
 
     [Fact]
-    public async void TestUpdateRepositoryDataBroker()
+    public async void TestUpdateCQSDataBroker()
     {
         var provider = GetServiceProvider();
         var broker = provider.GetService<ICQSDataBroker>()!;

@@ -29,7 +29,8 @@ public class RecordListQueryHandler<TRecord, TDbContext>
     private async ValueTask<ListProviderResult<TRecord>> _executeAsync()
     {
         if (this.listQuery is null)
-            return new ListProviderResult<TRecord>(new List<TRecord>(), 0);
+            return new ListProviderResult<TRecord>(new List<TRecord>(), 0, false, "No Query Defined");
+
         if (await this.GetItemsAsync())
             await this.GetCountAsync();
         return new ListProviderResult<TRecord>(this.items, this.count);
@@ -38,8 +39,6 @@ public class RecordListQueryHandler<TRecord, TDbContext>
     protected virtual async ValueTask<bool> GetItemsAsync()
     {
         var dbContext = this.factory.CreateDbContext();
-        if (listQuery is null)
-            return false;
 
         IQueryable<TRecord> dbSet = dbContext.Set<TRecord>();
 
@@ -57,13 +56,9 @@ public class RecordListQueryHandler<TRecord, TDbContext>
     {
         var dbContext = this.factory.CreateDbContext();
 
-        if (listQuery is null)
-            return false;
-
         IQueryable<DvoWeatherForecast> dbSet = dbContext.Set<DvoWeatherForecast>();
 
         count = await dbSet.CountAsync();
         return true;
     }
-
 }
