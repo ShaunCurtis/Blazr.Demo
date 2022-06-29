@@ -5,8 +5,8 @@
 /// ============================================================
 namespace Blazr.Demo.Core;
 
-public class DeoWeatherForecast 
-    : IEditRecord<DboWeatherForecast>
+public class DeoWeatherForecast
+    : IEditRecord<DboWeatherForecast>, IValidation
 {
     private DboWeatherForecast _baseRecord = new DboWeatherForecast();
     private Guid _newId = Guid.NewGuid();
@@ -25,7 +25,11 @@ public class DeoWeatherForecast
 
     public bool IsDirty => _baseRecord != this.Record;
 
-    public DeoWeatherForecast() { }
+    public DeoWeatherForecast()
+    {
+        var rec = new DboWeatherForecast();
+        this.Load(rec);
+    }
 
     public DeoWeatherForecast(DboWeatherForecast item)
         => this.Load(item);
