@@ -6,7 +6,7 @@
 
 namespace Blazr.Demo.Core;
 
-public static class WeatherForecastServices
+public static class WeatherForecastServiceCollection
 {
     public static void AddWeatherForecastServices(this IServiceCollection services)
     {

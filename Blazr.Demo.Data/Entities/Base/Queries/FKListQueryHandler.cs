@@ -29,7 +29,7 @@ public class FKListQueryHandler<TRecord, TDbContext>
         if (listQuery is null)
             return new FKListProviderResult(Enumerable.Empty<IFkListItem>(), false, "No Query defined");
 
-        IEnumerable<TRecord> dbSet = dbContext.Set<TRecord>().ToList();
+        IEnumerable<TRecord> dbSet = await dbContext.Set<TRecord>().ToListAsync();
         return new FKListProviderResult(dbSet);
 
     }

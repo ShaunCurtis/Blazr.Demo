@@ -12,6 +12,7 @@ public record WeatherForecastBySummaryListQuery
     public readonly Guid? WeatherSummaryId;
 
     public WeatherForecastBySummaryListQuery(Guid? weatherSummaryId, ListProviderRequest request)
+        :base(request)
     { 
         WeatherSummaryId = weatherSummaryId;
         Request = request;

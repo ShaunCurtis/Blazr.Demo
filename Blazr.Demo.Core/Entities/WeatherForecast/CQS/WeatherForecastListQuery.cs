@@ -9,7 +9,8 @@ namespace Blazr.Demo.Core;
 public record WeatherForecastListQuery
     :RecordListQuery<DvoWeatherForecast>
 {
-    public WeatherForecastListQuery(Guid? weatherSummaryId, ListProviderRequest request)
+    public WeatherForecastListQuery(ListProviderRequest request)
+        : base(request)
     { 
         Request = request;
     }

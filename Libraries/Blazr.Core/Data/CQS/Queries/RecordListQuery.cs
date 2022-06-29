@@ -12,4 +12,7 @@ public record RecordListQuery<TRecord>
     public Guid TransactionId { get; } = Guid.NewGuid();
     
     public ListProviderRequest Request { get; protected set; }
+
+    public RecordListQuery(ListProviderRequest request)
+        => Request = request;
 }
