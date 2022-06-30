@@ -8,6 +8,7 @@ namespace Blazr.Core;
 
 public class DeleteRecordCommand<TRecord>
      : RecordCommandBase<TRecord>
+    where TRecord : class, new()
 {
     public DeleteRecordCommand(TRecord record) : base(record)
     {}

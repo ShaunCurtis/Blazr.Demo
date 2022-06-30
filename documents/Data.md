@@ -30,13 +30,24 @@ public record DboWeatherForecast
 ```
 
 ```csharp
-public record DvoWeatherForecast 
+public record DvoWeatherForecast : IRecord
 {
-    [Key] public Guid WeatherForecastId { get; init; }
+    [Key] public Guid Id { get; init; }
     public Guid WeatherSummaryId { get; init; }
     public DateTimeOffset Date { get; init; }
     public int TemperatureC { get; init; }
     public string Summary { get; init; } = String.Empty;
+}
+```
+
+Note that there's a `IRecord` interface for any records that implement a generic name key "Id".
+
+This looks like this:
+
+```csherp
+public interface IRecord 
+{
+    public Guid Id { get; }
 }
 ```
 
@@ -111,7 +122,7 @@ public class InMemoryWeatherDbContext
                on f.WeatherSummaryId equals s.WeatherSummaryId
                select new DvoWeatherForecast
                {
-                   WeatherForecastId = f.WeatherForecastId,
+                   Id = f.WeatherForecastId,
                    WeatherSummaryId = f.WeatherSummaryId,
                    Date = f.Date,
                    Summary = s.Summary,
@@ -311,7 +322,7 @@ public class WeatherTestDataProvider
     {
         return new DvoWeatherForecast
         {
-            WeatherForecastId = record.WeatherForecastId,
+            Id = record.WeatherForecastId,
             WeatherSummaryId = record.WeatherSummaryId,
             Date = record.Date,
             TemperatureC = record.TemperatureC,

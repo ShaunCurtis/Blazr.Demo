@@ -8,6 +8,7 @@ namespace Blazr.Core;
 
 public interface IRecordCommand<TRecord> 
     : ICQSRequest<ValueTask<CommandResult>>
+    where TRecord : class, new()
 {
     public TRecord Record { get;}
 }

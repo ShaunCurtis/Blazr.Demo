@@ -23,25 +23,29 @@ public class InMemoryWeatherDbContext
         modelBuilder.Entity<DboWeatherForecast>().ToTable("WeatherForecast");
         modelBuilder.Entity<DboWeatherSummary>().ToTable("WeatherSummary");
 
-        modelBuilder.Entity<DvoWeatherForecast>().ToInMemoryQuery(()
+        modelBuilder.Entity<DvoWeatherForecast>()
+            .ToInMemoryQuery(()
             => from f in this.DboWeatherForecast
                join s in this.DboWeatherSummary!
                on f.WeatherSummaryId equals s.WeatherSummaryId
                select new DvoWeatherForecast
                {
-                   WeatherForecastId = f.WeatherForecastId,
+                   Id = f.WeatherForecastId,
                    WeatherSummaryId = f.WeatherSummaryId,
                    Date = f.Date,
                    Summary = s.Summary,
                    TemperatureC = f.TemperatureC,
-               });
+               })
+            .HasKey(x => x.Id);
 
-        modelBuilder.Entity<FkWeatherSummaryId>().ToInMemoryQuery(()
+        modelBuilder.Entity<FkWeatherSummaryId>()
+            .ToInMemoryQuery(()
             => from s in this.DboWeatherSummary!
                select new FkWeatherSummaryId
                {
                    Id =s.WeatherSummaryId,
                    Name = s.Summary
-               });
+               })
+            .HasKey(x => x.Id);
     }
 }

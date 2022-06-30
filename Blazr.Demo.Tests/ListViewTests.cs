@@ -20,7 +20,7 @@ public class ListViewTests
         var services = new ServiceCollection();
         services.AddDbContextFactory<InMemoryWeatherDbContext>(options => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));
         services.AddSingleton<ICustomCQSDataBroker, ServerCustomCQSDataBroker<InMemoryWeatherDbContext>>();
-        services.AddSingleton<IDataBroker, ServerEFInMemoryDataBroker<InMemoryWeatherDbContext>>();
+        services.AddSingleton<ICQSDataBroker, CQSDataBroker<InMemoryWeatherDbContext>>();
         services.AddScoped<INotificationService<WeatherForecastService>, StandardNotificationService<WeatherForecastService>>();
         services.AddScoped<IListService<DvoWeatherForecast>, StandardListService<DvoWeatherForecast, WeatherForecastService>>();
         var serviceProvider = services.BuildServiceProvider();
@@ -71,11 +71,10 @@ public class ListViewTests
         var view = services.GetService<IListService<DvoWeatherForecast>>()!; ;
 
         var testRecord = _weatherTestDataProvider.GetDvoWeatherForecast(_weatherTestDataProvider.GetRandomRecord()!);
-        var id = testRecord.WeatherForecastId;
+        var id = testRecord.Id;
 
         await view.GetRecordAsync(id);
 
         Assert.Equal(view.Record, testRecord);
     }
-
 }

@@ -11,7 +11,7 @@ public class StandardCrudService<TRecord, TEditRecord, TService>
     where TEditRecord : class, IEditRecord<TRecord>, new()
     where TService : class, IEntityService
 {
-    protected readonly IDataBroker DataBroker;
+    protected readonly ICQSDataBroker DataBroker;
     protected INotificationService<TService> Notifier;
 
     public TRecord? Record { get; private set; } = new TRecord();
@@ -22,7 +22,7 @@ public class StandardCrudService<TRecord, TEditRecord, TService>
 
     public string? Message { get; protected set; }
 
-    public StandardCrudService(IDataBroker dataBroker, INotificationService<TService> notifier)
+    public StandardCrudService(ICQSDataBroker dataBroker, INotificationService<TService> notifier)
     {
         this.DataBroker = dataBroker;
         this.Notifier = notifier;
@@ -33,7 +33,7 @@ public class StandardCrudService<TRecord, TEditRecord, TService>
         this.Message = String.Empty;
         if (Id != Guid.Empty)
         {
-            var result = await this.DataBroker.GetRecordAsync<TRecord>(Id);
+            var result = await this.DataBroker.ExecuteAsync<TRecord>(new RecordQuery<TRecord>(Id));
 
             if (result.Success && result.Record is not null)
             {
@@ -68,7 +68,7 @@ public class StandardCrudService<TRecord, TEditRecord, TService>
 
         this.Record = EditModel.AsNewRecord;
 
-        var result = await this.DataBroker.AddRecordAsync<TRecord>(this.Record);
+        var result = await this.DataBroker.ExecuteAsync<TRecord>(new AddRecordCommand<TRecord>(this.Record));
 
         if (!result.Success)
         {
@@ -84,7 +84,7 @@ public class StandardCrudService<TRecord, TEditRecord, TService>
     public async ValueTask<bool> UpdateRecordAsync()
     {
         this.Record = EditModel.Record;
-        var result = await this.DataBroker.UpdateRecordAsync<TRecord>(this.Record);
+        var result = await this.DataBroker.ExecuteAsync<TRecord>(new UpdateRecordCommand<TRecord>(this.Record));
 
         if (!result.Success)
         {
@@ -106,7 +106,7 @@ public class StandardCrudService<TRecord, TEditRecord, TService>
         }
 
         var id = GetRecordId<TRecord>(this.Record);
-        var result = await this.DataBroker.DeleteRecordAsync<TRecord>(this.Record);
+        var result = await this.DataBroker.ExecuteAsync<TRecord>(new DeleteRecordCommand<TRecord>(this.Record));
 
         if (!result.Success)
         {

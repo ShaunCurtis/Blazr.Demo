@@ -104,7 +104,7 @@ public class WeatherTestDataProvider
     {
         return new DvoWeatherForecast
         {
-            WeatherForecastId = record.WeatherForecastId,
+            Id = record.WeatherForecastId,
             WeatherSummaryId = record.WeatherSummaryId,
             Date = record.Date,
             TemperatureC = record.TemperatureC,

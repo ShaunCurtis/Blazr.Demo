@@ -20,7 +20,7 @@ public class CrudViewTests
         var services = new ServiceCollection();
         services.AddDbContextFactory<InMemoryWeatherDbContext>(options => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));
         services.AddSingleton<ICustomCQSDataBroker, ServerCustomCQSDataBroker<InMemoryWeatherDbContext>>();
-        services.AddSingleton<IDataBroker, ServerEFInMemoryDataBroker<InMemoryWeatherDbContext>>();
+        services.AddSingleton<ICQSDataBroker, CQSDataBroker<InMemoryWeatherDbContext>>();
         services.AddScoped<INotificationService<WeatherForecastService>, StandardNotificationService<WeatherForecastService>>();
         services.AddScoped<ICrudService<DboWeatherForecast, DeoWeatherForecast>, StandardCrudService<DboWeatherForecast, DeoWeatherForecast, WeatherForecastService>>();
         var serviceProvider = services.BuildServiceProvider();

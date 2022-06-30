@@ -8,8 +8,7 @@ namespace Blazr.Core;
 
 public interface IFkListItem
 {
-    [Key]
     public Guid Id { get; }
-
+    
     public string Name { get; }
 }

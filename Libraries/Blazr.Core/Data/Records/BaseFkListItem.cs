@@ -6,7 +6,8 @@
 
 namespace Blazr.Core;
 
-public record BaseFkListItem : IFkListItem
+public record BaseFkListItem 
+    : IFkListItem
 {
     [Key]
     public Guid Id { get; init; }

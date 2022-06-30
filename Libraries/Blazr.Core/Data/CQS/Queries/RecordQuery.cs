@@ -14,5 +14,7 @@ public record RecordQuery<TRecord>
     public readonly Guid? RecordId;
 
     public RecordQuery(Guid? recordId)
-        => this.RecordId = recordId;
+    { 
+        this.RecordId = recordId;
+    }
 }

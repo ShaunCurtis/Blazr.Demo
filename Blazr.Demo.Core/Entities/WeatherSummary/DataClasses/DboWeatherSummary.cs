@@ -5,10 +5,10 @@
 /// ============================================================
 namespace Blazr.Demo.Core;
 
-public record DboWeatherSummary 
+public record DboWeatherSummary
 {
     [Key]
     public Guid WeatherSummaryId { get; init; } = Guid.Empty;
 
-    public string Summary { get; init; } = string.Empty; 
+    public string Summary { get; init; } = string.Empty;
 }

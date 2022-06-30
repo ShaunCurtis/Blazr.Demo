@@ -75,6 +75,24 @@ public class CQSBrokerTests
         Assert.Equal(CompareRecord, result.Record!);
     }
 
+    [Fact]
+    public async void TestDboRecordCQSDataBroker()
+    {
+        var provider = GetServiceProvider();
+        var broker = provider.GetService<ICQSDataBroker>()!;
+
+        //var testRecord = _weatherTestData.GetRandomRecord()!;
+        var testRecord = _weatherTestData.WeatherSummaries.ToArray()[0]!;
+
+        var query = new RecordQuery<DboWeatherSummary>(testRecord.WeatherSummaryId);
+        //var query = new RecordQuery<DboWeatherForecast>(testRecord.WeatherForecastId);
+        var result = await broker.ExecuteAsync(query);
+
+        Assert.True(result.Success);
+        Assert.NotNull(result.Record);
+        Assert.Equal(testRecord, result.Record!);
+    }
+
 
     [Fact]
     public async void TestAddCQSDataBroker()
@@ -93,7 +111,7 @@ public class CQSBrokerTests
         var testRec = testRecord.Record!;
         var rec = new DboWeatherForecast
         {
-            WeatherForecastId = testRec.WeatherForecastId,
+            WeatherForecastId = testRec.Id,
             WeatherSummaryId = testRec.WeatherSummaryId,
             Date = testRec.Date,
             TemperatureC = testRec.TemperatureC

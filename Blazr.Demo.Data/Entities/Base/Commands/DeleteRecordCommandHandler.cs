@@ -14,10 +14,10 @@ public class DeleteRecordCommandHandler<TRecord, TDbContext>
     protected IDbContextFactory<TDbContext> factory;
     protected readonly IRecordCommand<TRecord> command;
 
-    public DeleteRecordCommandHandler(IDbContextFactory<TDbContext> _factory, IRecordCommand<TRecord> command)
+    public DeleteRecordCommandHandler(IDbContextFactory<TDbContext> factory, IRecordCommand<TRecord> command)
     {
         this.command = command;
-        this.factory = _factory;
+        this.factory = factory;
     }
 
     public async ValueTask<CommandResult> ExecuteAsync()

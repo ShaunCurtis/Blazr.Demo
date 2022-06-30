@@ -20,20 +20,11 @@ public class ServerEFDataBroker<TDbContext>
     {
         using var context = database.CreateDbContext();
 
-        var key = GetKeyProperty<TRecord>();
+        TRecord? record = await context.FindAsync<TRecord>(id);
 
-        var dbSet = context.Set<TRecord>().AsNoTracking();
-
-        if (dbSet is null)
-            return new RecordProviderResult<TRecord> (null, false, "No DbSet found for the provided data class");
-
-        var records = await dbSet
-            .Where($"{key} == \"{id}\"")
-            .ToListAsync();
-
-        return records is not null && records.Count == 1
-            ? new RecordProviderResult<TRecord>(records[0], true, "Record retrieved successfully.")
-            : new RecordProviderResult<TRecord>(null, false, "Could not find the record in the DbSet."); 
+        return record is null
+            ? new RecordProviderResult<TRecord>(null, false, "Could not find the record in the DbSet.")
+            : new RecordProviderResult<TRecord>(record, true, "Record retrieved successfully.");
     }
 
     public async ValueTask<RecordCountProviderResult> GetRecordCountAsync<TRecord>() where TRecord : class, new()
@@ -148,17 +139,6 @@ public class ServerEFDataBroker<TDbContext>
             _message = "Error in Executing Query.  This is probably caused by an incompatible SortExpression or QueryExpression";
             return 0;
         }
-    }
-
-    private static string GetKeyProperty<T>() where T : class, new()
-    {
-        var instance = new T();
-        var prop = instance.GetType()
-            .GetProperties()
-            .FirstOrDefault(prop => prop.GetCustomAttributes(false)
-                .OfType<KeyAttribute>()
-                .Any());
-        return prop?.Name ?? string.Empty;
     }
 
     private static Guid GetRecordId<T>(T record) where T : class, new()

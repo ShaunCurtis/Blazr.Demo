@@ -8,6 +8,7 @@ namespace Blazr.Core;
 
 public abstract class RecordCommandBase<TRecord>
      : IRecordCommand<TRecord>
+    where TRecord : class, new()
 {
     public Guid TransactionId { get; } = Guid.NewGuid(); 
     

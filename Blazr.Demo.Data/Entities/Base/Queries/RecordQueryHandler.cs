@@ -1,4 +1,5 @@
-﻿/// ============================================================
+﻿using System.Linq.Expressions;
+/// ============================================================
 /// Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
@@ -23,43 +24,25 @@ public class RecordQueryHandler<TRecord, TDbContext>
     }
 
     public async ValueTask<RecordProviderResult<TRecord>> ExecuteAsync()
-        => await _executeAsync();
-
-    private async ValueTask<RecordProviderResult<TRecord>> _executeAsync()
     {
         var _dbContext = _factory.CreateDbContext();
+
         TRecord? record = null;
-        if (GetKeyProperty(out PropertyInfo? value) && value is not null)
+
+        // first check if the record implements IRecord.  If so we can do a cast and then do the quesry via the Id property directly 
+        if ((new TRecord()) is IRecord)
+            record = await _dbContext.Set<TRecord>().SingleOrDefaultAsync(item => ((IRecord)item).Id == _query.RecordId);
+
+        // Try and use the EF FindAsync implementation
+        if (record == null)
+            record = await _dbContext.FindAsync<TRecord>(_query.RecordId);
+
+        if (record is null)
         {
-            record = await _dbContext.Set<TRecord>()
-                .SingleOrDefaultAsync(item => GuidCompare(value.GetValue(item)));
-
-            if (record is null)
-            {
-                _message = "No record retrieved";
-                _success = false;
-            }
-        }
-        return new RecordProviderResult<TRecord>(record, _success, _message);
-    }
-
-    private bool GuidCompare(object? value)
-        => value is Guid && (Guid)value == _query.RecordId;
-
-    private bool GetKeyProperty(out PropertyInfo? value)
-    {
-        var instance = new TRecord();
-        value = instance.GetType()
-            .GetProperties()
-            .FirstOrDefault(prop => prop.GetCustomAttributes(false)
-                .OfType<KeyAttribute>()
-                .Any());
-        if (value is null)
-        {
-            _message = "No Key attribute defined for the data set";
+            _message = "No record retrieved";
             _success = false;
         }
 
-        return value is not null;
+        return new RecordProviderResult<TRecord>(record, _success, _message);
     }
 }

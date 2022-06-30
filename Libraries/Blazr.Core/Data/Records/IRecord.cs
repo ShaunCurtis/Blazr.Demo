@@ -4,14 +4,9 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.Demo.Core;
+namespace Blazr.Core;
 
-public record WeatherForecastListQuery
-    :RecordListQuery<DvoWeatherForecast>
+public interface IRecord 
 {
-    public WeatherForecastListQuery(ListProviderRequest request)
-        : base(request)
-    { 
-        Request = request;
-    }
+    public Guid Id { get; }
 }

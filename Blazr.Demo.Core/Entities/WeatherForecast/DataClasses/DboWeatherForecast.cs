@@ -5,15 +5,14 @@
 /// ============================================================
 namespace Blazr.Demo.Core;
 
-public record DboWeatherForecast 
+public record DboWeatherForecast
 {
     [Key]
-    public Guid WeatherForecastId { get; init; } = Guid.Empty;
+    public Guid WeatherForecastId { get; init; }
 
-    public Guid WeatherSummaryId { get; init; } = Guid.Empty;
+    public Guid WeatherSummaryId { get; init; }
 
     public DateTimeOffset Date { get; init; }
 
     public int TemperatureC { get; init; }
-
 }

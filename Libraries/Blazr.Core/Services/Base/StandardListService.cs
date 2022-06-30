@@ -11,7 +11,7 @@ public class StandardListService<TRecord, TService>
     where TRecord : class, new()
     where TService : class, IEntityService
 {
-    protected IDataBroker DataBroker;
+    protected ICQSDataBroker DataBroker;
     protected INotificationService<TService> Notifier;
 
     public int PageSize { get; protected set; }
@@ -32,7 +32,7 @@ public class StandardListService<TRecord, TService>
 
     public bool HasRecord => this.Record is not null;
 
-    public StandardListService(IDataBroker dataBroker, INotificationService<TService> notifier)
+    public StandardListService(ICQSDataBroker dataBroker, INotificationService<TService> notifier)
     {
         this.DataBroker = dataBroker;
         Notifier = notifier;
@@ -41,7 +41,7 @@ public class StandardListService<TRecord, TService>
     public async ValueTask GetRecordAsync(Guid Id)
     {
         this.Message = String.Empty;
-        var result = await this.DataBroker.GetRecordAsync<TRecord>(Id);
+        var result = await this.DataBroker.ExecuteAsync<TRecord>(new RecordQuery<TRecord>(Id));
 
         if (result.Success && result.Record is not null)
         {
@@ -58,7 +58,7 @@ public class StandardListService<TRecord, TService>
         this.PageSize = request.PageSize;
         this.StartIndex = request.StartIndex;
 
-        var result = await this.DataBroker.GetRecordsAsync<TRecord>(request);
+        var result = await this.DataBroker.ExecuteAsync<TRecord>( new RecordListQuery<TRecord>(request));
 
         if (result.Success && result.Items is not null)
         {
@@ -66,7 +66,7 @@ public class StandardListService<TRecord, TService>
             this.ListCount = result.TotalItemCount;
             var page = request.StartIndex <= 0
                 ? 0
-                :(int)(request.StartIndex / request.PageSize);
+                : (int)(request.StartIndex / request.PageSize);
 
             this.Notifier.NotifyListPaged(this, page);
         }

@@ -8,6 +8,7 @@ namespace Blazr.Core;
 
 public class UpdateRecordCommand<TRecord>
      : RecordCommandBase<TRecord>
+    where TRecord : class, new()
 {
     public UpdateRecordCommand(TRecord record) : base(record)
     {}

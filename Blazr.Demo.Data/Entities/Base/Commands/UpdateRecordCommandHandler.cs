@@ -14,10 +14,10 @@ public class UpdateRecordCommandHandler<TRecord, TDbContext>
     protected IDbContextFactory<TDbContext> factory;
     protected readonly UpdateRecordCommand<TRecord> command;
 
-    public UpdateRecordCommandHandler(IDbContextFactory<TDbContext> _factory, UpdateRecordCommand<TRecord> command)
+    public UpdateRecordCommandHandler(IDbContextFactory<TDbContext> factory, UpdateRecordCommand<TRecord> command)
     {
         this.command = command;
-        this.factory = _factory;
+        this.factory = factory;
     }
 
     public async ValueTask<CommandResult> ExecuteAsync()

@@ -6,10 +6,11 @@
 
 namespace Blazr.Demo.Core;
 
-public record DvoWeatherForecast 
+public record DvoWeatherForecast
+    : IRecord
 {
     [Key]
-    public Guid WeatherForecastId { get; init; }
+    public Guid Id { get; init; }
 
     public Guid WeatherSummaryId { get; init; }
 

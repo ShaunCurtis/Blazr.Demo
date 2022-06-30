@@ -11,14 +11,14 @@ public class WeatherForecastService
 {
     private SortedDictionary<Guid, string> _weatherSummaries = new SortedDictionary<Guid, string>();
     private ICustomCQSDataBroker _queryBroker;
-  private ICQSDataBroker _cqsDataBroker;
+    private ICQSDataBroker _dataBroker;
     private INotificationService<WeatherSummaryService> _weatherSummaryNotificationService;
 
     public WeatherForecastService(ICustomCQSDataBroker queryDataBroker, INotificationService<WeatherSummaryService> notificationService, ICQSDataBroker cQSDataBroker)
-    { 
+    {
         _queryBroker = queryDataBroker;
         _weatherSummaryNotificationService = notificationService;
-        _cqsDataBroker = cQSDataBroker;
+        _dataBroker = cQSDataBroker;
         _weatherSummaryNotificationService.ListUpdated += SummariesListUpdated;
     }
 
@@ -33,7 +33,7 @@ public class WeatherForecastService
     private async Task GetWeatherSummariesAsync()
     {
         _weatherSummaries.Clear();
-        var result = await _queryBroker.ExecuteAsync(new FKListQuery<FkWeatherSummaryId>());
+        var result = await _dataBroker.ExecuteAsync(new FKListQuery<FkWeatherSummaryId>());
         if (result.Success)
         {
             foreach (var item in result.Items)
