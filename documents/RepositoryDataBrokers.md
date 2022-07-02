@@ -2,25 +2,59 @@
 
 ## Data Brokers
 
-Data brokers are the link between the Core and Data domains.
+Data brokers provide the link between the Core and Data domains.
 
-There are two types of data broker in the application.
+The application has two types of data broker.
 
 1. A set of data brokers that implement a generic Repository type pattern for CRUD and Read/List operations.
-2. A set of data brokers for CQS pattern data operations.
+2. A set of data brokers that implement a generic CQS pattern.
 
+This article covers the generic Repository pattern data pipeline,
+ 
 ## The Generic Repository Pattern
 
-`IDataBroker` is defined in the core domain and used in all calls down the data pipeline.
+The classic generic pattern looks like this:
 
-Generics are implemented at the method level, not the class level.  The application uses a single Singleton DI `IDataBroker` for the application.  Each call passes the data class to the method.  It uses EF functionality to get the correct `DbSet` and runs the action against that `DbSet`.  The command methods all return a simple `bool` status. 
+```csharp
+public interface IRepository<T>
+ where TRecord: class, new();
+{
+......
+}
+
+public class BaseRepository<T>
+ where TRecord: class, new();
+{
+......
+}
+
+```
+
+And the DI services instances declared like this:
+
+```csharp
+services.AddScoped<IRepository<WeatherForecast>, BaseRepository<WeatherForecast>(); 
+services.AddScoped<IRepository<WeatherReport>, BaseRepository<WeatherReport>(); 
+```
+
+This implementation uses a different approach.
+
+Generics are implemented at the method level, not the class level.  The application uses a single Singleton DI `IDataBroker` for the application.  Each call passes the data class to the method.  EF functionality maps requests to the correct `DbSet` and runs the action against that `DbSet`.  The command methods all return a simple `bool` status. 
+
+The `IDataBroker` interface is defined in the core domain and all calls in the data pipeline are though this interface.
+
+All methods conform with CRS principles and return *Result* objects.
+
+
+### IDataBroker
+
+First the interface.
 
 ```csharp
 public interface IDataBroker
 {
     public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync<TRecord>(ListProviderRequest request) where TRecord: class, new();
     public ValueTask<RecordProviderResult<TRecord>> GetRecordAsync<TRecord>(Guid id) where TRecord : class, new();
-    public ValueTask<FKListProviderResult> GetFKListAsync<TRecord>() where TRecord : class, IFkListItem, new();
     public ValueTask<RecordCountProviderResult> GetRecordCountAsync<TRecord>() where TRecord : class, new();
     public ValueTask<CommandResult> AddRecordAsync<TRecord>(TRecord record) where TRecord : class, new();
     public ValueTask<CommandResult> UpdateRecordAsync<TRecord>(TRecord record) where TRecord : class, new();
@@ -29,31 +63,87 @@ public interface IDataBroker
 ```
 Note:
 
-1. The methods are all generic.  We'll see how the implementation works in an implementation class.
-2. All the methods are `async` and return `ValueTasks`.
-3. All the methods return result objects that include status information.
+1. All methods use generics.  We'll see how the implementation works in an implementation class.
+2. All the methods are `async` and return a `ValueTask`.
+
+## Results
+
+Results standardize returns and provide a method to return status information on the request. Each is a `struct`.  Query results contain the data requested,  They're self explanatory.  The List result is structured for paging operations.
+
+```csharp
+public readonly struct ListProviderResult<TRecord>
+{
+    public IEnumerable<TRecord> Items { get; }
+    public int TotalItemCount { get; }
+    public bool Success { get; }
+    public string? Message { get; }
+    //....Constructors
+}
+```
+```csaharp
+public readonly struct RecordProviderResult<TRecord>
+{
+    public TRecord? Record { get; }
+    public bool Success { get; }
+    public string? Message { get; }
+    //....Constructors
+}
+```
+```csaharp
+public readonly struct RecordCountProviderResult
+{
+    public int Count { get; }
+    public bool Success { get; }
+    public string? Message { get; }
+    //....Constructors
+}
+```
+```csaharp
+public readonly struct CommandResult
+{
+    public Guid NewId { get; init; }
+    public bool Success { get; init; }
+    public string Message { get; init; }
+    //....Constructors
+}
+```
+```csaharp
+public readonly struct FKListProviderResult
+{
+    public IEnumerable<IFkListItem> Items { get; }
+    public bool Success { get; }
+    public string? Message { get; }
+    //....Constructors
+}
+```
 
 ### Server Data Broker
 
-`ServerEFDataBroker` is the `IDataBroker` implementation for Blazor Server and the API web server.
+`ServerEFDataBroker` is the `IDataBroker` implementation for Blazor Server and API web servers.
 
-The class takes a generic `TDbContext` that implements `IWeatherDbContext`.  This abstracts the data broker from a specific `DbContext` implementation.  In our test code we use an in-memory EF database.
+Our service registration is as follows: 
 
 ```csharp
 services.AddSingleton<IDataBroker, ServerInMemoryDataBroker<InMemoryWeatherDbContext>>();
 ```
 
+The class takes a generic `TDbContext` constrained as  `DbContext`.  This abstracts the data broker from a specific `DbContext` implementation.  The demo solution uses an in-memory EF database.
+
 
 ```csharp
 public class ServerEFDataBroker<TDbContext>
     : IDataBroker
-    where TDbContext : DbContext, IWeatherDbContext
+    where TDbContext : DbContext
 {
-    protected readonly IDbContextFactory<TDbContext> database;
+    protected readonly IDbContextFactory<TDbContext> factory;
+    private bool _success;
+    private string? _message;
 
-    public ServerEFDataBroker(IDbContextFactory<TDbContext> db)
-        => this.database = db;
+    public ServerEFDataBroker(IDbContextFactory<TDbContext> factory)
+        => this.factory = factory;
 ```
+
+All methods are async so we use "unit of work" Db contexts.
 
 Next we implement the standard CRUD operations.  Each method gets an individual DbContext from the factory with `Using`. 
 

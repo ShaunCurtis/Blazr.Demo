@@ -5,24 +5,24 @@
 /// ============================================================
 namespace Blazr.Demo.Data;
 
-public class ServerEFDataBroker<TDbContext>
+public class ServerDataBroker<TDbContext>
     : IDataBroker
     where TDbContext : DbContext
 {
-    protected readonly IDbContextFactory<TDbContext> factory;
+    protected readonly IDbContextFactory<TDbContext> database;
     private bool _success;
     private string? _message;
 
-    public ServerEFDataBroker(IDbContextFactory<TDbContext> factory)
-        => this.factory = factory;
+    public ServerDataBroker(IDbContextFactory<TDbContext> factory)
+        => _factory = factory;
 
     public async ValueTask<RecordProviderResult<TRecord>> GetRecordAsync<TRecord>(Guid id) where TRecord : class, new()
     {
-        var _dbContext = factory.CreateDbContext();
+        var _dbContext = _factory.CreateDbContext();
 
         TRecord? record = null;
 
-        // first check if the record implements IRecord.  If so we can do a cast and then do the quesry via the Id property directly 
+        // first check if the record implements IRecord.  If so we can do a cast and then do the query via the Id property directly 
         if ((new TRecord()) is IRecord)
             record = await _dbContext.Set<TRecord>().SingleOrDefaultAsync(item => ((IRecord)item).Id == id);
 
@@ -41,7 +41,7 @@ public class ServerEFDataBroker<TDbContext>
 
     public async ValueTask<RecordCountProviderResult> GetRecordCountAsync<TRecord>() where TRecord : class, new()
     {
-        using var dbContext = factory.CreateDbContext();
+        using var dbContext = _factory.CreateDbContext();
 
         IQueryable<TRecord> query = dbContext.Set<TRecord>();
 
@@ -67,7 +67,7 @@ public class ServerEFDataBroker<TDbContext>
 
     public async ValueTask<CommandResult> AddRecordAsync<TRecord>(TRecord item) where TRecord : class, new()
     {
-        using var dbContext = factory.CreateDbContext();
+        using var dbContext = _factory.CreateDbContext();
 
         var id = GetRecordId<TRecord>(item);
 
@@ -82,7 +82,7 @@ public class ServerEFDataBroker<TDbContext>
 
     public async ValueTask<CommandResult> UpdateRecordAsync<TRecord>(TRecord item) where TRecord : class, new()
     {
-        using var dbContext = factory.CreateDbContext();
+        using var dbContext = _factory.CreateDbContext();
 
         var id = GetRecordId<TRecord>(item);
 
@@ -97,7 +97,7 @@ public class ServerEFDataBroker<TDbContext>
 
     public async ValueTask<CommandResult> DeleteRecordAsync<TRecord>(TRecord item) where TRecord : class, new()
     {
-        using var dbContext = factory.CreateDbContext();
+        using var dbContext = _factory.CreateDbContext();
 
         var id = GetRecordId<TRecord>(item);
 
@@ -121,7 +121,7 @@ public class ServerEFDataBroker<TDbContext>
 
     protected async ValueTask<IEnumerable<TRecord>> GetItemsAsync<TRecord>(ListProviderRequest options) where TRecord : class, new()
     {
-        using var dbContext = factory.CreateDbContext();
+        using var dbContext = _factory.CreateDbContext();
 
         IQueryable<TRecord> query = dbContext.Set<TRecord>();
 
@@ -148,7 +148,7 @@ public class ServerEFDataBroker<TDbContext>
 
     protected async ValueTask<int> GetCountAsync<TRecord>(ListProviderRequest options) where TRecord : class, new()
     {
-        using var dbContext = factory.CreateDbContext();
+        using var dbContext = _factory.CreateDbContext();
 
         IQueryable<TRecord> query = dbContext.Set<TRecord>();
 
@@ -185,5 +185,4 @@ public class ServerEFDataBroker<TDbContext>
         }
         return Guid.Empty;
     }
-
 }
