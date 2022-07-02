@@ -4,7 +4,7 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.Demo.Data;
+namespace Blazr.Data;
 
 public class CQSDataBroker<TDbContext>
     :ICQSDataBroker
@@ -22,9 +22,9 @@ public class CQSDataBroker<TDbContext>
         return result;
     }
 
-    public async ValueTask<RecordProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordQuery<TRecord> query) where TRecord : class, new()
+    public async ValueTask<RecordProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordGuidQuery<TRecord> query) where TRecord : class, new()
     {
-        var handler = new RecordQueryHandler<TRecord, TDbContext>(_factory, query);
+        var handler = new RecordGuidQueryHandler<TRecord, TDbContext>(_factory, query);
         var result = await handler.ExecuteAsync();
         return result;
     }

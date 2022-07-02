@@ -1,9 +1,10 @@
+
+using System.Collections.Generic;
 /// ============================================================
 /// Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-
 namespace Blazr.Demo.Tests;
 
 public class DbContextTests
@@ -47,6 +48,17 @@ public class DbContextTests
         var result = await broker!.GetRecordsAsync<DboWeatherSummary>(listRequest);
 
         Assert.Equal(10, result.Items.Count());
+    }
+
+    [Fact]
+    public async void TestRepositoryDataBrokerFKList()
+    {
+        var broker = this.BuildServiceContainer();
+
+        var result = await broker!.GetFKListAsync<FkWeatherSummaryId>();
+
+        Assert.Equal(10, result.Items.Count());
+        Assert.IsType<FkWeatherSummaryId>(result.Items.First());
     }
 
 

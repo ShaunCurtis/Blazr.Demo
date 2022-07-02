@@ -33,7 +33,7 @@ public class StandardCrudService<TRecord, TEditRecord, TService>
         this.Message = String.Empty;
         if (Id != Guid.Empty)
         {
-            var result = await this.DataBroker.ExecuteAsync<TRecord>(new RecordQuery<TRecord>(Id));
+            var result = await this.DataBroker.ExecuteAsync<TRecord>(new RecordGuidQuery<TRecord>(Id));
 
             if (result.Success && result.Record is not null)
             {

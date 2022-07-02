@@ -20,6 +20,15 @@ public readonly struct ListProviderRequest
 
     public ItemsProviderRequest Request => new (this.StartIndex, this.PageSize, this.CancellationToken);
 
+    public ListProviderRequest()
+    {
+        StartIndex = 0;
+        PageSize = 10000;
+        CancellationToken = new CancellationToken();
+        SortExpression = null;
+        FilterExpression = null;
+    }
+
     public ListProviderRequest(int startIndex, int pageSize, CancellationToken cancellationToken, string? sortExpression = null, string? filterExpression = null )
     {
         StartIndex = startIndex;

@@ -6,21 +6,18 @@
 
 namespace Blazr.Core;
 
-public class BaseForeignKeyService<TFkRecord, TService>
+public class StandardForeignKeyService<TFkRecord, TService>
     : IForeignKeyService<TFkRecord, TService>, IDisposable
         where TFkRecord : class, IFkListItem, new()
         where TService : class, IEntityService
 {
-    private IEnumerable<TFkRecord> _fkList = Enumerable.Empty<TFkRecord>();
     protected INotificationService<TService> NotificationService;
-    protected IDataBroker DataBroker;
+    protected ICQSDataBroker DataBroker;
     private bool _firstLoad = true;
 
-    public IEnumerable<TFkRecord> FkList => _fkList;
+    public IEnumerable<IFkListItem> Items { get; protected set; } = Enumerable.Empty<TFkRecord>();
 
-    public IEnumerable<IFkListItem> List => new List<IFkListItem>(_fkList.Cast<IFkListItem>());
-
-    public BaseForeignKeyService(IDataBroker dataBroker, INotificationService<TService> notificationService)
+    public StandardForeignKeyService(ICQSDataBroker dataBroker, INotificationService<TService> notificationService)
     {
         NotificationService = notificationService;
         DataBroker = dataBroker;
@@ -32,9 +29,8 @@ public class BaseForeignKeyService<TFkRecord, TService>
             this.NotificationService.ListUpdated += OnUpdate;
 
         _firstLoad = false;
-        var cancel = new CancellationToken();
-        var result = await this.DataBroker.GetRecordsAsync<TFkRecord>(new ListProviderRequest( 0, 10000, cancel));
-        _fkList = result.Items;
+        var result = await this.DataBroker.ExecuteAsync<TFkRecord>(new FKListQuery<TFkRecord>());
+        this.Items = result.Items;
         return result.Success;
     }
 

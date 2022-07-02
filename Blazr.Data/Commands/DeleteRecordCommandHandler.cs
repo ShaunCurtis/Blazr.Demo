@@ -4,17 +4,17 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.Demo.Data;
+namespace Blazr.Data;
 
-public class AddRecordCommandHandler<TRecord, TDbContext>
-    : ICQSHandler<AddRecordCommand<TRecord>, ValueTask<CommandResult>>
+public class DeleteRecordCommandHandler<TRecord, TDbContext>
+    : ICQSHandler<DeleteRecordCommand<TRecord>, ValueTask<CommandResult>>
     where TDbContext : DbContext
     where TRecord : class, new()
 {
     protected IDbContextFactory<TDbContext> factory;
-    protected readonly AddRecordCommand<TRecord> command;
+    protected readonly IRecordCommand<TRecord> command;
 
-    public AddRecordCommandHandler(IDbContextFactory<TDbContext> factory, AddRecordCommand<TRecord> command)
+    public DeleteRecordCommandHandler(IDbContextFactory<TDbContext> factory, IRecordCommand<TRecord> command)
     {
         this.command = command;
         this.factory = factory;
@@ -23,7 +23,7 @@ public class AddRecordCommandHandler<TRecord, TDbContext>
     public async ValueTask<CommandResult> ExecuteAsync()
     {
         using var dbContext = factory.CreateDbContext();
-        dbContext.Add<TRecord>(command.Record);
+        dbContext.Remove<TRecord>(command.Record);
         return await dbContext.SaveChangesAsync() == 1
             ? new CommandResult(Guid.Empty, true, "Record Saved")
             : new CommandResult(Guid.Empty, false, "Error saving Record");

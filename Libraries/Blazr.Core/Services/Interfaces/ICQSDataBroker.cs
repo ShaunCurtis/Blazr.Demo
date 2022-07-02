@@ -10,7 +10,7 @@ public interface ICQSDataBroker
 {
     public ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordListQuery<TRecord> query) where TRecord : class, new();
 
-    public ValueTask<RecordProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordQuery<TRecord> query) where TRecord : class, new();
+    public ValueTask<RecordProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordGuidQuery<TRecord> query) where TRecord : class, new();
 
     public ValueTask<FKListProviderResult> ExecuteAsync<TRecord>(FKListQuery<TRecord> query) where TRecord : class, IFkListItem, new();
 

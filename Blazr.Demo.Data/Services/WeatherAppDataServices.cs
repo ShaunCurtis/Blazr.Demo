@@ -8,10 +8,27 @@ namespace Blazr.Demo.Data;
 
 public static class WeatherAppDataServices
 {
-    public static void AddWeatherAppServerDataServices(this IServiceCollection services)
+    public static void AddInMemoryWeatherAppServerDataServices(this IServiceCollection services)
     {
         services.AddDbContextFactory<InMemoryWeatherDbContext>(options => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));
-        services.AddSingleton<IDataBroker, ServerEFInMemoryDataBroker<InMemoryWeatherDbContext>>();
+        services.AddSingleton<ICQSDataBroker, CQSDataBroker<InMemoryWeatherDbContext>>();
+        //services.AddSingleton<IDataBroker, ServerEFInMemoryDataBroker<InMemoryWeatherDbContext>>();
         services.AddSingleton<ICustomCQSDataBroker, ServerCustomCQSDataBroker<InMemoryWeatherDbContext>>();
+    }
+
+    public static void AddTestData<TDbContext>(IServiceProvider provider) where TDbContext : DbContext
+    {
+        var factory = provider.GetService<IDbContextFactory<TDbContext>>();
+
+        if (factory is not null)
+            WeatherTestDataProvider.Instance().LoadDbContext<TDbContext>(factory);
+    }
+
+    public static void AddTestData(IServiceProvider provider)
+    {
+        var factory = provider.GetService<IDbContextFactory<InMemoryWeatherDbContext>>();
+
+        if (factory is not null)
+            WeatherTestDataProvider.Instance().LoadDbContext<InMemoryWeatherDbContext>(factory);
     }
 }

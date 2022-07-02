@@ -59,7 +59,7 @@
 
     private RenderFragment SummaryList => (__builder) =>
     {
-        @foreach (var item in this.FkService.FkList)
+        @foreach (var item in this.FkService.Items)
         {
             <option value="@item.Id">@item.Name</option>
         }

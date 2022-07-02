@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 		documents\RepositoryDataBrokers.md = documents\RepositoryDataBrokers.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.Data", "Blazr.Data\Blazr.Data.csproj", "{2EBBE486-21CD-42AE-8238-EAB8BF466C02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{0E68BD8A-F33A-43BA-8B60-FD03307D829D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E68BD8A-F33A-43BA-8B60-FD03307D829D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E68BD8A-F33A-43BA-8B60-FD03307D829D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EBBE486-21CD-42AE-8238-EAB8BF466C02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EBBE486-21CD-42AE-8238-EAB8BF466C02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EBBE486-21CD-42AE-8238-EAB8BF466C02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EBBE486-21CD-42AE-8238-EAB8BF466C02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

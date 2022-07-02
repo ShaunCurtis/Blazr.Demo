@@ -4,6 +4,7 @@ global using System.Reflection;
 
 global using Blazr.Demo.Core;
 global using Blazr.Core;
+global using Blazr.Data;
 
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.AspNetCore.Components.Web.Virtualization;

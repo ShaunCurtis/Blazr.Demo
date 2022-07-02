@@ -1,23 +1,22 @@
-﻿using System.Linq.Expressions;
-/// ============================================================
+﻿/// ============================================================
 /// Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-namespace Blazr.Demo.Data;
+namespace Blazr.Data;
 
-public class RecordQueryHandler<TRecord, TDbContext>
-    : ICQSHandler<RecordQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
+public class RecordGuidQueryHandler<TRecord, TDbContext>
+    : ICQSHandler<RecordGuidQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
         where TRecord : class, new()
         where TDbContext : DbContext
 
 {
-    private readonly RecordQuery<TRecord> _query;
+    private readonly RecordGuidQuery<TRecord> _query;
     private IDbContextFactory<TDbContext> _factory;
     private bool _success = true;
     private string _message = string.Empty;
 
-    public RecordQueryHandler(IDbContextFactory<TDbContext> factory, RecordQuery<TRecord> query)
+    public RecordGuidQueryHandler(IDbContextFactory<TDbContext> factory, RecordGuidQuery<TRecord> query)
     {
         _factory = factory;
         _query = query;

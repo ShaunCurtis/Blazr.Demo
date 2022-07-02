@@ -28,15 +28,15 @@
 
             <UIListControl TRecord=DvoWeatherForecast Records=this.ListViewService.Records LoadState=this.loadState class="table table-sm table-striped table-hover border-bottom no-margin">
                 <RowTemplate>
-                    <UIListColumn HeaderTitle="ID" SortField="WeatherForecastId" NoWrap=true>@context.WeatherForecastId.AsShortGuid()</UIListColumn>
+                    <UIListColumn HeaderTitle="ID" SortField="WeatherForecastId" NoWrap=true>@context.Id.AsShortGuid()</UIListColumn>
                     <UIListColumn HeaderTitle="Date" SortField="Date" NoWrap=true>@context.Date.AsGlobalDate()</UIListColumn>
                     <UIListColumn HeaderTitle="Temp &deg;C" SortField="TemperatureC" NoWrap=true>@context.TemperatureC.AsDegC()</UIListColumn>
                     <UIListColumn HeaderTitle="Temp &deg;F" SortField="TemperatureC" NoWrap=true>@context.TemperatureC.AsDegF()</UIListColumn>
                     <UIListColumn HeaderTitle="Summary" SortField="Summary" IsMaxColumn=true>@context.Summary</UIListColumn>
                     <UIListColumn HeaderTitle="" NoWrap=true class="text-right text-end">
                         <UIButtonGroup>
-                            <UIButton type="button" class="btn-sm btn-secondary" ClickEvent="() => this.ViewRecord(context.WeatherForecastId)">View</UIButton>
-                            <UIButton type="button" class="btn-sm btn-primary" ClickEvent="() => this.EditRecord(context.WeatherForecastId)">Edit</UIButton>
+                            <UIButton type="button" class="btn-sm btn-secondary" ClickEvent="() => this.ViewRecord(context.Id)">View</UIButton>
+                            <UIButton type="button" class="btn-sm btn-primary" ClickEvent="() => this.EditRecord(context.Id)">Edit</UIButton>
                         </UIButtonGroup>
                     </UIListColumn>
                 </RowTemplate>

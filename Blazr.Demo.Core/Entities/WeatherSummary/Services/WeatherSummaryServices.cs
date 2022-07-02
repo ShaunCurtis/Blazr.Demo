@@ -12,6 +12,6 @@ public static class WeatherSummaryServices
     {
         services.AddScoped<INotificationService<WeatherSummaryService>, StandardNotificationService<WeatherSummaryService>>();
         services.AddScoped<IListService<DboWeatherSummary>, StandardListService<DboWeatherSummary, WeatherSummaryService>>();
-        services.AddScoped<IForeignKeyService<FkWeatherSummaryId, WeatherSummaryService>, BaseForeignKeyService<FkWeatherSummaryId, WeatherSummaryService>>();
+        services.AddScoped<IForeignKeyService<FkWeatherSummaryId, WeatherSummaryService>, StandardForeignKeyService<FkWeatherSummaryId, WeatherSummaryService>>();
     }
 }

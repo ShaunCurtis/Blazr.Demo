@@ -22,7 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
         Services.AddSingleton<ModalService>();
         Services.AddSingleton<UiStateService>();
 
-        Services.AddWeatherAppServerDataServices();
+        Services.AddInMemoryWeatherAppServerDataServices();
 
         Services.AddWeatherForecastServices();
         Services.AddWeatherSummaryServices();
@@ -30,6 +30,9 @@ var builder = WebApplication.CreateBuilder(args);
 }
 
 var app = builder.Build();
+
+// Add the test data to the InMemory Db
+WeatherAppDataServices.AddTestData(app.Services);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

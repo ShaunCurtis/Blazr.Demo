@@ -19,17 +19,19 @@ Generics are implemented at the method level, not the class level.  The applicat
 public interface IDataBroker
 {
     public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync<TRecord>(ListProviderRequest request) where TRecord: class, new();
-    public ValueTask<TRecord> GetRecordAsync<TRecord>(TRecord record) where TRecord : class, new();
-    public ValueTask<int> GetRecordCountAsync<TRecord>() where TRecord : class, new();
-    public ValueTask<bool> AddRecordAsync<TRecord>(TRecord record) where TRecord : class, new();
-    public ValueTask<bool> UpdateRecordAsync<TRecord>(TRecord record) where TRecord : class, new();
-    public ValueTask<bool> DeleteRecordAsync<TRecord>(TRecord record) where TRecord : class, new();
+    public ValueTask<RecordProviderResult<TRecord>> GetRecordAsync<TRecord>(Guid id) where TRecord : class, new();
+    public ValueTask<FKListProviderResult> GetFKListAsync<TRecord>() where TRecord : class, IFkListItem, new();
+    public ValueTask<RecordCountProviderResult> GetRecordCountAsync<TRecord>() where TRecord : class, new();
+    public ValueTask<CommandResult> AddRecordAsync<TRecord>(TRecord record) where TRecord : class, new();
+    public ValueTask<CommandResult> UpdateRecordAsync<TRecord>(TRecord record) where TRecord : class, new();
+    public ValueTask<CommandResult> DeleteRecordAsync<TRecord>(TRecord record) where TRecord : class, new();
 }
 ```
 Note:
 
 1. The methods are all generic.  We'll see how the implementation works in an implementation class.
 2. All the methods are `async` and return `ValueTasks`.
+3. All the methods return result objects that include status information.
 
 ### Server Data Broker
 
@@ -55,71 +57,88 @@ public class ServerEFDataBroker<TDbContext>
 
 Next we implement the standard CRUD operations.  Each method gets an individual DbContext from the factory with `Using`. 
 
-`GetRecordAsync` uses a helper method to get the `Index` attribute field and Dynamic Linq to run the query.
+`GetRecordAsync` either uses the Id if the record has one (implements `IRecord`) or EF's `FindAsync` method.
 
 ```csharp
-    public async ValueTask<TRecord> GetRecordAsync<TRecord>(Guid id) where TRecord : class, new()
+public async ValueTask<RecordProviderResult<TRecord>> GetRecordAsync<TRecord>(Guid id) where TRecord : class, new()
+{
+    var _dbContext = factory.CreateDbContext();
+
+    TRecord? record = null;
+
+    // first check if the record implements IRecord.  If so we can do a cast and then do the quesry via the Id property directly 
+    if ((new TRecord()) is IRecord)
+        record = await _dbContext.Set<TRecord>().SingleOrDefaultAsync(item => ((IRecord)item).Id == id);
+
+    // Try and use the EF FindAsync implementation
+    if (record == null)
+        record = await _dbContext.FindAsync<TRecord>(id);
+
+    if (record is null)
     {
-        using var context = database.CreateDbContext();
-        var key = GetKeyProperty<TRecord>();
-        var dbSet = context.Set<TRecord>().AsNoTracking();
-        if (dbSet is null)
-            return new TRecord();
-
-        var records = await dbSet
-            .Where($"{key} == \"{id}\"")
-            .ToListAsync();
-
-        return records is not null && records.Count == 1
-            ? records[0]
-            : new TRecord();
+        _message = "No record retrieved";
+        _success = false;
     }
 
-    private string GetKeyProperty<T>() where T : class, new()
-    {
-        var instance = new T();
-        var prop = instance.GetType()
-            .GetProperties()
-            .FirstOrDefault(prop => prop.GetCustomAttributes(false)
-                .OfType<KeyAttribute>()
-                .Any());
-        return prop?.Name ?? string.Empty;
-    }
+    return new RecordProviderResult<TRecord>(record, _success, _message);
+}
 ```
 
 `GetRecordCountAsync` gets the total record count.  It uses `CountAsync` to make the operation async.
 
 ```csharp
-    public async ValueTask<int> GetRecordCountAsync<TRecord>() where TRecord : class, new()
-    {
-        using var dbContext = database.CreateDbContext();
-        IQueryable<TRecord> query = dbContext.Set<TRecord>();
-        return await query.CountAsync();
-    }
+public async ValueTask<RecordCountProviderResult> GetRecordCountAsync<TRecord>() where TRecord : class, new()
+{
+    using var dbContext = factory.CreateDbContext();
+    IQueryable<TRecord> query = dbContext.Set<TRecord>();
+    var count = await query.CountAsync();
+    return new RecordCountProviderResult(count);
+}
 ```
 
 The Add/Update/Delete methods use built in EF record management functionality.
 
 ```csharp
-public async ValueTask<bool> AddRecordAsync<TRecord>(TRecord item) where TRecord : class, new()
+public async ValueTask<CommandResult> AddRecordAsync<TRecord>(TRecord item) where TRecord : class, new()
 {
-    using var dbContext = database.CreateDbContext();
+    using var dbContext = factory.CreateDbContext();
+    var id = GetRecordId<TRecord>(item);
+
+    // Use the add method on the DbContect.  It knows what it's doing and will find the correct DbSet to add the record to
     dbContext.Add(item);
-    return await dbContext.SaveChangesAsync() == 1;
+
+    // We should have added a single record so the return count should be 1
+    return await dbContext.SaveChangesAsync() == 1
+        ? new CommandResult(id, true, "Record Added")
+        : new CommandResult(id, false, "Failed to Add Record");
 }
 
-public async ValueTask<bool> UpdateRecordAsync<TRecord>(TRecord item) where TRecord : class, new()
+public async ValueTask<CommandResult> UpdateRecordAsync<TRecord>(TRecord item) where TRecord : class, new()
 {
-    using var dbContext = database.CreateDbContext();
+    using var dbContext = factory.CreateDbContext();
+    var id = GetRecordId<TRecord>(item);
+
+    // Use the add method on the DbContect.  It knows what it's doing and will find the correct DbSet to add the record to
     dbContext.Update(item);
-    return await dbContext.SaveChangesAsync() == 1;
+
+    // We should have added a single record so the return count should be 1
+    return await dbContext.SaveChangesAsync() == 1
+        ? new CommandResult(id, true, "Record Updated")
+        : new CommandResult(id, false, "Failed to Update Record");
 }
 
-public async ValueTask<bool> DeleteRecordAsync<TRecord>(TRecord item) where TRecord : class, new()
+public async ValueTask<CommandResult> DeleteRecordAsync<TRecord>(TRecord item) where TRecord : class, new()
 {
-    using var dbContext = database.CreateDbContext();
+    using var dbContext = factory.CreateDbContext();
+    var id = GetRecordId<TRecord>(item);
+
+    // Use the add method on the DbContect.  It knows what it's doing and will find the correct DbSet to add the record to
     dbContext.Remove(item);
-    return await dbContext.SaveChangesAsync() == 1;
+
+    // We should have added a single record so the return count should be 1
+    return await dbContext.SaveChangesAsync() == 1
+        ? new CommandResult(id, true, "Record Deleted")
+        : new CommandResult(id, false, "Failed to Delete Record");
 }
 ```
 `GetRecordsAsync` returns a `ItemsProviderResult` object: the paged collection and the total number of records for the query.  Two internal methods do the work.  The methods use the `IQueryable` functionality of the underlying `DbSet` to construct a query based on `ListProviderRequest` and then execute the query to get the result.  The query action is wrapped in a `try`: Dynamic Linq will throw exceptions if it can't build a valid expression tree from the provided string expression.
@@ -134,25 +153,29 @@ Methods such as `Where` or `Take` modify the `Expression`: they don't run agains
 
 
 ```csharp
-public async ValueTask<ItemsProviderResult<TRecord>> GetRecordsAsync<TRecord>(ListProviderRequest options) where TRecord : class, new()
+public async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync<TRecord>(ListProviderRequest options) where TRecord : class, new()
 {
+    _message = null;
+    _success = true;
     var list = await this.GetItemsAsync<TRecord>(options);
     var count = await this.GetCountAsync<TRecord>(options);
-    return new ItemsProviderResult<TRecord>(list, count);    
+    return new ListProviderResult<TRecord>(list, count, _success, _message);    
 }
 
 protected async ValueTask<IEnumerable<TRecord>> GetItemsAsync<TRecord>(ListProviderRequest options) where TRecord : class, new()
 {
-    using var dbContext = database.CreateDbContext();
+    using var dbContext = factory.CreateDbContext();
+
     IQueryable<TRecord> query = dbContext.Set<TRecord>();
+
     if (!string.IsNullOrWhiteSpace(options.FilterExpression))
         query = query
                 .Where(options.FilterExpression);
 
-    if (options.Count > 0)
+    if (options.PageSize > 0)
         query = query
             .Skip(options.StartIndex)
-            .Take(options.Count);
+            .Take(options.PageSize);
 
     try
     {
@@ -160,14 +183,18 @@ protected async ValueTask<IEnumerable<TRecord>> GetItemsAsync<TRecord>(ListProvi
     }
     catch
     {
+        _success = false;
+        _message = "Error in Executing Query.  This is probably caused by an incompatible SortExpression or QueryExpression";
         return new List<TRecord>();
     }
 }
 
 protected async ValueTask<int> GetCountAsync<TRecord>(ListProviderRequest options) where TRecord : class, new()
 {
-    using var dbContext = database.CreateDbContext();
+    using var dbContext = factory.CreateDbContext();
+
     IQueryable<TRecord> query = dbContext.Set<TRecord>();
+
     if (!string.IsNullOrWhiteSpace(options.FilterExpression))
         query = query
                 .Where(options.FilterExpression);
@@ -178,6 +205,8 @@ protected async ValueTask<int> GetCountAsync<TRecord>(ListProviderRequest option
     }
     catch
     {
+        _success = false;
+        _message = "Error in Executing Query.  This is probably caused by an incompatible SortExpression or QueryExpression";
         return 0;
     }
 }
