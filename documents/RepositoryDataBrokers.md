@@ -1,19 +1,17 @@
 # Repository Data Brokers
 
-## Data Brokers
+Data brokers provide the link between the *Core* and *Data* domains.
 
-Data brokers provide the link between the Core and Data domains.
-
-The application has two types of data broker.
+The application implements two types of data broker.
 
 1. A set of data brokers that implement a generic Repository type pattern for CRUD and Read/List operations.
 2. A set of data brokers that implement a generic CQS pattern.
 
-This article covers the generic Repository pattern data pipeline,
+This article covers the Repository pattern data pipeline.
  
-## The Generic Repository Pattern
+## The Classic Generic Repository Pattern
 
-The classic generic pattern looks like this:
+The classic generic pattern that you will see looks like this:
 
 ```csharp
 public interface IRepository<T>
@@ -35,15 +33,27 @@ And the DI services instances declared like this:
 ```csharp
 services.AddScoped<IRepository<WeatherForecast>, BaseRepository<WeatherForecast>(); 
 services.AddScoped<IRepository<WeatherReport>, BaseRepository<WeatherReport>(); 
+services.AddScoped<IRepository<WeatherStation>, BaseRepository<WeatherStation>(); 
+services.AddScoped<IRepository<WeatherLocation>, BaseRepository<WeatherLocation>(); 
+//.... Ad Finitum for all your POCO classes mapping to your database tables and views
 ```
 
-This implementation uses a different approach.
+This implementation uses a different approach.  The service declaration looks like this:
 
-Generics are implemented at the method level, not the class level.  The application uses a single Singleton DI `IDataBroker` for the application.  Each call passes the data class to the method.  EF functionality maps requests to the correct `DbSet` and runs the action against that `DbSet`.  The command methods all return a simple `bool` status. 
+```csharp
+services.AddSingleton<IDataBroker, ServerInMemoryDataBroker<InMemoryWeatherDbContext>>();
+```
 
-The `IDataBroker` interface is defined in the core domain and all calls in the data pipeline are though this interface.
 
-All methods conform with CRS principles and return *Result* objects.
+Generics are implemented at the method level, not the class level.  The application uses a single Singleton DI `IDataBroker` for the application.  Each call passes the data class to the method.  EF functionality maps requests to the correct `DbSet` and runs the action against that `DbSet`.
+
+The `IDataBroker` interface is defined in the *Core* domain, one or more implementations in the *Data* domain, and all calls in the data pipeline are made though the interface.
+
+All methods:
+1. Conform to CRS principles.
+2. Use *unit of work* `DbContext` instances.
+3. Are *async*.
+4. Return `ValueTask` wrapped *Result* objects.
 
 
 ### IDataBroker
@@ -61,14 +71,11 @@ public interface IDataBroker
     public ValueTask<CommandResult> DeleteRecordAsync<TRecord>(TRecord record) where TRecord : class, new();
 }
 ```
-Note:
-
-1. All methods use generics.  We'll see how the implementation works in an implementation class.
-2. All the methods are `async` and return a `ValueTask`.
+Note that all methods define a restrained generic `TRecord` that are a class and implement an empty constructor.
 
 ## Results
 
-Results standardize returns and provide a method to return status information on the request. Each is a `struct`.  Query results contain the data requested,  They're self explanatory.  The List result is structured for paging operations.
+Result objects standardize method return values and provide a mechanism to return status information tpo the caller. Each is a readonly `struct`.  Query results contain the data requested.  The List result is structured for paging operations.
 
 ```csharp
 public readonly struct ListProviderResult<TRecord>
@@ -119,31 +126,23 @@ public readonly struct FKListProviderResult
 
 ### Server Data Broker
 
-`ServerEFDataBroker` is the `IDataBroker` implementation for Blazor Server and API web servers.
-
-Our service registration is as follows: 
-
-```csharp
-services.AddSingleton<IDataBroker, ServerInMemoryDataBroker<InMemoryWeatherDbContext>>();
-```
+`ServerDataBroker` is the `IDataBroker` implementation for Blazor Server and API web servers.
 
 The class takes a generic `TDbContext` constrained as  `DbContext`.  This abstracts the data broker from a specific `DbContext` implementation.  The demo solution uses an in-memory EF database.
 
 
 ```csharp
-public class ServerEFDataBroker<TDbContext>
+public class ServerDataBroker<TDbContext>
     : IDataBroker
     where TDbContext : DbContext
 {
-    protected readonly IDbContextFactory<TDbContext> factory;
+    private readonly IDbContextFactory<TDbContext> _factory;
     private bool _success;
     private string? _message;
 
-    public ServerEFDataBroker(IDbContextFactory<TDbContext> factory)
-        => this.factory = factory;
+    public ServerDataBroker(IDbContextFactory<TDbContext> factory)
+        => _factory = factory;
 ```
-
-All methods are async so we use "unit of work" Db contexts.
 
 Next we implement the standard CRUD operations.  Each method gets an individual DbContext from the factory with `Using`. 
 
@@ -152,24 +151,23 @@ Next we implement the standard CRUD operations.  Each method gets an individual 
 ```csharp
 public async ValueTask<RecordProviderResult<TRecord>> GetRecordAsync<TRecord>(Guid id) where TRecord : class, new()
 {
-    var _dbContext = factory.CreateDbContext();
-
+    var dbContext = _factory.CreateDbContext();
+    dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
     TRecord? record = null;
 
-    // first check if the record implements IRecord.  If so we can do a cast and then do the quesry via the Id property directly 
+    // first check if the record implements IRecord.  If so we can do a cast and then do the query via the Id property directly 
     if ((new TRecord()) is IRecord)
-        record = await _dbContext.Set<TRecord>().SingleOrDefaultAsync(item => ((IRecord)item).Id == id);
+        record = await dbContext.Set<TRecord>().SingleOrDefaultAsync(item => ((IRecord)item).Id == id);
 
     // Try and use the EF FindAsync implementation
     if (record == null)
-        record = await _dbContext.FindAsync<TRecord>(id);
+        record = await dbContext.FindAsync<TRecord>(id);
 
     if (record is null)
     {
         _message = "No record retrieved";
         _success = false;
     }
-
     return new RecordProviderResult<TRecord>(record, _success, _message);
 }
 ```
@@ -179,19 +177,21 @@ public async ValueTask<RecordProviderResult<TRecord>> GetRecordAsync<TRecord>(Gu
 ```csharp
 public async ValueTask<RecordCountProviderResult> GetRecordCountAsync<TRecord>() where TRecord : class, new()
 {
-    using var dbContext = factory.CreateDbContext();
+    using var dbContext = _factory.CreateDbContext();
+    dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
     IQueryable<TRecord> query = dbContext.Set<TRecord>();
     var count = await query.CountAsync();
     return new RecordCountProviderResult(count);
 }
 ```
 
-The Add/Update/Delete methods use built in EF record management functionality.
+The Add/Update/Delete methods use built in EF record management functionality.  This is the Add.
 
 ```csharp
 public async ValueTask<CommandResult> AddRecordAsync<TRecord>(TRecord item) where TRecord : class, new()
 {
-    using var dbContext = factory.CreateDbContext();
+    using var dbContext = _factory.CreateDbContext();
+
     var id = GetRecordId<TRecord>(item);
 
     // Use the add method on the DbContect.  It knows what it's doing and will find the correct DbSet to add the record to
@@ -202,36 +202,9 @@ public async ValueTask<CommandResult> AddRecordAsync<TRecord>(TRecord item) wher
         ? new CommandResult(id, true, "Record Added")
         : new CommandResult(id, false, "Failed to Add Record");
 }
-
-public async ValueTask<CommandResult> UpdateRecordAsync<TRecord>(TRecord item) where TRecord : class, new()
-{
-    using var dbContext = factory.CreateDbContext();
-    var id = GetRecordId<TRecord>(item);
-
-    // Use the add method on the DbContect.  It knows what it's doing and will find the correct DbSet to add the record to
-    dbContext.Update(item);
-
-    // We should have added a single record so the return count should be 1
-    return await dbContext.SaveChangesAsync() == 1
-        ? new CommandResult(id, true, "Record Updated")
-        : new CommandResult(id, false, "Failed to Update Record");
-}
-
-public async ValueTask<CommandResult> DeleteRecordAsync<TRecord>(TRecord item) where TRecord : class, new()
-{
-    using var dbContext = factory.CreateDbContext();
-    var id = GetRecordId<TRecord>(item);
-
-    // Use the add method on the DbContect.  It knows what it's doing and will find the correct DbSet to add the record to
-    dbContext.Remove(item);
-
-    // We should have added a single record so the return count should be 1
-    return await dbContext.SaveChangesAsync() == 1
-        ? new CommandResult(id, true, "Record Deleted")
-        : new CommandResult(id, false, "Failed to Delete Record");
-}
 ```
-`GetRecordsAsync` returns a `ItemsProviderResult` object: the paged collection and the total number of records for the query.  Two internal methods do the work.  The methods use the `IQueryable` functionality of the underlying `DbSet` to construct a query based on `ListProviderRequest` and then execute the query to get the result.  The query action is wrapped in a `try`: Dynamic Linq will throw exceptions if it can't build a valid expression tree from the provided string expression.
+
+`GetRecordsAsync` returns a `ItemsProviderResult` object: the paged collection and the total number of records for the query.  Two internal methods do the work.  The methods use the `IQueryable` functionality of the underlying `DbSet` to construct a query based on `ListProviderRequest` and finally execute the query to get the result.  The query action is wrapped in a `try`: Dynamic Linq will throw exceptions if it can't build a valid expression tree from the provided string expression.
 
 If you don't understand the differences between `IEnumerable` and `IQueryable` then I strongly recommend you read up on the subject.  [Here's an article](https://www.codeproject.com/Articles/1240553/LINQ-Part-An-Introduction-to-IQueryable).
 
@@ -254,7 +227,8 @@ public async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync<TRecord>(Lis
 
 protected async ValueTask<IEnumerable<TRecord>> GetItemsAsync<TRecord>(ListProviderRequest options) where TRecord : class, new()
 {
-    using var dbContext = factory.CreateDbContext();
+    using var dbContext = _factory.CreateDbContext();
+    dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
     IQueryable<TRecord> query = dbContext.Set<TRecord>();
 
@@ -281,7 +255,8 @@ protected async ValueTask<IEnumerable<TRecord>> GetItemsAsync<TRecord>(ListProvi
 
 protected async ValueTask<int> GetCountAsync<TRecord>(ListProviderRequest options) where TRecord : class, new()
 {
-    using var dbContext = factory.CreateDbContext();
+    using var dbContext = _factory.CreateDbContext();
+    dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
     IQueryable<TRecord> query = dbContext.Set<TRecord>();
 
@@ -302,42 +277,43 @@ protected async ValueTask<int> GetCountAsync<TRecord>(ListProviderRequest option
 }
 ```
 
-### ServerInMemoryDataBroker
-
-`ServerInMemoryDataBroker` is an `IDataBroker` implementation that uses an EF in-memory database context.  It inherits from `ServerEFDataBroker`.  The difference is New.  It uses the static class `WeatherForecastData` to generate test data and load it into the database.
+`GetFKListAsync` gets a list of `IFkListItems` that are principly used in select controls in edit forms.
 
 ```csharp
-public class ServerInMemoryDataBroker<TDbContext>
-    : ServerEFDataBroker<TDbContext>
-    where TDbContext : DbContext, IWeatherDbContext
-{
-    private bool _initialized = false;
-
-    public ServerInMemoryDataBroker(IDbContextFactory<TDbContext> db)
-        : base(db)
+    public async ValueTask<FKListProviderResult> GetFKListAsync<TRecord>() where TRecord : class, IFkListItem, new()
     {
-        // We need to populate this In Memory version of the database so we get a test data set from the static class WeatherForecastData
-        if (!_initialized)
-        {
-            WeatherForecastData.Load();
+        using var dbContext = _factory.CreateDbContext();
+        dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-            using var dbContext = database.CreateDbContext();
+        IQueryable<TRecord> query = dbContext.Set<TRecord>();
+        var list = await query.ToListAsync();
 
-            // Check if we already have a full data set
-            // If not clear down any existing data and start again
-            if (dbContext.DboWeatherLocation.Count() == 0 || dbContext.DboWeatherForecast.Count() == 0)
-            {
-                dbContext.RemoveRange(dbContext.DboWeatherForecast.ToList());
-                dbContext.RemoveRange(dbContext.DboWeatherLocation.ToList());
-                dbContext.SaveChanges();
-                dbContext.AddRange(WeatherForecastData.WeatherLocations);
-                dbContext.AddRange(WeatherForecastData.WeatherForecasts);
-                dbContext.SaveChanges();
-            }
-            _initialized = true;
-        }
+        if (list is null)
+            return new FKListProviderResult(Enumerable.Empty<IFkListItem>(), false, "Coukld not retrieve the FK List");
+
+        var fklist = list.Cast<IFkListItem>();
+
+        return new FKListProviderResult(fklist);
     }
+```
+
+The `IFkListItem` interface, `BaseFkListItem` and `FkWeatherSummary` implementation look like this:
+
+```csharp
+public interface IFkListItem
+{
+    public Guid Id { get; }
+    public string Name { get; }
 }
+
+public record BaseFkListItem 
+    : IFkListItem
+{
+    [Key] public Guid Id { get; init; }
+    public string Name { get; init; } = String.Empty;
+}
+
+public record FkWeatherSummary : BaseFkListItem { }
 ```
 
 ## Testing
@@ -346,29 +322,58 @@ The application uses XUnit testing.
 
 ### Defining the Test DI Service Container
 
-Creating a DotNetCore DI container is relatively simple:
+As this is a *system** rather than *unit* test we build out a DotNetCore DI container.
+
+This is relatively simple:
+
 1. Create a `ServiceCollection`.
 2. Add services to the collection.
-3. Create a container - called a `ServiceProvider` - by calling `ServiceCollection.BuildServiceProvider()`.
-
-You can see the Test container creation in the test class New.  It adds the DbContext factory and the `ServerInMemoryDataBroker` instance of `IDataBroker`.
+3. Create a DI container instance - called a `ServiceProvider` - by calling `ServiceCollection.BuildServiceProvider()`.
 
 ```csharp
-public class DbContextTests
+public class RepositoryBrokerTests
 {
-    private IServiceProvider _serviceProvider;
-    private InMemoryDatabaseService? _testDatabaseData;
+    private WeatherTestDataProvider _weatherTestDataProvider;
 
-    public DbContextTests()
+    public RepositoryBrokerTests()
+        => _weatherTestDataProvider = WeatherTestDataProvider.Instance();
+
+    private ServiceProvider GetServiceProvider()
     {
         var services = new ServiceCollection();
-        services.AddDbContextFactory<InMemoryWeatherDbContext>(options => options.UseInMemoryDatabase("WeatherDatabase"));
-        services.AddSingleton<IDataBroker, ServerInMemoryDataBroker<InMemoryWeatherDbContext>>();
-        services.AddSingleton<InMemoryDatabaseService>();
-        _serviceProvider = services.BuildServiceProvider();
-        // instance initialised to create test data
+        Action<DbContextOptionsBuilder> dbOptions = options => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}");
+        services.AddWeatherAppServerDataServices<InMemoryWeatherDbContext>(dbOptions);
+        var provider = services.BuildServiceProvider();
 
-        _testDatabaseData = _serviceProvider.GetService(typeof(InMemoryDatabaseService)) as InMemoryDatabaseService;
+        WeatherAppDataServices.AddTestData(provider);
+
+        return provider!;
+    }
+    ///... tests
+}
+```
+
+`AddInMemoryWeatherAppServerDataServices` is an extension method on `IServiceCollection`.  You can see it below.  It defines all the services we need to a specific application requirement.
+
+`AddTestData` adds the test data to the in-memory database. 
+
+```csharp
+public static class WeatherAppDataServices
+{
+    public static void AddWeatherAppServerDataServices<TDbContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> options) where TDbContext : DbContext
+    {
+        services.AddDbContextFactory<TDbContext>(options);
+        services.AddSingleton<ICQSDataBroker, CQSDataBroker<InMemoryWeatherDbContext>>();
+        services.AddSingleton<IDataBroker, ServerDataBroker<InMemoryWeatherDbContext>>();
+        services.AddSingleton<ICustomCQSDataBroker, ServerCustomCQSDataBroker<TDbContext>>();
+    }
+
+    public static void AddTestData(IServiceProvider provider)
+    {
+        var factory = provider.GetService<IDbContextFactory<InMemoryWeatherDbContext>>();
+
+        if (factory is not null)
+            WeatherTestDataProvider.Instance().LoadDbContext<InMemoryWeatherDbContext>(factory);
     }
 }
 ```
@@ -377,17 +382,16 @@ We can then write a simple test to check the `GetRecordsAsync` like this:
 
 ```csharp
 [Fact]
-public async void TestListRepositoryDataBroker()
+public async void TestRepositoryDataBrokerDboWeatherForecastList()
 {
-    var broker = _serviceProvider.GetService(typeof(IDataBroker)) as ServerInMemoryDataBroker<InMemoryWeatherDbContext>;
-    var WeatherForecastBroker = _serviceProvider.GetService(typeof(IWeatherForecastDataBroker<InMemoryWeatherDbContext>)) as IWeatherForecastDataBroker<InMemoryWeatherDbContext>;
+    var provider = GetServiceProvider();
+    var broker = provider.GetService<IDataBroker>()!;
 
     var cancelToken = new CancellationToken();
-    var listRequest = new ListProviderRequest(0, 10, cancelToken);
-    var result = await broker!.GetRecordsAsync<DvoWeatherForecast>(listRequest);
+    var listRequest = new ListProviderRequest(0, 1000, cancelToken);
+    var result = await broker!.GetRecordsAsync<DboWeatherForecast>(listRequest);
 
-    Assert.Equal(10, result.Items.Count());
-    Assert.True(result.TotalItemCount >= 300);
+    Assert.Equal(100, result.Items.Count());
 }
 ```
 
@@ -395,18 +399,19 @@ And a `AddRecordAsync` test like this:
 
 ```csharp
 [Fact]
-public async void TestAddRepositoryDataBroker()
+public async void TestAddMovementRepositoryDataBroker()
 {
-    var broker = _serviceProvider.GetService(typeof(IDataBroker)) as ServerInMemoryDataBroker<InMemoryWeatherDbContext>;
-    var WeatherForecastBroker = _serviceProvider.GetService(typeof(IWeatherForecastDataBroker<InMemoryWeatherDbContext>)) as IWeatherForecastDataBroker<InMemoryWeatherDbContext>;
+    var provider = GetServiceProvider();
+    var broker = provider.GetService<IDataBroker>()!;
 
-    var newRecord = _testDatabaseData!.GetForecast();
+    var testRecord = _weatherTestDataProvider.GetForecast();
+    var newRecord = testRecord with { };
     var id = newRecord.WeatherForecastId;
     var result = await broker!.AddRecordAsync<DboWeatherForecast>(newRecord);
 
-    var testRecord = await broker.GetRecordAsync<DboWeatherForecast>(id);
+    var recordResult = await broker.GetRecordAsync<DboWeatherForecast>(id);
 
-    Assert.True(result);
-    Assert.Equal(newRecord, testRecord);
+    Assert.True(result.Success);
+    Assert.Equal(testRecord, recordResult.Record);
 }
 ```
