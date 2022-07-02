@@ -2,7 +2,7 @@
 
 ## Data Classes
 
-Data classes are core domain objects: they are used throughout the application. The application defines three data classes to match the database objects required by the core domain and UI.
+Data classes (often knows as POCO classes) are core domain objects used throughout the application. The application defines three primary data classes to match the database objects required by the core domain and UI.
 
 1. They are value based immutable `records`.
 2. They have a new unique ID field labelled with the `[Key]` attribute for database compatibility.
@@ -15,7 +15,7 @@ Data classes are core domain objects: they are used throughout the application. 
 public record DboWeatherSummary 
 {
     [Key] public Guid WeatherSummaryId { get; init; } = Guid.Empty;
-    public string Summary { get; init; } = string.Empty; 
+    public string Summary { get; init; } = string.Empty
 }
 ```
 
@@ -40,9 +40,7 @@ public record DvoWeatherForecast : IRecord
 }
 ```
 
-Note that there's a `IRecord` interface for any records that implement a generic name key "Id".
-
-This looks like this:
+The `IRecord` interface is applied to any record that implements an "Id" property which makes record lookups simple.  This looks like this:
 
 ```csherp
 public interface IRecord 
@@ -75,26 +73,7 @@ public record FkWeatherSummaryId : BaseFkListItem { }
 
 ## DBContext
 
-The application uses interfaces to abstract the context implementation from the data brokers.  The DI `DbContext` can be switched between test and production databases with no changes to code up the data pipeline.
-
-### IWeatherDbContext
-
-The interface exposes the `DbSet` properties that the data domain uses and any underlying `DbContext` methods and properties the data domain code needs to access.  In this instance surfacing `SaveChangesAsync` so the data brokers can run CRUD operations and commit them to the datastore.
-
-```csharp
-public interface IWeatherDbContext
-{
-    public DbSet<DboWeatherForecast> DboWeatherForecast { get; set; }
-    public DbSet<DvoWeatherForecast> DvoWeatherForecast { get; set; }
-    public DbSet<DboWeatherSummary> DboWeatherSummary { get; set; }
-    public DbSet<FkWeatherSummaryId> FkWeatherSummaryId { get; set; }
-    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
-    public EntityEntry Add(object entity);
-    public EntityEntry Update(object entity);
-    public EntityEntry Remove(object entity);
-    public DbSet<TEntity> Set<TEntity>() where TEntity : class;
-}
-```
+The application uses the generic methods in `DbContext` so there's no need for specific interfaces.
 
 ### InMemoryDbContext
 
@@ -102,7 +81,7 @@ This is the implementation used while developing and testing the application.
 
 ```csharp
 public class InMemoryWeatherDbContext
-    : DbContext, IWeatherDbContext
+    : DbContext
 {
     public DbSet<DboWeatherForecast> DboWeatherForecast { get; set; } = default!;
     public DbSet<DvoWeatherForecast> DvoWeatherForecast { get; set; } = default!;
@@ -140,7 +119,7 @@ public class InMemoryWeatherDbContext
 }
 ```
 
-It inherits from `DbContext` and implements `IWeatherDbContext`.  It's designed to be used with an Entity Framework `In-Memory` database, so implements the `DvoWeatherForecast` and `FkWeatherSummaryId` views in the context as an `InMemoryQuery`.  This would point to a real view in a live database:
+It inherits from `DbContext`.  It's designed to be used with an Entity Framework `In-Memory` database, so implements the `DvoWeatherForecast` and `FkWeatherSummaryId` views in the context as  `InMemoryQuery`c definitions.  This would point to a real view in a live database:
 
 ```csharp
 modelBuilder.Entity<DvoWeatherForecast>().ToView("vw_WeatherForecasts");
