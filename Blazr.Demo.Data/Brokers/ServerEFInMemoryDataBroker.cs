@@ -6,7 +6,7 @@
 namespace Blazr.Demo.Data;
 
 public class ServerEFInMemoryDataBroker<TDbContext>
-    : ServerEFDataBroker<TDbContext>
+    : ServerDataBroker<TDbContext>
     where TDbContext : DbContext
 {
     public ServerEFInMemoryDataBroker(IDbContextFactory<TDbContext> db)

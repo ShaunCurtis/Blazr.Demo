@@ -5,31 +5,43 @@
 /// ============================================================
 namespace Blazr.Demo.Data;
 
-public class ServerEFDataBroker<TDbContext>
+public class ServerDataBroker<TDbContext>
     : IDataBroker
     where TDbContext : DbContext
 {
-    protected readonly IDbContextFactory<TDbContext> database;
+    private readonly IDbContextFactory<TDbContext> _factory;
     private bool _success;
     private string? _message;
 
-    public ServerEFDataBroker(IDbContextFactory<TDbContext> db)
-        => this.database = db;
+    public ServerDataBroker(IDbContextFactory<TDbContext> factory)
+        => _factory = factory;
 
     public async ValueTask<RecordProviderResult<TRecord>> GetRecordAsync<TRecord>(Guid id) where TRecord : class, new()
     {
-        using var context = database.CreateDbContext();
+        var _dbContext = _factory.CreateDbContext();
 
-        TRecord? record = await context.FindAsync<TRecord>(id);
+        TRecord? record = null;
 
-        return record is null
-            ? new RecordProviderResult<TRecord>(null, false, "Could not find the record in the DbSet.")
-            : new RecordProviderResult<TRecord>(record, true, "Record retrieved successfully.");
+        // first check if the record implements IRecord.  If so we can do a cast and then do the query via the Id property directly 
+        if ((new TRecord()) is IRecord)
+            record = await _dbContext.Set<TRecord>().SingleOrDefaultAsync(item => ((IRecord)item).Id == id);
+
+        // Try and use the EF FindAsync implementation
+        if (record == null)
+            record = await _dbContext.FindAsync<TRecord>(id);
+
+        if (record is null)
+        {
+            _message = "No record retrieved";
+            _success = false;
+        }
+
+        return new RecordProviderResult<TRecord>(record, _success, _message);
     }
 
     public async ValueTask<RecordCountProviderResult> GetRecordCountAsync<TRecord>() where TRecord : class, new()
     {
-        using var dbContext = database.CreateDbContext();
+        using var dbContext = _factory.CreateDbContext();
 
         IQueryable<TRecord> query = dbContext.Set<TRecord>();
 
@@ -40,7 +52,7 @@ public class ServerEFDataBroker<TDbContext>
 
     public async ValueTask<CommandResult> AddRecordAsync<TRecord>(TRecord item) where TRecord : class, new()
     {
-        using var dbContext = database.CreateDbContext();
+        using var dbContext = _factory.CreateDbContext();
 
         var id = GetRecordId<TRecord>(item);
 
@@ -55,7 +67,7 @@ public class ServerEFDataBroker<TDbContext>
 
     public async ValueTask<CommandResult> UpdateRecordAsync<TRecord>(TRecord item) where TRecord : class, new()
     {
-        using var dbContext = database.CreateDbContext();
+        using var dbContext = _factory.CreateDbContext();
 
         var id = GetRecordId<TRecord>(item);
 
@@ -70,7 +82,7 @@ public class ServerEFDataBroker<TDbContext>
 
     public async ValueTask<CommandResult> DeleteRecordAsync<TRecord>(TRecord item) where TRecord : class, new()
     {
-        using var dbContext = database.CreateDbContext();
+        using var dbContext = _factory.CreateDbContext();
 
         var id = GetRecordId<TRecord>(item);
 
@@ -94,7 +106,7 @@ public class ServerEFDataBroker<TDbContext>
 
     protected async ValueTask<IEnumerable<TRecord>> GetItemsAsync<TRecord>(ListProviderRequest options) where TRecord : class, new()
     {
-        using var dbContext = database.CreateDbContext();
+        using var dbContext = _factory.CreateDbContext();
 
         IQueryable<TRecord> query = dbContext.Set<TRecord>();
 
@@ -121,7 +133,7 @@ public class ServerEFDataBroker<TDbContext>
 
     protected async ValueTask<int> GetCountAsync<TRecord>(ListProviderRequest options) where TRecord : class, new()
     {
-        using var dbContext = database.CreateDbContext();
+        using var dbContext = _factory.CreateDbContext();
 
         IQueryable<TRecord> query = dbContext.Set<TRecord>();
 
@@ -158,5 +170,4 @@ public class ServerEFDataBroker<TDbContext>
         }
         return Guid.Empty;
     }
-
 }
