@@ -3,10 +3,10 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
+namespace Blazr.Core;
 
-namespace Blazr.Demo.Core;
-
-public interface ICustomCQSDataBroker
+public interface ICustomListQueryHandler<TRecord>
+        where TRecord : class, new()
 {
-    //public ValueTask<ListProviderResult<DvoWeatherForecast>> ExecuteAsync(WeatherForecastListQuery query);
+    ValueTask<ListProviderResult<TRecord>> ExecuteAsync(ICustomListQuery<TRecord> query);
 }

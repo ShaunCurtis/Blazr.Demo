@@ -3,7 +3,6 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-
 namespace Blazr.Data;
 
 public class CQSDataBroker<TDbContext>
@@ -11,9 +10,13 @@ public class CQSDataBroker<TDbContext>
     where TDbContext : DbContext
 {
     private readonly IDbContextFactory<TDbContext> _factory;
+    private readonly IServiceProvider _serviceProvider;
 
-    public CQSDataBroker(IDbContextFactory<TDbContext> factory)
-        => _factory = factory;
+    public CQSDataBroker(IDbContextFactory<TDbContext> factory, IServiceProvider serviceProvider)
+    { 
+        _factory = factory;
+        _serviceProvider = serviceProvider;
+    }
 
     public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordListQuery<TRecord> query) where TRecord : class, new()
     {
@@ -21,8 +24,18 @@ public class CQSDataBroker<TDbContext>
         var result = await handler.ExecuteAsync();
         return result;
     }
+    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(ICustomListQuery<TRecord> query) where TRecord : class, new()
+    {
+        var queryType = query.GetType();
+        var handler = _serviceProvider.GetService<ICustomListQueryHandler<TRecord>>();
+        if (handler == null)
+            throw new NullReferenceException("No Handler service registed for the List Query");
 
-    public async ValueTask<RecordProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordGuidQuery<TRecord> query) where TRecord : class, new()
+        var result = await handler.ExecuteAsync(query);
+        return result;
+    }
+
+    public async ValueTask<RecordProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordGuidKeyQuery<TRecord> query) where TRecord : class, new()
     {
         var handler = new RecordGuidQueryHandler<TRecord, TDbContext>(_factory, query);
         var result = await handler.ExecuteAsync();

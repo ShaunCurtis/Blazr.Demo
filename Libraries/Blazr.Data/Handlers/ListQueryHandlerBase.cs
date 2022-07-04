@@ -3,36 +3,35 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-namespace Blazr.Data;
+namespace Blazr.Demo.Data;
 
-public class RecordListQueryHandler<TRecord, TDbContext>
-    : ICQSHandler<RecordListQuery<TRecord>, ValueTask<ListProviderResult<TRecord>>>
-        where TRecord : class, new()
+public class ListQueryHandlerBase<TRecord, TDbContext>
+    : ICustomListQueryHandler<TRecord>
         where TDbContext : DbContext
+        where TRecord : class, new()
 
 {
     protected IEnumerable<TRecord> items = Enumerable.Empty<TRecord>();
     protected int count = 0;
 
     protected IDbContextFactory<TDbContext> factory;
-    protected readonly RecordListQuery<TRecord> listQuery;
+    protected ICustomListQuery<TRecord> listQuery = default!;
 
-    public RecordListQueryHandler(IDbContextFactory<TDbContext> factory, RecordListQuery<TRecord> query)
+    public ListQueryHandlerBase(IDbContextFactory<TDbContext> factory)
     {
         this.factory = factory;
-        this.listQuery = query;
     }
 
-    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync()
-        => await _executeAsync();
-
-    private async ValueTask<ListProviderResult<TRecord>> _executeAsync()
+    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync(ICustomListQuery<TRecord> query)
     {
-        if (this.listQuery is null)
+        if (query is null)
             return new ListProviderResult<TRecord>(new List<TRecord>(), 0, false, "No Query Defined");
+
+        listQuery = query;
 
         if (await this.GetItemsAsync())
             await this.GetCountAsync();
+
         return new ListProviderResult<TRecord>(this.items, this.count);
     }
 
@@ -42,7 +41,10 @@ public class RecordListQueryHandler<TRecord, TDbContext>
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
         IQueryable<TRecord> query = dbContext.Set<TRecord>();
-        query = this.GetCustomQueries(query);
+        if (listQuery.FilterExpression is not null)
+            query = query
+                .Where(listQuery.FilterExpression)
+                .AsQueryable();
 
         if (listQuery.Request.PageSize > 0)
             query = query
@@ -63,7 +65,8 @@ public class RecordListQueryHandler<TRecord, TDbContext>
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
         IQueryable<TRecord> query = dbContext.Set<TRecord>();
-        query = this.GetCustomQueries(query);
+        if (listQuery.FilterExpression is not null)
+            query = query.Where(listQuery.FilterExpression).AsQueryable();
 
         if (query is IAsyncEnumerable<TRecord>)
             count = await query.CountAsync();
@@ -72,7 +75,4 @@ public class RecordListQueryHandler<TRecord, TDbContext>
 
         return true;
     }
-
-    protected virtual IQueryable<TRecord> GetCustomQueries(IQueryable<TRecord> query)
-        => query;
 }

@@ -20,6 +20,8 @@ public class QueryBrokerTests
         var services = new ServiceCollection();
         Action<DbContextOptionsBuilder> dbOptions = options => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}");
         services.AddWeatherAppServerDataServices<InMemoryWeatherDbContext>(dbOptions);
+        services.AddTransient<ICustomListQueryHandler<DvoWeatherForecast>, ListQueryHandlerBase<DvoWeatherForecast, InMemoryWeatherDbContext>>();
+        //services.AddTransient<ICustomListQueryHandler<DvoWeatherForecast>, WeatherForecastListQueryHandler<InMemoryWeatherDbContext>>();
         var provider = services.BuildServiceProvider();
 
         WeatherAppDataServices.AddTestData(provider);
@@ -28,10 +30,10 @@ public class QueryBrokerTests
     }
 
     [Fact]
-    public async void TestQueryBySummaryDataBroker()
+    public async void TestWeatherQueryHandler()
     {
         var provider = GetServiceProvider();
-        var broker = provider.GetService<ICustomCQSDataBroker>()!;
+        var handler = provider.GetService<ICustomListQueryHandler<DvoWeatherForecast>>()!;
 
         var cancelToken = new CancellationToken();
         var listRequest = new ListProviderRequest(0, 2, cancelToken);
@@ -40,10 +42,70 @@ public class QueryBrokerTests
 
         var recordCount = _weatherTestDataProvider.WeatherForecasts.Where(item => item.WeatherSummaryId == summaryId).Count();
 
-        var query = new WeatherForecastBySummaryListQuery(summaryId, listRequest);
-        var result = await broker.ExecuteAsync(query);
+        var query = new WeatherForecastListQuery(summaryId, listRequest);
+        var result = await handler.ExecuteAsync(query);
 
         Assert.Equal(2, result.Items.Count());
         Assert.Equal(recordCount, result.TotalItemCount);
     }
+
+    [Fact]
+    public async void TestCustomWeatherQueryHandler()
+    {
+        var provider = GetServiceProvider();
+        var broker = provider.GetService<ICQSDataBroker>()!;
+
+        var cancelToken = new CancellationToken();
+        var listRequest = new ListProviderRequest(0, 2, cancelToken);
+
+        var summaryId = _weatherTestDataProvider.GetRandomRecord()?.WeatherSummaryId;
+
+        var recordCount = _weatherTestDataProvider.WeatherForecasts.Where(item => item.WeatherSummaryId == summaryId).Count();
+
+        var query = new WeatherForecastListQuery(summaryId, listRequest);
+
+        var result = await broker.ExecuteAsync<DvoWeatherForecast>(query);
+        Assert.Equal(2, result.Items.Count());
+        Assert.Equal(recordCount, result.TotalItemCount);
+    }
+
+
+    [Fact]
+    public async void TestCustomFullListWeatherQueryHandler()
+    {
+        var provider = GetServiceProvider();
+        var broker = provider.GetService<ICQSDataBroker>()!;
+
+        var cancelToken = new CancellationToken();
+        var listRequest = new ListProviderRequest(0, 2, cancelToken);
+
+        var recordCount = _weatherTestDataProvider.WeatherForecasts.Count();
+
+        var query = new WeatherForecastListQuery(Guid.Empty, listRequest);
+
+        var result = await broker.ExecuteAsync<DvoWeatherForecast>(query);
+        Assert.Equal(2, result.Items.Count());
+        Assert.Equal(recordCount, result.TotalItemCount);
+    }
+
+    [Fact]
+    public async void TestCustomListWeatherQueryHandler2()
+    {
+        var provider = GetServiceProvider();
+        var broker = provider.GetService<ICQSDataBroker>()!;
+
+        var cancelToken = new CancellationToken();
+        var listRequest = new ListProviderRequest(0, 2, cancelToken);
+
+        var summaryId = _weatherTestDataProvider.GetRandomRecord()?.WeatherSummaryId;
+        var recordCount = _weatherTestDataProvider.WeatherForecasts.Where(item => item.WeatherSummaryId == summaryId).Count();
+
+        Func<DvoWeatherForecast, bool> expression = item => item.WeatherSummaryId == summaryId;
+        var query = new CustomListQuery<DvoWeatherForecast>(listRequest, expression);
+
+        var result = await broker.ExecuteAsync<DvoWeatherForecast>(query);
+        Assert.Equal(2, result.Items.Count());
+        Assert.Equal(recordCount, result.TotalItemCount);
+    }
+
 }

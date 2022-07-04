@@ -8,11 +8,11 @@ namespace Blazr.Demo.Tests;
 
 public class CQSBrokerTests
 {
-    private WeatherTestDataProvider _weatherTestData;
+    private WeatherTestDataProvider _weatherTestDataProvider;
 
     public CQSBrokerTests()
     {
-        _weatherTestData = WeatherTestDataProvider.Instance();
+        _weatherTestDataProvider = WeatherTestDataProvider.Instance();
     }
 
     private ServiceProvider GetServiceProvider()
@@ -45,6 +45,28 @@ public class CQSBrokerTests
     }
 
     [Fact]
+    public async void TestCustomListCQSDataBroker()
+    {
+        var provider = GetServiceProvider();
+        var broker = provider.GetService<ICQSDataBroker>()!;
+
+        var cancelToken = new CancellationToken();
+        var listRequest = new ListProviderRequest(0, 2, cancelToken);
+
+        var summaryId = _weatherTestDataProvider.GetRandomRecord()?.WeatherSummaryId;
+
+        var recordCount = _weatherTestDataProvider.WeatherForecasts.Where(item => item.WeatherSummaryId == summaryId).Count();
+
+        var query = new WeatherForecastListQuery(summaryId, listRequest);
+
+        var result = await broker.ExecuteAsync<DvoWeatherForecast>(query);
+
+        Assert.True(result.Success);
+        Assert.Equal(2, result.Items.Count());
+        Assert.Equal(recordCount, result.TotalItemCount);
+    }
+
+    [Fact]
     public async void TestFKCQSDataBroker()
     {
         var provider = GetServiceProvider();
@@ -54,7 +76,7 @@ public class CQSBrokerTests
         var result = await broker.ExecuteAsync<FkWeatherSummary>(query);
 
         Assert.True(result.Success);
-        Assert.Equal(_weatherTestData.WeatherSummaries.Count(), result.Items.Count());
+        Assert.Equal(_weatherTestDataProvider.WeatherSummaries.Count(), result.Items.Count());
     }
 
     [Fact]
@@ -63,10 +85,10 @@ public class CQSBrokerTests
         var provider = GetServiceProvider();
         var broker = provider.GetService<ICQSDataBroker>()!;
 
-        var testRecord = _weatherTestData.GetRandomRecord()!;
-        var CompareRecord = _weatherTestData.GetDvoWeatherForecast(testRecord);
+        var testRecord = _weatherTestDataProvider.GetRandomRecord()!;
+        var CompareRecord = _weatherTestDataProvider.GetDvoWeatherForecast(testRecord);
 
-        var query = new RecordGuidQuery<DvoWeatherForecast>(testRecord.WeatherForecastId);
+        var query = new RecordGuidKeyQuery<DvoWeatherForecast>(testRecord.WeatherForecastId);
         var result = await broker.ExecuteAsync(query);
 
         Assert.True(result.Success);
@@ -81,9 +103,9 @@ public class CQSBrokerTests
         var broker = provider.GetService<ICQSDataBroker>()!;
 
         //var testRecord = _weatherTestData.GetRandomRecord()!;
-        var testRecord = _weatherTestData.WeatherSummaries.ToArray()[0]!;
+        var testRecord = _weatherTestDataProvider.WeatherSummaries.ToArray()[0]!;
 
-        var query = new RecordGuidQuery<DboWeatherSummary>(testRecord.WeatherSummaryId);
+        var query = new RecordGuidKeyQuery<DboWeatherSummary>(testRecord.WeatherSummaryId);
         //var query = new RecordQuery<DboWeatherForecast>(testRecord.WeatherForecastId);
         var result = await broker.ExecuteAsync(query);
 
@@ -99,13 +121,13 @@ public class CQSBrokerTests
         var provider = GetServiceProvider();
         var broker = provider.GetService<ICQSDataBroker>()!;
 
-        var newRecord = _weatherTestData.GetForecast();
+        var newRecord = _weatherTestDataProvider.GetForecast();
         var id = newRecord!.WeatherForecastId;
 
         var command = new AddRecordCommand<DboWeatherForecast>(newRecord);
         var result = await broker.ExecuteAsync(command);
 
-        var query = new RecordGuidQuery<DvoWeatherForecast>(id);
+        var query = new RecordGuidKeyQuery<DvoWeatherForecast>(id);
         var testRecord = await broker.ExecuteAsync(query);
         var testRec = testRecord.Record!;
         var rec = new DboWeatherForecast
@@ -132,7 +154,7 @@ public class CQSBrokerTests
 
         var startRecords = await broker.ExecuteAsync(query);
 
-        var deleteRecord = _weatherTestData.GetRandomRecord()!;
+        var deleteRecord = _weatherTestDataProvider.GetRandomRecord()!;
 
         var command = new DeleteRecordCommand<DboWeatherForecast>(deleteRecord);
         var id = deleteRecord.WeatherForecastId;
@@ -156,14 +178,14 @@ public class CQSBrokerTests
 
         var startRecords = await broker.ExecuteAsync(query);
 
-        var editedRecord = _weatherTestData.GetRandomRecord()! with { Date = DateTime.Now.AddDays(10) };
-        var editedDvoRecord = _weatherTestData.GetDvoWeatherForecast(editedRecord);
+        var editedRecord = _weatherTestDataProvider.GetRandomRecord()! with { Date = DateTime.Now.AddDays(10) };
+        var editedDvoRecord = _weatherTestDataProvider.GetDvoWeatherForecast(editedRecord);
         var id = editedRecord.WeatherForecastId;
 
         var command = new UpdateRecordCommand<DboWeatherForecast>(editedRecord);
         var result = await broker.ExecuteAsync(command);
 
-        var recordQuery = new RecordGuidQuery<DvoWeatherForecast>(id);
+        var recordQuery = new RecordGuidKeyQuery<DvoWeatherForecast>(id);
         var updatedRecord = await broker.ExecuteAsync(recordQuery);
 
         Assert.True(result.Success);

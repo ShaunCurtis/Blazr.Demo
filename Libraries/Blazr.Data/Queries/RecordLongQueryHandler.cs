@@ -6,17 +6,17 @@
 namespace Blazr.Data;
 
 public class RecordLongQueryHandler<TRecord, TDbContext>
-    : ICQSHandler<RecordGuidQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
+    : ICQSHandler<RecordGuidKeyQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
         where TRecord : class, new()
         where TDbContext : DbContext
 
 {
-    private readonly RecordLongQuery<TRecord> _query;
+    private readonly RecordLongKeyQuery<TRecord> _query;
     private IDbContextFactory<TDbContext> _factory;
     private bool _success = true;
     private string _message = string.Empty;
 
-    public RecordLongQueryHandler(IDbContextFactory<TDbContext> factory, RecordLongQuery<TRecord> query)
+    public RecordLongQueryHandler(IDbContextFactory<TDbContext> factory, RecordLongKeyQuery<TRecord> query)
     {
         _factory = factory;
         _query = query;

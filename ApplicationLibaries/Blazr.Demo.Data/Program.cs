@@ -1,5 +1,5 @@
 ﻿global using System.ComponentModel.DataAnnotations;
-global using System.Linq.Dynamic.Core;
+//global using System.Linq.Dynamic.Core;
 global using System.Reflection;
 
 global using Blazr.Demo.Core;

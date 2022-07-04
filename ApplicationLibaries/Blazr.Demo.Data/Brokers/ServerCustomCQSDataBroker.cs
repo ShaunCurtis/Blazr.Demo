@@ -15,9 +15,9 @@ public class ServerCustomCQSDataBroker<TDbContext>
     public ServerCustomCQSDataBroker(IDbContextFactory<TDbContext> factory)
         => this.factory = factory;
 
-    public async ValueTask<ListProviderResult<DvoWeatherForecast>> ExecuteAsync(WeatherForecastBySummaryListQuery query)
-    {
-        var handler = new WeatherForecastBySummaryListQueryHandler<TDbContext>(factory, query);
-        return await handler.ExecuteAsync();
-    }
+    //public async ValueTask<ListProviderResult<DvoWeatherForecast>> ExecuteAsync(WeatherForecastListQuery query)
+    //{
+    //    var handler = new WeatherForecastBySummaryListQueryHandler<TDbContext>(factory, query);
+    //    return await handler.ExecuteAsync();
+    //}
 }

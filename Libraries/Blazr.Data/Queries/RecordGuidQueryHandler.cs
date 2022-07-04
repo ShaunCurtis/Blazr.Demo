@@ -6,17 +6,17 @@
 namespace Blazr.Data;
 
 public class RecordGuidQueryHandler<TRecord, TDbContext>
-    : ICQSHandler<RecordGuidQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
+    : ICQSHandler<RecordGuidKeyQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
         where TRecord : class, new()
         where TDbContext : DbContext
 
 {
-    private readonly RecordGuidQuery<TRecord> _query;
+    private readonly RecordGuidKeyQuery<TRecord> _query;
     private IDbContextFactory<TDbContext> _factory;
     private bool _success = true;
     private string _message = string.Empty;
 
-    public RecordGuidQueryHandler(IDbContextFactory<TDbContext> factory, RecordGuidQuery<TRecord> query)
+    public RecordGuidQueryHandler(IDbContextFactory<TDbContext> factory, RecordGuidKeyQuery<TRecord> query)
     {
         _factory = factory;
         _query = query;

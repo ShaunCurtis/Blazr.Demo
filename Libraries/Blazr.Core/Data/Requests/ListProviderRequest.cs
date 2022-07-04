@@ -16,7 +16,7 @@ public readonly struct ListProviderRequest
 
     public string? SortExpression { get; }
 
-    public string? FilterExpression { get; }
+    public string? FilterExpressionString { get; }
 
     public ItemsProviderRequest Request => new (this.StartIndex, this.PageSize, this.CancellationToken);
 
@@ -26,16 +26,16 @@ public readonly struct ListProviderRequest
         PageSize = 10000;
         CancellationToken = new CancellationToken();
         SortExpression = null;
-        FilterExpression = null;
+        FilterExpressionString = null;
     }
 
-    public ListProviderRequest(int startIndex, int pageSize, CancellationToken cancellationToken, string? sortExpression = null, string? filterExpression = null )
+    public ListProviderRequest(int startIndex, int pageSize, CancellationToken cancellationToken, string? sortExpression = null, string? filterExpressionString = null )
     {
         StartIndex = startIndex;
         PageSize = pageSize;
         CancellationToken = cancellationToken;
         SortExpression = sortExpression;
-        FilterExpression = filterExpression;
+        FilterExpressionString = filterExpressionString;
     }
 
     public ListProviderRequest(ItemsProviderRequest request)
@@ -44,7 +44,7 @@ public readonly struct ListProviderRequest
         PageSize = request.Count;
         CancellationToken = request.CancellationToken;
         SortExpression = null;
-        FilterExpression = null;
+        FilterExpressionString = null;
     }
 
     public ListProviderRequest(ListState options)
@@ -53,6 +53,6 @@ public readonly struct ListProviderRequest
         PageSize = options.PageSize;
         CancellationToken = new CancellationToken();
         SortExpression = null;
-        FilterExpression = null;
+        FilterExpressionString = null;
     }
 }

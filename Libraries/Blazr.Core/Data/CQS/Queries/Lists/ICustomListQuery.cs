@@ -4,9 +4,12 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.Demo.Core;
+namespace Blazr.Core;
 
-public interface ICustomCQSDataBroker
+public interface ICustomListQuery<TRecord>
+    : ICQSRequest<ValueTask<ListProviderResult<TRecord>>>
 {
-    //public ValueTask<ListProviderResult<DvoWeatherForecast>> ExecuteAsync(WeatherForecastListQuery query);
+    public ListProviderRequest Request { get; }
+
+    public Func<TRecord, bool>? FilterExpression { get; }
 }

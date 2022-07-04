@@ -41,7 +41,7 @@ public class StandardListService<TRecord, TService>
     public async ValueTask GetRecordAsync(Guid Id)
     {
         this.Message = String.Empty;
-        var result = await this.DataBroker.ExecuteAsync<TRecord>(new RecordGuidQuery<TRecord>(Id));
+        var result = await this.DataBroker.ExecuteAsync<TRecord>(new RecordGuidKeyQuery<TRecord>(Id));
 
         if (result.Success && result.Record is not null)
         {

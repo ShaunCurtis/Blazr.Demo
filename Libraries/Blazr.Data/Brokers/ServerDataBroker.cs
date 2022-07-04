@@ -129,9 +129,9 @@ public class ServerDataBroker<TDbContext>
 
         IQueryable<TRecord> query = dbContext.Set<TRecord>();
 
-        if (!string.IsNullOrWhiteSpace(options.FilterExpression))
+        if (!string.IsNullOrWhiteSpace(options.FilterExpressionString))
             query = query
-                 .Where(options.FilterExpression);
+                 .Where(options.FilterExpressionString);
 
         if (options.PageSize > 0)
             query = query
@@ -157,9 +157,9 @@ public class ServerDataBroker<TDbContext>
 
         IQueryable<TRecord> query = dbContext.Set<TRecord>();
 
-        if (!string.IsNullOrWhiteSpace(options.FilterExpression))
+        if (!string.IsNullOrWhiteSpace(options.FilterExpressionString))
             query = query
-                 .Where(options.FilterExpression);
+                 .Where(options.FilterExpressionString);
 
         try
         {
