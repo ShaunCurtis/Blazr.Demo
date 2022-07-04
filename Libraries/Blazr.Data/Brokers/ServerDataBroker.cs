@@ -133,6 +133,10 @@ public class ServerDataBroker<TDbContext>
             query = query
                  .Where(options.FilterExpression);
 
+        if (!string.IsNullOrWhiteSpace(options.SortExpression))
+            query = query
+                .OrderBy(options.SortExpression);
+
         if (options.PageSize > 0)
             query = query
                 .Skip(options.StartIndex)
