@@ -6,8 +6,8 @@
 
 namespace Blazr.Core;
 
-public class FilteredListQuery<TRecord>
-    :IFilteredListQuery<TRecord>
+public class CustomListQuery<TRecord>
+    :ICustomListQuery<TRecord>
     where TRecord : class, new()
 {
     public ListProviderRequest<TRecord> Request { get; private set; }
@@ -16,7 +16,7 @@ public class FilteredListQuery<TRecord>
 
     public Guid TransactionId => Guid.NewGuid();
 
-    public FilteredListQuery(ListProviderRequest<TRecord> request, Func<TRecord, bool>? filter)
+    public CustomListQuery(ListProviderRequest<TRecord> request, Func<TRecord, bool>? filter)
     {
         Request = request;
         FilterExpression = filter;

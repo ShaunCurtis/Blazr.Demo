@@ -70,10 +70,10 @@ public class CQSBrokerTests
     public async void TestCustomListCQSDataBroker()
     {
         var provider = GetServiceProvider();
-        var handler = provider.GetService<IListQueryHandler<DvoWeatherForecast>>()!;
+        var handler = provider.GetService<IFilteredListQueryHandler<DvoWeatherForecast>>()!;
 
         var cancelToken = new CancellationToken();
-        var listRequest = new ListProviderRequest(0, 2, cancelToken);
+        var listRequest = new ListProviderRequest<DvoWeatherForecast>(0, 2, cancelToken);
 
         var summaryId = _weatherTestDataProvider.GetRandomRecord()?.WeatherSummaryId;
 
@@ -169,7 +169,7 @@ public class CQSBrokerTests
         var broker = provider.GetService<ICQSDataBroker>()!;
 
         var cancelToken = new CancellationToken();
-        var listRequest = new ListProviderRequest(0, 1000, cancelToken);
+        var listRequest = new ListProviderRequest<DvoWeatherForecast>(0, 1000, cancelToken);
         var query = new RecordListQuery<DvoWeatherForecast>(listRequest);
 
         var startRecords = await broker.ExecuteAsync(query);
@@ -193,7 +193,7 @@ public class CQSBrokerTests
         var broker = provider.GetService<ICQSDataBroker>()!;
 
         var cancelToken = new CancellationToken();
-        var listRequest = new ListProviderRequest(0, 1000, cancelToken);
+        var listRequest = new ListProviderRequest<DvoWeatherForecast>(0, 1000, cancelToken);
         var query = new RecordListQuery<DvoWeatherForecast>(listRequest);
 
         var startRecords = await broker.ExecuteAsync(query);

@@ -41,7 +41,7 @@ public class ListViewTests
         var notificationService = services.GetService<INotificationService<WeatherForecastService>>();
 
         var cancelToken = new CancellationToken();
-        var listRequest = new ListProviderRequest(startindex, pageSize, cancelToken);
+        var listRequest = new ListProviderRequest<DvoWeatherForecast>(startindex, pageSize, cancelToken);
         object? eventSender = null;
         PagingEventArgs? pagingEvent = null;
         

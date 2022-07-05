@@ -6,7 +6,7 @@
 namespace Blazr.Demo.Data;
 
 public class ListQueryHandlerBase<TRecord, TDbContext>
-    : IListQueryHandler<TRecord>
+    : IFilteredListQueryHandler<TRecord>
         where TDbContext : DbContext
         where TRecord : class, new()
 

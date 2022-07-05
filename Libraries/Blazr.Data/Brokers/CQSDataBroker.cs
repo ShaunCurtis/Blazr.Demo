@@ -27,7 +27,7 @@ public class CQSDataBroker<TDbContext>
     public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(IFilteredListQuery<TRecord> query) where TRecord : class, new()
     {
         var queryType = query.GetType();
-        var handler = _serviceProvider.GetService<IListQueryHandler<TRecord>>();
+        var handler = _serviceProvider.GetService<IFilteredListQueryHandler<TRecord>>();
         if (handler == null)
             throw new NullReferenceException("No Handler service registed for the List Query");
 

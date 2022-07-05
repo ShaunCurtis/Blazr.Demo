@@ -34,7 +34,7 @@ public class RepositoryBrokerTests
         var broker = provider.GetService<IDataBroker>()!;
 
         var cancelToken = new CancellationToken();
-        var listRequest = new ListProviderRequest(0, 1000, cancelToken);
+        var listRequest = new ListProviderRequest<DboWeatherForecast>(0, 1000, cancelToken);
         var result = await broker!.GetRecordsAsync<DboWeatherForecast>(listRequest);
 
         Assert.Equal(100, result.Items.Count());
@@ -47,7 +47,7 @@ public class RepositoryBrokerTests
         var broker = provider.GetService<IDataBroker>()!;
 
         var cancelToken = new CancellationToken();
-        var listRequest = new ListProviderRequest(0, 1000, cancelToken);
+        var listRequest = new ListProviderRequest<DboWeatherSummary>(0, 1000, cancelToken);
         var result = await broker!.GetRecordsAsync<DboWeatherSummary>(listRequest);
 
         Assert.Equal(10, result.Items.Count());

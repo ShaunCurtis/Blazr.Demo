@@ -8,8 +8,9 @@ namespace Blazr.Core;
 
 public interface IFilteredListQuery<TRecord>
     : ICQSRequest<ValueTask<ListProviderResult<TRecord>>>
+    where TRecord : class, new()
 {
-    public ListProviderRequest Request { get; }
+    public ListProviderRequest<TRecord> Request { get; }
 
     public Func<TRecord, bool>? FilterExpression { get; }
 }

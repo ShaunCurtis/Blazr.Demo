@@ -1,6 +1,6 @@
 # Building A Succinct CQS Data Pipeline
 
-I was excited the first time I came across CQS, but that excitement quickly disipated when I discovered how many classes I would need to create and maintain to implement it.  My generic repository framework trumped it hands down.
+The first time I came across CQS I though it might answer some issues I had with the Repository pattern.  My exitement quickly disipated when I discovered how many classes I needed to create to implement it.  My generic repository framework trumped it hands down.
 
 I recently had cause to revisit CQS on an application re-write and decided to work on creating a more succinct version.  This article is about what I've managed to achieve.
 
@@ -73,5 +73,63 @@ Note:
 6. `Dvo` records map to database view objects.
 
 There's a `WeatherTestDataProvider` singleton object to generate and access a test data set.
+
+## Results
+
+We can classify the results qwe want back inot five categories:
+
+1. A result containing a collection of objects.
+2. A result containing a record we wanr to retrieve.
+3. A result containing a count of the number of records in a dataset
+4. A result cointaning the status iof a command to  
+
+
+```csharp
+public readonly struct ListProviderResult<TRecord>
+{
+    public IEnumerable<TRecord> Items { get; }
+    public int TotalItemCount { get; }
+    public bool Success { get; }
+    public string? Message { get; }
+    //....Constructors
+}
+```
+```csaharp
+public readonly struct RecordProviderResult<TRecord>
+{
+    public TRecord? Record { get; }
+    public bool Success { get; }
+    public string? Message { get; }
+    //....Constructors
+}
+```
+```csaharp
+public readonly struct RecordCountProviderResult
+{
+    public int Count { get; }
+    public bool Success { get; }
+    public string? Message { get; }
+    //....Constructors
+}
+```
+```csaharp
+public readonly struct CommandResult
+{
+    public Guid NewId { get; init; }
+    public bool Success { get; init; }
+    public string Message { get; init; }
+    //....Constructors
+}
+```
+```csaharp
+public readonly struct FKListProviderResult
+{
+    public IEnumerable<IFkListItem> Items { get; }
+    public bool Success { get; }
+    public string? Message { get; }
+    //....Constructors
+}
+```
+
 
 
