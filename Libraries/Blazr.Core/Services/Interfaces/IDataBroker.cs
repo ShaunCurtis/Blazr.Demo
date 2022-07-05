@@ -7,7 +7,7 @@ namespace Blazr.Core;
 
 public interface IDataBroker
 {
-    public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync<TRecord>(ListProviderRequest request) where TRecord: class, new();
+    public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync<TRecord>(ListProviderRequest<TRecord> request) where TRecord: class, new();
 
     public ValueTask<RecordProviderResult<TRecord>> GetRecordAsync<TRecord>(Guid id) where TRecord : class, new();
 

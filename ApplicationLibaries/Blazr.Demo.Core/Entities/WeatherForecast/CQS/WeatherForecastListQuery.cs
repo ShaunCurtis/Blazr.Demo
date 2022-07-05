@@ -10,7 +10,7 @@ public record WeatherForecastListQuery
     : ICustomListQuery<DvoWeatherForecast>
 {
 
-    public ListProviderRequest Request { get; private set; }
+    public ListProviderRequest<DvoWeatherForecast> Request { get; private set; }
 
     public Func<DvoWeatherForecast, bool>? FilterExpression { get; private set; } = null;
 
@@ -18,7 +18,7 @@ public record WeatherForecastListQuery
 
     public readonly Guid? WeatherSummaryId;
 
-    public WeatherForecastListQuery(Guid? weatherSummaryId, ListProviderRequest request)
+    public WeatherForecastListQuery(Guid? weatherSummaryId, ListProviderRequest<DvoWeatherForecast> request)
     {
         if (weatherSummaryId is not null && weatherSummaryId != Guid.Empty)
         {
@@ -29,7 +29,7 @@ public record WeatherForecastListQuery
         Request = request;
     }
 
-    public WeatherForecastListQuery(ListProviderRequest request, Func<DvoWeatherForecast, bool>? filter)
+    public WeatherForecastListQuery(ListProviderRequest<DvoWeatherForecast> request, Func<DvoWeatherForecast, bool>? filter)
     {
         WeatherSummaryId = Guid.Empty;
         Request = request;

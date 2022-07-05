@@ -6,7 +6,8 @@
 
 namespace Blazr.Core;
 
-public readonly struct ListProviderRequest
+public readonly struct ListProviderRequest<TRecord>
+    where TRecord : class, new()
 {
     public int StartIndex { get; }
 
@@ -18,6 +19,8 @@ public readonly struct ListProviderRequest
 
     public string? FilterExpressionString { get; }
 
+    public Func<TRecord, bool>? FilterExpression { get; }
+
     public ItemsProviderRequest Request => new (this.StartIndex, this.PageSize, this.CancellationToken);
 
     public ListProviderRequest()
@@ -27,32 +30,36 @@ public readonly struct ListProviderRequest
         CancellationToken = new CancellationToken();
         SortExpression = null;
         FilterExpressionString = null;
+        FilterExpression = null;
     }
 
-    public ListProviderRequest(int startIndex, int pageSize, CancellationToken cancellationToken, string? sortExpression = null, string? filterExpressionString = null )
+    public ListProviderRequest(int startIndex, int pageSize, CancellationToken cancellationToken, string? sortExpression = null, string? filterExpressionString = null, Func<TRecord, bool>? filterExpression = null )
     {
         StartIndex = startIndex;
         PageSize = pageSize;
         CancellationToken = cancellationToken;
         SortExpression = sortExpression;
         FilterExpressionString = filterExpressionString;
+        FilterExpression = filterExpression;
     }
 
-    public ListProviderRequest(ItemsProviderRequest request)
+    public ListProviderRequest(ItemsProviderRequest request, Func<TRecord, bool>? filterExpression = null)
     {
         StartIndex = request.StartIndex;
         PageSize = request.Count;
         CancellationToken = request.CancellationToken;
         SortExpression = null;
         FilterExpressionString = null;
+        FilterExpression = filterExpression;
     }
 
-    public ListProviderRequest(ListState options)
+    public ListProviderRequest(ListState options, Func<TRecord, bool>? filterExpression)
     {
         StartIndex = options.StartIndex;
         PageSize = options.PageSize;
         CancellationToken = new CancellationToken();
         SortExpression = null;
         FilterExpressionString = null;
+        FilterExpression = filterExpression;
     }
 }

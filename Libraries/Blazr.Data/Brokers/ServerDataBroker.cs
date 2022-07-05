@@ -113,7 +113,7 @@ public class ServerDataBroker<TDbContext>
             : new CommandResult(id, false, "Failed to Delete Record");
     }
 
-    public async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync<TRecord>(ListProviderRequest options) where TRecord : class, new()
+    public async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync<TRecord>(ListProviderRequest<TRecord> options) where TRecord : class, new()
     {
         _message = null;
         _success = true;
@@ -122,25 +122,25 @@ public class ServerDataBroker<TDbContext>
         return new ListProviderResult<TRecord>(list, count, _success, _message);    
     }
 
-    protected async ValueTask<IEnumerable<TRecord>> GetItemsAsync<TRecord>(ListProviderRequest options) where TRecord : class, new()
+    protected async ValueTask<IEnumerable<TRecord>> GetItemsAsync<TRecord>(ListProviderRequest<TRecord> request) where TRecord : class, new()
     {
         using var dbContext = _factory.CreateDbContext();
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
         IQueryable<TRecord> query = dbContext.Set<TRecord>();
 
-        if (!string.IsNullOrWhiteSpace(options.FilterExpressionString))
+        if (!string.IsNullOrWhiteSpace(request.FilterExpressionString))
             query = query
-                 .Where(options.FilterExpressionString);
+                 .Where(request.FilterExpressionString);
 
-        if (!string.IsNullOrWhiteSpace(options.SortExpression))
+        if (!string.IsNullOrWhiteSpace(request.SortExpression))
             query = query
-                .OrderBy(options.SortExpression);
+                .OrderBy(request.SortExpression);
 
-        if (options.PageSize > 0)
+        if (request.PageSize > 0)
             query = query
-                .Skip(options.StartIndex)
-                .Take(options.PageSize);
+                .Skip(request.StartIndex)
+                .Take(request.PageSize);
 
         try
         {
@@ -154,16 +154,16 @@ public class ServerDataBroker<TDbContext>
         }
     }
 
-    protected async ValueTask<int> GetCountAsync<TRecord>(ListProviderRequest options) where TRecord : class, new()
+    protected async ValueTask<int> GetCountAsync<TRecord>(ListProviderRequest<TRecord> request) where TRecord : class, new()
     {
         using var dbContext = _factory.CreateDbContext();
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
         IQueryable<TRecord> query = dbContext.Set<TRecord>();
 
-        if (!string.IsNullOrWhiteSpace(options.FilterExpressionString))
+        if (!string.IsNullOrWhiteSpace(request.FilterExpressionString))
             query = query
-                 .Where(options.FilterExpressionString);
+                 .Where(request.FilterExpressionString);
 
         try
         {
