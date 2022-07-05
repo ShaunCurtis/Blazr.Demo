@@ -34,7 +34,7 @@ public class CQSBrokerTests
         var broker = provider.GetService<ICQSDataBroker>()!;
 
         var cancelToken = new CancellationToken();
-        var listRequest = new ListProviderRequest(0, 10, cancelToken);
+        var listRequest = new ListProviderRequest<DvoWeatherForecast>(0, 10, cancelToken);
 
         var query = new RecordListQuery<DvoWeatherForecast>(listRequest);
         var result = await broker.ExecuteAsync<DvoWeatherForecast>(query);
@@ -51,7 +51,7 @@ public class CQSBrokerTests
         var broker = provider.GetService<ICQSDataBroker>()!;
 
         var cancelToken = new CancellationToken();
-        var listRequest = new ListProviderRequest(0, 2, cancelToken);
+        var listRequest = new ListProviderRequest<DvoWeatherForecast>(0, 2, cancelToken);
 
         var summaryId = _weatherTestDataProvider.GetRandomRecord()?.WeatherSummaryId;
 
