@@ -6,7 +6,7 @@
 namespace Blazr.Demo.Data;
 
 public class ListQueryHandlerBase<TRecord, TDbContext>
-    : ICustomListQueryHandler<TRecord>
+    : IListQueryHandler<TRecord>
         where TDbContext : DbContext
         where TRecord : class, new()
 
@@ -15,14 +15,14 @@ public class ListQueryHandlerBase<TRecord, TDbContext>
     protected int count = 0;
 
     protected IDbContextFactory<TDbContext> factory;
-    protected ICustomListQuery<TRecord> listQuery = default!;
+    protected IFilteredListQuery<TRecord> listQuery = default!;
 
     public ListQueryHandlerBase(IDbContextFactory<TDbContext> factory)
     {
         this.factory = factory;
     }
 
-    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync(ICustomListQuery<TRecord> query)
+    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync(IFilteredListQuery<TRecord> query)
     {
         if (query is null)
             return new ListProviderResult<TRecord>(new List<TRecord>(), 0, false, "No Query Defined");

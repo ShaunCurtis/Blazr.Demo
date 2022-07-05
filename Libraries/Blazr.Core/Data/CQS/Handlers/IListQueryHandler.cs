@@ -5,8 +5,8 @@
 /// ============================================================
 namespace Blazr.Core;
 
-public interface ICustomListQueryHandler<TRecord>
+public interface IListQueryHandler<TRecord>
         where TRecord : class, new()
 {
-    ValueTask<ListProviderResult<TRecord>> ExecuteAsync(ICustomListQuery<TRecord> query);
+    ValueTask<ListProviderResult<TRecord>> ExecuteAsync(IFilteredListQuery<TRecord> query);
 }

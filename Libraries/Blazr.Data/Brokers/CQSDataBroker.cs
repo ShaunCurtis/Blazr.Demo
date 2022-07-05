@@ -24,10 +24,10 @@ public class CQSDataBroker<TDbContext>
         var result = await handler.ExecuteAsync();
         return result;
     }
-    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(ICustomListQuery<TRecord> query) where TRecord : class, new()
+    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(IFilteredListQuery<TRecord> query) where TRecord : class, new()
     {
         var queryType = query.GetType();
-        var handler = _serviceProvider.GetService<ICustomListQueryHandler<TRecord>>();
+        var handler = _serviceProvider.GetService<IListQueryHandler<TRecord>>();
         if (handler == null)
             throw new NullReferenceException("No Handler service registed for the List Query");
 

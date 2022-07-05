@@ -20,7 +20,7 @@ public class QueryBrokerTests
         var services = new ServiceCollection();
         Action<DbContextOptionsBuilder> dbOptions = options => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}");
         services.AddWeatherAppServerDataServices<InMemoryWeatherDbContext>(dbOptions);
-        services.AddTransient<ICustomListQueryHandler<DvoWeatherForecast>, ListQueryHandlerBase<DvoWeatherForecast, InMemoryWeatherDbContext>>();
+        services.AddTransient<IListQueryHandler<DvoWeatherForecast>, ListQueryHandlerBase<DvoWeatherForecast, InMemoryWeatherDbContext>>();
         //services.AddTransient<ICustomListQueryHandler<DvoWeatherForecast>, WeatherForecastListQueryHandler<InMemoryWeatherDbContext>>();
         var provider = services.BuildServiceProvider();
 
@@ -33,7 +33,7 @@ public class QueryBrokerTests
     public async void TestWeatherQueryHandler()
     {
         var provider = GetServiceProvider();
-        var handler = provider.GetService<ICustomListQueryHandler<DvoWeatherForecast>>()!;
+        var handler = provider.GetService<IListQueryHandler<DvoWeatherForecast>>()!;
 
         var cancelToken = new CancellationToken();
         var listRequest = new ListProviderRequest(0, 2, cancelToken);
@@ -101,7 +101,7 @@ public class QueryBrokerTests
         var recordCount = _weatherTestDataProvider.WeatherForecasts.Where(item => item.WeatherSummaryId == summaryId).Count();
 
         Func<DvoWeatherForecast, bool> expression = item => item.WeatherSummaryId == summaryId;
-        var query = new CustomListQuery<DvoWeatherForecast>(listRequest, expression);
+        var query = new FilteredListQuery<DvoWeatherForecast>(listRequest, expression);
 
         var result = await broker.ExecuteAsync<DvoWeatherForecast>(query);
         Assert.Equal(2, result.Items.Count());

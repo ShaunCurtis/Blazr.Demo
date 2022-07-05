@@ -7,7 +7,7 @@
 namespace Blazr.Demo.Core;
 
 public record WeatherForecastListQuery
-    : ICustomListQuery<DvoWeatherForecast>
+    : IFilteredListQuery<DvoWeatherForecast>
 {
 
     public ListProviderRequest Request { get; private set; }

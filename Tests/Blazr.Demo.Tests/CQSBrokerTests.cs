@@ -45,7 +45,7 @@ public class CQSBrokerTests
     }
 
     [Fact]
-    public async void TestCustomListCQSDataBroker()
+    public async void TestFilteredListCQSDataBroker()
     {
         var provider = GetServiceProvider();
         var broker = provider.GetService<ICQSDataBroker>()!;
@@ -57,9 +57,31 @@ public class CQSBrokerTests
 
         var recordCount = _weatherTestDataProvider.WeatherForecasts.Where(item => item.WeatherSummaryId == summaryId).Count();
 
-        var query = new WeatherForecastListQuery(summaryId, listRequest);
+        var query = new FilteredListQuery<DvoWeatherForecast>(listRequest, item => item.WeatherSummaryId == summaryId);
 
         var result = await broker.ExecuteAsync<DvoWeatherForecast>(query);
+
+        Assert.True(result.Success);
+        Assert.Equal(2, result.Items.Count());
+        Assert.Equal(recordCount, result.TotalItemCount);
+    }
+
+    [Fact]
+    public async void TestCustomListCQSDataBroker()
+    {
+        var provider = GetServiceProvider();
+        var handler = provider.GetService<IListQueryHandler<DvoWeatherForecast>>()!;
+
+        var cancelToken = new CancellationToken();
+        var listRequest = new ListProviderRequest(0, 2, cancelToken);
+
+        var summaryId = _weatherTestDataProvider.GetRandomRecord()?.WeatherSummaryId;
+
+        var recordCount = _weatherTestDataProvider.WeatherForecasts.Where(item => item.WeatherSummaryId == summaryId).Count();
+
+        var query = new WeatherForecastListQuery(summaryId, listRequest);
+
+        var result = await handler.ExecuteAsync(query);
 
         Assert.True(result.Success);
         Assert.Equal(2, result.Items.Count());
@@ -102,11 +124,9 @@ public class CQSBrokerTests
         var provider = GetServiceProvider();
         var broker = provider.GetService<ICQSDataBroker>()!;
 
-        //var testRecord = _weatherTestData.GetRandomRecord()!;
         var testRecord = _weatherTestDataProvider.WeatherSummaries.ToArray()[0]!;
 
         var query = new RecordGuidKeyQuery<DboWeatherSummary>(testRecord.WeatherSummaryId);
-        //var query = new RecordQuery<DboWeatherForecast>(testRecord.WeatherForecastId);
         var result = await broker.ExecuteAsync(query);
 
         Assert.True(result.Success);
