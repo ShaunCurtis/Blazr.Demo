@@ -30,7 +30,7 @@ public interface IListService<TRecord>
 
     public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(int startRecord, int pageSize);
 
-    public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(ListProviderRequest request);
+    public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(ListProviderRequest<TRecord> request);
 
     public ValueTask<ItemsProviderResult<TRecord>> GetRecordsAsync(ItemsProviderRequest request);
 }

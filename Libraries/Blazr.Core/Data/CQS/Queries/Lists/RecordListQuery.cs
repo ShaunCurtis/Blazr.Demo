@@ -8,11 +8,12 @@ namespace Blazr.Core;
 
 public record RecordListQuery<TRecord>
     : ICQSRequest<ValueTask<ListProviderResult<TRecord>>>
+    where TRecord : class, new()
 {
     public Guid TransactionId { get; } = Guid.NewGuid();
     
-    public ListProviderRequest Request { get; protected set; }
+    public ListProviderRequest<TRecord> Request { get; protected set; }
 
-    public RecordListQuery(ListProviderRequest request)
+    public RecordListQuery(ListProviderRequest<TRecord> request)
         => Request = request;
 }

@@ -52,7 +52,7 @@ public class StandardListService<TRecord, TService>
         this.Message = $"Failed to retrieve the record with Id - {Id.ToString()}";
     }
 
-    public async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(ListProviderRequest request)
+    public async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(ListProviderRequest<TRecord> request)
     {
         this.Message = String.Empty;
         this.PageSize = request.PageSize;
@@ -90,7 +90,7 @@ public class StandardListService<TRecord, TService>
 
     public async ValueTask<ItemsProviderResult<TRecord>> GetRecordsAsync(ItemsProviderRequest itemsRequest)
     {
-        var request = new ListProviderRequest(itemsRequest);
+        var request = new ListProviderRequest<TRecord>(itemsRequest);
         this.StartIndex = request.StartIndex;
         this.PageSize = this.PageSize;
 
@@ -102,7 +102,7 @@ public class StandardListService<TRecord, TService>
     private async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync()
     {
         var cancel = new CancellationToken();
-        var request = new ListProviderRequest(this.StartIndex, this.PageSize, cancel);
+        var request = new ListProviderRequest<TRecord>(this.StartIndex, this.PageSize, cancel);
 
         return await this.GetRecordsAsync(request);
     }
