@@ -7,7 +7,7 @@
 namespace Blazr.Demo.Core;
 
 public class WeatherForecastService
-    : IEntityService
+    : BaseEntityService
 {
     private SortedDictionary<Guid, string> _weatherSummaries = new SortedDictionary<Guid, string>();
     private ICustomCQSDataBroker _queryBroker;

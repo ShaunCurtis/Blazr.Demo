@@ -7,4 +7,7 @@ namespace Blazr.Core;
 
 public interface IEntityService
 {
+    public string Url { get;}
+
+    public string Title { get;}
 }

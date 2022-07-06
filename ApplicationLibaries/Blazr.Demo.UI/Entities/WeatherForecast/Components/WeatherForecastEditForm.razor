@@ -8,7 +8,7 @@
 @namespace Blazr.Demo.UI
 @inherits EditorForm<DboWeatherForecast, DeoWeatherForecast, WeatherForecastService>
 @implements IDisposable
-@inject IForeignKeyService<FkWeatherSummaryId, WeatherSummaryService> FkService
+@inject IForeignKeyService<FkWeatherSummary, WeatherSummaryService> FkService
 <PageLocker />
 <UILoader State="this.LoadState">
     <FormViewTitle>
