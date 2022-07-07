@@ -5,20 +5,17 @@
 /// ============================================================
 namespace Blazr.Core;
 
-public interface ICrudService<TRecord, TEditRecord>
+public interface IEditService<TRecord, TEditRecord>
     where TRecord : class, new()
     where TEditRecord : class, IEditRecord<TRecord>, new()
 {
-
-    public TRecord? Record { get; }
-
     public TEditRecord EditModel { get; }
 
     public bool IsNewRecord { get; }
 
     public string? Message { get; }
 
-    public ValueTask GetRecordAsync(Guid Id);
+    public ValueTask LoadRecordAsync(Guid Id);
 
     public ValueTask GetNewRecordAsync(TRecord? record);
 

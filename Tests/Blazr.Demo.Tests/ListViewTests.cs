@@ -60,18 +60,4 @@ public class ListViewTests
         // Check we have a paging event triggered
         Assert.NotNull(pagingEvent);
     }
-
-    [Fact]
-    public async void TestGetRecordDataBroker()
-    {
-        var services = GetServiceProvider();
-        var view = services.GetService<IListService<DvoWeatherForecast>>()!; ;
-
-        var testRecord = _weatherTestDataProvider.GetDvoWeatherForecast(_weatherTestDataProvider.GetRandomRecord()!);
-        var id = testRecord.Id;
-
-        await view.GetRecordAsync(id);
-
-        Assert.Equal(view.Record, testRecord);
-    }
 }

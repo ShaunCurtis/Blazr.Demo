@@ -16,17 +16,11 @@ public interface IListService<TRecord>
 
     public IEnumerable<TRecord>? Records { get; }
 
-    public TRecord? Record { get; }
-
     public string? Message { get; }
 
     public bool IsPaging => (PageSize > 0);
 
     public bool HasList => this.Records is not null;
-
-    public bool HasRecord => this.Record is not null;
-
-    public ValueTask GetRecordAsync(Guid Id);
 
     public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(int startRecord, int pageSize);
 

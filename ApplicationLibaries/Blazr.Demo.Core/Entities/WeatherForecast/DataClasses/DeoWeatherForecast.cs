@@ -25,6 +25,8 @@ public class DeoWeatherForecast
 
     public bool IsDirty => _baseRecord != this.Record;
 
+    public DboWeatherForecast CleanRecord => _baseRecord;
+
     public DeoWeatherForecast()
     {
         var rec = new DboWeatherForecast();

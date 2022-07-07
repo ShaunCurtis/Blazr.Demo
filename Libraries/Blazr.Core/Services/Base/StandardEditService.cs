@@ -5,8 +5,8 @@
 /// ============================================================
 namespace Blazr.Core;
 
-public class StandardCrudService<TRecord, TEditRecord, TService>
-    : ICrudService<TRecord, TEditRecord>
+public class StandardEditService<TRecord, TEditRecord, TService>
+    : IEditService<TRecord, TEditRecord>
     where TRecord : class, new()
     where TEditRecord : class, IEditRecord<TRecord>, new()
     where TService : class, IEntityService
@@ -14,21 +14,19 @@ public class StandardCrudService<TRecord, TEditRecord, TService>
     protected readonly ICQSDataBroker DataBroker;
     protected INotificationService<TService> Notifier;
 
-    public TRecord? Record { get; private set; } = new TRecord();
-
     public TEditRecord EditModel { get; private set; } = new TEditRecord();
 
     public bool IsNewRecord => this.EditModel.IsNew;
 
     public string? Message { get; protected set; }
 
-    public StandardCrudService(ICQSDataBroker dataBroker, INotificationService<TService> notifier)
+    public StandardEditService(ICQSDataBroker dataBroker, INotificationService<TService> notifier)
     {
         this.DataBroker = dataBroker;
         this.Notifier = notifier;
     }
 
-    public async ValueTask GetRecordAsync(Guid Id)
+    public async ValueTask LoadRecordAsync(Guid Id)
     {
         this.Message = String.Empty;
         if (Id != Guid.Empty)
@@ -37,8 +35,7 @@ public class StandardCrudService<TRecord, TEditRecord, TService>
 
             if (result.Success && result.Record is not null)
             {
-                this.Record = result.Record;
-                this.EditModel.Load(this.Record);
+                this.EditModel.Load(result.Record);
                 return;
             }
 
@@ -51,8 +48,7 @@ public class StandardCrudService<TRecord, TEditRecord, TService>
 
     public ValueTask GetNewRecordAsync(TRecord? record)
     {
-        this.Record = record ?? new TRecord();
-        this.EditModel.Load(this.Record);
+        this.EditModel.Load(record ?? new TRecord());
         return ValueTask.CompletedTask;
     }
 
@@ -66,9 +62,9 @@ public class StandardCrudService<TRecord, TEditRecord, TService>
             return false;
         }
 
-        this.Record = EditModel.AsNewRecord;
-
-        var result = await this.DataBroker.ExecuteAsync<TRecord>(new AddRecordCommand<TRecord>(this.Record));
+        var record = EditModel.AsNewRecord;
+        var command = new AddRecordCommand<TRecord>(record);
+        var result = await this.DataBroker.ExecuteAsync<TRecord>(command);
 
         if (!result.Success)
         {
@@ -76,15 +72,16 @@ public class StandardCrudService<TRecord, TEditRecord, TService>
             return false;
         }
 
-        this.EditModel.Load(this.Record);
+        this.EditModel.Load(record);
         this.NotifyChange(EditModel.Id);
         return true;
     }
 
     public async ValueTask<bool> UpdateRecordAsync()
     {
-        this.Record = EditModel.Record;
-        var result = await this.DataBroker.ExecuteAsync<TRecord>(new UpdateRecordCommand<TRecord>(this.Record));
+        var record = EditModel.Record;
+        var command = new UpdateRecordCommand<TRecord>(record);
+        var result = await this.DataBroker.ExecuteAsync<TRecord>(command);
 
         if (!result.Success)
         {
@@ -92,28 +89,34 @@ public class StandardCrudService<TRecord, TEditRecord, TService>
             return false;
         }
 
-        this.EditModel.Load(this.Record);
+        this.EditModel.Load(record);
         this.NotifyChange(EditModel.Id);
         return true;
     }
 
     public async ValueTask<bool> DeleteRecordAsync()
     {
-        if (this.Record is null)
+        if (this.EditModel.Record is null)
         {
             this.Message = "No record to delete";
             return false;
         }
 
-        var id = GetRecordId<TRecord>(this.Record);
-        var result = await this.DataBroker.ExecuteAsync<TRecord>(new DeleteRecordCommand<TRecord>(this.Record));
+        // make sure we have the original record data
+        this.EditModel.Reset();
+
+        var record = EditModel.Record;
+        var id = EditModel.Id;
+        var command = new DeleteRecordCommand<TRecord>(record);
+
+        var result = await this.DataBroker.ExecuteAsync<TRecord>(command);
 
         if (!result.Success)
         {
             this.Message = "Failed to update the record";
             return false;
         }
-        this.Record = null;
+        this.EditModel.Load(new TRecord());
         this.NotifyChange(id);
         return true;
     }
@@ -123,27 +126,6 @@ public class StandardCrudService<TRecord, TEditRecord, TService>
         if (Uid is not null)
             this.Notifier?.NotifyRecordChanged(this, Uid ?? Guid.Empty);
 
-        this.Notifier?.NotifyListUpdated(this.Record);
-    }
-
-    private static Guid GetRecordId<T>(T? record) where T : class, new()
-    {
-        if (record == null)
-            return Guid.Empty;
-
-        var instance = new T();
-        var prop = instance.GetType()
-            .GetProperties()
-            .FirstOrDefault(prop => prop.GetCustomAttributes(false)
-                .OfType<KeyAttribute>()
-                .Any());
-
-        if (prop != null)
-        {
-            var value = prop.GetValue(record);
-            if (value is not null)
-                return (Guid)value;
-        }
-        return Guid.Empty;
+        this.Notifier?.NotifyListUpdated(this);
     }
 }

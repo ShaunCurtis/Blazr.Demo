@@ -1,21 +1,24 @@
 # Building a Command/Query Data Pipeline for Blazor in DotNetCore
 
-The first time I came across CQS I though it might answer some issues I had with the Repository pattern.  My exitement quickly disipated when I discovered how many classes I needed to create to implement it.  My generic repository framework trumped it hands down.
+The first time I came across CQS - the answer to my problems with the Repository pattern.  My excitment quickly disipated when I discovered how many classes I needed to create to implement it.  My generic repository framework, even with it's design problems, trumped it hands down.
 
-I recently had cause to revisit CQS on an application re-write and decided to work on creating a more succinct version.  This article is about what I've managed to achieve.
+I recently had cause to revisit CQS on an application re-write and decided to work on creating a more succinct version.  This article is about what I managed to achieve.
 
-CQS - not to be confused with CQRS - is a programming style.  Every action is either:
+CQS - not to be confused with CQRS - is fundimentally a programming style.  Every action is either:
 
 1. A *Command* - a request to make a data change.
 2. A *Query* - a request to get some data.
 
-A *Command* returns either status information or nothing.  It should **NEVER** return a data set.
+A *Command* returns either status information or nothing.  CQS defines it **NEVER** return a data set.
 
-A *Query* returns a data set.  It makes makes no changes to the state of the data.  It simply gets the data requested. **NO SIDE EFFECTS**.
+A *Query* returns a data set.  CQS defines it **NEVER** makes makes changes to the state of the data.  Ther are no **NO SIDE EFFECTS** to the owning object.
 
-These rules can (and should) be applied to all object methods.  They make code more readable to the third person.
+Good practice is to apply theese rules to all object methods.  They make code more readable to the third person.
 
-## Repository
+## Code Repository
+
+> Not to be confused with the Repository pattern
+
 
 You can find the code used in this article in my consolidated **Blazr.Demo** repository here: 
 
@@ -23,17 +26,19 @@ You can find the code used in this article in my consolidated **Blazr.Demo** rep
 
 Note that this repo also contains a generic *Repository* framework data pipeline and several Blazor SPA implementations demonstrating various Blazor concepts and practices.
 
+> Note: The solution has `Nullable` enabled, which explains some of the coding practices.
+
 ## The CQS Pattern
 
-Many smaller projects avoid the CQS Data pipeline framework: it's seen as complicated because the demo implementations contain a lot of classes.
+Smaller projects tend to avoid the CQS Data pipeline framework: it's seen as complicated because the demo implementations contain a lot of classes.
 
 Each action has a *Command/Query* class that defines the action and a *Handler* class to execute the defined action.  Normally there's a one-to-one relationship:  a unique handler for every request.
 
 In essence:
 
-- A *Request* object defines any information a *Handler* needs to execute the request and a *Result* (what it expects as a return value).
+- A *Request* object defines the information a *Handler* needs to execute the request and what it expects in return - the *Result* .
 
-- A *Handler* object executes the necessary code to obtain *Result* using data provided in the *Request* object.  
+- A *Handler* object executes the necessary code and returns the defined *Result* using data provided by the *Request*.  
 
 Conceptually it's very simple, and relatively easy to implement.  The problem is most implementations are very verbose: lots of classes repeating the same old code.  Here's an example:
 
@@ -41,9 +46,9 @@ Conceptually it's very simple, and relatively easy to implement.  The problem is
 
 *Sincere apologies if you recognise this as your code!  I searched Google for an example and your article was high in the search results.*
 
-It certainly scared me off when I first investigated the topic.  I already had a generic `Repository` based generic solution that was just a few classes.  Why go backwards, it made no sense.
+It certainly scared me off when I first investigated CQS.  My `Repository` based generic solution had just a few classes.  Why go backwards, it made no sense.
 
-This is an attempt to make it succinct!  I now use it rather than my generic repository.
+This is an attempt to make it succinct!  I now use it over my generic repository code.
 
 ## Basic Interfaces and Classes
 
@@ -119,19 +124,19 @@ public class AddWeatherForecastHandler
 }
 ```
 
-Relatively small classes, but you need 3 sets (one each for add, update and delete) for each entity. That's 3 times *x* entities just for the commands.  The same principles apply to queries.  A lot of repetition.
+Relatively small classes, but you need 3 sets (one each for add, update and delete) for each entity. That's 3 times *x* entities just for the commands.  The same principles apply to queries.  **DRY** hung out to dry!
 
 ## A Succinct Implementation
 
 To build a more succinct implementation we need to accept:
 
  - The 80/20 rule.  Not every request can be fulfilled by our standard implementation.  We need a custom approach for these.
- - We need a "compliant" generics based ORM to interface with our data store.  This implementation uses *Entity Framework*. 
+ - We need a "compliant" generics based ORM to interface with our data store.  This implementation uses *Entity Framework* which gives us that. 
  - There's going to be some quite complicated generics implemented in the base classes.
 
 ## Results
 
-Before diving into requests and handlers, we need to define a set of standard results they return: the `TResult` of the request.  Each is a `struct` containing status information and, if a request, the requested data set.  They're self explanatory.
+Before diving into requests and handlers, we need a set of standard results they return: `TResult` of the request.  Each is defined a `struct` containing status information and, if a request, the data set.  They're self explanatory.
 
 ```csharp
 public readonly struct ListProviderResult<TRecord>
@@ -189,7 +194,7 @@ public readonly struct FKListProviderResult
 All commands:
 
 1. Take a record which we can define as `TRecord`.
-2. Return an async `CommandResult`, so we can fix `TResult`.
+2. Return an async `Task<CommandResult>` to fix `TResult`.
 
 First an interface that implements `ICQSRequest` and this functionality.
 
@@ -238,11 +243,15 @@ public class UpdateRecordCommand<TRecord>
 }
 ```
 
+> Why implement these empty classes?  
+
+We need a one-to-one relationship (requests -> handlers) so we need a handler for each type or command.
+
 ### The Handlers
 
-There's no benefit in creating interfaces or base classes for handlers so we implement Create/Update/Delete commands as three classes.  `TRecord` defines the record class and `TDbContext` the `DbContext` used in the DI `DbContextFactory`.
+There's no benefit in creating interfaces or base classes for handlers so we implement Create/Update/Delete commands as three separate classes.  `TRecord` defines the record class and `TDbContext` the `DbContext` used in the DI `DbContextFactory`.
 
-We don't need the actual `DbContext` class.  We use the generic `Set<TRecord>` method to find the `DbSet` instances of `TRecord` and the generic `Update<TRecord>`, `Add<TRecord>` and `Delete<TRecord>` methods with `SaveChangesAsync` for the commands. 
+We don't need the actual `DbContext` class: we use generics in `DbContext`.   `Set<TRecord>` method finds the `DbSet` instances of `TRecord` and `Update<TRecord>`, `Add<TRecord>` and `Delete<TRecord>` methods with `SaveChangesAsync` implement the commands. 
 
 #### Add Handler
 
@@ -330,7 +339,7 @@ public class DeleteRecordCommandHandler<TRecord, TDbContext>
 
 ## The Generic Factory Broker
 
-We can now define a factory interface and class to abstract the execution of *Requests* against their respective *Handlers*.
+We can now define a factory interface and class to abstract the execution of *Requests* against their respective *Handlers*.  Personal: I always call these Core -> Data domain interfaces *Brokers*.
 
 The interface:
 
@@ -344,7 +353,8 @@ public interface ICQSDataBroker
     public ValueTask<object> ExecuteAsync<TRecord>(object query);
 }
 ```
-The server implementation:
+The server implementation, which maps the request to the associated handler.
+
 ```csharp
 public class CQSDataBroker<TDbContext>
     :ICQSDataBroker
@@ -382,7 +392,7 @@ public class CQSDataBroker<TDbContext>
 }
 ```
 
-We can now call `ExecuteAsync` on the broker, setting `TRecord` and passing it the relevant command.
+We can now call `ExecuteAsync` on the broker, setting `TRecord` and passing it the relevant command and it will execute the associated handler.
 
 ```
 var command = new UpdateRecordCommand<DboWeatherForecast>(editedRecord);
@@ -394,13 +404,13 @@ var result = await broker.ExecuteAsync(command);
 Queries aren't quite so uniform.
 
 1. There are various types of `TResult`.
-2. Specific *Where* and *OrderBy* list queries.
+2. They have specific *Where* and *OrderBy* requirements.
 
 We define three Query requests:
 
 ### RecordQuery
 
-This returns a `RecordProviderResult` containing a single record based on a provide Id.
+This returns a `RecordProviderResult` containing a single record based on a provided Id.
 
 ```csharp
 public record RecordQuery<TRecord>
@@ -432,7 +442,7 @@ public record RecordListQuery<TRecord>
 
 ### FKListQuery
 
-This returns a `FkListProviderResult` containing an `IEnumerable` of `IFkListItem`.  A `FkListItem` is a simple object containing a *Guid/Name* pair that can be used to populate foreign key *Select* controls in the UI.
+This returns a `FkListProviderResult` containing an `IEnumerable` of `IFkListItem`.  `FkListItem` is a simple object containing a *Guid/Name* pair.  It's principle use is in foreign key *Select* controls in the UI.
 
 
 
@@ -446,7 +456,7 @@ public record FKListQuery<TRecord>
 
 ## Handlers
 
-The corresponding handlers are:
+The corresponding query handlers are:
 
 ### RecordQueryHandler
 
@@ -455,7 +465,7 @@ Creatinge a "generic" version can be challenging depending on the ORM.
 The key concepts to note are:
 
 1. The use of *unit of work* `DbContexts` from the `IDbContextFactory`.
-2. `_dbContext.Set<TRecord>()` to get the `DbSet` for `TRecord`.
+2. `_dbContext.Set<TRecord>()` gets the `DbSet` for `TRecord`.
 3. The use of two methodologies to apply the query.  
 
 ```csharp
@@ -503,11 +513,11 @@ public class RecordQueryHandler<TRecord, TDbContext>
 
 ### RecordListQueryHandler
 
-The key concepts to note her are:
+The key concepts to note here are:
 
 1. The use of *unit of work* `DbContexts` from the `IDbContextFactory`.
 2. `_dbContext.Set<TRecord>()` to get the `DbSet` for `TRecord`.
-3. The use of `IQueryable` to build queries before executing them.
+3. The use of `IQueryable` to build queries.
 
 ```csharp
 public class RecordListQueryHandler<TRecord, TDbContext>
@@ -606,7 +616,7 @@ public class FKListQueryHandler<TRecord, TDbContext>
 
 ## The Generic Factory Broker Methods
 
-We can now define the factory methods to abstract the execution of *Requests* against their respective *Handlers*.
+Havikng defined our Requests/Handlers in one-to-one relationships we can now define the factory methods to abstract the execution of *Requests* against their respective *Handlers*.
 
 ```csharp
 public interface ICQSDataBroker
@@ -658,7 +668,7 @@ public class CQSDataBroker<TDbContext>
 
 ## Testing
 
-There is a set of simple XUnit based tests to test the pipeline.  These build out a DI service container rather than use Mock. 
+The solution defines a set of simple XUnit based tests to test the pipeline.  These build out a DI service container rather than use Mock. 
 
 Note:
 

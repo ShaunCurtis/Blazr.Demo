@@ -6,11 +6,11 @@
 
 namespace Blazr.Demo.Tests;
 
-public class CrudViewTests
+public class EditViewTests
 {
     private WeatherTestDataProvider _weatherTestDataProvider;
 
-    public CrudViewTests()
+    public EditViewTests()
     {
         _weatherTestDataProvider = WeatherTestDataProvider.Instance();
     }
@@ -33,13 +33,13 @@ public class CrudViewTests
     {
         var services = GetServiceProvider();
 
-        var view = services.GetService<ICrudService<DboWeatherForecast, DeoWeatherForecast>>()!;
+        var view = services.GetService<IEditService<DboWeatherForecast, DeoWeatherForecast>>()!;
         var notificationService = services.GetService<INotificationService<WeatherForecastService>>();
 
         var testRecord = _weatherTestDataProvider.GetRandomRecord()!;
         var id = testRecord.WeatherForecastId;
 
-        await view.GetRecordAsync(id);
+        await view.LoadRecordAsync(id);
 
         Assert.Equal(view.Record, testRecord);
     }
@@ -49,7 +49,7 @@ public class CrudViewTests
     {
         var services = GetServiceProvider();
 
-        var view = services.GetService<ICrudService<DboWeatherForecast, DeoWeatherForecast>>()!;
+        var view = services.GetService<IEditService<DboWeatherForecast, DeoWeatherForecast>>()!;
         var notificationService = services.GetService<INotificationService<WeatherForecastService>>();
 
         var listUpdated = false;
@@ -71,7 +71,7 @@ public class CrudViewTests
         var editedRecord = baseRecord with { TemperatureC = baseRecord.TemperatureC + 10 };
 
         // get the record into the view
-        await view.GetRecordAsync(id);
+        await view.LoadRecordAsync(id);
 
         // change a value in the edit model
         view.EditModel.TemperatureC = view.EditModel.TemperatureC + 10;
@@ -93,7 +93,7 @@ public class CrudViewTests
     {
         var services = GetServiceProvider();
 
-        var view = services.GetService<ICrudService<DboWeatherForecast, DeoWeatherForecast>>()!;
+        var view = services.GetService<IEditService<DboWeatherForecast, DeoWeatherForecast>>()!;
         var notificationService = services.GetService<INotificationService<WeatherForecastService>>();
 
         var listUpdated = false;
@@ -140,7 +140,7 @@ public class CrudViewTests
     {
         var services = GetServiceProvider();
 
-        var view = services.GetService<ICrudService<DboWeatherForecast, DeoWeatherForecast>>()!;
+        var view = services.GetService<IEditService<DboWeatherForecast, DeoWeatherForecast>>()!;
         var notificationService = services.GetService<INotificationService<WeatherForecastService>>();
 
         var listUpdated = false;
@@ -160,7 +160,7 @@ public class CrudViewTests
         var id = baseRecord.WeatherForecastId;
 
         // get the record into the view
-        await view.GetRecordAsync(id);
+        await view.LoadRecordAsync(id);
 
         // Update the record
         await view.DeleteRecordAsync();
@@ -168,7 +168,7 @@ public class CrudViewTests
         Assert.Null(view.Record);
 
         // get the record into the view
-        await view.GetRecordAsync(id);
+        await view.LoadRecordAsync(id);
 
         Assert.Null(view.Record);
 
