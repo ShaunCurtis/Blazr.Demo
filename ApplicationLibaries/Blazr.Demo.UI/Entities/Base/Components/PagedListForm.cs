@@ -17,12 +17,6 @@ public class PagedListForm<TRecord, TService>
     protected Type? EditControl;
     protected string RecordUrl;
     protected string RecordTitle;
-    protected IListService<TRecord> ListViewService => this._listViewService!;
-    protected INotificationService<TService> NotificationService => _notificationService!;
-    protected NavigationManager NavigationManager => _navigationManager!;
-    protected ToasterService ToasterService => _toasterService!;
-    protected UiStateService UiStateService => _uiStateService!;
-    protected ModalService modalService => _modalService!;
     protected bool isLoading => ListViewService.Records is null;
     protected ComponentState loadState => isLoading ? ComponentState.Loading : ComponentState.Loaded;
 
@@ -32,17 +26,17 @@ public class PagedListForm<TRecord, TService>
 
     [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
 
-    [Inject] private IListService<TRecord>? _listViewService { get; set; }
+    [Inject] protected IListService<TRecord> ListViewService { get; set; } = default!;
 
-    [Inject] private INotificationService<TService>? _notificationService { get; set; }
+    [Inject] protected INotificationService<TService> NotificationService { get; set; } = default!;
 
-    [Inject] private NavigationManager? _navigationManager { get; set; }
+    [Inject] protected NavigationManager NavigationManager { get; set; } = default!;
 
-    [Inject] private ToasterService? _toasterService { get; set; }
+    [Inject] protected ToasterService ToasterService { get; set; } = default!;
 
-    [Inject] private UiStateService? _uiStateService { get; set; }
+    [Inject] protected UiStateService UiStateService { get; set; } = default!;
 
-    [Inject] private ModalService? _modalService { get; set; }
+    [Inject] protected ModalService ModalService { get; set; } = default!;
 
     [Parameter] public bool UseModalForms { get; set; } = false;
 
@@ -66,12 +60,12 @@ public class PagedListForm<TRecord, TService>
         this.NotificationService.ListUpdated += this.OnListChanged;
     }
 
-    public virtual async ValueTask<PagingState> GetPagedItems(PagingState request)
+    public async ValueTask<PagingState> GetPagedItems(PagingState request)
     {
         var listState = new ListState { PageSize = request.PageSize, StartIndex = request.StartIndex };
         listState = this.GetState(listState);
 
-        var result = await this.ListViewService.GetRecordsAsync(new ListProviderRequest(listState));
+        var result = await this.ListViewService.GetRecordsAsync(new ListProviderRequest<TRecord>(listState));
         
         listState.ListTotalCount = result.TotalItemCount;
         
@@ -87,7 +81,7 @@ public class PagedListForm<TRecord, TService>
     {
         var listState = this.GetState(request);
         
-        var result = await this.ListViewService.GetRecordsAsync(new ListProviderRequest(listState));
+        var result = await this.ListViewService.GetRecordsAsync(new ListProviderRequest<TRecord>(listState));
         
         listState.ListTotalCount = result.TotalItemCount;
         
@@ -126,38 +120,37 @@ public class PagedListForm<TRecord, TService>
         return returnState;
     }
 
-
-    protected virtual async Task EditRecord(Guid Id)
+    protected async Task EditRecord(Guid Id)
     {
-        if (this.modalService.IsModalFree && this.UseModalForms && this.EditControl is not null)
+        if (this.ModalService.IsModalFree && this.UseModalForms && this.EditControl is not null)
         {
             var options = new ModalOptions();
             options.ControlParameters.Add("Id", Id);
             options = this.GetEditOptions(options);
-            await this.modalService.Modal.ShowAsync(this.EditControl, options);
+            await this.ModalService.Modal.ShowAsync(this.EditControl, options);
         }
         else
             this.NavigationManager!.NavigateTo($"/{this.RecordUrl}/edit/{Id}");
     }
 
-    protected virtual async Task ViewRecord(Guid Id)
+    protected async Task ViewRecord(Guid Id)
     {
-        if (this.modalService.IsModalFree && this.UseModalForms && this.ViewControl is not null)
+        if (this.ModalService.IsModalFree && this.UseModalForms && this.ViewControl is not null)
         {
             var options = GetViewOptions(null);
             options.ControlParameters.Add("Id", Id);
-            await this.modalService.Modal.ShowAsync(this.ViewControl,  options);
+            await this.ModalService.Modal.ShowAsync(this.ViewControl,  options);
         }
         else
             this.NavigationManager!.NavigateTo($"/{this.RecordUrl}/view/{Id}");
     }
 
-    protected virtual async Task AddRecordAsync(ModalOptions? options = null)
+    protected async Task AddRecordAsync(ModalOptions? options = null)
     {
-        if (this.modalService.IsModalFree && this.UseModalForms && this.EditControl is not null)
+        if (this.ModalService.IsModalFree && this.UseModalForms && this.EditControl is not null)
         {
             options = this.GetAddOptions(options);
-            await this.modalService.Modal.ShowAsync(this.EditControl, options);
+            await this.ModalService.Modal.ShowAsync(this.EditControl, options);
         }
         else
             this.NavigationManager!.NavigateTo($"/{this.RecordUrl}/edit/0");

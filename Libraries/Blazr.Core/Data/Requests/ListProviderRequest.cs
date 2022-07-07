@@ -53,7 +53,7 @@ public readonly struct ListProviderRequest<TRecord>
         FilterExpression = filterExpression;
     }
 
-    public ListProviderRequest(ListState options, Func<TRecord, bool>? filterExpression)
+    public ListProviderRequest(ListState options, Func<TRecord, bool>? filterExpression = null)
     {
         StartIndex = options.StartIndex;
         PageSize = options.PageSize;
