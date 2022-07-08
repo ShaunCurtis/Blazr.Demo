@@ -6,13 +6,13 @@
 
 namespace Blazr.Core;
 
-public class StandardListService<TRecord, TService>
+public class StandardListService<TRecord, TEntity>
     : IListService<TRecord>
     where TRecord : class, new()
-    where TService : class, IEntityService
+    where TEntity : class, IEntity
 {
     protected ICQSDataBroker DataBroker;
-    protected INotificationService<TService> Notifier;
+    protected INotificationService<TEntity> Notifier;
 
     public int PageSize { get; protected set; }
 
@@ -32,7 +32,7 @@ public class StandardListService<TRecord, TService>
 
     public bool HasRecord => this.Record is not null;
 
-    public StandardListService(ICQSDataBroker dataBroker, INotificationService<TService> notifier)
+    public StandardListService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier)
     {
         this.DataBroker = dataBroker;
         Notifier = notifier;

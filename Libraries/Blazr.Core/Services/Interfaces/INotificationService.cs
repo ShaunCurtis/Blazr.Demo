@@ -6,8 +6,8 @@
 
 namespace Blazr.Core;
 
-public interface INotificationService<TService>
-    where TService : class, IEntityService
+public interface INotificationService<TEntity>
+    where TEntity : class, IEntity
 {
     public event EventHandler? ListUpdated;
     public event EventHandler<PagingEventArgs>? ListPaged;

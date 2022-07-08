@@ -6,17 +6,14 @@
 
 namespace Blazr.Demo.UI;
 
-public class ViewerForm<TRecord, TService> 
-    : OwningComponentBase
+public class ViewerForm<TRecord, TEntity>
+    : OwningComponentBase<IReadService<TRecord>>
     where TRecord : class, new()
-    where TService : class, IEntityService
+    where TEntity : class, IEntity
 {
+    private bool _isNew = true;
     protected string RecordUrl;
     protected Type? EditControl;
-    protected NavigationManager NavManager => _navManager!;
-    protected IListService<TRecord> ListService => _listService!;
-    protected ModalService modalService => _modalService!;
-    protected INotificationService<TService> notificationService => _notificationService!;
 
     [Parameter] public Guid Id { get; set; }
 
@@ -24,13 +21,11 @@ public class ViewerForm<TRecord, TService>
 
     [CascadingParameter] public IModalDialog? Modal { get; set; }
 
-    [Inject] private NavigationManager? _navManager { get; set; }
+    [Inject] protected NavigationManager NavManager { get; set; } = default!;
 
-    [Inject] private ModalService? _modalService { get; set; }
+    [Inject] protected ModalService ModalService { get; set; } = default!;
 
-    [Inject] private IListService<TRecord>? _listService { get; set; }
-
-    [Inject] private INotificationService<TService>? _notificationService { get; set; }
+    [Inject] protected INotificationService<TEntity> NotificationService { get; set; } = default!;
 
     public ComponentState LoadState { get; protected set; } = ComponentState.New;
 
@@ -43,38 +38,55 @@ public class ViewerForm<TRecord, TService>
         this.RecordUrl = name;
     }
 
-    protected async override Task OnInitializedAsync()
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
-        await this.LoadRecord();
-        this.notificationService.RecordChanged += OnChange;
+        parameters.SetParameterProperties(this);
+
+        await PreLoadRecordAsync(_isNew);
+        if (_isNew)
+        {
+            await this.LoadRecordAsync();
+            this.NotificationService.RecordChanged += OnChange;
+        }
+
+        await base.SetParametersAsync(ParameterView.Empty);
+        _isNew = false;
     }
 
-    private async Task LoadRecord(bool render = false)
+    public virtual Task PreLoadRecordAsync(bool isNew)
+        => Task.CompletedTask;
+
+    private async Task LoadRecordAsync(bool render = false)
     {
         this.LoadState = ComponentState.Loading;
-        await this.ListService.GetRecordAsync(Id);
+        await this.Service.GetRecordAsync(Id);
         this.LoadState = ComponentState.Loaded;
         if (render)
             await this.InvokeAsync(this.StateHasChanged);
     }
 
     private async void OnChange(object? sender, RecordEventArgs e)
-    { 
+    {
         if (this.IsThisRecord(e.RecordId))
-            await LoadRecord(true);
+            await LoadRecordAsync(true);
     }
 
     protected virtual bool IsThisRecord(Guid Id)
-        => true;
+    {
+        if (this.Service.Record is IRecord)
+            return ((IRecord)this.Service.Record).Id == Id;
+
+        return true;
+    }
 
     protected virtual async Task EditRecordAsync()
     {
-        if (this.Modal is null && this.modalService.IsModalFree && this.EditControl is not null)
+        if (this.Modal is null && this.ModalService.IsModalFree && this.EditControl is not null)
         {
             var options = new ModalOptions();
             options.ControlParameters.Add("Id", this.Id);
             options = this.GetEditOptions(options);
-            await this.modalService.Modal.ShowAsync(this.EditControl, options);
+            await this.ModalService.Modal.ShowAsync(this.EditControl, options);
         }
         else
             this.NavManager!.NavigateTo($"/{this.RecordUrl}/edit/{Id}");
