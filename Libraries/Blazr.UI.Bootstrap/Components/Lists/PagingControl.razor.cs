@@ -7,8 +7,7 @@
 namespace Blazr.UI.Bootstrap;
 
 public partial class PagingControl
-    : ComponentBase,
-    IDisposable
+    : ComponentBase, IPagingControl
 {
     private int Page = 0;
     private int ListCount = 0;

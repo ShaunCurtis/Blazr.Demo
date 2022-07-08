@@ -1,0 +1,56 @@
+﻿@*
+    /// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================
+*@
+
+@implements IDisposable
+@namespace Blazr.Demo.UI
+@inherits PagedListForm<DboWeatherLocation, WeatherLocationEntity>
+
+<UICard IsCollapsible=true MoreCardCss="@this.FormCss">
+    <Header>List of Weather Locations</Header>
+    <Body>
+        <ListForm ListContext=this.listContext ListProvider=this.GetPagedItems StateId=this.RouteId>
+            <UIContainer Size=BootstrapSize.Fluid>
+                <UIFormRow class="my-2">
+                    <UIColumn Columns=12 LargeColumns=8 class="text-start">
+                        <PagingControl @ref=this.pagingControl />
+                    </UIColumn>
+                    <UIColumn Columns=2 LargeColumns=4 class="text-right text-end">
+                        <UIButton class="btn-primary btn-sm" ClickEvent="() => AddRecordAsync()">Add New Weather Forecast</UIButton>
+                        <UIButton class="btn-secondary btn-sm" ClickEvent="Exit">Exit</UIButton>
+                    </UIColumn>
+                </UIFormRow>
+            </UIContainer>
+
+            <UIListControl TRecord=DboWeatherLocation Records=this.Service.Records LoadState=this.loadState class="table table-sm table-striped table-hover border-bottom no-margin">
+                <RowTemplate>
+                    <UIListColumn HeaderTitle="ID" SortField="WeatherForecastId" NoWrap=true>@context.WeatherLocationId.AsShortGuid()</UIListColumn>
+                    <UIListColumn HeaderTitle="Location" SortField="Location" IsMaxColumn=true>@context.Location</UIListColumn>
+                    <UIListColumn HeaderTitle="" NoWrap=true class="text-right text-end">
+                        <UIButtonGroup>
+                            <UIButton type="button" class="btn-sm btn-secondary" ClickEvent="() => this.ViewRecord(context.WeatherLocationId)">View</UIButton>
+                            <UIButton type="button" class="btn-sm btn-primary" ClickEvent="() => this.EditRecord(context.WeatherLocationId)">Edit</UIButton>
+                        </UIButtonGroup>
+                    </UIListColumn>
+                </RowTemplate>
+            </UIListControl>
+
+        </ListForm>
+    </Body>
+</UICard>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        listContext.ListState.SortField = "Location";
+        this.RecordUrl = "weatherlocations";
+        this.ViewControl = typeof(WeatherLocationViewForm);
+        this.EditControl = typeof(WeatherLocationEditForm);
+    }
+}

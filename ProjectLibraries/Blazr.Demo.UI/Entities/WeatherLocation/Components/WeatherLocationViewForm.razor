@@ -1,0 +1,48 @@
+﻿@*
+    /// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================
+*@
+
+@namespace Blazr.Demo.UI
+@inherits ViewerForm<DboWeatherLocation, WeatherLocationEntity>
+
+
+<UICard IsCollapsible=true>
+    <Header>Weather Location Viewer</Header>
+    <Body>
+        <UIContainer Size=BootstrapSize.Fluid>
+            <UIFormRow>
+                <UIColumn Columns=12 class="text-end text-right mt-2">
+                    <UIButton class="btn-secondary" ClickEvent="this.Exit">Exit</UIButton>
+                </UIColumn>
+            </UIFormRow>
+        </UIContainer>
+        <UILoader State="this.LoadState">
+            <UIContainer Size=BootstrapSize.Fluid>
+                <UIFormRow>
+                    <UIColumn Columns=12 MediumColumns=6>
+                        <FormViewControl Label="Id" Value="this.Service.Record!.WeatherLocationId" ControlType="typeof(InputReadOnlyDisplay)" />
+                    </UIColumn>
+                    <UIColumn Columns=12 MediumColumns=6>
+                        <FormViewControl Label="Date" Value="this.Service.Record!.Location" ControlType="typeof(InputReadOnlyText)" />
+                    </UIColumn>
+                </UIFormRow>
+            </UIContainer>
+        </UILoader>
+    </Body>
+</UICard>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        this.EditControl = typeof(WeatherLocationEditForm);
+    }
+
+    protected override void BaseExit()
+        => this.NavManager?.NavigateTo("/weatherlocations");
+}

@@ -1,0 +1,12 @@
+﻿@page "/weatherlocation/edit/{Id:guid}"
+@page "/weatherlocations/edit/{Id:guid}"
+@page "/weatherlocation/edit/"
+@page "/weatherlocations/edit/"
+
+@namespace Blazr.Demo.UI
+
+<WeatherLocationEditForm Id=this.Id RecordUrl="weatherlocations"></WeatherLocationEditForm>
+
+@code {
+    [Parameter] public Guid Id { get; set; } = Guid.Empty;
+}

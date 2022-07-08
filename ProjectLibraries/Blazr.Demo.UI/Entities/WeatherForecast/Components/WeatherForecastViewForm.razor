@@ -1,0 +1,56 @@
+﻿@*
+    /// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================
+*@
+
+@namespace Blazr.Demo.UI
+@inherits ViewerForm<DvoWeatherForecast, WeatherForecastEntity>
+
+
+<UICard IsCollapsible=true>
+    <Header>Weather Forecast Viewer</Header>
+    <Body>
+        <UIContainer Size=BootstrapSize.Fluid>
+            <UIFormRow>
+                <UIColumn Columns=12 class="text-end text-right mt-2">
+                    <UIButton class="btn-secondary" ClickEvent="this.Exit">Exit</UIButton>
+                </UIColumn>
+            </UIFormRow>
+        </UIContainer>
+        <UILoader State="this.LoadState">
+            <UIContainer Size=BootstrapSize.Fluid>
+                <UIFormRow>
+                    <UIColumn Columns=12 MediumColumns=6>
+                        <FormViewControl Label="Id" Value="this.Service.Record!.Id" ControlType="typeof(InputReadOnlyDisplay)" />
+                    </UIColumn>
+                    <UIColumn Columns=12 MediumColumns=6>
+                        <FormViewControl Label="Date" Value="this.Service.Record!.Date.AsGlobalDate()" ControlType="typeof(InputReadOnlyText)" />
+                    </UIColumn>
+                </UIFormRow>
+                <UIFormRow>
+                    <UIColumn Columns=12 MediumColumns=6>
+                        <FormViewControl Label="Summary" Value="this.Service.Record!.Summary" ControlType="typeof(InputReadOnlyText)" />
+                    </UIColumn>
+                    <UIColumn Columns=12 MediumColumns=6>
+                        <FormViewControl Label="Temp &deg;C" Value="this.Service.Record!.TemperatureC" ControlType="typeof(InputReadOnlyDisplay)" />
+                    </UIColumn>
+                </UIFormRow>
+            </UIContainer>
+        </UILoader>
+    </Body>
+</UICard>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        this.EditControl = typeof(WeatherForecastEditForm);
+    }
+
+    protected override void BaseExit()
+        => this.NavManager?.NavigateTo("/weatherforecasts");
+}

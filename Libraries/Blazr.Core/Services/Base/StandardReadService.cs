@@ -6,13 +6,13 @@
 
 namespace Blazr.Core;
 
-public class StandardReadService<TRecord, TService>
+public class StandardReadService<TRecord, TEntity>
     : IReadService<TRecord>
     where TRecord : class, new()
-    where TService : class, IEntityService
+    where TEntity : class, IEntity
 {
     protected ICQSDataBroker DataBroker;
-    protected INotificationService<TService> Notifier;
+    protected INotificationService<TEntity> Notifier;
 
     public TRecord? Record { get; private set; }
 
@@ -20,7 +20,7 @@ public class StandardReadService<TRecord, TService>
 
     public bool HasRecord => this.Record is not null;
 
-    public StandardReadService(ICQSDataBroker dataBroker, INotificationService<TService> notifier)
+    public StandardReadService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier)
     {
         this.DataBroker = dataBroker;
         Notifier = notifier;

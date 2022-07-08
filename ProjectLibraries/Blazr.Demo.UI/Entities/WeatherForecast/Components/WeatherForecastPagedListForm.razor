@@ -1,0 +1,59 @@
+﻿@*
+    /// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================
+*@
+
+@implements IDisposable
+@namespace Blazr.Demo.UI
+@inherits PagedListForm<DvoWeatherForecast, WeatherForecastEntity>
+
+<UICard IsCollapsible=true MoreCardCss="@this.FormCss">
+    <Header>List of Weather Forecasts</Header>
+    <Body>
+        <ListForm ListContext=this.listContext ListProvider=this.GetPagedItems StateId=this.RouteId>
+            <UIContainer Size=BootstrapSize.Fluid>
+                <UIFormRow class="my-2">
+                    <UIColumn Columns=12 LargeColumns=8 class="text-start">
+                        <PagingControl @ref=this.pagingControl />
+                    </UIColumn>
+                    <UIColumn Columns=2 LargeColumns=4 class="text-right text-end">
+                        <UIButton class="btn-primary btn-sm" ClickEvent="() => AddRecordAsync()">Add New Weather Forecast</UIButton>
+                        <UIButton class="btn-secondary btn-sm" ClickEvent="Exit">Exit</UIButton>
+                    </UIColumn>
+                </UIFormRow>
+            </UIContainer>
+
+            <UIListControl TRecord=DvoWeatherForecast Records=this.Service.Records LoadState=this.loadState class="table table-sm table-striped table-hover border-bottom no-margin">
+                <RowTemplate>
+                    <UIListColumn HeaderTitle="ID" SortField="WeatherForecastId" NoWrap=true>@context.Id.AsShortGuid()</UIListColumn>
+                    <UIListColumn HeaderTitle="Date" SortField="Date" NoWrap=true>@context.Date.AsGlobalDate()</UIListColumn>
+                    <UIListColumn HeaderTitle="Temp &deg;C" SortField="TemperatureC" NoWrap=true>@context.TemperatureC.AsDegC()</UIListColumn>
+                    <UIListColumn HeaderTitle="Temp &deg;F" SortField="TemperatureC" NoWrap=true>@context.TemperatureC.AsDegF()</UIListColumn>
+                    <UIListColumn HeaderTitle="Summary" SortField="Summary" IsMaxColumn=true>@context.Summary</UIListColumn>
+                    <UIListColumn HeaderTitle="" NoWrap=true class="text-right text-end">
+                        <UIButtonGroup>
+                            <UIButton type="button" class="btn-sm btn-secondary" ClickEvent="() => this.ViewRecord(context.Id)">View</UIButton>
+                            <UIButton type="button" class="btn-sm btn-primary" ClickEvent="() => this.EditRecord(context.Id)">Edit</UIButton>
+                        </UIButtonGroup>
+                    </UIListColumn>
+                </RowTemplate>
+            </UIListControl>
+
+        </ListForm>
+    </Body>
+</UICard>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        listContext.ListState.SortField = "Date";
+        this.RecordUrl = "weatherforecasts";
+        this.ViewControl = typeof(WeatherForecastViewForm);
+        this.EditControl = typeof(WeatherForecastEditForm);
+    }
+}

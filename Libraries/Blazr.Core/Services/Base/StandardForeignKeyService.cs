@@ -6,18 +6,18 @@
 
 namespace Blazr.Core;
 
-public class StandardForeignKeyService<TFkRecord, TService>
-    : IForeignKeyService<TFkRecord, TService>, IDisposable
+public class StandardForeignKeyService<TFkRecord, TEntity>
+    : IForeignKeyService<TFkRecord, TEntity>, IDisposable
         where TFkRecord : class, IFkListItem, new()
-        where TService : class, IEntityService
+        where TEntity : class, IEntity
 {
-    protected INotificationService<TService> NotificationService;
+    protected INotificationService<TEntity> NotificationService;
     protected ICQSDataBroker DataBroker;
     private bool _firstLoad = true;
 
     public IEnumerable<IFkListItem> Items { get; protected set; } = Enumerable.Empty<TFkRecord>();
 
-    public StandardForeignKeyService(ICQSDataBroker dataBroker, INotificationService<TService> notificationService)
+    public StandardForeignKeyService(ICQSDataBroker dataBroker, INotificationService<TEntity> notificationService)
     {
         NotificationService = notificationService;
         DataBroker = dataBroker;

@@ -5,14 +5,14 @@
 /// ============================================================
 namespace Blazr.Core;
 
-public class StandardEditService<TRecord, TEditRecord, TService>
+public class StandardEditService<TRecord, TEditRecord, TEntity>
     : IEditService<TRecord, TEditRecord>
     where TRecord : class, new()
     where TEditRecord : class, IEditRecord<TRecord>, new()
-    where TService : class, IEntityService
+    where TEntity : class, IEntity
 {
     protected readonly ICQSDataBroker DataBroker;
-    protected INotificationService<TService> Notifier;
+    protected INotificationService<TEntity> Notifier;
 
     public TEditRecord EditModel { get; private set; } = new TEditRecord();
 
@@ -20,7 +20,7 @@ public class StandardEditService<TRecord, TEditRecord, TService>
 
     public string? Message { get; protected set; }
 
-    public StandardEditService(ICQSDataBroker dataBroker, INotificationService<TService> notifier)
+    public StandardEditService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier)
     {
         this.DataBroker = dataBroker;
         this.Notifier = notifier;
