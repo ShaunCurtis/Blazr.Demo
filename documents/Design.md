@@ -76,7 +76,7 @@ The primary organisation of the solution is on separation of concerns.  The seco
 
 ## Coding Standards
 
-I (try to) implement good code practices throughout the solution: principally SOLID and basic CQS principles in classes.  I use coding patterns where appropiate.
+I (try to) implement good code practices throughout the solution: principally SOLID and basic CQS principles in classes.  Please correct me where I've broken them.  I use coding patterns where appropiate.
 
 ## Generics and Boilerplating
 
