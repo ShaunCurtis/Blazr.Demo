@@ -16,4 +16,8 @@ public record SortState
 
     public static SortState GetSortState(ListState options)
         =>  new SortState { SortDescending = options.SortDescending, SortField=options.SortField  };
+
+    public string SortExpression => $"{SortField}{sortDirectionText}";
+
+    private string sortDirectionText => SortDescending ? " Desc" : string.Empty;
 }

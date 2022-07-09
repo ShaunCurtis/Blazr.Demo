@@ -14,7 +14,7 @@ public record DboWeatherForecast
 
     public Guid WeatherLocationId { get; init; }
 
-    public DateTimeOffset Date { get; init; }
+    public DateTimeOffset Date { get; init; } = DateTimeOffset.Now;
 
-    public int TemperatureC { get; init; }
+    public int TemperatureC { get; init; } = 0;
 }

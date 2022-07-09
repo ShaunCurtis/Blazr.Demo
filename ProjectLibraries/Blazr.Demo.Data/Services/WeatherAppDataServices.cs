@@ -33,15 +33,6 @@ public static class WeatherAppDataServices
         services.AddWeatherServices();
     }
 
-    public static void AddInMemoryCQSWeatherAppServerDataServices(this IServiceCollection services)
-    {
-        services.AddDbContextFactory<InMemoryWeatherDbContext>(options => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));
-        services.AddSingleton<ICQSDataBroker, CQSDataBroker<InMemoryWeatherDbContext>>();
-        services.AddSingleton<ICustomCQSDataBroker, ServerCustomCQSDataBroker<InMemoryWeatherDbContext>>();
-        services.AddTransient<IFilteredListQueryHandler<DvoWeatherForecast>, ListQueryHandlerBase<DvoWeatherForecast, InMemoryWeatherDbContext>>();
-        services.AddTransient<ICustomQueryHandler<DvoWeatherForecast>, WeatherForecastListQueryHandler<InMemoryWeatherDbContext>>();
-    }
-
     public static void AddInMemoryWeatherRepositoryAppServerDataServices(this IServiceCollection services)
     {
         services.AddDbContextFactory<InMemoryWeatherDbContext>(options => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));

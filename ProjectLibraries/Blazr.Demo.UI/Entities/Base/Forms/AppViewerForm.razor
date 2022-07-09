@@ -3,6 +3,11 @@
 @typeparam TEntity where TEntity  : class, IEntity
 @inherits ViewerForm<TRecord, TEntity>
 @code {
+    
+    protected string ContainerCss => this.Modal is null
+        ? "p-2 bg-light border border-dark mt-2"
+        :"p-2 bg-light";
+
     protected RenderFragment HeaderButtonContainer => __builder =>
         {
         <UIContainer Size=BootstrapSize.Fluid>

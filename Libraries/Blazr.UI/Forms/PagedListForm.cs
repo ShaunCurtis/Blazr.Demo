@@ -3,14 +3,14 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-namespace Blazr.Demo.UI;
+namespace Blazr.UI;
 
 public class PagedListForm<TRecord, TEntity>
     : OwningComponentBase<IListService<TRecord, TEntity >>, IDisposable
     where TRecord : class, new()
     where TEntity : class, IEntity
 {
-    protected PagingControl? pagingControl;
+    protected IPagingControl? pagingControl;
     private bool _isNew = true;
     protected ListContext listContext = new ListContext();
     protected Type? ViewControl;

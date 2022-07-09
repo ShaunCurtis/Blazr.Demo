@@ -10,9 +10,10 @@
 @namespace Blazr.Demo.UI
 @inherits AppPagedListForm<DvoWeatherForecast, WeatherForecastEntity>
 
-<UICard IsCollapsible=true MoreCardCss="@this.FormCss">
-    <Header>List of Weather Forecasts</Header>
-    <Body>
+    <UIContainer Size=BootstrapSize.Fluid class="@this.ContainerCss">
+        <FormViewTitle>
+            <h2>List of Weather Forecasts</h2>
+        </FormViewTitle>
         <ListForm ListContext=this.listContext ListProvider=this.GetPagedItems StateId=this.RouteId>
             @this.HeaderButtonMarkup("Add New Weather Forecast")
             <UIListControl TRecord=DvoWeatherForecast Records=this.Service.Records LoadState=this.loadState class="@this.TableCss">
@@ -29,8 +30,7 @@
                 </RowTemplate>
             </UIListControl>
         </ListForm>
-    </Body>
-</UICard>
+</UIContainer>
 
 @code {
     [Parameter] public Guid WeatherLocationId { get; set; } = Guid.Empty;

@@ -9,25 +9,24 @@
 @namespace Blazr.Demo.UI
 @inherits AppViewerForm<DboWeatherLocation, WeatherLocationEntity>
 
-
-<UICard IsCollapsible=true>
-    <Header>Weather Location Viewer</Header>
-    <Body>
+<UIContainer Size=BootstrapSize.Fluid class="@this.ContainerCss">
+    <UILoader State="this.LoadState">
+        <FormViewTitle>
+            <h2>Weather Location Viewer</h2>
+        </FormViewTitle>
         @this.HeaderButtonContainer
-        <UILoader State="this.LoadState">
-            <UIContainer Size=BootstrapSize.Fluid>
-                <UIFormRow>
-                    <UIColumn Columns=12 MediumColumns=6>
-                        <FormViewControl Label="Id" Value="this.Service.Record!.WeatherLocationId" ControlType="typeof(InputReadOnlyDisplay)" />
-                    </UIColumn>
-                    <UIColumn Columns=12 MediumColumns=6>
-                        <FormViewControl Label="Location" Value="this.Service.Record!.Location" ControlType="typeof(InputReadOnlyText)" />
-                    </UIColumn>
-                </UIFormRow>
-            </UIContainer>
-        </UILoader>
-    </Body>
-</UICard>
+        <UIContainer Size=BootstrapSize.Fluid>
+            <UIFormRow>
+                <UIColumn Columns=12 MediumColumns=6>
+                    <FormViewControl Label="Location" Value="this.Service.Record!.Location" ControlType="typeof(InputReadOnlyText)" />
+                </UIColumn>
+                <UIColumn Columns=12 MediumColumns=6>
+                    <FormViewControl Label="Unique Record Identity" Value="this.Service.Record!.WeatherLocationId" ControlType="typeof(InputReadOnlyDisplay)" />
+                </UIColumn>
+            </UIFormRow>
+        </UIContainer>
+    </UILoader>
+</UIContainer>
 
 @code {
 

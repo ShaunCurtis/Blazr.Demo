@@ -10,7 +10,25 @@
 @namespace Blazr.Demo.UI
 @inherits AppPagedListForm<DboWeatherLocation, WeatherLocationEntity>
 
-<UICard IsCollapsible=true MoreCardCss="@this.FormCss">
+<UIContainer Size=BootstrapSize.Fluid class="@this.ContainerCss">
+        <FormViewTitle>
+            <h2>List of Weather Locations</h2>
+        </FormViewTitle>
+        <ListForm ListContext=this.listContext ListProvider=this.GetPagedItems StateId=this.RouteId>
+            @this.HeaderButtonMarkup()
+            <UIListControl TRecord=DboWeatherLocation Records=this.Service.Records LoadState=this.loadState class="@this.TableCss">
+                <RowTemplate>
+                    <UIListColumn HeaderTitle="ID" SortField="WeatherForecastId" NoWrap=true>@context.WeatherLocationId.AsShortGuid()</UIListColumn>
+                    <UIListColumn HeaderTitle="Location" SortField="Location" IsMaxColumn=true>@context.Location</UIListColumn>
+                    <UIListColumn HeaderTitle="" NoWrap=true class="text-right text-end">
+                        @this.RowButtonMarkup(context.WeatherLocationId, true)
+                    </UIListColumn>
+                </RowTemplate>
+            </UIListControl>
+        </ListForm>
+</UIContainer>
+
+@*<UICard IsCollapsible=true MoreCardCss="@this.FormCss">
     <Header>List of Weather Locations</Header>
     <Body>
         <ListForm ListContext=this.listContext ListProvider=this.GetPagedItems StateId=this.RouteId>
@@ -27,7 +45,7 @@
         </ListForm>
     </Body>
 </UICard>
-
+*@
 @code {
 
     protected override void OnInitialized()

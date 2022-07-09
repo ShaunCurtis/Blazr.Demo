@@ -5,6 +5,8 @@
 @code {
     protected readonly string TableCss = "table table-sm table-striped table-hover border-bottom no-margin";
 
+    protected string ContainerCss = "bg-light border border-dark p-0 mt-2";
+
     protected RenderFragment HeaderButtonMarkup(string addText = "Add new Record") => __builder =>
     {
         <UIContainer Size=BootstrapSize.Fluid>

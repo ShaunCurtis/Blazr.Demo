@@ -2,9 +2,9 @@
 @page "/weatherlocations/dashboard/{Id:guid}"
 @namespace Blazr.Demo.UI
 
-<WeatherLocationViewForm Id=this.Id />
+<WeatherLocationViewForm Id=this.Id/>
 
-<WeatherForecastPagedListForm RouteId=RouteId WeatherLocationId=this.Id />
+<WeatherForecastPagedListForm RouteId=RouteId WeatherLocationId=this.Id/>
 
 @code {
     private static Guid RouteId = Guid.NewGuid();

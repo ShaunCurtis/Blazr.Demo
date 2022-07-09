@@ -47,15 +47,7 @@ public class FilteredListQueryHandlerBase<TRecord, TDbContext>
                 .Where(listQuery.Request.FilterExpression)
                 .AsQueryable();
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-        if (listQuery.Request.SortField is not null)
-            if (listQuery.Request.SortDescending)
-                query = query.OrderByDescending(x => x.GetType().GetProperty(listQuery.Request.SortField).GetValue(x, null));
-            else
-                query = query.OrderBy(x => x.GetType().GetProperty(listQuery.Request.SortField).GetValue(x, null));
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-
-        else if (listQuery.Request.SortExpressionString is not null)
+        if (listQuery.Request.SortExpressionString is not null)
             query = query.OrderBy(listQuery.Request.SortExpressionString);
 
         if (listQuery.Request.PageSize > 0)

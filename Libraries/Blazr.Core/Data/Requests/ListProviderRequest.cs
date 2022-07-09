@@ -13,10 +13,6 @@ public readonly struct ListProviderRequest<TRecord>
 
     public int PageSize { get; }
 
-    public string? SortField { get; }
-
-    public bool SortDescending { get; }
-
     public CancellationToken CancellationToken { get; }
 
     public string? SortExpressionString { get; }
@@ -35,8 +31,6 @@ public readonly struct ListProviderRequest<TRecord>
         SortExpressionString = null;
         FilterExpressionString = null;
         FilterExpression = null;
-        SortField = null;
-        SortDescending = false;
     }
 
     public ListProviderRequest(int startIndex, int pageSize, CancellationToken cancellationToken, string? sortExpressionString = null, string? filterExpressionString = null, Func<TRecord, bool>? filterExpression = null )
@@ -47,8 +41,6 @@ public readonly struct ListProviderRequest<TRecord>
         SortExpressionString = sortExpressionString;
         FilterExpressionString = filterExpressionString;
         FilterExpression = filterExpression;
-        SortField = null;
-        SortDescending = false;
     }
 
     public ListProviderRequest(ItemsProviderRequest request, Func<TRecord, bool>? filterExpression = null)
@@ -59,8 +51,6 @@ public readonly struct ListProviderRequest<TRecord>
         SortExpressionString = null;
         FilterExpressionString = null;
         FilterExpression = filterExpression;
-        SortField = null;
-        SortDescending = false;
     }
 
     public ListProviderRequest(ListState options, Func<TRecord, bool>? filterExpression = null)
@@ -68,9 +58,7 @@ public readonly struct ListProviderRequest<TRecord>
         StartIndex = options.StartIndex;
         PageSize = options.PageSize;
         CancellationToken = new CancellationToken();
-        SortDescending = options.SortDescending;
-        SortField = options.SortField;
-        SortExpressionString = null;
+        SortExpressionString = options.SortState.SortExpression;
         FilterExpressionString = null;
         FilterExpression = filterExpression;
     }

@@ -4,7 +4,6 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-
 namespace Blazr.UI.Bootstrap;
 
 /// <summary>
@@ -12,17 +11,32 @@ namespace Blazr.UI.Bootstrap;
 /// </summary>
 public class InputReadOnlyText : ComponentBase
 {
-    [Parameter] public string Value { get; set; } = String.Empty;
-
-    [Parameter] public bool AsMarkup { get; set; } = true;
+    [Parameter] public object Value { get; set; } = default!;
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         builder.OpenElement(0, "div");
         builder.AddAttribute(2, "class", "form-control-plaintext form-control-markup");
-        if (AsMarkup) builder.AddMarkupContent(4, this.Value);
-        else builder.AddContent(4, this.Value);
+        builder.AddContent(4, GetAsMarkup(this.Value));
         builder.CloseElement();
+    }
+
+    private MarkupString GetAsMarkup(object value)
+    { 
+        switch (value)
+        {
+            case MarkupString mValue:
+                return mValue;
+
+            case string sValue:
+                return (MarkupString)(sValue);
+
+            case null:
+                return new MarkupString(string.Empty);
+
+            default:
+                return new MarkupString(value?.ToString() ?? String.Empty);
+        }
     }
 }
 

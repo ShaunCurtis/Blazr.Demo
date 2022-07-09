@@ -10,18 +10,27 @@
 @inherits AppViewerForm<DvoWeatherForecast, WeatherForecastEntity>
 
 
-<UICard IsCollapsible=true>
-    <Header>Weather Forecast Viewer</Header>
-    <Body>
+<UIContainer Size=BootstrapSize.Fluid class="@this.ContainerCss">
+    <UILoader State="this.LoadState">
+        <FormViewTitle>
+            <h2>Weather Forecast Viewer</h2>
+        </FormViewTitle>
         @this.HeaderButtonContainer
-        <UILoader State="this.LoadState">
             <UIContainer Size=BootstrapSize.Fluid>
                 <UIFormRow>
-                    <UIColumn Columns=12 MediumColumns=6>
-                        <FormViewControl Label="Id" Value="this.Service.Record!.Id" ControlType="typeof(InputReadOnlyDisplay)" />
+                    <UIColumn Columns=12 MediumColumns=8>
+                        <FormViewControl Label="Location" Value="this.Service.Record!.Location" ControlType="typeof(InputReadOnlyText)" />
                     </UIColumn>
-                    <UIColumn Columns=12 MediumColumns=6>
+                    <UIColumn Columns=12 MediumColumns=4>
                         <FormViewControl Label="Date" Value="this.Service.Record!.Date.AsGlobalDate()" ControlType="typeof(InputReadOnlyText)" />
+                    </UIColumn>
+                </UIFormRow>
+                <UIFormRow>
+                    <UIColumn Columns=12 MediumColumns=4>
+                        <FormViewControl Label="Temp &deg;F" Value="this.Service.Record!.TemperatureC.AsDegF()" ControlType="typeof(InputReadOnlyText)" />
+                    </UIColumn>
+                    <UIColumn Columns=12 MediumColumns=4>
+                        <FormViewControl Label="Temp &deg;C" Value="this.Service.Record!.TemperatureC.AsDegC()" ControlType="typeof(InputReadOnlyText)" />
                     </UIColumn>
                 </UIFormRow>
                 <UIFormRow>
@@ -29,13 +38,12 @@
                         <FormViewControl Label="Summary" Value="this.Service.Record!.Summary" ControlType="typeof(InputReadOnlyText)" />
                     </UIColumn>
                     <UIColumn Columns=12 MediumColumns=6>
-                        <FormViewControl Label="Temp &deg;C" Value="this.Service.Record!.TemperatureC" ControlType="typeof(InputReadOnlyDisplay)" />
+                        <FormViewControl Label="Unique Record Identity" Value="this.Service.Record!.Id" ControlType="typeof(InputReadOnlyDisplay)" />
                     </UIColumn>
                 </UIFormRow>
             </UIContainer>
-        </UILoader>
-    </Body>
-</UICard>
+    </UILoader>
+</UIContainer>
 
 @code {
     protected override void OnInitialized()

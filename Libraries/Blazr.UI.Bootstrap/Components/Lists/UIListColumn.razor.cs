@@ -34,7 +34,7 @@ public partial class UIListColumn : UIComponentBase
 
         // TODO - currwnt sort issue is here
         SortState options = this.IsCurrentSortField()
-            ?  new SortState { SortDescending = true, SortField = this._listContext.ListState.SortState.SortField }
+            ?  new SortState { SortDescending = !this._listContext.ListState.SortState.SortDescending, SortField = this._listContext.ListState.SortState.SortField }
             : new SortState { SortDescending = false, SortField = this.SortField };
 
         this._listContext?.SetSortState(options);
