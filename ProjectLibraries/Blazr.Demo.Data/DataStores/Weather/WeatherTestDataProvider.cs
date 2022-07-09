@@ -28,7 +28,7 @@ public class WeatherTestDataProvider
 
         // Check if we already have a full data set
         // If not clear down any existing data and start again
-        if (WeatherSummaries.Count() == 0 || weatherForcasts.Count() == 0)
+        if (weatherSummaries.Count() == 0 || weatherForcasts.Count() == 0)
         {
 
             dbContext.RemoveRange(weatherSummaries.ToList());
@@ -94,6 +94,7 @@ public class WeatherTestDataProvider
                     {
                         WeatherForecastId = Guid.NewGuid(),
                         WeatherSummaryId = summaryArray[Random.Shared.Next(summaryArray.Length)].WeatherSummaryId,
+                        WeatherLocationId = location.WeatherLocationId,
                         Date = DateTime.Now.AddDays(index),
                         TemperatureC = Random.Shared.Next(-20, 55),
                     })

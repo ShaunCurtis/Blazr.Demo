@@ -5,10 +5,10 @@
 /// ============================================================
 namespace Blazr.Demo.UI;
 
-public class PagedListForm<TRecord, TService>
-    : OwningComponentBase<IListService<TRecord>>, IDisposable
+public class PagedListForm<TRecord, TEntity>
+    : OwningComponentBase<IListService<TRecord, TEntity >>, IDisposable
     where TRecord : class, new()
-    where TService : class, IEntity
+    where TEntity : class, IEntity
 {
     protected PagingControl? pagingControl;
     private bool _isNew = true;
@@ -20,13 +20,15 @@ public class PagedListForm<TRecord, TService>
     protected bool isLoading => Service.Records is null;
     protected ComponentState loadState => isLoading ? ComponentState.Loading : ComponentState.Loaded;
 
+    public Func<TRecord, bool>? ListFilter { get; set; }
+
     [Parameter] public Guid RouteId { get; set; } = Guid.Empty;
 
     [Parameter] public bool IsSubForm { get; set; } = false;
 
     [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
 
-    [Inject] protected INotificationService<TService> NotificationService { get; set; } = default!;
+    [Inject] protected INotificationService<TEntity> NotificationService { get; set; } = default!;
 
     [Inject] protected NavigationManager NavigationManager { get; set; } = default!;
 
@@ -56,7 +58,10 @@ public class PagedListForm<TRecord, TService>
     {
         parameters.SetParameterProperties(this);
 
+        this.Service.SetNotificationService(this.NotificationService);
+
         await PreLoadRecordAsync(_isNew);
+
         if (_isNew)
             this.NotificationService.ListUpdated += this.OnListChanged;
 
@@ -67,28 +72,20 @@ public class PagedListForm<TRecord, TService>
     public virtual Task PreLoadRecordAsync(bool isNew)
         => Task.CompletedTask;
 
-    public async ValueTask<PagingState> GetPagedItems(PagingState request)
+    public virtual async ValueTask<PagingState> GetPagedItems(PagingState request)
     {
         var listState = new ListState { PageSize = request.PageSize, StartIndex = request.StartIndex };
-        listState = this.GetState(listState);
+        var newListState = await this.GetPagedItems(listState);
 
-        var result = await this.Service.GetRecordsAsync(new ListProviderRequest<TRecord>(listState));
-        
-        listState.ListTotalCount = result.TotalItemCount;
-        
-        await this.OnAfterGetItems();
-        await this.InvokeAsync(StateHasChanged);
-        
-        this.SaveState(listState);
-        
-        return new PagingState { PageSize = listState.PageSize, StartIndex = listState.StartIndex, ListTotalCount = listState.ListTotalCount };
+        return new PagingState { PageSize = newListState.PageSize, StartIndex = newListState.StartIndex, ListTotalCount = newListState.ListTotalCount };
     }
 
     public async ValueTask<ListState> GetPagedItems(ListState request)
     {
         var listState = this.GetState(request);
-        
-        var result = await this.Service.GetRecordsAsync(new ListProviderRequest<TRecord>(listState));
+
+        var query = new FilteredListQuery<TRecord>(new ListProviderRequest<TRecord>(listState, this.ListFilter));
+        var result = await this.Service.GetRecordsAsync(query);
         
         listState.ListTotalCount = result.TotalItemCount;
         
@@ -126,6 +123,9 @@ public class PagedListForm<TRecord, TService>
         returnState ??= state;
         return returnState;
     }
+    protected virtual void RecordDashboard(Guid Id)
+        => this.NavigationManager!.NavigateTo($"/{this.RecordUrl}/dashboard/{Id}");
+
 
     protected async Task EditRecord(Guid Id)
     {

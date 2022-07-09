@@ -22,10 +22,9 @@ var builder = WebApplication.CreateBuilder(args);
         Services.AddSingleton<ModalService>();
         Services.AddSingleton<UiStateService>();
 
-        Services.AddInMemoryWeatherAppServerDataServices();
-
-        Services.AddWeatherForecastServices();
-        Services.AddWeatherSummaryServices();
+        //Services.AddInMemoryWeatherAppServerDataServices();
+        Services.AddWeatherAppServerDataServices<InMemoryWeatherDbContext>(options 
+            => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));
     }
 }
 

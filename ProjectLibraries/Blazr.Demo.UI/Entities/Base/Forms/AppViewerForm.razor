@@ -1,0 +1,17 @@
+﻿@namespace Blazr.Demo.UI
+@typeparam TRecord where TRecord : class, new() 
+@typeparam TEntity where TEntity  : class, IEntity
+@inherits ViewerForm<TRecord, TEntity>
+@code {
+    protected RenderFragment HeaderButtonContainer => __builder =>
+        {
+        <UIContainer Size=BootstrapSize.Fluid>
+            <UIFormRow>
+                <UIColumn Columns=12 class="text-end text-right mt-2">
+                    <UIButton class="btn-danger btn-sm" ClickEvent="this.EditRecordAsync">Edit</UIButton>
+                    <UIButton class="btn-secondary btn-sm" ClickEvent="this.Exit">Exit</UIButton>
+                </UIColumn>
+            </UIFormRow>
+        </UIContainer>
+        };
+}

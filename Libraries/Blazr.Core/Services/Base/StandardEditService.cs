@@ -6,7 +6,7 @@
 namespace Blazr.Core;
 
 public class StandardEditService<TRecord, TEditRecord, TEntity>
-    : IEditService<TRecord, TEditRecord>
+    : IEditService<TRecord, TEditRecord, TEntity>
     where TRecord : class, new()
     where TEditRecord : class, IEditRecord<TRecord>, new()
     where TEntity : class, IEntity
@@ -25,6 +25,9 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
         this.DataBroker = dataBroker;
         this.Notifier = notifier;
     }
+
+    public void SetNotificationService(INotificationService<TEntity> service)
+        => this.Notifier = service;
 
     public async ValueTask LoadRecordAsync(Guid Id)
     {

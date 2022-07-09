@@ -9,6 +9,8 @@ namespace Blazr.Core;
 public class StandardNotificationService<TEntity> : INotificationService<TEntity>
     where TEntity : class, IEntity
 {
+    public readonly Guid Id = Guid.NewGuid();
+
     public event EventHandler? ListUpdated;
     public event EventHandler<PagingEventArgs>? ListPaged;
     public event EventHandler<RecordEventArgs>? RecordChanged;

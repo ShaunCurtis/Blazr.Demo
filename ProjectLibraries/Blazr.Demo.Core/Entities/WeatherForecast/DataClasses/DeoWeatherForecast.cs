@@ -78,7 +78,7 @@ public class DeoWeatherForecast
         bool trip = false;
 
         this.Date.Validation("Date", model, validationMessageStore)
-            .LessThan(DateTime.Now, true, "The weather forecast must be for a future date")
+            .GreaterThan(DateTime.Now, true, "The weather forecast must be for a future date")
             .Validate(ref trip, fieldname);
 
         this.SummaryId.Validation("SummaryId", model, validationMessageStore)

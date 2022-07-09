@@ -11,9 +11,9 @@ public static class WeatherLocationServiceCollection
     public static void AddWeatherLocationServices(this IServiceCollection services)
     {
         services.AddScoped<INotificationService<WeatherLocationEntity>, StandardNotificationService<WeatherLocationEntity>>();
-        services.AddScoped<IListService<DboWeatherLocation>, StandardListService<DboWeatherLocation, WeatherLocationEntity>>();
-        services.AddScoped<IReadService<DboWeatherLocation>, StandardReadService<DboWeatherLocation, WeatherLocationEntity>>();
-        services.AddScoped<IEditService<DboWeatherLocation, DeoWeatherLocation>, StandardEditService<DboWeatherLocation, DeoWeatherLocation, WeatherLocationEntity>>();
+        services.AddScoped<IListService<DboWeatherLocation, WeatherLocationEntity>, StandardListService<DboWeatherLocation, WeatherLocationEntity>>();
+        services.AddScoped<IReadService<DboWeatherLocation, WeatherLocationEntity>, StandardReadService<DboWeatherLocation, WeatherLocationEntity>>();
+        services.AddScoped<IEditService<DboWeatherLocation, DeoWeatherLocation, WeatherLocationEntity>, StandardEditService<DboWeatherLocation, DeoWeatherLocation, WeatherLocationEntity>>();
         services.AddScoped<WeatherLocationService>();
     }
 }

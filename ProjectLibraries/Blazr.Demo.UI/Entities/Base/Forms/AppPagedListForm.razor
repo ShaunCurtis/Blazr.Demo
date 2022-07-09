@@ -1,0 +1,34 @@
+﻿@namespace Blazr.Demo.UI
+@typeparam TRecord where TRecord : class, new()
+@typeparam TEntity where TEntity  : class, IEntity
+@inherits PagedListForm<TRecord, TEntity>
+@code {
+    protected readonly string TableCss = "table table-sm table-striped table-hover border-bottom no-margin";
+
+    protected RenderFragment HeaderButtonMarkup(string addText = "Add new Record") => __builder =>
+    {
+        <UIContainer Size=BootstrapSize.Fluid>
+            <UIFormRow class="my-2">
+                <UIColumn Columns=12 LargeColumns=8 class="text-start">
+                    <PagingControl @ref=this.pagingControl />
+                </UIColumn>
+                <UIColumn Columns=2 LargeColumns=4 class="text-right text-end">
+                    <UIButton class="btn-primary btn-sm" ClickEvent="() => this.AddRecordAsync()">@addText</UIButton>
+                    <UIButton class="btn-secondary btn-sm" ClickEvent="this.Exit">Exit</UIButton>
+                </UIColumn>
+            </UIFormRow>
+        </UIContainer>
+    };
+
+    protected RenderFragment RowButtonMarkup(Guid id, bool showDash = false) => __builder =>
+    {
+        <UIButtonGroup>
+            @if (showDash)
+            {
+                <UIButton type="button" class="btn-sm btn-primary" ClickEvent="() => this.RecordDashboard(id)">Dash</UIButton>
+            }
+            <UIButton type="button" class="btn-sm btn-secondary" ClickEvent="() => this.ViewRecord(id)">View</UIButton>
+            <UIButton type="button" class="btn-sm btn-danger" ClickEvent="() => this.EditRecord(id)">Edit</UIButton>
+        </UIButtonGroup>
+    };
+}

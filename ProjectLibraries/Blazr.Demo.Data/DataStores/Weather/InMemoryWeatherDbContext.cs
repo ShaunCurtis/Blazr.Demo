@@ -31,16 +31,18 @@ public class InMemoryWeatherDbContext
         modelBuilder.Entity<DvoWeatherForecast>()
             .ToInMemoryQuery(()
             => from f in this.DboWeatherForecast
-               join s in this.DboWeatherSummary! on f.WeatherSummaryId equals s.WeatherSummaryId
-               join l in this.DboWeatherLocation! on f.WeatherLocationId equals l.WeatherLocationId
+               join s in this.DboWeatherSummary! on f.WeatherSummaryId equals s.WeatherSummaryId into fs
+               from fsjoin in fs
+               join l in this.DboWeatherLocation! on f.WeatherLocationId equals l.WeatherLocationId into fl
+               from fljoin in fl
                select new DvoWeatherForecast
                {
                    Id = f.WeatherForecastId,
                    WeatherSummaryId = f.WeatherSummaryId,
                    WeatherLocationId = f.WeatherLocationId,
                    Date = f.Date,
-                   Summary = s.Summary,
-                   Location = l.Location,
+                   Summary = fsjoin.Summary,
+                   Location = fljoin.Location,
                    TemperatureC = f.TemperatureC,
                })
             .HasKey(x => x.Id);

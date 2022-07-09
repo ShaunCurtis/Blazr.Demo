@@ -28,6 +28,7 @@ public abstract class ModalDialogBase : ComponentBase, IModalDialog
         InvokeAsync(StateHasChanged);
         return this._ModalTask.Task;
     }
+
     public Task<ModalResult> ShowAsync(Type control, ModalOptions options)
     {
         if (!(typeof(IComponent).IsAssignableFrom(control)))
@@ -39,6 +40,25 @@ public abstract class ModalDialogBase : ComponentBase, IModalDialog
         this.Display = true;
         InvokeAsync(StateHasChanged);
         return this._ModalTask.Task;
+    }
+
+    public async Task<bool> SwitchAsync<TModal>(ModalOptions options) where TModal : IComponent
+    {
+        this.ModalContentType = typeof(TModal);
+        this.Options = options ??= this.Options;
+        await InvokeAsync(StateHasChanged);
+        return true;
+    }
+
+    public async Task<bool> SwitchAsync(Type control, ModalOptions options)
+    {
+        if (!(typeof(IComponent).IsAssignableFrom(control)))
+            throw new InvalidOperationException("Passed control must implement IComponent");
+
+        this.ModalContentType = control;
+        this.Options = options ??= this.Options;
+        await InvokeAsync(StateHasChanged);
+        return true;
     }
 
     /// <summary>

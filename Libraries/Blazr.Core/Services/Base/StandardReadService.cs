@@ -7,7 +7,7 @@
 namespace Blazr.Core;
 
 public class StandardReadService<TRecord, TEntity>
-    : IReadService<TRecord>
+    : IReadService<TRecord, TEntity>
     where TRecord : class, new()
     where TEntity : class, IEntity
 {
@@ -25,6 +25,9 @@ public class StandardReadService<TRecord, TEntity>
         this.DataBroker = dataBroker;
         Notifier = notifier;
     }
+
+    public void SetNotificationService(INotificationService<TEntity> service)
+        => this.Notifier = service;
 
     public async ValueTask GetRecordAsync(Guid Id)
     {

@@ -12,13 +12,10 @@ public class FilteredListQuery<TRecord>
 {
     public ListProviderRequest<TRecord> Request { get; private set; }
 
-    public Func<TRecord, bool>? FilterExpression { get; private set; } = null;
-
     public Guid TransactionId => Guid.NewGuid();
 
-    public FilteredListQuery(ListProviderRequest<TRecord> request, Func<TRecord, bool>? filter)
+    public FilteredListQuery(ListProviderRequest<TRecord> request)
     {
         Request = request;
-        FilterExpression = filter;
     }
 }

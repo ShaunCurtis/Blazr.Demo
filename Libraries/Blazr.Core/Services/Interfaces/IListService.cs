@@ -5,8 +5,9 @@
 /// ============================================================
 namespace Blazr.Core;
 
-public interface IListService<TRecord>
+public interface IListService<TRecord, TEntity>
     where TRecord : class, new()
+    where TEntity : class, IEntity
 {
     public int PageSize { get;}
 
@@ -22,10 +23,14 @@ public interface IListService<TRecord>
 
     public bool HasList => this.Records is not null;
 
+    public void SetNotificationService(INotificationService<TEntity> service);
+
     public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(int startRecord, int pageSize);
 
     public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(ListProviderRequest<TRecord> request);
 
     public ValueTask<ItemsProviderResult<TRecord>> GetRecordsAsync(ItemsProviderRequest request);
+
+    public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(IFilteredListQuery<TRecord> query);
 }
 

@@ -7,7 +7,7 @@
 namespace Blazr.Core;
 
 public class StandardListService<TRecord, TEntity>
-    : IListService<TRecord>
+    : IListService<TRecord, TEntity>
     where TRecord : class, new()
     where TEntity : class, IEntity
 {
@@ -37,6 +37,9 @@ public class StandardListService<TRecord, TEntity>
         this.DataBroker = dataBroker;
         Notifier = notifier;
     }
+
+    public void SetNotificationService(INotificationService<TEntity> service)
+        => this.Notifier = service;
 
     public async ValueTask GetRecordAsync(Guid Id)
     {
@@ -105,6 +108,34 @@ public class StandardListService<TRecord, TEntity>
         var request = new ListProviderRequest<TRecord>(this.StartIndex, this.PageSize, cancel);
 
         return await this.GetRecordsAsync(request);
+    }
+
+    public async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(IFilteredListQuery<TRecord> query)
+    {
+        this.Message = String.Empty;
+        this.PageSize = query.Request.PageSize;
+        this.StartIndex = query.Request.StartIndex;
+
+        var result = await this.DataBroker.ExecuteAsync<TRecord>(query);
+
+        if (result.Success && result.Items is not null)
+        {
+            this.Records = result.Items;
+            this.ListCount = result.TotalItemCount;
+            var page = query.Request.StartIndex <= 0
+                ? 0
+                : (int)(query.Request.StartIndex / query.Request.PageSize);
+
+            this.Notifier.NotifyListPaged(this, page);
+        }
+        else
+        {
+            this.Records = null;
+            this.ListCount = 0;
+            this.Message = $"Failed to retrieve the recordset at index {query.Request.StartIndex}";
+        }
+
+        return new ListProviderResult<TRecord>(this.Records ?? Enumerable.Empty<TRecord>(), this.ListCount, result.Success, Message);
     }
 }
 

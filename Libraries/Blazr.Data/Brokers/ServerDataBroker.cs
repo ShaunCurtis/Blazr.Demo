@@ -133,9 +133,9 @@ public class ServerDataBroker<TDbContext>
             query = query
                  .Where(request.FilterExpressionString);
 
-        if (!string.IsNullOrWhiteSpace(request.SortExpression))
+        if (!string.IsNullOrWhiteSpace(request.SortExpressionString))
             query = query
-                .OrderBy(request.SortExpression);
+                .OrderBy(request.SortExpressionString);
 
         if (request.PageSize > 0)
             query = query

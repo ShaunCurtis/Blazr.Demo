@@ -7,19 +7,13 @@
 *@
 
 @namespace Blazr.Demo.UI
-@inherits ViewerForm<DvoWeatherForecast, WeatherForecastEntity>
+@inherits AppViewerForm<DvoWeatherForecast, WeatherForecastEntity>
 
 
 <UICard IsCollapsible=true>
     <Header>Weather Forecast Viewer</Header>
     <Body>
-        <UIContainer Size=BootstrapSize.Fluid>
-            <UIFormRow>
-                <UIColumn Columns=12 class="text-end text-right mt-2">
-                    <UIButton class="btn-secondary" ClickEvent="this.Exit">Exit</UIButton>
-                </UIColumn>
-            </UIFormRow>
-        </UIContainer>
+        @this.HeaderButtonContainer
         <UILoader State="this.LoadState">
             <UIContainer Size=BootstrapSize.Fluid>
                 <UIFormRow>
@@ -44,13 +38,10 @@
 </UICard>
 
 @code {
-
     protected override void OnInitialized()
     {
         base.OnInitialized();
         this.EditControl = typeof(WeatherForecastEditForm);
+        this.RecordUrl = "weatherforecasts";
     }
-
-    protected override void BaseExit()
-        => this.NavManager?.NavigateTo("/weatherforecasts");
 }

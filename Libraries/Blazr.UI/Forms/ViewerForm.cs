@@ -7,7 +7,7 @@
 namespace Blazr.UI;
 
 public class ViewerForm<TRecord, TEntity>
-    : OwningComponentBase<IReadService<TRecord>>, IDisposable
+    : OwningComponentBase<IReadService<TRecord, TEntity>>, IDisposable
     where TRecord : class, new()
     where TEntity : class, IEntity
 {
@@ -45,6 +45,7 @@ public class ViewerForm<TRecord, TEntity>
         await PreLoadRecordAsync(_isNew);
         if (_isNew)
         {
+            this.Service.SetNotificationService(this.NotificationService);
             await this.LoadRecordAsync();
             this.NotificationService.RecordChanged += OnChange;
         }
@@ -88,6 +89,13 @@ public class ViewerForm<TRecord, TEntity>
             options = this.GetEditOptions(options);
             await this.ModalService.Modal.ShowAsync(this.EditControl, options);
         }
+        else if (this.Modal is not null && this.EditControl is not null)
+        {
+            var options = new ModalOptions();
+            options.ControlParameters.Add("Id", this.Id);
+            options = this.GetEditOptions(options);
+            await this.ModalService.Modal.SwitchAsync(this.EditControl, options);
+        }
         else
             this.NavManager!.NavigateTo($"/{this.RecordUrl}/edit/{Id}");
     }
@@ -112,7 +120,7 @@ public class ViewerForm<TRecord, TEntity>
     }
 
     protected virtual void BaseExit()
-        => this.NavManager?.NavigateTo("/");
+        => this.NavManager?.NavigateTo($"/{this.RecordUrl}");
 
     public void Dispose()
         => this.NotificationService.RecordChanged -= OnChange;

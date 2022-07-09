@@ -7,11 +7,12 @@
 namespace Blazr.UI;
 
 public abstract partial class EditorForm<TRecord, TEditRecord, TEntity>
-    : OwningComponentBase<IEditService<TRecord, TEditRecord>>, IDisposable
+    : OwningComponentBase<IEditService<TRecord, TEditRecord, TEntity>>, IDisposable
     where TRecord : class, new()
     where TEditRecord : class, IEditRecord<TRecord>, new()
     where TEntity : class, IEntity
 {
+    private bool _isNew = true;
     protected EditContext editContext = default!;
 
     [Parameter] public Guid Id { get; set; }
@@ -55,27 +56,41 @@ public abstract partial class EditorForm<TRecord, TEditRecord, TEntity>
         _recordUrl = name;
     }
 
-    protected async override Task OnInitializedAsync()
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
+        parameters.SetParameterProperties(this);
 
-        this.LoadState = ComponentState.Loading;
-
-        if (Id != Guid.Empty)
-            await this.Service.LoadRecordAsync(Id);
-        else 
-            await this.Service.GetNewRecordAsync(await GetNewRecord());
-
-        this.editContext = new EditContext(this.Service.EditModel);
-        this.editContext.OnFieldChanged += FieldChanged;
-        
-        if (this.blazrNavManager is not null)
+        await PreLoadRecordAsync(_isNew);
+        if (_isNew)
         {
-            this.blazrNavManager.BrowserExitAttempted += FailedExitAttempt;
-            this.blazrNavManager.NavigationEventBlocked += FailedRoutingAttempt;
+            this.Service.SetNotificationService(this.NotificationService);
+
+            this.LoadState = ComponentState.Loading;
+
+            if (Id != Guid.Empty)
+                await this.Service.LoadRecordAsync(Id);
+            else
+                await this.Service.GetNewRecordAsync(await GetNewRecord());
+
+            this.editContext = new EditContext(this.Service.EditModel);
+            this.editContext.OnFieldChanged += FieldChanged;
+
+            if (this.blazrNavManager is not null)
+            {
+                this.blazrNavManager.BrowserExitAttempted += FailedExitAttempt;
+                this.blazrNavManager.NavigationEventBlocked += FailedRoutingAttempt;
+            }
+
+            this.LoadState = ComponentState.Loaded;
         }
-        
-        this.LoadState = ComponentState.Loaded;
+
+        await base.SetParametersAsync(ParameterView.Empty);
+        _isNew = false;
     }
+
+    public virtual Task PreLoadRecordAsync(bool isNew)
+        => Task.CompletedTask;
+
 
     protected virtual Task<TRecord> GetNewRecord()
         => Task.FromResult(new TRecord());

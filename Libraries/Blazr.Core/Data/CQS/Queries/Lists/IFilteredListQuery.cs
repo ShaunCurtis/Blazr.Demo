@@ -11,6 +11,4 @@ public interface IFilteredListQuery<TRecord>
     where TRecord : class, new()
 {
     public ListProviderRequest<TRecord> Request { get; }
-
-    public Func<TRecord, bool>? FilterExpression { get; }
 }
