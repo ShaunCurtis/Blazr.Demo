@@ -38,7 +38,7 @@ public class PagedListForm<TRecord, TEntity>
 
     [Inject] protected ModalService ModalService { get; set; } = default!;
 
-    [Parameter] public bool UseModalForms { get; set; } = false;
+    [Parameter] public bool UseModalForms { get; set; } = true;
 
     protected string FormCss => new CSSBuilder()
         .AddClassFromAttributes(UserAttributes)

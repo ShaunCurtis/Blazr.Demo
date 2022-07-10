@@ -7,7 +7,9 @@
 
 namespace Blazr.UI.Bootstrap;
 
-public class FormEditControl<TValue> :ComponentBase
+public class FormFocusEditControl<TValue, TEditControl>
+    : ComponentBase
+    where TEditControl : class, IComponentReference
 {
     [Parameter]
     public TValue? Value { get; set; }
@@ -25,8 +27,6 @@ public class FormEditControl<TValue> :ComponentBase
     [Parameter] public string LabelCssClass { get; set; } = "form-label small text-muted";
 
     [Parameter] public string ControlCssClass { get; set; } = "form-control";
-
-    [Parameter] public Type? ControlType { get; set; }
 
     [Parameter] public bool ShowValidation { get; set; }
 
@@ -52,6 +52,8 @@ public class FormEditControl<TValue> :ComponentBase
     private FieldIdentifier _fieldIdentifier;
 
     private ValidationMessageStore? _messageStore;
+
+    private TEditControl? focusElement;
 
     private string? DisplayLabel => this.Label ?? this.FieldName;
 
@@ -175,9 +177,12 @@ public class FormEditControl<TValue> :ComponentBase
 
     private RenderFragment ControlFragment => (builder) =>
     {
-        if (this.ControlType is not null)
+        if (this.ChildContent is not null)
+            builder.AddContent(200, this.ChildContent);
+
+        else
         {
-            builder.OpenComponent(210, this.ControlType);
+            builder.OpenComponent<TEditControl>(210);
             builder.AddAttribute(220, "class", this.ControlCss);
             builder.AddAttribute(230, "Value", this.Value);
             builder.AddAttribute(240, "ValueChanged", EventCallback.Factory.Create(this, this.ValueChanged));
@@ -185,10 +190,9 @@ public class FormEditControl<TValue> :ComponentBase
             if (this.ChildContent is not null)
                 builder.AddAttribute(260, "ChildContent", this.ChildContent);
 
+            builder.AddComponentReferenceCapture(270, (__value) => { focusElement = (TEditControl)__value; });
             builder.CloseComponent();
         }
-        else if (this.ChildContent is not null)
-            builder.AddContent(200, this.ChildContent);
     };
 
     private RenderFragment ValidationFragment => (builder) =>
@@ -210,6 +214,14 @@ public class FormEditControl<TValue> :ComponentBase
             builder.CloseElement();
         }
     };
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && this.IsFirstFocus && this.focusElement is not null && this.focusElement.Element.HasValue)
+            this.focusElement.Element.Value.FocusAsync();
+
+        return Task.CompletedTask;
+    }
+
 
     // Code lifted from FieldIdentifier.cs
     private static void ParseAccessor<T>(Expression<Func<T>> accessor, out object model, out string fieldName)

@@ -31,8 +31,4 @@
     <ProjectReference Include="..\Blazr.Routing\Blazr.Routing.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Components\InputControls\" />
-  </ItemGroup>
-
 </Project>

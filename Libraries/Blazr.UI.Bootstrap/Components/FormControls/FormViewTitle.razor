@@ -11,10 +11,18 @@
         <UIColumn Columns=12>
             @if (this.ChildContent != null)
             {
-                <h2>@ChildContent</h2> }
+                <div class="@this.CssClass">@ChildContent</div> }
             else
             {
-                <h2>@this.Title</h2>}
+                <div class="@this.CssClass">@this.Title</div> }
         </UIColumn>
     </UIFormRow>
 </UIContainer>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public string Title { get; set; } = "No Title Set";
+
+    [Parameter] public string CssClass { get; set; } = "h2 border-bottom border-brand pt-2";
+}

@@ -4,13 +4,8 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
+namespace Blazr.UI;
 
-namespace Blazr.UI.Bootstrap;
-
-public partial class FormViewTitle
+public class BlazrInputDate<TValue> : InputDate<TValue>, IComponentReference
 {
-    [Parameter] public RenderFragment? ChildContent { get; set; }
-
-    [Parameter] public string Title { get; set; } = "No Title Set";
 }
-

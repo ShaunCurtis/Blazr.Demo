@@ -82,11 +82,11 @@ public class DeoWeatherForecast
             .Validate(ref trip, fieldname);
 
         this.SummaryId.Validation("SummaryId", model, validationMessageStore)
-            .NotEmpty("Guid can't be empty")
+            .NotEmpty("You must select a weather summary")
             .Validate(ref trip, fieldname);
 
         this.LocationId.Validation("LocationId", model, validationMessageStore)
-            .NotEmpty("Guid can't be empty")
+            .NotEmpty("You must select a location")
             .Validate(ref trip, fieldname);
 
         this.TemperatureC.Validation("TemperatureC", model, validationMessageStore)

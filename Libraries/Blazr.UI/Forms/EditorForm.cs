@@ -7,7 +7,9 @@
 namespace Blazr.UI;
 
 public abstract partial class EditorForm<TRecord, TEditRecord, TEntity>
-    : OwningComponentBase<IEditService<TRecord, TEditRecord, TEntity>>, IDisposable
+    : OwningComponentBase<IEditService<TRecord, TEditRecord, TEntity>>, 
+    IDisposable
+
     where TRecord : class, new()
     where TEditRecord : class, IEditRecord<TRecord>, new()
     where TEntity : class, IEntity
@@ -91,7 +93,6 @@ public abstract partial class EditorForm<TRecord, TEditRecord, TEntity>
     public virtual Task PreLoadRecordAsync(bool isNew)
         => Task.CompletedTask;
 
-
     protected virtual Task<TRecord> GetNewRecord()
         => Task.FromResult(new TRecord());
 
@@ -114,11 +115,12 @@ public abstract partial class EditorForm<TRecord, TEditRecord, TEntity>
         this.SetMessage("Fields reset to database values", "alert-info");
     }
 
-    protected async Task SaveRecord()
+    protected async Task<bool> SaveRecord()
     {
+        var result = false;
         if (this.editContext.Validate())
         {
-            var result = await this.Service.UpdateRecordAsync();
+            result = await this.Service.UpdateRecordAsync();
             this.blazrNavManager?.SetLockState(this.IsDirty);
             if (result)
                 this.SetMessage("Record Saved", "alert-success");
@@ -127,6 +129,14 @@ public abstract partial class EditorForm<TRecord, TEditRecord, TEntity>
         }
         else
             this.SetMessage("There are validation problems", "alert-danger");
+
+        return result;
+    }
+
+    protected virtual async Task SaveRecordAndExit()
+    {
+        if (await this.SaveRecord())
+            await DoExit();
     }
 
     protected virtual async Task<bool> AddRecord()
@@ -149,6 +159,12 @@ public abstract partial class EditorForm<TRecord, TEditRecord, TEntity>
             this.SetMessage("There are validation problems", "alert-danger");
 
         return hasSaved;
+    }
+
+    protected virtual async Task AddRecordAndExit()
+    {
+        if (await this.AddRecord())
+            await DoExit();
     }
 
     protected void ClearConfirmDelete()
@@ -189,7 +205,7 @@ public abstract partial class EditorForm<TRecord, TEditRecord, TEntity>
     }
 
     protected virtual void BaseExit()
-        => this.NavManager?.NavigateTo("/");
+        => this.NavManager?.NavigateTo($"/{RecordUrl}");
 
     protected void SetMessage(string message, string colour)
     {

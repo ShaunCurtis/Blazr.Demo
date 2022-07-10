@@ -5,7 +5,7 @@
 @code {
     protected readonly string TableCss = "table table-sm table-striped table-hover border-bottom no-margin";
 
-    protected string ContainerCss = "bg-light border border-dark p-0 mt-2";
+    protected string ContainerCss = "bg-light border border-brand p-0 mt-2";
 
     protected RenderFragment HeaderButtonMarkup(string addText = "Add new Record") => __builder =>
     {
@@ -16,7 +16,7 @@
                 </UIColumn>
                 <UIColumn Columns=2 LargeColumns=4 class="text-right text-end">
                     <UIButton class="btn-primary btn-sm" ClickEvent="() => this.AddRecordAsync()">@addText</UIButton>
-                    <UIButton class="btn-secondary btn-sm" ClickEvent="this.Exit">Exit</UIButton>
+                    <UIButton class="btn-secondary btn-sm" Show=(!this.IsSubForm) ClickEvent="this.Exit">Exit</UIButton>
                 </UIColumn>
             </UIFormRow>
         </UIContainer>
