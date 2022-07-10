@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Blazr.Core\Blazr.Core.csproj" />
+    <ProjectReference Include="..\..\Libraries\Blazr.Routing\Blazr.Routing.csproj" />
+    <ProjectReference Include="..\..\Libraries\Blazr.UI.Bootstrap\Blazr.UI.Bootstrap.csproj" />
+    <ProjectReference Include="..\..\Libraries\Blazr.UI\Blazr.UI.csproj" />
+    <ProjectReference Include="..\Blazr.Demo.Core\Blazr.Demo.Core.csproj" />
+  </ItemGroup>
+
+</Project>

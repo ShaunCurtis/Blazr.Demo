@@ -1,0 +1,29 @@
+﻿@namespace Blazr.Demo.UI.Forms
+@typeparam TRecord where TRecord : class, new()
+@typeparam TEntity where TEntity  : class, IEntity
+@inherits ViewForm<TRecord, TEntity>
+@code {
+    protected string ContainerCss => this.Modal is null
+    ? "p-2 bg-light border border-brand mt-2"
+        : "p-2 bg-light";
+
+    protected override RenderFragment FormMarkup => __builder =>
+        {
+            <UIContainer Size=BootstrapSize.Fluid class="@this.ContainerCss">
+                <UILoader State="this.LoadState">
+                    <FormViewTitle>
+                        <h2>Weather Forecast Viewer</h2>
+                    </FormViewTitle>
+                    <UIContainer Size=BootstrapSize.Fluid>
+                        <UIFormRow>
+                            <UIColumn Columns=12 class="text-end text-right mt-2">
+                                <UIButton class="btn-danger btn-sm" ClickEvent="this.EditRecordAsync">Edit</UIButton>
+                                <UIButton class="btn-secondary btn-sm" ClickEvent="this.Exit">Exit</UIButton>
+                            </UIColumn>
+                        </UIFormRow>
+                    </UIContainer>
+                    @this.ContentMarkup
+                </UILoader>
+            </UIContainer>
+        };
+}

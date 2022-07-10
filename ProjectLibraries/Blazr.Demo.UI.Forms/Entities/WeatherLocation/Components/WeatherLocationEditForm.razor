@@ -1,0 +1,30 @@
+﻿@*/// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================
+*@
+
+@namespace Blazr.Demo.UI.Forms
+@inherits AppEditorForm<DboWeatherLocation, DeoWeatherLocation, WeatherLocationEntity>
+@implements IDisposable
+
+<PageLocker />
+<UIContainer Size=BootstrapSize.Fluid class="m-2">
+    <UILoader State="this.LoadState">
+        <FormViewTitle>
+            <h2 class="Border-bottom">Weather Forecast Editor</h2>
+        </FormViewTitle>
+        <EditForm EditContext="this.editContext">
+            <ValidationFormState />
+            <UIContainer Size=BootstrapSize.Fluid>
+                <UIFormRow>
+                    <UIColumn Columns=12 MediumColumns=6>
+                        <FormFocusEditControl Label="Location" IsFirstFocus=true ShowLabel="true" @bind-Value="this.Service.EditModel.Location" TValue=string TEditControl=BlazrInputText IsRequired="true" ShowValidation="true" />
+                    </UIColumn>
+                </UIFormRow>
+            </UIContainer>
+            @this.EditButtonMarkup
+        </EditForm>
+    </UILoader>
+</UIContainer>

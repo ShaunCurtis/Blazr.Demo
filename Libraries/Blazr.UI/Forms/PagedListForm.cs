@@ -26,6 +26,8 @@ public class PagedListForm<TRecord, TEntity>
 
     [Parameter] public bool IsSubForm { get; set; } = false;
 
+    [Parameter] public int PageSize { get; set; } = 20;
+
     [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
 
     [Inject] protected INotificationService<TEntity> NotificationService { get; set; } = default!;

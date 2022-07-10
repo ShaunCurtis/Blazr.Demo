@@ -1,0 +1,39 @@
+﻿@*
+    /// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================
+*@
+
+@namespace Blazr.Demo.UI.Forms
+@inherits AppViewerForm<DboWeatherLocation, WeatherLocationEntity>
+
+<UIContainer Size=BootstrapSize.Fluid class="@this.ContainerCss">
+    <UILoader State="this.LoadState">
+        <FormViewTitle>
+            <h2>Weather Location Viewer</h2>
+        </FormViewTitle>
+        @this.HeaderButtonContainer
+        <UIContainer Size=BootstrapSize.Fluid>
+            <UIFormRow>
+                <UIColumn Columns=12 MediumColumns=6>
+                    <FormViewControl Label="Location" Value="this.Service.Record!.Location" ControlType="typeof(InputReadOnlyText)" />
+                </UIColumn>
+                <UIColumn Columns=12 MediumColumns=6>
+                    <FormViewControl Label="Unique Record Identity" Value="this.Service.Record!.WeatherLocationId" ControlType="typeof(InputReadOnlyDisplay)" />
+                </UIColumn>
+            </UIFormRow>
+        </UIContainer>
+    </UILoader>
+</UIContainer>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        this.EditControl = typeof(WeatherLocationEditForm);
+        this.RecordUrl = "weatherlocations";
+    }
+}

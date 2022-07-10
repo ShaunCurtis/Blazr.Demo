@@ -1,0 +1,10 @@
+﻿@page "/Weatherlocation/view/{Id:guid}"
+@page "/weatherlocations/view/{Id:guid}"
+@namespace Blazr.Demo.UI.Forms
+
+<WeatherForecastViewForm Id=this.Id></WeatherForecastViewForm>
+
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+}

@@ -1,0 +1,90 @@
+﻿@*/// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================
+*@
+
+@namespace Blazr.Demo.UI.Forms
+@inherits AppEditorForm<DboWeatherForecast, DeoWeatherForecast, WeatherForecastEntity>
+@inject IForeignKeyService<FkWeatherSummary, WeatherSummaryEntity> FkSummaryService
+@inject IForeignKeyService<FkWeatherLocation, WeatherLocationEntity> FkLocationService
+
+<PageLocker />
+<UIContainer Size=BootstrapSize.Fluid class="m-2">
+    <UILoader State="this.LoadState">
+        <FormViewTitle>
+            <h2>Weather Forecast Editor</h2>
+        </FormViewTitle>
+        <EditForm EditContext="this.editContext">
+            <ValidationFormState />
+            <UIContainer Size=BootstrapSize.Fluid>
+                <UIFormRow>
+                    <UIColumn Columns=12 MediumColumns=6>
+                        <FormFocusEditControl Label="Date" ShowLabel="true" IsFirstFocus=true @bind-Value="this.Service.EditModel.Date" TValue=DateTimeOffset  TEditControl="BlazrInputDate<DateTimeOffset>" IsRequired="true" ShowValidation="true" />
+                    </UIColumn>
+                    <UIColumn Columns=12 MediumColumns=6>
+                        <FormEditControl Label="Temperature &deg;C" ShowLabel="true" @bind-Value="this.Service.EditModel.TemperatureC" ControlType="typeof(BlazrInputNumber<int>)" IsRequired="true" ShowValidation="true" HelperText="Enter a temperature" />
+                    </UIColumn>
+                </UIFormRow>
+                <UIFormRow>
+                    <UIColumn Columns=12 MediumColumns=6>
+                        <FormEditControl Label="Summary" ShowLabel="true" @bind-Value="this.Service.EditModel.SummaryId" ControlType="typeof(InputSelect<Guid>)" IsRequired="true" ShowValidation="true" HelperText="Select a summary from the list">
+                            @this.SummaryList
+                        </FormEditControl>
+                    </UIColumn>
+                    <UIColumn Columns=12 MediumColumns=6>
+                        <FormEditControl Label="Location" ShowLabel="true" @bind-Value="this.Service.EditModel.LocationId" ControlType="typeof(InputSelect<Guid>)" IsRequired="true" ShowValidation="true" HelperText="Select a location from the list">
+                            @this.LocationList
+                        </FormEditControl>
+                    </UIColumn>
+                </UIFormRow>
+            </UIContainer>
+            @this.EditButtonMarkup
+        </EditForm>
+    </UILoader>
+</UIContainer>
+
+@code {
+
+    // If we come to this form from the Weather Location Dash we already have the WeatherLocationId
+    // So we have a parameter property to accept it
+    [Parameter] public Guid WeatherLocationId { get; set; } = Guid.Empty;
+
+    // We need to get the two foreign keys the for uses
+    protected async override Task OnInitializedAsync()
+    {
+        await this.FkSummaryService.GetFkList();
+        await this.FkLocationService.GetFkList();
+        await base.OnInitializedAsync();
+    }
+
+    // Render fragment for the Summary List from the Foreign Key service 
+    private RenderFragment SummaryList => (__builder) =>
+    {
+        @foreach (var item in this.FkSummaryService.Items)
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    };
+
+    // Render fragment for the Location List from the Foreign Key service 
+    private RenderFragment LocationList => (__builder) =>
+    {
+        @foreach (var item in this.FkLocationService.Items)
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    };
+
+    // Override the GetNewRecord to fix the default values for the New Form
+    // Note we use the WeatherLocationId if we have one
+    protected override Task<DboWeatherForecast> GetNewRecord()
+    {
+        DboWeatherForecast record = new() { Date = DateTimeOffset.Now.AddDays(1) };
+        if (this.WeatherLocationId != Guid.Empty)
+            record = record with { WeatherLocationId = this.WeatherLocationId };
+
+        return Task.FromResult(record);
+    }
+}
