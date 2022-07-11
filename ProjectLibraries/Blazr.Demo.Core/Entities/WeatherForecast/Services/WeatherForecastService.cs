@@ -7,7 +7,7 @@
 namespace Blazr.Demo.Core;
 
 public class WeatherForecastService
-    : BaseEntityService
+    : BaseEntityService<WeatherForecastEntity>
 {
     private SortedDictionary<Guid, string> _weatherSummaries = new SortedDictionary<Guid, string>();
     private ICustomCQSDataBroker _queryBroker;
@@ -20,6 +20,10 @@ public class WeatherForecastService
         _weatherSummaryNotificationService = notificationService;
         _dataBroker = cQSDataBroker;
         _weatherSummaryNotificationService.ListUpdated += SummariesListUpdated;
+
+        this.SingleTitle = "Weather Forecast";
+        this.PluralTitle = "Weather Forecasts";
+        this.Url = "weatherforecast";
     }
 
     public async ValueTask<SortedDictionary<Guid, string>> WeatherSummariesAsync()

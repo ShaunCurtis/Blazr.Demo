@@ -7,6 +7,12 @@
 namespace Blazr.Demo.Core;
 
 public class WeatherSummaryService
-    :BaseEntityService
+    :BaseEntityService<WeatherSummaryEntity>
 {
+    public WeatherSummaryService()
+    {
+        this.SingleTitle = "Weather Summary";
+        this.PluralTitle = "Weather Summaries";
+        this.Url = "weathersummary";
+    }
 }

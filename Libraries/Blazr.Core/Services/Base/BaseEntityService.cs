@@ -5,10 +5,13 @@
 /// ============================================================
 namespace Blazr.Core;
 
-public class BaseEntityService
-    :IEntityService
+public class BaseEntityService<TEntity>
+    :IEntityService<TEntity>
+    where TEntity : class, IEntity
 {
     public string Url { get; set; } = "record";
 
-    public string Title { get; set; } = "Record" ;
+    public string SingleTitle { get; set; } = "Record" ;
+
+    public string PluralTitle { get; set; } = "Records";
 }

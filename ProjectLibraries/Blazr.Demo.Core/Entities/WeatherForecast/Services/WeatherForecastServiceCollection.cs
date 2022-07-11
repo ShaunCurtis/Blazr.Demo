@@ -15,6 +15,6 @@ public static class WeatherForecastServiceCollection
         services.AddScoped<IReadService<DvoWeatherForecast, WeatherForecastEntity>, StandardReadService<DvoWeatherForecast, WeatherForecastEntity>>();
         services.AddScoped<IReadService<DboWeatherForecast, WeatherForecastEntity>, StandardReadService<DboWeatherForecast, WeatherForecastEntity>>();
         services.AddScoped<IEditService<DboWeatherForecast, DeoWeatherForecast, WeatherForecastEntity>, StandardEditService<DboWeatherForecast, DeoWeatherForecast, WeatherForecastEntity>>();
-        services.AddScoped<WeatherForecastService>();
+        services.AddScoped<IEntityService<WeatherForecastEntity>, WeatherForecastService>();
     }
 }

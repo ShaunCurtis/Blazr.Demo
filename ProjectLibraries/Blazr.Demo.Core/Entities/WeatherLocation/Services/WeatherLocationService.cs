@@ -7,6 +7,12 @@
 namespace Blazr.Demo.Core;
 
 public class WeatherLocationService
-    : BaseEntityService
+    : BaseEntityService<WeatherLocationEntity>
 {
+    public WeatherLocationService()
+    {
+        this.SingleTitle = "Weather Location";
+        this.PluralTitle = "Weather Locations";
+        this.Url = "weathersummary";
+    }
 }

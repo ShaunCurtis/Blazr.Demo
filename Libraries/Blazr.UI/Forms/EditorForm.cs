@@ -19,8 +19,6 @@ public abstract partial class EditorForm<TRecord, TEditRecord, TEntity>
 
     [Parameter] public Guid Id { get; set; }
 
-    [Parameter] public string? RecordUrl { get; set; }
-
     [Parameter] public EventCallback ExitAction { get; set; }
 
     [CascadingParameter] public IModalDialog? Modal { get; set; }
@@ -28,6 +26,8 @@ public abstract partial class EditorForm<TRecord, TEditRecord, TEntity>
     [Inject] private INotificationService<TEntity> NotificationService { get; set; } = default!;
 
     [Inject] protected IBlazrNavigationManager NavManager { get; set; } = default!;
+
+    [Inject] protected IEntityService<TEntity> EntityService { get; set; } = default!;
 
     protected BlazrNavigationManager? blazrNavManager => NavManager is BlazrNavigationManager ? NavManager as BlazrNavigationManager : null;
 
@@ -44,19 +44,6 @@ public abstract partial class EditorForm<TRecord, TEditRecord, TEntity>
     protected bool IsDirty => this.Service.EditModel.IsDirty;
 
     protected bool IsNew => this.Service.EditModel.IsNew;
-
-    private string _recordUrl;
-
-    protected string ListUrl => string.IsNullOrWhiteSpace(this.RecordUrl) ? _recordUrl : this.RecordUrl;
-
-    public EditorForm()
-    {
-        var name = new TRecord().GetType().Name
-            .Replace("Dbo", "")
-            .Replace("Dvo", "");
-
-        _recordUrl = name;
-    }
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
@@ -205,7 +192,7 @@ public abstract partial class EditorForm<TRecord, TEditRecord, TEntity>
     }
 
     protected virtual void BaseExit()
-        => this.NavManager?.NavigateTo($"/{RecordUrl}");
+        => this.NavManager?.NavigateTo($"/{this.EntityService.Url}");
 
     protected void SetMessage(string message, string colour)
     {

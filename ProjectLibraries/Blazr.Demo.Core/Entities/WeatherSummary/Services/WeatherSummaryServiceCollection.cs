@@ -14,6 +14,6 @@ public static class WeatherSummaryServiceCollection
         services.AddScoped<IListService<DboWeatherSummary, WeatherSummaryEntity>, StandardListService<DboWeatherSummary, WeatherSummaryEntity>>();
         services.AddScoped<IReadService<DboWeatherSummary, WeatherSummaryEntity>, StandardReadService<DboWeatherSummary, WeatherSummaryEntity>>();
         services.AddScoped<IForeignKeyService<FkWeatherSummary, WeatherSummaryEntity>, StandardForeignKeyService<FkWeatherSummary, WeatherSummaryEntity>>();
-        services.AddScoped<WeatherSummaryService>();
+        services.AddScoped< IEntityService<WeatherSummaryEntity>, WeatherSummaryService>();
     }
 }

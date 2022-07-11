@@ -12,7 +12,6 @@ public class ViewerForm<TRecord, TEntity>
     where TEntity : class, IEntity
 {
     private bool _isNew = true;
-    protected string RecordUrl;
     protected Type? EditControl;
 
     [Parameter] public Guid Id { get; set; }
@@ -27,24 +26,17 @@ public class ViewerForm<TRecord, TEntity>
 
     [Inject] protected INotificationService<TEntity> NotificationService { get; set; } = default!;
 
+    [Inject] protected IEntityService<TEntity> EntityService { get; set; } = default!;
+
     public ComponentState LoadState { get; protected set; } = ComponentState.New;
-
-    public ViewerForm()
-    {
-        var name = new TRecord().GetType().Name
-            .Replace("Dbo", "")
-            .Replace("Dvo", "");
-
-        this.RecordUrl = name;
-    }
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
         parameters.SetParameterProperties(this);
 
-        await PreLoadRecordAsync(_isNew);
         if (_isNew)
         {
+            await PreLoadRecordAsync();
             this.Service.SetNotificationService(this.NotificationService);
             await this.LoadRecordAsync();
             this.NotificationService.RecordChanged += OnChange;
@@ -54,7 +46,7 @@ public class ViewerForm<TRecord, TEntity>
         _isNew = false;
     }
 
-    public virtual Task PreLoadRecordAsync(bool isNew)
+    protected virtual Task PreLoadRecordAsync()
         => Task.CompletedTask;
 
     private async Task LoadRecordAsync(bool render = false)
@@ -97,7 +89,7 @@ public class ViewerForm<TRecord, TEntity>
             await this.ModalService.Modal.SwitchAsync(this.EditControl, options);
         }
         else
-            this.NavManager!.NavigateTo($"/{this.RecordUrl}/edit/{Id}");
+            this.NavManager!.NavigateTo($"/{this.EntityService.Url}/edit/{Id}");
     }
 
     protected virtual ModalOptions GetEditOptions(ModalOptions? options)
@@ -120,7 +112,7 @@ public class ViewerForm<TRecord, TEntity>
     }
 
     protected virtual void BaseExit()
-        => this.NavManager?.NavigateTo($"/{this.RecordUrl}");
+        => this.NavManager?.NavigateTo($"/{this.EntityService.Url}");
 
     public void Dispose()
         => this.NotificationService.RecordChanged -= OnChange;
