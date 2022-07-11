@@ -30,8 +30,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{E1582ED5-D53F-43C7-9FF3-03283FFE9729}"
 	ProjectSection(SolutionItems) = preProject
 		documents\Controls.md = documents\Controls.md
+		documents\CoreServices.md = documents\CoreServices.md
 		documents\CRSDataBrokers.md = documents\CRSDataBrokers.md
 		documents\Data.md = documents\Data.md
+		documents\DataServices.md = documents\DataServices.md
 		documents\Design.md = documents\Design.md
 		documents\EditState.md = documents\EditState.md
 		documents\Forms.md = documents\Forms.md

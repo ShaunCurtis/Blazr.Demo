@@ -1,8 +1,10 @@
-# View Services
+# Core Services
+
+Core Services are services delivered by the *Core Domain* to the UI.  They manage data for the UI.
 
 ## Entities
 
-Services are based on *Entities*:  in the Blazor template *WeatherForecast* is an entity.
+Services are based around *Entities*:  in the Blazor template *WeatherForecast* is an entity.
 
 For each entity there are four, with one or more optional, view services:
 
@@ -12,19 +14,19 @@ For each entity there are four, with one or more optional, view services:
 4. EntityService - handles custom operations associated with an entity.
 5. FKServices - handles foreign Key operstions where the entity is used as a foreign key in other entities.
 
-There's also an `Entity` class, derived from `IEntity`. for each entity to act as a unique identifier for the entity in DI service instances.  We'll see this in action later.
+Each *Entity* has an `Entity` class, derived from `IEntity`.  This is the unique identifier for each entity and is used in service instance declarations to provide uniqueness to base service instances.  We'll see this in action later.
 
-The services are split this way to obey the 'S' of the SOLID Principles- *Single Reposibility Principle*.
+The services are split into single purpose classes - the 'S' of the SOLID - *Single Resposibility Principle*.
 
 ## Generics
 
 Our interfaces and base classes use generics.  They define:
-1. The record as `TRecord` and qualify it as  `class. new()`.
-2. The Entity object as `TEntity` to qualify the type in DI service definitions, 
+1. `TRecord` is a record aka POCO class, and qualified as  `class. new()`.
+2. `TEntity` is the `IEntity` object defined for the entity. It qualifies DI service definitions. 
 
 ## List Services
 
-The purpose of the List Services is to provide a `IEnumerable` collection of `TRecord.`
+The purpose of the List Services is to provide an `IEnumerable` collection of `TRecord.`
 
 ### Interface
 
@@ -41,9 +43,7 @@ public interface IListService<TRecord>
     public bool HasList => this.Records is not null;
 
     public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(int startRecord, int pageSize);
-
     public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(ListProviderRequest<TRecord> request);
-
     public ValueTask<ItemsProviderResult<TRecord>> GetRecordsAsync(ItemsProviderRequest request);
 }
 ```
