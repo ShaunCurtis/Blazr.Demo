@@ -39,7 +39,6 @@
     {
         base.OnInitialized();
         listContext.ListState.SortField = "Date";
-        this.RecordUrl = "weatherforecasts";
         this.ViewControl = typeof(WeatherForecastViewForm);
         this.EditControl = typeof(WeatherForecastEditForm);
         if (this.WeatherLocationId != Guid.Empty)

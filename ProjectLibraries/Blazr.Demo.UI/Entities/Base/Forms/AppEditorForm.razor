@@ -3,6 +3,7 @@
 @typeparam TEditRecord where TEditRecord : class, IEditRecord<TRecord>, new() 
 @typeparam TEntity where TEntity  : class, IEntity
 @inherits EditorForm<TRecord, TEditRecord, TEntity>
+
 @code {
     protected RenderFragment EditButtonMarkup => 
         __builder =>

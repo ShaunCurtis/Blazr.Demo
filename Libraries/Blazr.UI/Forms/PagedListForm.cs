@@ -15,8 +15,6 @@ public class PagedListForm<TRecord, TEntity>
     protected ListContext listContext = new ListContext();
     protected Type? ViewControl;
     protected Type? EditControl;
-    protected string RecordUrl;
-    protected string RecordTitle;
     protected bool isLoading => Service.Records is null;
     protected ComponentState loadState => isLoading ? ComponentState.Loading : ComponentState.Loaded;
 
@@ -32,6 +30,8 @@ public class PagedListForm<TRecord, TEntity>
 
     [Inject] protected INotificationService<TEntity> NotificationService { get; set; } = default!;
 
+    [Inject] protected IEntityService<TEntity> EntityService { get; set; } = default!;
+
     [Inject] protected NavigationManager NavigationManager { get; set; } = default!;
 
     [Inject] protected ToasterService ToasterService { get; set; } = default!;
@@ -45,16 +45,6 @@ public class PagedListForm<TRecord, TEntity>
     protected string FormCss => new CSSBuilder()
         .AddClassFromAttributes(UserAttributes)
         .Build();
-
-    public PagedListForm()
-    {
-        var name = new TRecord().GetType().Name
-            .Replace("Dbo", "")
-            .Replace("Dvo", "");
-        
-        this.RecordTitle = name;
-        this.RecordUrl = name;
-    }
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
@@ -126,7 +116,7 @@ public class PagedListForm<TRecord, TEntity>
         return returnState;
     }
     protected virtual void RecordDashboard(Guid Id)
-        => this.NavigationManager!.NavigateTo($"/{this.RecordUrl}/dashboard/{Id}");
+        => this.NavigationManager!.NavigateTo($"/{this.EntityService.Url}/dashboard/{Id}");
 
 
     protected async Task EditRecord(Guid Id)
@@ -139,7 +129,7 @@ public class PagedListForm<TRecord, TEntity>
             await this.ModalService.Modal.ShowAsync(this.EditControl, options);
         }
         else
-            this.NavigationManager!.NavigateTo($"/{this.RecordUrl}/edit/{Id}");
+            this.NavigationManager!.NavigateTo($"/{this.EntityService.Url}/edit/{Id}");
     }
 
     protected async Task ViewRecord(Guid Id)
@@ -151,7 +141,7 @@ public class PagedListForm<TRecord, TEntity>
             await this.ModalService.Modal.ShowAsync(this.ViewControl,  options);
         }
         else
-            this.NavigationManager!.NavigateTo($"/{this.RecordUrl}/view/{Id}");
+            this.NavigationManager!.NavigateTo($"/{this.EntityService.Url}/view/{Id}");
     }
 
     protected async Task AddRecordAsync(ModalOptions? options = null)
@@ -162,7 +152,7 @@ public class PagedListForm<TRecord, TEntity>
             await this.ModalService.Modal.ShowAsync(this.EditControl, options);
         }
         else
-            this.NavigationManager!.NavigateTo($"/{this.RecordUrl}/edit/0");
+            this.NavigationManager!.NavigateTo($"/{this.EntityService.Url}/edit/0");
     }
 
     protected virtual ModalOptions GetAddOptions(ModalOptions? options)
