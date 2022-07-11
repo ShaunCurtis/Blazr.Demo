@@ -4,7 +4,7 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.Demo.Core;
+namespace Blazr.App.Core;
 
 public class WeatherLocationEntity
     : IEntity

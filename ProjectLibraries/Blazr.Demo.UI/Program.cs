@@ -10,4 +10,4 @@ global using Blazr.Core.Toaster;
 
 global using Blazr.UI.Bootstrap;
 
-namespace Blazr.Demo.UI;
+namespace Blazr.App.UI;

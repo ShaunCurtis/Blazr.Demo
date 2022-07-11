@@ -1,6 +1,4 @@
-global using Blazr.Demo.Core;
-
-using Blazr.Demo.Data;
+using Blazr.App.Data;
 using Blazr.Core;
 using Blazr.Core.Toaster;
 using Blazr.Routing;

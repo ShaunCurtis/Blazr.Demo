@@ -7,4 +7,4 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Blazr.Core;
 global using Blazr.Core.Validation;
 
-namespace Blazr.Demo.Core;
+namespace Blazr.App.Core;

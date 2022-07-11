@@ -39,10 +39,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 		documents\RepositoryDataBrokers.md = documents\RepositoryDataBrokers.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.UI.Forms", "ProjectLibraries\Blazr.Demo.UI.Forms\Blazr.Demo.UI.Forms.csproj", "{84CFD3FD-A63E-4F20-844C-9058198593DA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.Forms.Server.Web", "Applications\Blazr.Demo.Forms.Server.Web\Blazr.Demo.Forms.Server.Web.csproj", "{B6FE221C-EBA6-4EC2-A40F-D2A5DFABBB1C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,14 +81,6 @@ Global
 		{95AA491E-82CA-4AD5-99FD-E0724A5233F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95AA491E-82CA-4AD5-99FD-E0724A5233F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95AA491E-82CA-4AD5-99FD-E0724A5233F8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{84CFD3FD-A63E-4F20-844C-9058198593DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{84CFD3FD-A63E-4F20-844C-9058198593DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{84CFD3FD-A63E-4F20-844C-9058198593DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{84CFD3FD-A63E-4F20-844C-9058198593DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B6FE221C-EBA6-4EC2-A40F-D2A5DFABBB1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B6FE221C-EBA6-4EC2-A40F-D2A5DFABBB1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B6FE221C-EBA6-4EC2-A40F-D2A5DFABBB1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B6FE221C-EBA6-4EC2-A40F-D2A5DFABBB1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -107,8 +95,6 @@ Global
 		{4A115E55-89D4-4AD5-ACB7-7DFE4FAB3070} = {20AC6B52-B88C-4C60-B271-BC4EA226C4EC}
 		{1F00E8DE-84C0-455C-A238-195250277B7A} = {20AC6B52-B88C-4C60-B271-BC4EA226C4EC}
 		{95AA491E-82CA-4AD5-99FD-E0724A5233F8} = {20AC6B52-B88C-4C60-B271-BC4EA226C4EC}
-		{84CFD3FD-A63E-4F20-844C-9058198593DA} = {20AC6B52-B88C-4C60-B271-BC4EA226C4EC}
-		{B6FE221C-EBA6-4EC2-A40F-D2A5DFABBB1C} = {CC2D9923-F4CC-48E1-A359-DC95D9B7DB26}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {796897AD-0035-48BF-9BF0-2F19BBA500FA}

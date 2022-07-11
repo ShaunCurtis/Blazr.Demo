@@ -3,7 +3,7 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-namespace Blazr.Demo.Data;
+namespace Blazr.App.Data;
 
 public class WeatherTestDataProvider
 {

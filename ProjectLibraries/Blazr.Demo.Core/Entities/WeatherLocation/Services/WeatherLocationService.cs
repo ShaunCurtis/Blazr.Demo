@@ -4,7 +4,7 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.Demo.Core;
+namespace Blazr.App.Core;
 
 public class WeatherLocationService
     : BaseEntityService<WeatherLocationEntity>
@@ -13,6 +13,6 @@ public class WeatherLocationService
     {
         this.SingleTitle = "Weather Location";
         this.PluralTitle = "Weather Locations";
-        this.Url = "weathersummary";
+        this.Url = "weatherlocation";
     }
 }

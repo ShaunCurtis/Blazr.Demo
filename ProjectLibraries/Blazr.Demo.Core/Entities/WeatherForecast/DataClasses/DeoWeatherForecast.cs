@@ -3,7 +3,7 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-namespace Blazr.Demo.Core;
+namespace Blazr.App.Core;
 
 public class DeoWeatherForecast
     : IEditRecord<DboWeatherForecast>, IValidation

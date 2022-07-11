@@ -4,7 +4,7 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.Demo.UI;
+namespace Blazr.App.UI;
 
 public static class DisplayExtensions
 {

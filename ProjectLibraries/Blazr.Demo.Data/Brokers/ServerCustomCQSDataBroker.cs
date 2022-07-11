@@ -4,7 +4,7 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.Demo.Data;
+namespace Blazr.App.Data;
 
 public class ServerCustomCQSDataBroker<TDbContext>
     :ICustomCQSDataBroker
