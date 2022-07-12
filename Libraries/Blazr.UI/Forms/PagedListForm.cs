@@ -13,8 +13,6 @@ public class PagedListForm<TRecord, TEntity>
     protected IPagingControl? pagingControl;
     private bool _isNew = true;
     protected ListContext listContext = new ListContext();
-    protected Type? ViewControl;
-    protected Type? EditControl;
     protected bool isLoading => Service.Records is null;
     protected ComponentState loadState => isLoading ? ComponentState.Loading : ComponentState.Loaded;
 
@@ -31,6 +29,8 @@ public class PagedListForm<TRecord, TEntity>
     [Inject] protected INotificationService<TEntity> NotificationService { get; set; } = default!;
 
     [Inject] protected IEntityService<TEntity> EntityService { get; set; } = default!;
+
+    [Inject] protected IEntityUIService<TEntity> EntityUIService { get; set; } = default!;
 
     [Inject] protected NavigationManager NavigationManager { get; set; } = default!;
 
@@ -116,43 +116,43 @@ public class PagedListForm<TRecord, TEntity>
         return returnState;
     }
     protected virtual void RecordDashboard(Guid Id)
-        => this.NavigationManager!.NavigateTo($"/{this.EntityService.Url}/dashboard/{Id}");
+        => this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/dashboard/{Id}");
 
 
     protected async Task EditRecord(Guid Id)
     {
-        if (this.ModalService.IsModalFree && this.UseModalForms && this.EditControl is not null)
+        if (this.ModalService.IsModalFree && this.UseModalForms && this.EntityUIService.EditForm is not null)
         {
             var options = new ModalOptions();
             options.ControlParameters.Add("Id", Id);
             options = this.GetEditOptions(options);
-            await this.ModalService.Modal.ShowAsync(this.EditControl, options);
+            await this.ModalService.Modal.ShowAsync(this.EntityUIService.EditForm, options);
         }
         else
-            this.NavigationManager!.NavigateTo($"/{this.EntityService.Url}/edit/{Id}");
+            this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/edit/{Id}");
     }
 
     protected async Task ViewRecord(Guid Id)
     {
-        if (this.ModalService.IsModalFree && this.UseModalForms && this.ViewControl is not null)
+        if (this.ModalService.IsModalFree && this.UseModalForms && this.EntityUIService.ViewForm is not null)
         {
             var options = GetViewOptions(null);
             options.ControlParameters.Add("Id", Id);
-            await this.ModalService.Modal.ShowAsync(this.ViewControl,  options);
+            await this.ModalService.Modal.ShowAsync(this.EntityUIService.ViewForm,  options);
         }
         else
-            this.NavigationManager!.NavigateTo($"/{this.EntityService.Url}/view/{Id}");
+            this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/view/{Id}");
     }
 
     protected async Task AddRecordAsync(ModalOptions? options = null)
     {
-        if (this.ModalService.IsModalFree && this.UseModalForms && this.EditControl is not null)
+        if (this.ModalService.IsModalFree && this.UseModalForms && this.EntityUIService.EditForm is not null)
         {
             options = this.GetAddOptions(options);
-            await this.ModalService.Modal.ShowAsync(this.EditControl, options);
+            await this.ModalService.Modal.ShowAsync(this.EntityUIService.EditForm, options);
         }
         else
-            this.NavigationManager!.NavigateTo($"/{this.EntityService.Url}/edit/0");
+            this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/edit/0");
     }
 
     protected virtual ModalOptions GetAddOptions(ModalOptions? options)

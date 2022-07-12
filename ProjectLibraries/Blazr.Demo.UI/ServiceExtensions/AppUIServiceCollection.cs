@@ -3,10 +3,12 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-namespace Blazr.Core;
+namespace Blazr.App.UI;
 
-public class BaseEntityService<TEntity>
-    :IEntityService<TEntity>
-    where TEntity : class, IEntity
+public static class AppUIServiceCollection
 {
+    public static void AddAppUIServices(this IServiceCollection services)
+    {
+        services.AddScoped<IEntityUIService<WeatherForecastEntity>, WeatherForecastUIService>();
+    }
 }
