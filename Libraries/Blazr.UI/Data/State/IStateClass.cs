@@ -6,9 +6,12 @@
 
 namespace Blazr.UI;
 
-public interface IPagingControl : IDisposable
+public interface IStateClass<TStateRecord>
+where TStateRecord : BaseStateRecord, new()
 {
-    [Parameter] public bool ShowPageOf { get; set; }
+    public TStateRecord State { get; }
 
-    public void NotifyListChangedAsync();
+    public event EventHandler? StateHasChanged;
+
+    public void Set(TStateRecord record);
 }

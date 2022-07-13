@@ -1,6 +1,5 @@
 using Blazr.App.Data;
 using Blazr.Core;
-using Blazr.Core.Toaster;
 using Blazr.Routing;
 using Blazr.UI;
 using Microsoft.EntityFrameworkCore;
@@ -16,13 +15,11 @@ var builder = WebApplication.CreateBuilder(args);
         Services.AddControllersWithViews();
 
         Services.AddBlazrNavigationManager();
-        Services.AddSingleton<ToasterService>();
-        Services.AddSingleton<ModalService>();
-        Services.AddSingleton<UiStateService>();
 
-        //Services.AddInMemoryWeatherAppServerDataServices();
         Services.AddWeatherAppServerDataServices<InMemoryWeatherDbContext>(options 
             => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));
+
+        Services.AddAppUIServices();
     }
 }
 

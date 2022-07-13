@@ -4,8 +4,6 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-using Blazr.Core.Toaster;
-
 namespace Blazr.UI.Bootstrap;
 
 public partial class Toaster : ComponentBase, IDisposable

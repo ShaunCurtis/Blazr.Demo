@@ -6,9 +6,4 @@
 
 namespace Blazr.UI;
 
-public interface IPagingControl : IDisposable
-{
-    [Parameter] public bool ShowPageOf { get; set; }
-
-    public void NotifyListChangedAsync();
-}
+public abstract record BaseStateRecord {}

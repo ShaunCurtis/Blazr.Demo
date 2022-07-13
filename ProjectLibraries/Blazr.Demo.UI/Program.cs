@@ -6,7 +6,6 @@ global using Microsoft.AspNetCore.Components.Web;
 global using Blazr.Core;
 global using Blazr.Routing;
 global using Blazr.UI;
-global using Blazr.Core.Toaster;
 
 global using Blazr.UI.Bootstrap;
 

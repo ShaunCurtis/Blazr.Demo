@@ -12,7 +12,7 @@
         <UIContainer Size=BootstrapSize.Fluid>
             <UIFormRow class="my-2">
                 <UIColumn Columns=12 LargeColumns=8 class="text-start">
-                    <PagingControl @ref=this.pagingControl PageSize=this.PageSize />
+                    <PagingControl @ref=this.pagingControl />
                 </UIColumn>
                 <UIColumn Columns=2 LargeColumns=4 class="text-right text-end">
                     <UIButton class="btn-primary btn-sm" ClickEvent="() => this.AddRecordAsync()">@addText</UIButton>

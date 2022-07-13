@@ -12,49 +12,53 @@ public class ListContext
     private bool _hasLoaded;
     private UiStateService? _uiStateService;
 
+    public readonly Guid Id = Guid.NewGuid();
     public readonly ListState ListState = new();
 
-    private Func<ListState, ValueTask<ListState>>? _listProvider { get; set; }
+    private Func<ListStateRecord, ValueTask<(int, bool)>>? _listProvider { get; set; }
 
-    public event EventHandler<PagingEventArgs>? PagingReset; 
+    public event EventHandler<PagingEventArgs>? PagingReset;
 
-    public ListContext() { }
-
-    public ListContext(ListState options)
-        => ListState.Load(options);
-
-    internal void Attach(UiStateService? uiStateService, Guid stateId, Func<ListState, ValueTask<ListState>>? listProvider)
+    public ListContext(UiStateService uiStateService)
     {
         _uiStateService = uiStateService;
-        _stateId = stateId;
-        _listProvider = listProvider;
-        _hasLoaded = false;
-
-        if (_uiStateService is not null)
-            this.GetState();
     }
 
-    public async ValueTask<PagingState> SetPage(PagingState pagingStatr)
+    internal void Load(Guid stateId, Func<ListStateRecord, ValueTask<(int, bool)>>? listProvider)
     {
-        var hasNoState = !this.GetState();
-        if (_hasLoaded || hasNoState)
-        {
-            this.ListState.StartIndex = pagingStatr.StartIndex;
-            this.ListState.PageSize = pagingStatr.PageSize;
-        }
+        _stateId = stateId;
+        _listProvider = listProvider;
+        _hasLoaded = true;
+
+        this.GetState();
+    }
+
+    public async ValueTask<bool> GoToPage(int? page = null)
+    {
+        if (!_hasLoaded)
+            throw new InvalidOperationException("You can't use the ListContext untill you have loaded it.");
+
+        this.ListState.Set(page);
+
         if (_listProvider is not null)
         {
-            var returnOptions = await _listProvider(this.ListState);
-            if (returnOptions != null)
-                this.ListState.ListTotalCount = returnOptions.ListTotalCount;
+            var result = await _listProvider(this.ListState.Record);
+            if (result.Item2)
+                this.ListState.ListTotalCount = result.Item1;
+
+            this.SaveState();
+
+            return result.Item2;
         }
-        _hasLoaded = true;
-        this.SaveState();
-        return this.ListState.PagingState;
+
+        return false;
     }
 
     public async ValueTask SetSortState(SortState sortState)
     {
+        if (!_hasLoaded)
+            throw new InvalidOperationException("You can't use the ListContext untill you have loaded it.");
+
         var isPagingReset = !sortState.SortField?.Equals(this.ListState.SortState.SortField);
 
         this.GetState();
@@ -65,30 +69,31 @@ public class ListContext
 
         this.ListState.SortField = sortState.SortField;
         this.ListState.SortDescending = sortState.SortDescending;
+
         if (_listProvider is not null)
         {
-            var returnState = await _listProvider(this.ListState);
-            if (returnState != null)
-                this.ListState.ListTotalCount = returnState.ListTotalCount;
+            var returnState = await _listProvider(this.ListState.Record);
+
+            if (returnState.Item2)
+                this.ListState.ListTotalCount = returnState.Item1;
         }
+
         this.SaveState();
-        if (isPagingReset ??= false )
+
+        if (isPagingReset ??= false)
             PagingReset?.Invoke(this, new PagingEventArgs(ListState.PagingState));
     }
 
-    private bool GetState()
+    public bool GetState()
     {
-        if (_stateId != Guid.Empty && _uiStateService is not null && _uiStateService.TryGetStateData<ListState>(_stateId, out object? stateOptions) && stateOptions is ListState)
-        {
-            this.ListState.Load((ListState)stateOptions);
-            return true;
-        }
-        return false;
+        return _uiStateService?.TryGetStateData<ListStateRecord>(_stateId, out ListStateRecord? state) ?? false
+             ? this.ListState.Set(state)
+             : false;
     }
 
-    private void SaveState()
-    {
-        if (_stateId != Guid.Empty && _uiStateService is not null)
-            _uiStateService.AddStateData(_stateId, this.ListState);
-    }
+    public bool CheckState()
+        => _uiStateService?.TryGetStateData<ListStateRecord>(_stateId, out ListStateRecord? state) ?? false;
+
+    public void SaveState()
+        => _uiStateService?.AddStateData(_stateId, this.ListState.Record);
 }

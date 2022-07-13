@@ -5,12 +5,16 @@
 /// ============================================================
 
 namespace Blazr.UI;
+
 public class UiStateService
 {
     private Dictionary<Guid, object> _stateItems = new Dictionary<Guid, object>();
 
     public void AddStateData(Guid Id, object value) 
     {
+        if (Id == Guid.Empty)
+            return;
+
         if (_stateItems.ContainsKey(Id))
             _stateItems[Id] = value;
         else
@@ -19,23 +23,31 @@ public class UiStateService
 
     public void ClearStateDataData(Guid Id)
     {
+        if (Id == Guid.Empty)
+            return;
+
         if (_stateItems.ContainsKey(Id))
             _stateItems.Remove(Id);
     }
 
-    public bool TryGetStateData<T>(Guid Id, out object? value)
+    public bool TryGetStateData<T>(Guid Id, out T? value)
     {
-        value = null;
+        value = default;
+
         if (Id == Guid.Empty)
             return false;
 
         var isdata = _stateItems.ContainsKey(Id);
-        value = isdata
+
+        var val = isdata
             ? _stateItems[Id]
-            : null;
-        // TODO - not sure this will work
-        if (value is T)
+            : default;
+
+        if (val is T)
+        {
+            value = (T)val;
             return true;
+        }
 
         return false;
     }

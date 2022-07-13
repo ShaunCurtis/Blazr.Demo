@@ -9,47 +9,40 @@ namespace Blazr.UI.Bootstrap;
 public partial class PagingControl
     : ComponentBase, IPagingControl
 {
-    private int Page = 0;
-    private int ListCount = 0;
-    private PagingState _pagingState => new PagingState() { PageSize = this.PageSize, StartIndex = this.ReadStartRecord };
+    private int Page => this.ListContext?.ListState.Page ?? 0;
+    private int ListCount => this.ListContext?.ListState.ListTotalCount ?? 0 ;
+    private int PageSize => this.ListContext?.ListState.PageSize ?? 10 ;
     private bool hasPages => LastPage > 0;
 
-    [Parameter] public int PageSize { get; set; } = 5;
-
     [Parameter] public int BlockSize { get; set; } = 10;
-
-    [Parameter] public Func<PagingState, ValueTask<PagingState>>? PagingProvider { get; set; }
 
     [Parameter] public bool ShowPageOf { get; set; } = true;
 
     [CascadingParameter] private ListContext? ListContext { get; set; }
 
     public async void NotifyListChangedAsync()
-        => await GotToPage();
+        => await SetPage();
 
     protected async override Task OnInitializedAsync()
     {
+        if (ListContext is null)
+            throw new NullReferenceException($"No cascaded {nameof(ListContext)} found.");
+
         await this.SetPage();
+        
         if (this.ListContext is not null)
             this.ListContext.PagingReset += this.OnPagingReset;
     }
 
-    private async Task SetPage()
+    private async Task SetPage(int? page = null)
     {
-        PagingState state = new();
         if (this.ListContext is not null)
-            state = await this.ListContext.SetPage(_pagingState);
-
-        else if (this.PagingProvider is not null)
-            state = await PagingProvider(_pagingState);
-
-        this.Page = state.Page;
-        this.ListCount = state.ListTotalCount;
+            await this.ListContext.GoToPage(page);
     }
 
     private void OnPagingReset(object? sender, PagingEventArgs e)
     {
-        this.Page = e.PagingState.Page;
+        this.ListContext?.ListState.Set(e.PagingState.Page);
         this.InvokeAsync(StateHasChanged);
     }
 
@@ -81,15 +74,9 @@ public partial class PagingControl
     {
         if (page != this.Page)
         {
-            this.Page = page;
-            await GotToPage();
+            await SetPage(page);
+            this.StateHasChanged();
         }
-    }
-
-    private async Task GotToPage()
-    {
-        await SetPage();
-        this.StateHasChanged();
     }
 
     private string GetCss(int page)

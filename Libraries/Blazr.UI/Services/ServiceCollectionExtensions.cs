@@ -10,9 +10,12 @@ namespace Blazr.UI;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddUiServices(this IServiceCollection services)
+    public static void AddAppUIServices(this IServiceCollection services)
     {
-        services.AddScoped<UiStateService, UiStateService>();
+        services.AddScoped<UiStateService>();
+        services.AddSingleton<ModalService>();
+        services.AddSingleton<ToasterService>();
+        services.AddTransient<ListContext>();
     }
 }
 

@@ -8,6 +8,9 @@ namespace Blazr.Core;
 
 public class ListState
 {
+    private ListStateRecord _currentRecord = default!;
+    public readonly Guid Id = Guid.NewGuid();
+
     public string? SortField { get; set; }
 
     public bool SortDescending { get; set; }
@@ -20,18 +23,47 @@ public class ListState
 
     public bool IsPaging => (PageSize > 0);
 
+    public ListStateRecord Record => new ListStateRecord(this);
+
     public void Set(ListState state)
     {
         this.PageSize = state.PageSize;
         this.StartIndex = state.StartIndex;
         this.SortField = state.SortField;
         this.SortDescending = state.SortDescending;
+        this.ListTotalCount = state.ListTotalCount;
+    }
+
+    public bool Set(ListStateRecord? state)
+    {
+        if (state != null)
+        {
+            _currentRecord = state with { };
+            this.PageSize = state.PageSize;
+            this.StartIndex = state.StartIndex;
+            this.SortField = state.SortField;
+            this.SortDescending = state.SortDescending;
+            this.ListTotalCount = state.ListTotalCount;
+        }
+        return state != null;
     }
 
     public void Set(ItemsProviderRequest options)
     {
         this.PageSize = options.Count;
         this.StartIndex = options.StartIndex;
+    }
+
+    public void Set(PagingState state)
+    {
+        this.PageSize = state.PageSize;
+        this.StartIndex = state.StartIndex;
+    }
+
+    public void Set(int? page)
+    {
+        if (page is not null)
+            this.StartIndex = this.PageSize * (int)page;
     }
 
     public int Page
@@ -62,6 +94,7 @@ public class ListState
             PageSize = this.PageSize,
             StartIndex = this.StartIndex
         };
+
 
     public void Load(ListState? state)
     {

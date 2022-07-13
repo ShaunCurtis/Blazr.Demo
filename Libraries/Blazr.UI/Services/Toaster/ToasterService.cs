@@ -6,7 +6,7 @@
 
 using System.Timers;
 
-namespace Blazr.Core.Toaster;
+namespace Blazr.UI;
 
 public class ToasterService : IDisposable
 {

@@ -14,7 +14,7 @@
     <FormViewTitle>
         <h2>List of Weather Forecasts</h2>
     </FormViewTitle>
-    <ListForm ListContext=this.listContext ListProvider=this.GetPagedItems StateId=this.RouteId>
+    <ListForm ListContext=this.ListContext>
         @this.HeaderButtonMarkup("Add New Weather Forecast")
         <UIListControl TRecord=DvoWeatherForecast Records=this.Service.Records LoadState=this.loadState class="@this.TableCss">
             <RowTemplate>
@@ -38,7 +38,7 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        listContext.ListState.SortField = "Date";
+        ListContext.ListState.SortField = "Date";
         this.ViewControl = typeof(WeatherForecastViewForm);
         this.EditControl = typeof(WeatherForecastEditForm);
         if (this.WeatherLocationId != Guid.Empty)

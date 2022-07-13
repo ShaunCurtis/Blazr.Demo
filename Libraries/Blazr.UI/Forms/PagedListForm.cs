@@ -6,13 +6,12 @@
 namespace Blazr.UI;
 
 public class PagedListForm<TRecord, TEntity>
-    : OwningComponentBase<IListService<TRecord, TEntity >>, IDisposable
+    : OwningComponentBase<IListService<TRecord, TEntity>>, IDisposable
     where TRecord : class, new()
     where TEntity : class, IEntity
 {
     protected IPagingControl? pagingControl;
     private bool _isNew = true;
-    protected ListContext listContext = new ListContext();
     protected Type? ViewControl;
     protected Type? EditControl;
     protected bool isLoading => Service.Records is null;
@@ -40,6 +39,8 @@ public class PagedListForm<TRecord, TEntity>
 
     [Inject] protected ModalService ModalService { get; set; } = default!;
 
+    [Inject] protected ListContext ListContext { get; set; } = default!;
+
     [Parameter] public bool UseModalForms { get; set; } = true;
 
     protected string FormCss => new CSSBuilder()
@@ -55,7 +56,11 @@ public class PagedListForm<TRecord, TEntity>
         await PreLoadRecordAsync(_isNew);
 
         if (_isNew)
+        {
+            ListContext.ListState.PageSize = this.PageSize;
+            ListContext.Load(this.RouteId, GetPagedItems);
             this.NotificationService.ListUpdated += this.OnListChanged;
+        }
 
         await base.SetParametersAsync(ParameterView.Empty);
         _isNew = false;
@@ -66,58 +71,49 @@ public class PagedListForm<TRecord, TEntity>
 
     public virtual async ValueTask<PagingState> GetPagedItems(PagingState request)
     {
-        var listState = new ListState { PageSize = request.PageSize, StartIndex = request.StartIndex };
-        var newListState = await this.GetPagedItems(listState);
+        ListContext.ListState.Set(request);
 
-        return new PagingState { PageSize = newListState.PageSize, StartIndex = newListState.StartIndex, ListTotalCount = newListState.ListTotalCount };
+        await this.GetPagedItems();
+
+        return this.ListContext.ListState.PagingState;
     }
 
-    public async ValueTask<ListState> GetPagedItems(ListState request)
+    public async ValueTask GetPagedItems()
     {
-        var listState = this.GetState(request);
-
-        var query = new FilteredListQuery<TRecord>(new ListProviderRequest<TRecord>(listState, this.ListFilter));
+        var query = new FilteredListQuery<TRecord>(new ListProviderRequest<TRecord>(this.ListContext.ListState.Record, this.ListFilter));
         var result = await this.Service.GetRecordsAsync(query);
-        
-        listState.ListTotalCount = result.TotalItemCount;
-        
+
+        this.ListContext.ListState.ListTotalCount = result.TotalItemCount;
+
         await this.OnAfterGetItems();
         await this.InvokeAsync(StateHasChanged);
-        
-        this.SaveState(listState);
-        
-        return listState;
+
+        this.ListContext.SaveState();
+    }
+
+    public async ValueTask<(int, bool)> GetPagedItems(ListStateRecord request)
+    {
+        var query = new FilteredListQuery<TRecord>(new ListProviderRequest<TRecord>(request, this.ListFilter));
+        var result = await this.Service.GetRecordsAsync(query);
+
+        this.ListContext.ListState.ListTotalCount = result.TotalItemCount;
+
+        await this.OnAfterGetItems();
+        await this.InvokeAsync(StateHasChanged);
+
+        this.ListContext.SaveState();
+
+        return (result.TotalItemCount, result.Success);
     }
 
     protected virtual Task OnAfterGetItems()
         => Task.CompletedTask;
 
     protected void SaveState(ListState state)
-    {
-        if (this.RouteId != Guid.Empty)
-            this.UiStateService.AddStateData(this.RouteId, state);
-    }
+        => this.UiStateService.AddStateData(this.RouteId, state.Record);
 
-    protected ListState GetState(ListState state)
-    {
-        ListState? returnState = null;
-        // TODO - can reduce this if the new version of TryGetStateData works
-        if (this.RouteId != Guid.Empty && this.UiStateService.TryGetStateData<ListState>(this.RouteId, out object? listState) && listState is ListState)
-        {
-            returnState = (listState as ListState)!.Copy;
-            if (!_isNew)
-            {
-                returnState.StartIndex = state.StartIndex;
-                returnState.PageSize = state.PageSize;
-            }
-        }
-        _isNew = false;
-        returnState ??= state;
-        return returnState;
-    }
     protected virtual void RecordDashboard(Guid Id)
         => this.NavigationManager!.NavigateTo($"/{this.EntityService.Url}/dashboard/{Id}");
-
 
     protected async Task EditRecord(Guid Id)
     {
@@ -138,7 +134,7 @@ public class PagedListForm<TRecord, TEntity>
         {
             var options = GetViewOptions(null);
             options.ControlParameters.Add("Id", Id);
-            await this.ModalService.Modal.ShowAsync(this.ViewControl,  options);
+            await this.ModalService.Modal.ShowAsync(this.ViewControl, options);
         }
         else
             this.NavigationManager!.NavigateTo($"/{this.EntityService.Url}/view/{Id}");

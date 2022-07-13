@@ -53,12 +53,12 @@ public readonly struct ListProviderRequest<TRecord>
         FilterExpression = filterExpression;
     }
 
-    public ListProviderRequest(ListState options, Func<TRecord, bool>? filterExpression = null)
+    public ListProviderRequest(ListStateRecord options, Func<TRecord, bool>? filterExpression = null)
     {
         StartIndex = options.StartIndex;
         PageSize = options.PageSize;
         CancellationToken = new CancellationToken();
-        SortExpressionString = options.SortState.SortExpression;
+        SortExpressionString = options.SortExpression;
         FilterExpressionString = null;
         FilterExpression = filterExpression;
     }
