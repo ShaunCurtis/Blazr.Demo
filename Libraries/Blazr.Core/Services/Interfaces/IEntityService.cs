@@ -8,9 +8,4 @@ namespace Blazr.Core;
 public interface IEntityService<TEntity>
     where TEntity : class, IEntity 
 {
-    public string Url { get;}
-
-    public string SingleTitle { get;}
-
-    public string PluralTitle { get; }
 }
