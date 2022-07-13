@@ -38,7 +38,7 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        ListContext.ListState.SortField = "Date";
+        ListContext.SortField = "Date";
         this.ViewControl = typeof(WeatherForecastViewForm);
         this.EditControl = typeof(WeatherForecastEditForm);
         if (this.WeatherLocationId != Guid.Empty)

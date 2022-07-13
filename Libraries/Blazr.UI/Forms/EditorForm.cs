@@ -29,6 +29,8 @@ public abstract partial class EditorForm<TRecord, TEditRecord, TEntity>
 
     [Inject] protected IEntityService<TEntity> EntityService { get; set; } = default!;
 
+    [Inject] protected IEntityUIService<TEntity> EntityUIService { get; set; } = default!;
+
     protected BlazrNavigationManager? blazrNavManager => NavManager is BlazrNavigationManager ? NavManager as BlazrNavigationManager : null;
 
     protected string? alertMessage;
@@ -192,7 +194,7 @@ public abstract partial class EditorForm<TRecord, TEditRecord, TEntity>
     }
 
     protected virtual void BaseExit()
-        => this.NavManager?.NavigateTo($"/{this.EntityService.Url}");
+        => this.NavManager?.NavigateTo($"/{this.EntityUIService.Url}");
 
     protected void SetMessage(string message, string colour)
     {

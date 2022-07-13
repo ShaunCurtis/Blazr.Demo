@@ -28,6 +28,8 @@ public class ViewerForm<TRecord, TEntity>
 
     [Inject] protected IEntityService<TEntity> EntityService { get; set; } = default!;
 
+    [Inject] protected IEntityUIService<TEntity> EntityUIService { get; set; } = default!;
+
     public ComponentState LoadState { get; protected set; } = ComponentState.New;
 
     public override async Task SetParametersAsync(ParameterView parameters)
@@ -89,7 +91,7 @@ public class ViewerForm<TRecord, TEntity>
             await this.ModalService.Modal.SwitchAsync(this.EditControl, options);
         }
         else
-            this.NavManager!.NavigateTo($"/{this.EntityService.Url}/edit/{Id}");
+            this.NavManager!.NavigateTo($"/{this.EntityUIService.Url}/edit/{Id}");
     }
 
     protected virtual ModalOptions GetEditOptions(ModalOptions? options)
@@ -112,7 +114,7 @@ public class ViewerForm<TRecord, TEntity>
     }
 
     protected virtual void BaseExit()
-        => this.NavManager?.NavigateTo($"/{this.EntityService.Url}");
+        => this.NavManager?.NavigateTo($"/{this.EntityUIService.Url}");
 
     public void Dispose()
         => this.NotificationService.RecordChanged -= OnChange;

@@ -34,17 +34,17 @@ public partial class UIListColumn : UIComponentBase
 
         // TODO - currwnt sort issue is here
         SortState options = this.IsCurrentSortField()
-            ?  new SortState { SortDescending = !this._listContext.ListState.SortState.SortDescending, SortField = this._listContext.ListState.SortState.SortField }
+            ?  new SortState { SortDescending = !this._listContext.SortDescending, SortField = this._listContext.SortField }
             : new SortState { SortDescending = false, SortField = this.SortField };
 
         this._listContext?.SetSortState(options);
     }
     private bool IsCurrentSortField()
     {
-        if (this._listContext is null || String.IsNullOrWhiteSpace(_listContext.ListState.SortState.SortField))
+        if (this._listContext is null || String.IsNullOrWhiteSpace(_listContext.SortField))
             return false;
 
-        return _listContext.ListState.SortState.SortField.Equals(this.SortField);
+        return _listContext.SortField.Equals(this.SortField);
     }
 
 
@@ -66,7 +66,7 @@ public partial class UIListColumn : UIComponentBase
     private string SortIconCss
     => _listContext is null || !this.IsCurrentSortField()
         ? UICssClasses.NotSortedClass
-        : this._listContext.ListState.SortState.SortDescending
+        : this._listContext.SortDescending
             ? UICssClasses.AscendingClass
             : UICssClasses.DescendingClass;
 }

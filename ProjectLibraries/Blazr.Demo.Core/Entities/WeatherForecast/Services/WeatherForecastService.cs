@@ -20,10 +20,6 @@ public class WeatherForecastService
         _weatherSummaryNotificationService = notificationService;
         _dataBroker = cQSDataBroker;
         _weatherSummaryNotificationService.ListUpdated += SummariesListUpdated;
-
-        this.SingleTitle = "Weather Forecast";
-        this.PluralTitle = "Weather Forecasts";
-        this.Url = "weatherforecast";
     }
 
     public async ValueTask<SortedDictionary<Guid, string>> WeatherSummariesAsync()

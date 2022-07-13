@@ -9,10 +9,5 @@ namespace Blazr.App.Core;
 public class WeatherLocationService
     : BaseEntityService<WeatherLocationEntity>
 {
-    public WeatherLocationService()
-    {
-        this.SingleTitle = "Weather Location";
-        this.PluralTitle = "Weather Locations";
-        this.Url = "weatherlocation";
-    }
+    public WeatherLocationService() { }
 }

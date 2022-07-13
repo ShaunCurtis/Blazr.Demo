@@ -9,9 +9,9 @@ namespace Blazr.UI.Bootstrap;
 public partial class PagingControl
     : ComponentBase, IPagingControl
 {
-    private int Page => this.ListContext?.ListState.Page ?? 0;
-    private int ListCount => this.ListContext?.ListState.ListTotalCount ?? 0 ;
-    private int PageSize => this.ListContext?.ListState.PageSize ?? 10 ;
+    private int Page => this.ListContext?.Page ?? 0;
+    private int ListCount => this.ListContext?.ListTotalCount ?? 0 ;
+    private int PageSize => this.ListContext?.PageSize ?? 10 ;
     private bool hasPages => LastPage > 0;
 
     [Parameter] public int BlockSize { get; set; } = 10;
@@ -42,7 +42,7 @@ public partial class PagingControl
 
     private void OnPagingReset(object? sender, PagingEventArgs e)
     {
-        this.ListContext?.ListState.Set(e.PagingState.Page);
+        this.ListContext?.Set(e.PagingState.Page);
         this.InvokeAsync(StateHasChanged);
     }
 

@@ -31,6 +31,8 @@ public class PagedListForm<TRecord, TEntity>
 
     [Inject] protected IEntityService<TEntity> EntityService { get; set; } = default!;
 
+    [Inject] protected IEntityUIService<TEntity> EntityUIService { get; set; } = default!;
+
     [Inject] protected NavigationManager NavigationManager { get; set; } = default!;
 
     [Inject] protected ToasterService ToasterService { get; set; } = default!;
@@ -57,7 +59,7 @@ public class PagedListForm<TRecord, TEntity>
 
         if (_isNew)
         {
-            ListContext.ListState.PageSize = this.PageSize;
+            ListContext.PageSize = this.PageSize;
             ListContext.Load(this.RouteId, GetPagedItems);
             this.NotificationService.ListUpdated += this.OnListChanged;
         }
@@ -69,21 +71,21 @@ public class PagedListForm<TRecord, TEntity>
     public virtual Task PreLoadRecordAsync(bool isNew)
         => Task.CompletedTask;
 
-    public virtual async ValueTask<PagingState> GetPagedItems(PagingState request)
-    {
-        ListContext.ListState.Set(request);
+    //public virtual async ValueTask<PagingState> GetPagedItems(PagingState request)
+    //{
+    //    ListContext.Set(request);
 
-        await this.GetPagedItems();
+    //    await this.GetPagedItems();
 
-        return this.ListContext.ListState.PagingState;
-    }
+    //    return this.ListContext.PagingState;
+    //}
 
     public async ValueTask GetPagedItems()
     {
-        var query = new FilteredListQuery<TRecord>(new ListProviderRequest<TRecord>(this.ListContext.ListState.Record, this.ListFilter));
+        var query = new FilteredListQuery<TRecord>(new ListProviderRequest<TRecord>(this.ListContext.Record, this.ListFilter));
         var result = await this.Service.GetRecordsAsync(query);
 
-        this.ListContext.ListState.ListTotalCount = result.TotalItemCount;
+        this.ListContext.ListTotalCount = result.TotalItemCount;
 
         await this.OnAfterGetItems();
         await this.InvokeAsync(StateHasChanged);
@@ -91,12 +93,12 @@ public class PagedListForm<TRecord, TEntity>
         this.ListContext.SaveState();
     }
 
-    public async ValueTask<(int, bool)> GetPagedItems(ListStateRecord request)
+    public async ValueTask<(int, bool)> GetPagedItems(ListState request)
     {
         var query = new FilteredListQuery<TRecord>(new ListProviderRequest<TRecord>(request, this.ListFilter));
         var result = await this.Service.GetRecordsAsync(query);
 
-        this.ListContext.ListState.ListTotalCount = result.TotalItemCount;
+        this.ListContext.ListTotalCount = result.TotalItemCount;
 
         await this.OnAfterGetItems();
         await this.InvokeAsync(StateHasChanged);
@@ -109,11 +111,11 @@ public class PagedListForm<TRecord, TEntity>
     protected virtual Task OnAfterGetItems()
         => Task.CompletedTask;
 
-    protected void SaveState(ListState state)
-        => this.UiStateService.AddStateData(this.RouteId, state.Record);
+    //protected void SaveState(ListState state)
+    //    => this.UiStateService.AddStateData(this.RouteId, state.Record);
 
     protected virtual void RecordDashboard(Guid Id)
-        => this.NavigationManager!.NavigateTo($"/{this.EntityService.Url}/dashboard/{Id}");
+        => this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/dashboard/{Id}");
 
     protected async Task EditRecord(Guid Id)
     {
@@ -125,7 +127,7 @@ public class PagedListForm<TRecord, TEntity>
             await this.ModalService.Modal.ShowAsync(this.EditControl, options);
         }
         else
-            this.NavigationManager!.NavigateTo($"/{this.EntityService.Url}/edit/{Id}");
+            this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/edit/{Id}");
     }
 
     protected async Task ViewRecord(Guid Id)
@@ -137,7 +139,7 @@ public class PagedListForm<TRecord, TEntity>
             await this.ModalService.Modal.ShowAsync(this.ViewControl, options);
         }
         else
-            this.NavigationManager!.NavigateTo($"/{this.EntityService.Url}/view/{Id}");
+            this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/view/{Id}");
     }
 
     protected async Task AddRecordAsync(ModalOptions? options = null)
@@ -148,7 +150,7 @@ public class PagedListForm<TRecord, TEntity>
             await this.ModalService.Modal.ShowAsync(this.EditControl, options);
         }
         else
-            this.NavigationManager!.NavigateTo($"/{this.EntityService.Url}/edit/0");
+            this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/edit/0");
     }
 
     protected virtual ModalOptions GetAddOptions(ModalOptions? options)

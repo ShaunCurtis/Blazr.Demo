@@ -13,15 +13,15 @@ public class BaseEntityUIService<TEntity>
     private readonly NavigationManager _navigationManager;
     private readonly ModalService _modalService;
 
-    public string Url => "record";
+    public string Url { get; set; } = "record";
 
-    public string SingleTitle => "record";
+    public string SingleTitle { get; set; } = "record";
 
-    public string PluralTitle => "records";
+    public string PluralTitle { get; set; } = "records";
 
-    public Type? EditForm => null;
+    public Type? EditForm { get; set; } = null;
 
-    public Type? ViewForm => null;
+    public Type? ViewForm { get; set; } = null;
 
     public BaseEntityUIService(ModalService modalService, NavigationManager navigationManager)
     {

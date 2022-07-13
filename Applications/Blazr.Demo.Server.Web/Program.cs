@@ -1,4 +1,5 @@
 using Blazr.App.Data;
+using Blazr.App.UI;
 using Blazr.Core;
 using Blazr.Routing;
 using Blazr.UI;
@@ -18,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 
         Services.AddWeatherAppServerDataServices<InMemoryWeatherDbContext>(options 
             => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));
-
+        Services.AddBlazrUIServices();
         Services.AddAppUIServices();
     }
 }

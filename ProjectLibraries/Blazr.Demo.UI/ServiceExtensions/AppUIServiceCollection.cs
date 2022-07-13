@@ -10,5 +10,7 @@ public static class AppUIServiceCollection
     public static void AddAppUIServices(this IServiceCollection services)
     {
         services.AddScoped<IEntityUIService<WeatherForecastEntity>, WeatherForecastUIService>();
+        services.AddScoped<IEntityUIService<WeatherLocationEntity>, WeatherLocationUIService>();
+        services.AddScoped<IEntityUIService<WeatherSummaryEntity>, WeatherSummaryUIService>();
     }
 }

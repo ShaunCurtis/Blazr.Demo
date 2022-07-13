@@ -6,15 +6,16 @@
 
 namespace Blazr.App.UI;
 
-public class WeatherForecastUIService : IEntityUIService<WeatherForecastEntity>
+public class WeatherForecastUIService
+    : BaseEntityUIService<WeatherForecastEntity>
 {
-    public string Url => "weatherforecast";
-
-    public string SingleTitle => "Weather Forecast";
-
-    public string PluralTitle => "Weather Forecasts";
-
-    public Type? EditForm => typeof(WeatherForecastEditForm);
-
-    public Type? ViewForm => typeof(WeatherForecastViewForm);
+    public WeatherForecastUIService(ModalService modalService, NavigationManager navigationManager)
+        : base(modalService, navigationManager)
+    {
+        this.Url = "weatherforecast";
+        this.SingleTitle = "Weather Forecast";
+        this.PluralTitle = "Weather Forecasts";
+        this.EditForm = typeof(WeatherForecastEditForm);
+        this.ViewForm = typeof(WeatherForecastViewForm);
+    }
 }
