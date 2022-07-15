@@ -6,7 +6,8 @@
 
 namespace Blazr.UI;
 
-public class UiStateService
+public class UiStateService 
+    :IUiStateService
 {
     private Dictionary<Guid, object> _stateItems = new Dictionary<Guid, object>();
 

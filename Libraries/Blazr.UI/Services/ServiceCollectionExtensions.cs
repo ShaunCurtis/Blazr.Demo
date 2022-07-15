@@ -12,7 +12,7 @@ public static class ServiceCollectionExtensions
 {
     public static void AddBlazrUIServices(this IServiceCollection services)
     {
-        services.AddScoped<UiStateService>();
+        services.AddScoped<IUiStateService, UiStateService>();
         services.AddSingleton<ModalService>();
         services.AddSingleton<ToasterService>();
         services.AddTransient<ListContext>();

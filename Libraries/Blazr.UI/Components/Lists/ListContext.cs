@@ -10,7 +10,7 @@ public class ListContext
 {
     private Guid _stateId = Guid.Empty;
     private bool _hasLoaded;
-    private UiStateService? _uiStateService;
+    private IUiStateService? _uiStateService;
     private ListState _currentRecord = default!;
     private Func<ListState, ValueTask<(int, bool)>>? _listProvider { get; set; }
     private string sortDirectionText => SortDescending ? " Desc" : string.Empty;
@@ -81,7 +81,7 @@ public class ListContext
             this.StartIndex = this.PageSize * (int)page;
     }
 
-    public ListContext(UiStateService uiStateService)
+    public ListContext(IUiStateService uiStateService)
     {
         _uiStateService = uiStateService;
     }

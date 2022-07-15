@@ -37,7 +37,7 @@ public class PagedListForm<TRecord, TEntity>
 
     [Inject] protected ToasterService ToasterService { get; set; } = default!;
 
-    [Inject] protected UiStateService UiStateService { get; set; } = default!;
+    [Inject] protected IUiStateService UiStateService { get; set; } = default!;
 
     [Inject] protected ModalService ModalService { get; set; } = default!;
 
