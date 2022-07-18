@@ -1,7 +1,11 @@
 using Blazr.App.Data;
 using Blazr.App.UI;
+using Blazr.Auth;
+using Blazr.Auth.Simple;
+using Blazr.Auth.Simple.Core;
 using Blazr.Routing;
 using Blazr.UI;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +19,19 @@ var builder = WebApplication.CreateBuilder(args);
         Services.AddControllersWithViews();
 
         Services.AddBlazrNavigationManager();
+
+        // Authentication and Authorization Services
+        //{
+        //    Services.AddScoped<AuthenticationStateProvider, TestAuthenticationStateProvider>();
+        //    Services.AddAuthorization(config =>
+        //    {
+        //        foreach (var policy in SimpleAuthorizationPolicies.Policies)
+        //        {
+        //            config.AddPolicy(policy.Key, policy.Value);
+        //        }
+        //    });
+        //}
+        Services.AddAppAuthServices();
 
         Services.AddWeatherAppServerDataServices<InMemoryWeatherDbContext>(options
             => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));

@@ -1,6 +1,7 @@
-﻿@namespace Blazr.App.UI
-
-@page "/counter"
+﻿@page "/counter"
+@*@attribute [Authorize]*@
+@attribute [Authorize(Policy = "IsAdmin")]
+@namespace Blazr.App.UI
 
 <PageTitle>Counter</PageTitle>
 
