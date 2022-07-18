@@ -1,0 +1,47 @@
+﻿@*
+    /// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================
+*@
+
+@implements IDisposable
+@namespace Blazr.App.UI
+@inherits BlazrAppPagedListForm<DvoWeatherForecast, WeatherForecastEntity>
+
+<UIListControl TRecord=DvoWeatherForecast Records=this.Service.Records LoadState=this.loadState class="@this.TableCss">
+    <RowTemplate>
+        <UIListColumn HeaderTitle="ID" SortField="WeatherForecastId" NoWrap=true>@context.Id.AsShortGuid()</UIListColumn>
+        <UIListColumn HeaderTitle="Date" SortField="Date" NoWrap=true>@context.Date.AsGlobalDate()</UIListColumn>
+        <UIListColumn HeaderTitle="Location" SortField="Location">@context.Location</UIListColumn>
+        <UIListColumn HeaderTitle="Temp &deg;C" SortField="TemperatureC" NoWrap=true>@context.TemperatureC.AsDegC()</UIListColumn>
+        <UIListColumn HeaderTitle="Temp &deg;F" SortField="TemperatureC" NoWrap=true>@context.TemperatureC.AsDegF()</UIListColumn>
+        <UIListColumn HeaderTitle="Summary" SortField="Summary" IsMaxColumn=true>@context.Summary</UIListColumn>
+        <UIListColumn HeaderTitle="" NoWrap=true class="text-right text-end">
+            @this.RowButtonMarkup(context.Id)
+        </UIListColumn>
+    </RowTemplate>
+</UIListControl>
+
+
+@code {
+    protected override RenderFragment BaseContent => (builder) => base.BuildRenderTree(builder);
+
+    [Parameter] public Guid WeatherLocationId { get; set; } = Guid.Empty;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        ListContext.SortField = "Date";
+        if (this.WeatherLocationId != Guid.Empty)
+            this.ListFilter = record => record.WeatherLocationId == this.WeatherLocationId;
+    }
+
+    protected override ModalOptions GetAddOptions(ModalOptions? options)
+    {
+        options = options ?? new();
+        options.ControlParameters.Add("WeatherLocationId", this.WeatherLocationId);
+        return options;
+    }
+}

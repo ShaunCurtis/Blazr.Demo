@@ -1,27 +1,29 @@
 ﻿@namespace Blazr.App.UI
 @typeparam TRecord where TRecord : class, new()
 @typeparam TEntity where TEntity  : class, IEntity
-@inherits PagedListForm<TRecord, TEntity>
-@code {
-    protected readonly string TableCss = "table table-sm table-striped table-hover border-bottom no-margin";
+@inherits BlazrPagedListForm<TRecord, TEntity>
 
-    protected string ContainerCss = "bg-light border border-brand p-0 mt-2";
-
-    protected RenderFragment HeaderButtonMarkup(string addText = "Add new Record") => __builder =>
-    {
+<UIContainer Size=BootstrapSize.Fluid class="@this.ContainerCss">
+    <FormViewTitle>
+        <h2>List of Weather Forecasts</h2>
+    </FormViewTitle>
+    <ListForm ListContext=this.ListContext>
         <UIContainer Size=BootstrapSize.Fluid>
             <UIFormRow class="my-2">
                 <UIColumn Columns=12 LargeColumns=8 class="text-start">
                     <PagingControl @ref=this.pagingControl />
                 </UIColumn>
                 <UIColumn Columns=2 LargeColumns=4 class="text-right text-end">
-                    <UIButton class="btn-primary btn-sm" ClickEvent="() => this.AddRecordAsync()">@addText</UIButton>
+                    <UIButton class="btn-primary btn-sm" ClickEvent="() => this.AddRecordAsync()">@this.NewRecordText</UIButton>
                     <UIButton class="btn-secondary btn-sm" Show=(!this.IsSubForm) ClickEvent="this.Exit">Exit</UIButton>
                 </UIColumn>
             </UIFormRow>
         </UIContainer>
-    };
+        @this.Childcontent
+    </ListForm>
+</UIContainer>
 
+@code {
     protected RenderFragment RowButtonMarkup(Guid id, bool showDash = false) => __builder =>
     {
         <UIButtonGroup>
@@ -34,3 +36,4 @@
         </UIButtonGroup>
     };
 }
+

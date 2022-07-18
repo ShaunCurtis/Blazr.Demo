@@ -7,13 +7,14 @@
 namespace Blazr.UI;
 
 public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
-    : BlazrComponentBase, IDisposable
+    : BlazrOwningComponentBase<IEditService<TRecord, TEditRecord, TEntity>>, IDisposable
     where TRecord : class, new()
     where TEditRecord : class, IEditRecord<TRecord>, new()
     where TEntity : class, IEntity
 {
     private bool _isNew = true;
     protected EditContext editContext = default!;
+    protected string FormTitle = "Record Editor";
 
     [Parameter] public Guid Id { get; set; }
 
@@ -54,6 +55,9 @@ public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
         await PreLoadRecordAsync(_isNew);
         if (_isNew)
         {
+            if (!string.IsNullOrWhiteSpace(this.EntityUIService.SingleTitle))
+                this.FormTitle = $"{this.EntityUIService.SingleTitle} Editor";
+
             this.Service.SetNotificationService(this.NotificationService);
 
             this.LoadState = ComponentState.Loading;

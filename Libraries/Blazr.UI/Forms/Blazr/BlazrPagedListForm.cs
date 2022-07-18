@@ -5,15 +5,17 @@
 /// ============================================================
 namespace Blazr.UI;
 
-public class PagedListForm<TRecord, TEntity>
-    : OwningComponentBase<IListService<TRecord, TEntity>>, IDisposable
+public class BlazrPagedListForm<TRecord, TEntity>
+    : BlazrOwningComponentBase<IListService<TRecord, TEntity>>, IDisposable
     where TRecord : class, new()
     where TEntity : class, IEntity
 {
     protected IPagingControl? pagingControl;
+    protected string FormTitle = "Record Editor";
+    protected string NewRecordText = "Add Record";
     private bool _isNew = true;
-    protected Type? ViewControl => this.EntityUIService.ViewForm ;
-    protected Type? EditControl => this.EntityUIService.EditForm;
+    protected virtual Type? ViewControl => this.EntityUIService.ViewForm;
+    protected virtual Type? EditControl => this.EntityUIService.EditForm;
     protected bool isLoading => Service.Records is null;
     protected ComponentState loadState => isLoading ? ComponentState.Loading : ComponentState.Loaded;
 
@@ -55,6 +57,12 @@ public class PagedListForm<TRecord, TEntity>
 
         this.Service.SetNotificationService(this.NotificationService);
 
+        if (!string.IsNullOrWhiteSpace(this.EntityUIService.SingleTitle))
+        {
+            this.FormTitle = $"List of {this.EntityUIService.PluralTitle}";
+            NewRecordText = $"Add {this.EntityUIService.SingleTitle}";
+        }
+
         await PreLoadRecordAsync(_isNew);
 
         if (_isNew)
@@ -73,7 +81,7 @@ public class PagedListForm<TRecord, TEntity>
 
     public async ValueTask GetPagedItems()
     {
-        var query = new FilteredListQuery<TRecord>(new ListProviderRequest<TRecord>(this.ListContext.Record, this.ListFilter));
+        var query = new FilteredListQuery<TRecord>(new ListProviderRequest<TRecord>(this.ListContext.ListStateRecord, this.ListFilter));
         var result = await this.Service.GetRecordsAsync(query);
 
         this.ListContext.ListTotalCount = result.TotalItemCount;
@@ -101,9 +109,6 @@ public class PagedListForm<TRecord, TEntity>
 
     protected virtual Task OnAfterGetItems()
         => Task.CompletedTask;
-
-    //protected void SaveState(ListState state)
-    //    => this.UiStateService.AddStateData(this.RouteId, state.Record);
 
     protected virtual void RecordDashboard(Guid Id)
         => this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/dashboard/{Id}");

@@ -1,0 +1,21 @@
+﻿@namespace Blazr.App.UI
+@inherits LayoutComponentBase
+
+<PageTitle>Blazr.Articles.Lists</PageTitle>
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <UserBar />
+            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>

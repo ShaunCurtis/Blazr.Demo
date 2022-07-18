@@ -29,11 +29,11 @@ public class ListContext
 
     public int Page => StartIndex / PageSize;
 
-    public bool IsDirty => this.Record != _currentRecord;
+    public bool IsDirty => this.ListStateRecord != _currentRecord;
 
     public string SortExpression => $"{SortField}{sortDirectionText}";
 
-    public ListState Record => new ListState()
+    public ListState ListStateRecord => new ListState()
     {
         PageSize = this.PageSize,
         StartIndex = StartIndex,
@@ -43,11 +43,10 @@ public class ListContext
         ListTotalCount = this.ListTotalCount
     };
 
-    public PagingState PagingState => new PagingState
+    public PagingRequest PagingState => new PagingRequest
     {
         PageSize = PageSize,
         StartIndex = StartIndex,
-        ListTotalCount = ListTotalCount
     };
 
     public event EventHandler<PagingEventArgs>? PagingReset;
@@ -75,10 +74,13 @@ public class ListContext
         return state != null;
     }
 
-    public void Set(int? page)
+    public void Set(PagingRequest? request)
     {
-        if (page is not null)
-            this.StartIndex = this.PageSize * (int)page;
+        if (request is not null)
+        {
+            this.StartIndex = request.StartIndex;
+            this.PageSize = request.PageSize;
+        }
     }
 
     public ListContext(IUiStateService uiStateService)
@@ -86,16 +88,16 @@ public class ListContext
         _uiStateService = uiStateService;
     }
 
-    public async ValueTask<bool> PageAsync(int? page = null)
+    public async ValueTask<bool> PageAsync(PagingRequest? request = null)
     {
         if (!_hasLoaded)
             throw new InvalidOperationException("You can't use the ListContext untill you have loaded it.");
 
-        this.Set(page);
+        this.Set(request);
 
         if (_listProvider is not null)
         {
-            var result = await _listProvider(this.Record);
+            var result = await _listProvider(this.ListStateRecord);
             if (result.Item2)
                 this.ListTotalCount = result.Item1;
 
@@ -125,7 +127,7 @@ public class ListContext
 
         if (_listProvider is not null)
         {
-            var returnState = await _listProvider(this.Record);
+            var returnState = await _listProvider(this.ListStateRecord);
 
             if (returnState.Item2)
                 this.ListTotalCount = returnState.Item1;
@@ -143,7 +145,7 @@ public class ListContext
              ? this.Set(state)
              : false;
 
-        _currentRecord = this.Record;
+        _currentRecord = this.ListStateRecord;
         return result;
     }
 
@@ -152,7 +154,7 @@ public class ListContext
 
     public void SaveState()
     {
-        _uiStateService?.AddStateData(_stateId, this.Record);
-        _currentRecord = this.Record;
+        _uiStateService?.AddStateData(_stateId, this.ListStateRecord);
+        _currentRecord = this.ListStateRecord;
     }
 }

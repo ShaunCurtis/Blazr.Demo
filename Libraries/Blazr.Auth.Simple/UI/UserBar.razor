@@ -1,0 +1,79 @@
+﻿@*/// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================*@
+
+@implements IDisposable
+@namespace Blazr.Auth.Simple.UI
+
+<span class="mr-2">Change User:</span>
+<div class="w-25">
+    <select id="userselect" class="form-control" @onchange="ChangeUser">
+        @foreach (var value in TestUserProvider.UserList)
+        {
+            @if (value.Key == _currentUserId)
+            {
+                <option value="@value.Key" selected>@value.Value</option>
+            }
+            else
+            {
+                <option value="@value.Key">@value.Value</option>
+            }
+        }
+    </select>
+</div>
+<span class="text-nowrap ms-3">
+    <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+
+    </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+    <AuthorizeView>
+        <Authorized>
+            @if (this.user is not null && this.user.Identity is not null)
+            {
+                <span>Hello, @this.user!.Identity!.Name</span>
+            }
+        </Authorized>
+        <NotAuthorized>
+            Not Logged In
+        </NotAuthorized>
+    </AuthorizeView>
+</span>
+
+@code {
+
+    [CascadingParameter] public Task<AuthenticationState>? AuthTask { get; set; }
+
+    [Inject] private AuthenticationStateProvider? AuthState { get; set; } = default!;
+
+    private System.Security.Claims.ClaimsPrincipal user = new ClaimsPrincipal();
+    private Guid _currentUserId = Guid.Empty;
+
+    protected async override Task OnInitializedAsync()
+    {
+        var authState = await AuthTask!;
+        this.user = authState.User;
+        AuthState!.AuthenticationStateChanged += this.OnUserChanged;
+    }
+
+    private bool GetSelected(string value)
+        => user.Identity!.Name!.Equals(value, StringComparison.CurrentCultureIgnoreCase);
+
+    private async Task ChangeUser(ChangeEventArgs e)
+    {
+        if (AuthState is TestAuthenticationStateProvider && e.Value is not null && Guid.TryParse(e.Value.ToString(), out Guid Id))
+                await ((TestAuthenticationStateProvider)AuthState).ChangeUser(Id);
+    }
+
+    private async void OnUserChanged(Task<AuthenticationState> state)
+        => await this.GetUser(state);
+
+    private async Task GetUser(Task<AuthenticationState> state)
+    {
+        var authState = await state;
+        this.user = authState.User;
+    }
+
+    public void Dispose()
+        => AuthState!.AuthenticationStateChanged -= this.OnUserChanged;
+}

@@ -7,12 +7,13 @@
 namespace Blazr.UI;
 
 public class BlazrViewerForm<TRecord, TEntity>
-    : BlazrComponentBase, IDisposable
+    : BlazrOwningComponentBase<IReadService<TRecord, TEntity>>, IDisposable
     where TRecord : class, new()
     where TEntity : class, IEntity
 {
     private bool _isNew = true;
-    protected Type? EditControl => this.EntityUIService.EditForm;
+    protected virtual Type? EditControl => this.EntityUIService.EditForm;
+    protected string FormTitle = "Record Viewer";
 
     [Parameter] public Guid Id { get; set; }
 
@@ -30,7 +31,7 @@ public class BlazrViewerForm<TRecord, TEntity>
 
     [Inject] protected IEntityUIService<TEntity> EntityUIService { get; set; } = default!;
 
-    [Inject] protected IReadService<TRecord, TEntity> Service { get; set; } = default!;   
+    [Inject] protected IReadService<TRecord, TEntity> Service { get; set; } = default!;
 
     public ComponentState LoadState { get; protected set; } = ComponentState.New;
 
@@ -40,6 +41,9 @@ public class BlazrViewerForm<TRecord, TEntity>
 
         if (_isNew)
         {
+            if (!string.IsNullOrWhiteSpace(this.EntityUIService.SingleTitle))
+                this.FormTitle = $"{this.EntityUIService.SingleTitle} Viewer";
+
             await PreLoadRecordAsync();
             this.Service.SetNotificationService(this.NotificationService);
             await this.LoadRecordAsync();
@@ -108,11 +112,11 @@ public class BlazrViewerForm<TRecord, TEntity>
         // If we're in a modal context, call Close on the cascaded Modal object
         if (this.Modal is not null)
             this.Modal.Close(ModalResult.OK());
-        
+
         // If there's a delegate registered on the ExitAction, execute it. 
         else if (ExitAction.HasDelegate)
             await ExitAction.InvokeAsync();
-        
+
         // else fallback action is to navigate to root
         else
             this.BaseExit();
