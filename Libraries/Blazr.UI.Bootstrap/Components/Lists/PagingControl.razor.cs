@@ -21,23 +21,23 @@ public partial class PagingControl
     [CascadingParameter] private ListContext? ListContext { get; set; }
 
     public async void NotifyListChangedAsync()
-        => await SetPage();
+        => await SetPageAsync();
 
     protected async override Task OnInitializedAsync()
     {
         if (ListContext is null)
             throw new NullReferenceException($"No cascaded {nameof(ListContext)} found.");
 
-        await this.SetPage();
+        await this.SetPageAsync();
         
         if (this.ListContext is not null)
             this.ListContext.PagingReset += this.OnPagingReset;
     }
 
-    private async Task SetPage(int? page = null)
+    private async Task SetPageAsync(int? page = null)
     {
         if (this.ListContext is not null)
-            await this.ListContext.GoToPage(page);
+            await this.ListContext.PageAsync(page);
     }
 
     private void OnPagingReset(object? sender, PagingEventArgs e)
@@ -74,7 +74,7 @@ public partial class PagingControl
     {
         if (page != this.Page)
         {
-            await SetPage(page);
+            await SetPageAsync(page);
             this.StateHasChanged();
         }
     }

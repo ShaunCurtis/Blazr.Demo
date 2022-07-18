@@ -12,7 +12,7 @@ public class BlazrViewerForm<TRecord, TEntity>
     where TEntity : class, IEntity
 {
     private bool _isNew = true;
-    protected Type? EditControl;
+    protected Type? EditControl => this.EntityUIService.EditForm;
 
     [Parameter] public Guid Id { get; set; }
 
@@ -30,7 +30,7 @@ public class BlazrViewerForm<TRecord, TEntity>
 
     [Inject] protected IEntityUIService<TEntity> EntityUIService { get; set; } = default!;
 
-    [Inject] IReadService<TRecord, TEntity> Service { get; set; } = default!;   
+    [Inject] protected IReadService<TRecord, TEntity> Service { get; set; } = default!;   
 
     public ComponentState LoadState { get; protected set; } = ComponentState.New;
 
@@ -92,6 +92,7 @@ public class BlazrViewerForm<TRecord, TEntity>
             options = this.GetEditOptions(options);
             await this.ModalService.Modal.SwitchAsync(this.EditControl, options);
         }
+        // this needs testing in normal form for new component base
         else
             this.NavManager!.NavigateTo($"/{this.EntityUIService.Url}/edit/{Id}");
     }
@@ -107,9 +108,11 @@ public class BlazrViewerForm<TRecord, TEntity>
         // If we're in a modal context, call Close on the cascaded Modal object
         if (this.Modal is not null)
             this.Modal.Close(ModalResult.OK());
+        
         // If there's a delegate registered on the ExitAction, execute it. 
         else if (ExitAction.HasDelegate)
             await ExitAction.InvokeAsync();
+        
         // else fallback action is to navigate to root
         else
             this.BaseExit();

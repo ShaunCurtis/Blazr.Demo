@@ -16,6 +16,7 @@ public class WeatherForecastUIService
         this.SingleTitle = "Weather Forecast";
         this.PluralTitle = "Weather Forecasts";
         this.EditForm = typeof(WeatherForecastEditForm);
-        this.ViewForm = typeof(WeatherForecastViewForm);
+        //this.ViewForm = typeof(WeatherForecastViewForm);
+        this.ViewForm = typeof(WeatherForecastBlazrViewForm);
     }
 }

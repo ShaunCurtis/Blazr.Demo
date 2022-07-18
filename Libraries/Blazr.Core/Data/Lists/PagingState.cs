@@ -17,4 +17,9 @@ public record PagingState
     public int Page => StartIndex <= 0
         ? 0
         : StartIndex / PageSize;
+
+    public PagingState() { }
+
+    public PagingState(int page)
+        => this.StartIndex = page * PageSize;
 }

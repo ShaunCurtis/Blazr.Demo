@@ -86,7 +86,7 @@ public class ListContext
         _uiStateService = uiStateService;
     }
 
-    public async ValueTask<bool> GoToPage(int? page = null)
+    public async ValueTask<bool> PageAsync(int? page = null)
     {
         if (!_hasLoaded)
             throw new InvalidOperationException("You can't use the ListContext untill you have loaded it.");
@@ -107,12 +107,12 @@ public class ListContext
         return false;
     }
 
-    public async ValueTask SetSortState(SortState sortState)
+    public async ValueTask SortAsync(SortRequest request)
     {
         if (!_hasLoaded)
             throw new InvalidOperationException("You can't use the ListContext untill you have loaded it.");
 
-        var isPagingReset = !sortState.SortField?.Equals(this.SortField);
+        var isPagingReset = !request.SortField?.Equals(this.SortField);
 
         this.GetState();
 
@@ -120,8 +120,8 @@ public class ListContext
         if (isPagingReset ??= false)
             this.StartIndex = 0;
 
-        this.SortField = sortState.SortField;
-        this.SortDescending = sortState.SortDescending;
+        this.SortField = request.SortField;
+        this.SortDescending = request.SortDescending;
 
         if (_listProvider is not null)
         {

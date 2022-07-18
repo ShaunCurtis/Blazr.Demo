@@ -33,11 +33,11 @@ public partial class UIListColumn : UIComponentBase
             return;
 
         // TODO - currwnt sort issue is here
-        SortState options = this.IsCurrentSortField()
-            ?  new SortState { SortDescending = !this._listContext.SortDescending, SortField = this._listContext.SortField }
-            : new SortState { SortDescending = false, SortField = this.SortField };
+        SortRequest request = this.IsCurrentSortField()
+            ?  new SortRequest { SortDescending = !this._listContext.SortDescending, SortField = this._listContext.SortField }
+            : new SortRequest { SortDescending = false, SortField = this.SortField };
 
-        this._listContext?.SetSortState(options);
+        this._listContext?.SortAsync(request);
     }
     private bool IsCurrentSortField()
     {

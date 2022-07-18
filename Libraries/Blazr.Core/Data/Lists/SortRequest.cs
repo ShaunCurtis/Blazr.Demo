@@ -6,7 +6,7 @@
 
 namespace Blazr.Core;
 
-public record SortState
+public record SortRequest
 {
     public string? SortField { get; init; }
 

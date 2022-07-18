@@ -1,0 +1,41 @@
+﻿@*
+    /// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================
+*@
+
+@namespace Blazr.App.UI
+@inherits BlazrAppViewerForm<DvoWeatherForecast, WeatherForecastEntity>
+<div>Blazr Form</div>
+<UIContainer Size=BootstrapSize.Fluid>
+    <UIFormRow>
+        <UIColumn Columns=12 MediumColumns=8>
+            <FormViewControl Label="Location" Value="this.Service.Record!.Location" ControlType="typeof(InputReadOnlyText)" />
+        </UIColumn>
+        <UIColumn Columns=12 MediumColumns=4>
+            <FormViewControl Label="Date" Value="this.Service.Record!.Date.AsGlobalDate()" ControlType="typeof(InputReadOnlyText)" />
+        </UIColumn>
+    </UIFormRow>
+    <UIFormRow>
+        <UIColumn Columns=12 MediumColumns=4>
+            <FormViewControl Label="Temp &deg;F" Value="this.Service.Record!.TemperatureC.AsDegF()" ControlType="typeof(InputReadOnlyText)" />
+        </UIColumn>
+        <UIColumn Columns=12 MediumColumns=4>
+            <FormViewControl Label="Temp &deg;C" Value="this.Service.Record!.TemperatureC.AsDegC()" ControlType="typeof(InputReadOnlyText)" />
+        </UIColumn>
+    </UIFormRow>
+    <UIFormRow>
+        <UIColumn Columns=12 MediumColumns=6>
+            <FormViewControl Label="Summary" Value="this.Service.Record!.Summary" ControlType="typeof(InputReadOnlyText)" />
+        </UIColumn>
+        <UIColumn Columns=12 MediumColumns=6>
+            <FormViewControl Label="Unique Record Identity" Value="this.Service.Record!.Id" ControlType="typeof(InputReadOnlyDisplay)" />
+        </UIColumn>
+    </UIFormRow>
+</UIContainer>
+
+@code {
+    protected override RenderFragment BaseContent => (builder) => base.BuildRenderTree(builder);
+}

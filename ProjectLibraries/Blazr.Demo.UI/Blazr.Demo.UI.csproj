@@ -19,7 +19,6 @@
     <Folder Include="Entities\Base\Apps\" />
     <Folder Include="Entities\Base\Layouts\" />
     <Folder Include="Entities\Base\Routes\" />
-    <Folder Include="Entities\WeatherForecast\Components\" />
     <Folder Include="Entities\WeatherForecast\Routes\" />
     <Folder Include="Entities\WeatherLocation\Components\" />
     <Folder Include="Entities\WeatherLocation\Routes\" />

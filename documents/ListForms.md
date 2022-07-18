@@ -1,10 +1,105 @@
-﻿/// ============================================================
-/// Author: Shaun Curtis, Cold Elm Coders
-/// License: Use And Donate
-/// If you use it, donate something to a charity somewhere
-/// ============================================================
+# List Forms
+
+Forms that present lists of information present different challenges to edit and read forms.
+
+They need to be:
+
+1. Paged.
+2. Sortable.
+3. Filtered.
+4. Maintain state.  You need to return to the same sorted page after visiting a record view dialog or page.
+
+The demo application implements a `ListContext` - a similar framework to the `EditContext` in edit forms.
+
+State Service
+
+Before we dive into the forms, we need to look at how the application manages state.  I've shied away from using **Fluxor** because I consider it just too complicated for smaller applications.  Instead the application implements a simple `UIStateManagementService` that maintains a dictionary of Guid/Objrct pairs.  The form is presented by the Guid and it's state stored in a `record`.  Each application route has a Guid,  specified like this:
+
+```csharp
+@page "/weatherforecast/list"
+@namespace Blazr.App.UI
+
+<WeatherForecastPagedListForm RouteId=RouteId class="mt-2"/>
+
+@code {
+    private static Guid RouteId = Guid.NewGuid();
+}
+```
+
+`RouteId` is static so there's a single Id for the route while the application runnng.  The route passes this to the form it uses through a `Parameter`.  You need one Guid for each form that needs toimplement state management in a route.
+
+`UIStateManagementService` is a *Scoped* service, so the `RouteId` is unique.
+
+First our interface which basixcally implements a getter and a setter for a Guid and a clear method.
+
+```csharp
 namespace Blazr.UI;
 
+public interface IUiStateService
+{
+    public void AddStateData(Guid Id, object value);
+    public void ClearStateDataData(Guid Id);
+    public bool TryGetStateData<T>(Guid Id, out T? value);
+}
+```
+
+The class implemented maintains state in-application with a Scoped service.  You can implement more permenant storage through a different `IUiStateService` implementation.
+
+```csharp
+namespace Blazr.UI;
+
+public class UiStateService 
+    :IUiStateService
+{
+    private Dictionary<Guid, object> _stateItems = new Dictionary<Guid, object>();
+
+    public void AddStateData(Guid Id, object value) 
+    {
+        if (Id == Guid.Empty)
+            return;
+
+        if (_stateItems.ContainsKey(Id))
+            _stateItems[Id] = value;
+        else
+            _stateItems.Add(Id, value);
+    }
+
+    public void ClearStateDataData(Guid Id)
+    {
+        if (Id == Guid.Empty)
+            return;
+
+        if (_stateItems.ContainsKey(Id))
+            _stateItems.Remove(Id);
+    }
+
+    public bool TryGetStateData<T>(Guid Id, out T? value)
+    {
+        value = default;
+
+        if (Id == Guid.Empty)
+            return false;
+
+        var isdata = _stateItems.ContainsKey(Id);
+
+        var val = isdata
+            ? _stateItems[Id]
+            : default;
+
+        if (val is T)
+        {
+            value = (T)val;
+            return true;
+        }
+
+        return false;
+    }
+}
+```
+
+## ListContext
+
+```csharp
 public class PagedListForm<TRecord, TEntity>
     : OwningComponentBase<IListService<TRecord, TEntity>>, IDisposable
     where TRecord : class, new()
@@ -12,8 +107,8 @@ public class PagedListForm<TRecord, TEntity>
 {
     protected IPagingControl? pagingControl;
     private bool _isNew = true;
-    protected Type? ViewControl => this.EntityUIService.ViewForm ;
-    protected Type? EditControl => this.EntityUIService.EditForm;
+    protected Type? ViewControl;
+    protected Type? EditControl;
     protected bool isLoading => Service.Records is null;
     protected ComponentState loadState => isLoading ? ComponentState.Loading : ComponentState.Loaded;
 
@@ -24,8 +119,6 @@ public class PagedListForm<TRecord, TEntity>
     [Parameter] public bool IsSubForm { get; set; } = false;
 
     [Parameter] public int PageSize { get; set; } = 20;
-
-    [Parameter] public bool UseModalForms { get; set; } = true;
 
     [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
 
@@ -44,6 +137,8 @@ public class PagedListForm<TRecord, TEntity>
     [Inject] protected ModalService ModalService { get; set; } = default!;
 
     [Inject] protected ListContext ListContext { get; set; } = default!;
+
+    [Parameter] public bool UseModalForms { get; set; } = true;
 
     protected string FormCss => new CSSBuilder()
         .AddClassFromAttributes(UserAttributes)
@@ -70,6 +165,15 @@ public class PagedListForm<TRecord, TEntity>
 
     public virtual Task PreLoadRecordAsync(bool isNew)
         => Task.CompletedTask;
+
+    //public virtual async ValueTask<PagingState> GetPagedItems(PagingState request)
+    //{
+    //    ListContext.Set(request);
+
+    //    await this.GetPagedItems();
+
+    //    return this.ListContext.PagingState;
+    //}
 
     public async ValueTask GetPagedItems()
     {
@@ -167,3 +271,4 @@ public class PagedListForm<TRecord, TEntity>
     public virtual void Dispose()
         => this.NotificationService.ListUpdated += this.OnListChanged;
 }
+```
