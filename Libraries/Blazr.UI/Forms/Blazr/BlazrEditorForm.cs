@@ -116,7 +116,7 @@ public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
             if (result)
                 this.SetMessage("Record Saved", "alert-success");
             else
-                this.SetMessage("Problem saving record", "alert-danger");
+                this.SetMessage(this.Service.Message ?? "Problem saving record", "alert-danger");
         }
         else
             this.SetMessage("There are validation problems", "alert-danger");
@@ -144,7 +144,7 @@ public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
                 hasSaved = true;
             }
             else
-                this.SetMessage("Problem adding record", "alert-danger");
+                this.SetMessage(this.Service.Message ?? "Problem adding record", "alert-danger");
         }
         else
             this.SetMessage("There are validation problems", "alert-danger");

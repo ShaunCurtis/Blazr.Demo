@@ -15,6 +15,9 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
     protected INotificationService<TEntity> Notifier;
     protected AuthenticationStateProvider AuthenticationStateProvider;
     protected IAuthorizationService AuthorizationService;
+    protected string AddPolicy = "IsEditorPolicy";
+    protected string EditPolicy = "IsEditorPolicy";
+    protected string DeletePolicy = "IsEditorPolicy";
 
     public TEditRecord EditModel { get; private set; } = new TEditRecord();
 
@@ -63,6 +66,9 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
     {
         this.Message = String.Empty;
 
+        if (!await this.CheckAuthorization(this.AddPolicy))
+            return false;
+
         if (!EditModel.IsNew)
         {
             this.Message = "You can't add an existing record";
@@ -87,6 +93,10 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
     public async ValueTask<bool> UpdateRecordAsync()
     {
         var record = EditModel.Record;
+
+        if (!await this.CheckAuthorization(this.EditPolicy))
+            return false;
+
         var command = new UpdateRecordCommand<TRecord>(record);
         var result = await this.DataBroker.ExecuteAsync<TRecord>(command);
 
@@ -103,6 +113,9 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
 
     public async ValueTask<bool> DeleteRecordAsync()
     {
+        if (!await this.CheckAuthorization(this.DeletePolicy))
+            return false;
+
         if (this.EditModel.Record is null)
         {
             this.Message = "No record to delete";
@@ -126,6 +139,18 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
         this.EditModel.Load(new TRecord());
         this.NotifyChange(id);
         return true;
+    }
+
+    private async ValueTask<bool> CheckAuthorization(string policyName)
+    {
+        // Check the Authorization policy - can the current user ass a record 
+        var authstate = await this.AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var result = await this.AuthorizationService.AuthorizeAsync(authstate.User, null, policyName);
+
+        if (!result.Succeeded)
+            this.Message = "You don't have permissions to add/delete/update this record";
+
+        return result.Succeeded;
     }
 
     private void NotifyChange(Guid? Uid = null)
