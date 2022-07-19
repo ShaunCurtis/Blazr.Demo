@@ -13,6 +13,8 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
 {
     protected readonly ICQSDataBroker DataBroker;
     protected INotificationService<TEntity> Notifier;
+    protected AuthenticationStateProvider AuthenticationStateProvider;
+    protected IAuthorizationService AuthorizationService;
 
     public TEditRecord EditModel { get; private set; } = new TEditRecord();
 
@@ -20,10 +22,12 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
 
     public string? Message { get; protected set; }
 
-    public StandardEditService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier)
+    public StandardEditService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier, AuthenticationStateProvider authenticationState, IAuthorizationService authorizationService)
     {
         this.DataBroker = dataBroker;
         this.Notifier = notifier;
+        this.AuthenticationStateProvider = authenticationState;
+        this.AuthorizationService = authorizationService;
     }
 
     public void SetNotificationService(INotificationService<TEntity> service)

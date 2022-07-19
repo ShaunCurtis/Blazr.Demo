@@ -7,7 +7,7 @@
 namespace Blazr.App.Core;
 
 public record DvoWeatherForecast
-    : IRecord
+    : IRecord, IAuthRecord
 {
     [Key]
     public Guid Id { get; init; }
@@ -16,6 +16,8 @@ public record DvoWeatherForecast
 
     public Guid WeatherLocationId { get; init; }
 
+    public Guid OwnerId { get; init; }
+
     public DateTimeOffset Date { get; init; }
 
     public int TemperatureC { get; init; }
@@ -23,5 +25,7 @@ public record DvoWeatherForecast
     public string Summary { get; init; } = String.Empty;
 
     public string Location { get; init; } = String.Empty;
+
+    public string Owner { get; init; } = String.Empty;
 }
 

@@ -27,4 +27,7 @@ public abstract partial class BlazrAppViewerForm<TRecord, TEntity>
             builder.AddContent(0, BaseContent);
         };
     }
+    protected virtual AppAuthFields GetAuthFields(TRecord? record)
+    => new AppAuthFields { OwnerId = (record as IAuthRecord)?.OwnerId ?? Guid.Empty };
+
 }

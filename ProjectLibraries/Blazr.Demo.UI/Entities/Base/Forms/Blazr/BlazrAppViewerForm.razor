@@ -3,19 +3,22 @@
 @typeparam TEntity where TEntity  : class, IEntity
 @inherits BlazrViewerForm<TRecord, TEntity>
 
-<UIContainer Size=BootstrapSize.Fluid class="@this.ContainerCss">
-    <UILoader State="this.LoadState">
-        <FormViewTitle>
-            @this.FormTitle
-        </FormViewTitle>
-        <UIContainer Size=BootstrapSize.Fluid>
-            <UIFormRow>
-                <UIColumn Columns=12 class="text-end text-right mt-2">
-                    <UIButton class="btn-danger btn-sm" ClickEvent="this.EditRecordAsync">Edit</UIButton>
-                    <UIButton class="btn-secondary btn-sm" ClickEvent="this.Exit">Exit</UIButton>
-                </UIColumn>
-            </UIFormRow>
-        </UIContainer>
-        @this.Childcontent
-    </UILoader>
-</UIContainer>
+<CascadingAuthenticationState>
+    <UIContainer Size=BootstrapSize.Fluid class="@this.ContainerCss">
+        <UILoader State="this.LoadState">
+            <FormViewTitle>
+                @this.FormTitle
+            </FormViewTitle>
+            <UIContainer Size=BootstrapSize.Fluid>
+                <UIFormRow>
+                    <UIColumn Columns=12 class="text-end text-right mt-2">
+                        <UIAuthorizeRecordButton Policy=@AppAuthorizationPolicies.IsEditorPolicy AuthFields="this.GetAuthFields(Service.Record)" type="button" class="btn-sm btn-danger"
+                                                 ClickEvent=this.EditRecordAsync>Edit</UIAuthorizeRecordButton>
+                        <UIButton class="btn-secondary btn-sm" ClickEvent=this.Exit>Exit</UIButton>
+                    </UIColumn>
+                </UIFormRow>
+            </UIContainer>
+            @this.Childcontent
+        </UILoader>
+    </UIContainer>
+</CascadingAuthenticationState>

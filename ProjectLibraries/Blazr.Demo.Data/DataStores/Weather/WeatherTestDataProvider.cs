@@ -15,6 +15,8 @@ public class WeatherTestDataProvider
 
     public IEnumerable<DboWeatherLocation> WeatherLocations { get; private set; } = Enumerable.Empty<DboWeatherLocation>();
 
+    public IEnumerable<DboUser> Users { get; private set; } = Enumerable.Empty<DboUser>();
+
     private WeatherTestDataProvider()
         => this.Load();
 
@@ -25,6 +27,7 @@ public class WeatherTestDataProvider
         var weatherForcasts = dbContext.Set<DboWeatherForecast>();
         var weatherSummaries = dbContext.Set<DboWeatherSummary>();
         var weatherLocations = dbContext.Set<DboWeatherLocation>();
+        var users = dbContext.Set<DboUser>();
 
         // Check if we already have a full data set
         // If not clear down any existing data and start again
@@ -34,10 +37,12 @@ public class WeatherTestDataProvider
             dbContext.RemoveRange(weatherSummaries.ToList());
             dbContext.RemoveRange(weatherForcasts.ToList());
             dbContext.RemoveRange(weatherLocations.ToList());
+            dbContext.RemoveRange(users.ToList());
             dbContext.SaveChanges();
             dbContext.AddRange(this.WeatherSummaries);
             dbContext.AddRange(this.WeatherForecasts);
             dbContext.AddRange(this.WeatherLocations);
+            dbContext.AddRange(this.Users);
             dbContext.SaveChanges();
         }
     }
@@ -51,6 +56,7 @@ public class WeatherTestDataProvider
             this.LoadLocations();
             this.LoadSummaries();
             this.LoadForecasts();
+            this.LoadUsers();
         }
     }
 
@@ -73,10 +79,10 @@ public class WeatherTestDataProvider
     private void LoadLocations()
     {
         this.WeatherLocations = new List<DboWeatherLocation> {
-            new DboWeatherLocation { WeatherLocationId = Guid.NewGuid(), Location = "Gloucester"},
-            new DboWeatherLocation { WeatherLocationId = Guid.NewGuid(), Location = "Capestang"},
-            new DboWeatherLocation { WeatherLocationId = Guid.NewGuid(), Location = "Alvor"},
-            new DboWeatherLocation { WeatherLocationId = Guid.NewGuid(), Location = "Adelaide"},
+            new DboWeatherLocation { WeatherLocationId = Guid.NewGuid(), Location = "Gloucester", OwnerId = new Guid($"00000000-0000-0000-0000-100000000001") },
+            new DboWeatherLocation { WeatherLocationId = Guid.NewGuid(), Location = "Capestang", OwnerId = new Guid($"00000000-0000-0000-0000-100000000002")},
+            new DboWeatherLocation { WeatherLocationId = Guid.NewGuid(), Location = "Alvor", OwnerId = new Guid($"00000000-0000-0000-0000-100000000003")},
+            new DboWeatherLocation { WeatherLocationId = Guid.NewGuid(), Location = "Adelaide", OwnerId = new Guid($"00000000-0000-0000-0000-100000000003")},
         };
     }
 
@@ -97,11 +103,24 @@ public class WeatherTestDataProvider
                         WeatherLocationId = location.WeatherLocationId,
                         Date = DateTime.Now.AddDays(index),
                         TemperatureC = Random.Shared.Next(-20, 55),
+                        OwnerId = location.OwnerId,
                     })
                 );
         }
 
         this.WeatherForecasts = forecasts;
+    }
+
+    private void LoadUsers()
+    {
+        this.Users = new List<DboUser> {
+            new DboUser { Id = GuidExtensions.Null, Name="Anonymous"},
+            new DboUser { Id = new Guid("00000000-0000-0000-0000-000000000001"), Name="Visitor", Role= AppAuthorizationPolicies.VisitorRole},
+            new DboUser { Id = new Guid("00000000-0000-0000-0000-100000000001"), Name="User-1", Role=AppAuthorizationPolicies.UserRole},
+            new DboUser { Id = new Guid("00000000-0000-0000-0000-100000000002"), Name="User-2", Role=AppAuthorizationPolicies.UserRole},
+            new DboUser { Id = new Guid("00000000-0000-0000-0000-100000000003"), Name="User-3", Role=AppAuthorizationPolicies.UserRole},
+            new DboUser { Id = new Guid("00000000-0000-0000-0000-200000000001"), Name="Admin", Role=AppAuthorizationPolicies.AdminRole},
+        };
     }
 
     public DboWeatherForecast GetForecast()

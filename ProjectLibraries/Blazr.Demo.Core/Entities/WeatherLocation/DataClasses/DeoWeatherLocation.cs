@@ -6,12 +6,14 @@
 namespace Blazr.App.Core;
 
 public class DeoWeatherLocation
-    : IEditRecord<DboWeatherLocation>, IValidation
+    : IEditRecord<DboWeatherLocation>, IValidation, IAuthRecord
 {
     private DboWeatherLocation _baseRecord = new DboWeatherLocation();
     private Guid _newId = Guid.NewGuid();
 
     public Guid Id { get; set; } = GuidExtensions.Null;
+
+    public Guid OwnerId { get; set; } = Guid.Empty;
 
     public string Location { get; set; } = string.Empty;
 
@@ -40,6 +42,7 @@ public class DeoWeatherLocation
         _baseRecord = record with { };
 
         this.Id = record.WeatherLocationId;
+        this.OwnerId = record.OwnerId;
         this.Location = record.Location;
     }
 
@@ -47,6 +50,7 @@ public class DeoWeatherLocation
         new DboWeatherLocation()
         {
             WeatherLocationId = this.Id,
+            OwnerId = this.OwnerId,
             Location = this.Location
         };
 
@@ -54,6 +58,7 @@ public class DeoWeatherLocation
         new DboWeatherLocation()
         {
             WeatherLocationId = _newId,
+            OwnerId = this.OwnerId,
             Location = this.Location
         };
 

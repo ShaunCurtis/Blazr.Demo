@@ -5,13 +5,12 @@
 /// ============================================================
 namespace Blazr.App.Core;
 
-public record DboWeatherLocation
-    : IAuthRecord
+public record DboUser
 {
     [Key]
-    public Guid WeatherLocationId { get; init; }
+    public Guid Id { get; init; } = Guid.Empty;
 
-    public Guid OwnerId { get; init; }
+    public string Name { get; init; } = String.Empty;
 
-    public string Location { get; init; } = String.Empty;
+    public string Role { get; init; } = String.Empty;
 }

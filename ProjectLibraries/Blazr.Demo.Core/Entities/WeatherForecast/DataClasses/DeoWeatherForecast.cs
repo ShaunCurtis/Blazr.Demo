@@ -6,7 +6,7 @@
 namespace Blazr.App.Core;
 
 public class DeoWeatherForecast
-    : IEditRecord<DboWeatherForecast>, IValidation
+    : IEditRecord<DboWeatherForecast>, IValidation, IAuthRecord
 {
     private DboWeatherForecast _baseRecord = new DboWeatherForecast();
     private Guid _newId = Guid.NewGuid();
@@ -18,6 +18,8 @@ public class DeoWeatherForecast
     public Guid LocationId { get; set; }
 
     public DateTimeOffset Date { get; set; }
+
+    public Guid OwnerId { get; set; } = Guid.Empty;
 
     public int TemperatureC { get; set; }
 
@@ -48,6 +50,7 @@ public class DeoWeatherForecast
         this.Id = record.WeatherForecastId;
         this.SummaryId = record.WeatherSummaryId;
         this.LocationId = record.WeatherLocationId;
+        this.OwnerId = record.OwnerId;
         this.Date = record.Date;
         this.TemperatureC = record.TemperatureC;
     }
@@ -58,6 +61,7 @@ public class DeoWeatherForecast
             WeatherForecastId = this.Id,
             WeatherSummaryId = this.SummaryId,
             WeatherLocationId = this.LocationId,
+            OwnerId = this.OwnerId,
             Date = this.Date,
             TemperatureC = this.TemperatureC
         };
@@ -68,6 +72,7 @@ public class DeoWeatherForecast
             WeatherForecastId = _newId,
             WeatherSummaryId = this.SummaryId,
             WeatherLocationId = this.LocationId,
+            OwnerId = this.OwnerId,
             Date = this.Date,
             TemperatureC = this.TemperatureC
         };
@@ -96,5 +101,4 @@ public class DeoWeatherForecast
 
         return !trip;
     }
-
 }

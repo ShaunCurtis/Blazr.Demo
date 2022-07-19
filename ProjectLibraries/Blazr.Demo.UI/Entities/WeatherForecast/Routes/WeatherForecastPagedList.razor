@@ -2,6 +2,7 @@
 @page "/weatherforecast"
 @page "/weatherforecasts"
 @namespace Blazr.App.UI
+@attribute [Authorize(Policy = "IsVisitorPolicy")]
 
 <WeatherForecastBlazrPagedListForm RouteId=RouteId UseModalForms=true class="mt-2"/>
 

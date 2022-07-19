@@ -5,12 +5,15 @@
     /// ============================================================*@
 
 @implements IDisposable
-@namespace Blazr.Auth.Simple.UI
+@namespace Blazr.App.UI
+@inject UserService UserService;
+
+<UILoader State=this.state >
 
 <span class="mr-2 me-2">Change User:</span>
 <div class="w-25">
     <select id="userselect" class="form-control" @onchange="ChangeUser">
-        @foreach (var value in TestUserProvider.UserList)
+        @foreach (var value in UserService.UserList)
         {
             @if (value.Key == _currentUserId)
             {
@@ -36,20 +39,24 @@
         </NotAuthorized>
     </AuthorizeView>
 </span>
+</UILoader>
 
 @code {
+    private ComponentState state = ComponentState.Loading;
 
     [CascadingParameter] public Task<AuthenticationState>? AuthTask { get; set; }
 
     [Inject] private AuthenticationStateProvider? AuthState { get; set; } = default!;
 
     private System.Security.Claims.ClaimsPrincipal user = new ClaimsPrincipal();
-    private Guid _currentUserId = Guid.Empty;
+    private Guid _currentUserId = GuidExtensions.Null;
 
     protected async override Task OnInitializedAsync()
     {
+        await this.UserService.EnsureUsersAsync();
         var authState = await AuthTask!;
         this.user = authState.User;
+        this.state = ComponentState.Loaded;
         AuthState!.AuthenticationStateChanged += this.OnUserChanged;
     }
 

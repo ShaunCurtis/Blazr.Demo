@@ -169,6 +169,7 @@ public class BlazrPagedListForm<TRecord, TEntity>
         this.pagingControl?.NotifyListChangedAsync();
         this.InvokeAsync(this.StateHasChanged);
     }
+
     public virtual void Dispose()
         => this.NotificationService.ListUpdated += this.OnListChanged;
 }

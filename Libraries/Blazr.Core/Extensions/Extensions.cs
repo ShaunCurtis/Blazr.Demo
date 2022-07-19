@@ -3,15 +3,14 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-namespace Blazr.App.Core;
 
-public record DboWeatherLocation
-    : IAuthRecord
+namespace Blazr.Core;
+
+public static class Extensions
 {
-    [Key]
-    public Guid WeatherLocationId { get; init; }
+    public static bool IsNull(this Guid guid)
+        => guid == GuidExtensions.Null;
 
-    public Guid OwnerId { get; init; }
-
-    public string Location { get; init; } = String.Empty;
+    public static bool IsNotNull(this Guid guid)
+        => guid != GuidExtensions.Null;
 }

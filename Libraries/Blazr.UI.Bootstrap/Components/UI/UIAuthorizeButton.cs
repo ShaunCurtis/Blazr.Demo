@@ -9,9 +9,9 @@ public class UIAuthorizeButton : UIComponent
 {
     [Parameter] public string Policy { get; set; } = String.Empty;
 
-    [CascadingParameter] public Task<AuthenticationState>? AuthTask { get; set; }
+    [CascadingParameter] public Task<AuthenticationState> AuthTask { get; set; } = default!;
 
-    [Inject] protected IAuthorizationService? authorizationService { get; set; }
+    [Inject] protected IAuthorizationService authorizationService { get; set; } =default!;
 
     public UIAuthorizeButton()
         => this.CssClasses.Add("btn");
@@ -49,7 +49,7 @@ public class UIAuthorizeButton : UIComponent
     protected virtual async Task<bool> CheckPolicy()
     {
         var state = await AuthTask!;
-        var result = await this.authorizationService!.AuthorizeAsync(state.User, null, Policy);
+        var result = await this.authorizationService.AuthorizeAsync(state.User, null, Policy);
         return result.Succeeded;
     }
 }

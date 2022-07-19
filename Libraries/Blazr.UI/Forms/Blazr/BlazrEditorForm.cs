@@ -29,8 +29,6 @@ public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
     [Inject] protected IEntityService<TEntity> EntityService { get; set; } = default!;
 
     [Inject] protected IEntityUIService<TEntity> EntityUIService { get; set; } = default!;
-
-    [Inject] protected IEditService<TRecord, TEditRecord, TEntity> Service { get; set; } = default!;
     
     protected BlazrNavigationManager? blazrNavManager => NavManager is BlazrNavigationManager ? NavManager as BlazrNavigationManager : null;
 

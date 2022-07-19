@@ -1,8 +1,6 @@
+using Blazr.App.Core;
 using Blazr.App.Data;
 using Blazr.App.UI;
-using Blazr.Auth;
-using Blazr.Auth.Simple;
-using Blazr.Auth.Simple.Core;
 using Blazr.Routing;
 using Blazr.UI;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -20,17 +18,6 @@ var builder = WebApplication.CreateBuilder(args);
 
         Services.AddBlazrNavigationManager();
 
-        // Authentication and Authorization Services
-        //{
-        //    Services.AddScoped<AuthenticationStateProvider, TestAuthenticationStateProvider>();
-        //    Services.AddAuthorization(config =>
-        //    {
-        //        foreach (var policy in SimpleAuthorizationPolicies.Policies)
-        //        {
-        //            config.AddPolicy(policy.Key, policy.Value);
-        //        }
-        //    });
-        //}
         Services.AddAppAuthServices();
 
         Services.AddWeatherAppServerDataServices<InMemoryWeatherDbContext>(options
@@ -42,7 +29,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
-// Add the test data to the InMemory Db
+// Add the test data to the In Memory Db
 WeatherAppDataServices.AddTestData(app.Services);
 
 // Configure the HTTP request pipeline.

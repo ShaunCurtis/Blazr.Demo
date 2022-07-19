@@ -31,8 +31,6 @@ public class BlazrViewerForm<TRecord, TEntity>
 
     [Inject] protected IEntityUIService<TEntity> EntityUIService { get; set; } = default!;
 
-    [Inject] protected IReadService<TRecord, TEntity> Service { get; set; } = default!;
-
     public ComponentState LoadState { get; protected set; } = ComponentState.New;
 
     public override async Task SetParametersAsync(ParameterView parameters)

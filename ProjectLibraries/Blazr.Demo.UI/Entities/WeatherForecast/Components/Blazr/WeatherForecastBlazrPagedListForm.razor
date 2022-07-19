@@ -8,6 +8,7 @@
 
 @implements IDisposable
 @namespace Blazr.App.UI
+
 @inherits BlazrAppPagedListForm<DvoWeatherForecast, WeatherForecastEntity>
 
 <UIListControl TRecord=DvoWeatherForecast Records=this.Service.Records LoadState=this.loadState class="@this.TableCss">
@@ -19,7 +20,7 @@
         <UIListColumn HeaderTitle="Temp &deg;F" SortField="TemperatureC" NoWrap=true>@context.TemperatureC.AsDegF()</UIListColumn>
         <UIListColumn HeaderTitle="Summary" SortField="Summary" IsMaxColumn=true>@context.Summary</UIListColumn>
         <UIListColumn HeaderTitle="" NoWrap=true class="text-right text-end">
-            @this.RowButtonMarkup(context.Id)
+            @this.AuthorizedRowButtonMarkup(context, context.Id)
         </UIListColumn>
     </RowTemplate>
 </UIListControl>

@@ -11,8 +11,8 @@ public class UIAuthorizeRecordButton : UIAuthorizeButton
 
     protected override async Task<bool> CheckPolicy()
     {
-        var state = await AuthTask!;
-        var result = await this.authorizationService!.AuthorizeAsync(state.User, AuthFields, Policy);
+        var state = await AuthTask;
+        var result = await this.authorizationService.AuthorizeAsync(state.User, AuthFields, Policy);
         return result.Succeeded;
     }
 }

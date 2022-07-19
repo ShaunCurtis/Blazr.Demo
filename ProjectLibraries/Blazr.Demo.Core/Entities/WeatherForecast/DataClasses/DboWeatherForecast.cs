@@ -6,6 +6,7 @@
 namespace Blazr.App.Core;
 
 public record DboWeatherForecast
+    : IAuthRecord
 {
     [Key]
     public Guid WeatherForecastId { get; init; }
@@ -13,6 +14,8 @@ public record DboWeatherForecast
     public Guid WeatherSummaryId { get; init; }
 
     public Guid WeatherLocationId { get; init; }
+
+    public Guid OwnerId { get; init; }
 
     public DateTimeOffset Date { get; init; }
 

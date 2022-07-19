@@ -4,13 +4,10 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.Auth.Simple.Core;
+namespace Blazr.App.Core;
 
-public enum TestUserType
+public record AppAuthFields
 {
-    None,
-    Visitor,
-    User,
-    Admin
+    public Guid OwnerId { get; init; } = Guid.Empty;
 }
 
