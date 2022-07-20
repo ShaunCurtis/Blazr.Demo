@@ -18,6 +18,12 @@ public interface IEntityUIService<TEntity>
 
     public Type? ViewForm { get; }
 
+    public string DefaultSortField { get; }
+
+    public bool DefaultSortDescending { get; }
+
+    public object? RecordAuthResource { get; }
+
     public Task AddRecordAsync(bool isModal, ModalOptions options);
 
 }

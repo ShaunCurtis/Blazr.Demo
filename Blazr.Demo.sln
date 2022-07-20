@@ -21,11 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Data", "Libraries\Bla
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectLibraries", "ProjectLibraries", "{20AC6B52-B88C-4C60-B271-BC4EA226C4EC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.Core", "ProjectLibraries\Blazr.Demo.Core\Blazr.Demo.Core.csproj", "{4A115E55-89D4-4AD5-ACB7-7DFE4FAB3070}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Core", "ProjectLibraries\Blazr.App.Core\Blazr.App.Core.csproj", "{4A115E55-89D4-4AD5-ACB7-7DFE4FAB3070}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.Data", "ProjectLibraries\Blazr.Demo.Data\Blazr.Demo.Data.csproj", "{1F00E8DE-84C0-455C-A238-195250277B7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Data", "ProjectLibraries\Blazr.App.Data\Blazr.App.Data.csproj", "{1F00E8DE-84C0-455C-A238-195250277B7A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.UI", "ProjectLibraries\Blazr.Demo.UI\Blazr.Demo.UI.csproj", "{95AA491E-82CA-4AD5-99FD-E0724A5233F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.UI", "ProjectLibraries\Blazr.App.UI\Blazr.App.UI.csproj", "{95AA491E-82CA-4AD5-99FD-E0724A5233F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{E1582ED5-D53F-43C7-9FF3-03283FFE9729}"
 	ProjectSection(SolutionItems) = preProject

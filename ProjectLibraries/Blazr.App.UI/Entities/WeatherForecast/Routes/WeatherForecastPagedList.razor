@@ -1,0 +1,13 @@
+﻿@page "/weatherforecast/list"
+@page "/weatherforecast/pagedlist"
+@page "/weatherforecast"
+@page "/weatherforecasts"
+@attribute [Authorize(Policy = "IsVisitorPolicy")]
+@namespace Blazr.App.UI
+
+<WeatherForecastPagedListForm RouteId=RouteId UseModalForms=true class="mt-2"/>
+
+@code {
+    private static Guid RouteId = Guid.NewGuid();
+}
+

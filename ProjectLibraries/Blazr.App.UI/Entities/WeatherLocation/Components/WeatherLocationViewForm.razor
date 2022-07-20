@@ -1,0 +1,24 @@
+﻿@*
+    /// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================
+*@
+
+@namespace Blazr.App.UI
+@inherits BlazrAppViewerForm<DboWeatherLocation, WeatherLocationEntity>
+<UIContainer Size=BootstrapSize.Fluid>
+    <UIFormRow>
+        <UIColumn Columns=12 MediumColumns=6>
+            <FormViewControl Label="Location" Value="this.Service.Record!.Location" ControlType="typeof(InputReadOnlyDisplay)" />
+        </UIColumn>
+        <UIColumn Columns=12 MediumColumns=6>
+            <FormViewControl Label="Unique Record Identity" Value="this.Service.Record!.WeatherLocationId" ControlType="typeof(InputReadOnlyDisplay)" />
+        </UIColumn>
+    </UIFormRow>
+</UIContainer>
+
+@code {
+    protected override RenderFragment BaseContent => (builder) => base.BuildRenderTree(builder);
+}

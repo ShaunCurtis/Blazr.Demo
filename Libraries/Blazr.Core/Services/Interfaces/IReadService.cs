@@ -15,8 +15,8 @@ public interface IReadService<TRecord, TEntity>
 
     public bool HasRecord => this.Record is not null;
 
-    public void SetNotificationService(INotificationService<TEntity> service);
+    public void SetServices(IServiceProvider services);
 
-    public ValueTask GetRecordAsync(Guid Id);
+    public ValueTask<bool> GetRecordAsync(Guid Id);
 }
 

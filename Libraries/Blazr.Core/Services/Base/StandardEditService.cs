@@ -6,54 +6,52 @@
 namespace Blazr.Core;
 
 public class StandardEditService<TRecord, TEditRecord, TEntity>
-    : IEditService<TRecord, TEditRecord, TEntity>
+    : BaseViewService<TRecord, TEntity>, IEditService<TRecord, TEditRecord, TEntity>
     where TRecord : class, new()
     where TEditRecord : class, IEditRecord<TRecord>, new()
     where TEntity : class, IEntity
 {
-    protected readonly ICQSDataBroker DataBroker;
-    protected INotificationService<TEntity> Notifier;
-    protected AuthenticationStateProvider AuthenticationStateProvider;
-    protected IAuthorizationService AuthorizationService;
     protected string AddPolicy = "IsEditorPolicy";
     protected string EditPolicy = "IsEditorPolicy";
     protected string DeletePolicy = "IsEditorPolicy";
+    protected string ReadPolicy = "IsViewerPolicy";
 
     public TEditRecord EditModel { get; private set; } = new TEditRecord();
 
     public bool IsNewRecord => this.EditModel.IsNew;
 
-    public string? Message { get; protected set; }
-
     public StandardEditService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier, AuthenticationStateProvider authenticationState, IAuthorizationService authorizationService)
-    {
-        this.DataBroker = dataBroker;
-        this.Notifier = notifier;
-        this.AuthenticationStateProvider = authenticationState;
-        this.AuthorizationService = authorizationService;
-    }
+        : base(dataBroker, notifier, authenticationState, authorizationService)
+    { }
 
-    public void SetNotificationService(INotificationService<TEntity> service)
-        => this.Notifier = service;
-
-    public async ValueTask LoadRecordAsync(Guid Id)
+    public async ValueTask<bool> LoadRecordAsync(Guid Id)
     {
-        this.Message = String.Empty;
+        this.Message = string.Empty;
+
         if (Id != Guid.Empty)
         {
             var result = await this.DataBroker.ExecuteAsync<TRecord>(new RecordGuidKeyQuery<TRecord>(Id));
 
             if (result.Success && result.Record is not null)
             {
+
+                if (!await this.CheckRecordAuthorization(result.Record, this.ReadPolicy))
+                {
+                    this.EditModel.Load(new TRecord());
+                    return false;
+                }
+
                 this.EditModel.Load(result.Record);
-                return;
+                return true;
             }
 
             this.Message = $"Unable to retrieve record with Id : {Id.ToString()}";
-            return;
+            return false;
         }
         else
             await GetNewRecordAsync(null);
+
+        return true;
     }
 
     public ValueTask GetNewRecordAsync(TRecord? record)
@@ -64,7 +62,7 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
 
     public async ValueTask<bool> AddRecordAsync()
     {
-        this.Message = String.Empty;
+        this.Message = string.Empty;
 
         if (!await this.CheckAuthorization(this.AddPolicy))
             return false;
@@ -92,9 +90,11 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
 
     public async ValueTask<bool> UpdateRecordAsync()
     {
+        this.Message = string.Empty;
+
         var record = EditModel.Record;
 
-        if (!await this.CheckAuthorization(this.EditPolicy))
+        if (!await this.CheckRecordAuthorization(this.EditModel.CleanRecord, this.EditPolicy))
             return false;
 
         var command = new UpdateRecordCommand<TRecord>(record);
@@ -113,7 +113,7 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
 
     public async ValueTask<bool> DeleteRecordAsync()
     {
-        if (!await this.CheckAuthorization(this.DeletePolicy))
+        if (!await this.CheckRecordAuthorization( this.EditModel.CleanRecord ,this.DeletePolicy))
             return false;
 
         if (this.EditModel.Record is null)
@@ -139,18 +139,6 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
         this.EditModel.Load(new TRecord());
         this.NotifyChange(id);
         return true;
-    }
-
-    private async ValueTask<bool> CheckAuthorization(string policyName)
-    {
-        // Check the Authorization policy - can the current user ass a record 
-        var authstate = await this.AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var result = await this.AuthorizationService.AuthorizeAsync(authstate.User, null, policyName);
-
-        if (!result.Succeeded)
-            this.Message = "You don't have permissions to add/delete/update this record";
-
-        return result.Succeeded;
     }
 
     private void NotifyChange(Guid? Uid = null)

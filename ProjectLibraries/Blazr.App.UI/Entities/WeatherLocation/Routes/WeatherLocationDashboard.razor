@@ -1,0 +1,14 @@
+﻿@page "/Weatherlocation/dashboard/{Id:guid}"
+@page "/weatherlocations/dashboard/{Id:guid}"
+@*@attribute [Authorize(Policy = "IsVisitorPolicy")]*@
+@namespace Blazr.App.UI
+
+<WeatherLocationViewForm Id=this.Id/>
+
+<WeatherForecastPagedListForm RouteId=RouteId WeatherLocationId=this.Id/>
+
+@code {
+    private static Guid RouteId = Guid.NewGuid();
+
+    [Parameter] public Guid Id { get; set; }
+}

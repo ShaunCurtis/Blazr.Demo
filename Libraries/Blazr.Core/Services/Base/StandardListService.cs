@@ -7,13 +7,10 @@
 namespace Blazr.Core;
 
 public class StandardListService<TRecord, TEntity>
-    : IListService<TRecord, TEntity>
+    : BaseViewService<TRecord, TEntity>, IListService<TRecord, TEntity>
     where TRecord : class, new()
     where TEntity : class, IEntity
 {
-    protected ICQSDataBroker DataBroker;
-    protected INotificationService<TEntity> Notifier;
-
     public int PageSize { get; protected set; }
 
     public int StartIndex { get; protected set; }
@@ -22,24 +19,13 @@ public class StandardListService<TRecord, TEntity>
 
     public IEnumerable<TRecord>? Records { get; private set; }
 
-    public TRecord? Record { get; private set; }
-
-    public string? Message { get; protected set; }
-
     public bool IsPaging => (PageSize > 0);
 
     public bool HasList => this.Records is not null;
 
-    public bool HasRecord => this.Record is not null;
-
-    public StandardListService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier)
-    {
-        this.DataBroker = dataBroker;
-        Notifier = notifier;
-    }
-
-    public void SetNotificationService(INotificationService<TEntity> service)
-        => this.Notifier = service;
+    public StandardListService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier, AuthenticationStateProvider authenticationState, IAuthorizationService authorizationService)
+        : base(dataBroker, notifier, authenticationState, authorizationService)
+    { }
 
     public async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(int startRecord, int pageSize)
     {
@@ -51,23 +37,14 @@ public class StandardListService<TRecord, TEntity>
 
     public async ValueTask<ItemsProviderResult<TRecord>> GetRecordsAsync(ItemsProviderRequest itemsRequest)
     {
-        var request = new ListProviderRequest<TRecord>(itemsRequest);
-        this.StartIndex = request.StartIndex;
-        this.PageSize = this.PageSize;
-
-        await this.GetRecordsAsync(request);
+        await this.GetRecordsAsync(new ListProviderRequest<TRecord>(itemsRequest));
 
         return new ItemsProviderResult<TRecord>(this.Records ?? new List<TRecord>(), this.ListCount);
     }
 
     private async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync()
-    {
-        var cancel = new CancellationToken();
-        var request = new ListProviderRequest<TRecord>(this.StartIndex, this.PageSize, cancel);
+        => await this.GetRecordsAsync(new ListProviderRequest<TRecord>(this.StartIndex, this.PageSize));
 
-        return await this.GetRecordsAsync(request);
-    }
-    
     public async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(ListProviderRequest<TRecord> request)
     {
         this.Message = String.Empty;

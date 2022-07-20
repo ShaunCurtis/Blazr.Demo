@@ -23,9 +23,9 @@
 	  <ProjectReference Include="..\..\Libraries\Blazr.Routing\Blazr.Routing.csproj" />
 	  <ProjectReference Include="..\..\Libraries\Blazr.UI.Bootstrap\Blazr.UI.Bootstrap.csproj" />
 	  <ProjectReference Include="..\..\Libraries\Blazr.UI\Blazr.UI.csproj" />
-	  <ProjectReference Include="..\..\ProjectLibraries\Blazr.Demo.Core\Blazr.Demo.Core.csproj" />
-	  <ProjectReference Include="..\..\ProjectLibraries\Blazr.Demo.Data\Blazr.Demo.Data.csproj" />
-	  <ProjectReference Include="..\..\ProjectLibraries\Blazr.Demo.UI\Blazr.Demo.UI.csproj" />
+	  <ProjectReference Include="..\..\ProjectLibraries\Blazr.App.Core\Blazr.App.Core.csproj" />
+	  <ProjectReference Include="..\..\ProjectLibraries\Blazr.App.Data\Blazr.App.Data.csproj" />
+	  <ProjectReference Include="..\..\ProjectLibraries\Blazr.App.UI\Blazr.App.UI.csproj" />
 	</ItemGroup>
 
 </Project>

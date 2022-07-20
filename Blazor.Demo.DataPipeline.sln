@@ -16,11 +16,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Data", "Libraries\Bla
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Core", "Libraries\Blazr.Core\Blazr.Core.csproj", "{C1B7F294-94BE-4A3D-9692-73BED5804ACB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.Core", "ProjectLibaries\Blazr.Demo.Core\Blazr.Demo.Core.csproj", "{3CC14267-2BDC-49AF-AFE8-034D83E75820}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Core", "ProjectLibaries\Blazr.App.Core\Blazr.App.Core.csproj", "{3CC14267-2BDC-49AF-AFE8-034D83E75820}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.Data", "ProjectLibaries\Blazr.Demo.Data\Blazr.Demo.Data.csproj", "{E44A477B-4632-469B-AA67-2881D61279C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Data", "ProjectLibaries\Blazr.App.Data\Blazr.App.Data.csproj", "{E44A477B-4632-469B-AA67-2881D61279C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.Tests", "Tests\Blazr.Demo.Tests\Blazr.Demo.Tests.csproj", "{FBE37130-4D43-43C4-BE30-7B9ACF1429CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Tests", "Tests\Blazr.App.Tests\Blazr.App.Tests.csproj", "{FBE37130-4D43-43C4-BE30-7B9ACF1429CA}"
 EndProject
 
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{FFAB6BE5-60C9-45E9-A9E0-699CDC9B4C44}"

@@ -23,7 +23,7 @@ public interface IListService<TRecord, TEntity>
 
     public bool HasList => this.Records is not null;
 
-    public void SetNotificationService(INotificationService<TEntity> service);
+    public void SetServices(IServiceProvider services);
 
     public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(int startRecord, int pageSize);
 

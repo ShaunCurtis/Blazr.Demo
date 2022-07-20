@@ -1,0 +1,24 @@
+﻿@*
+    /// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================
+*@
+
+@implements IDisposable
+@namespace Blazr.App.UI
+@inherits BlazrAppPagedListForm<DboWeatherLocation, WeatherLocationEntity>
+
+<UIListControl TRecord=DboWeatherLocation Records=this.Service.Records LoadState=this.loadState class="@this.TableCss">
+    <RowTemplate>
+        <UIListColumn HeaderTitle="ID" SortField="WeatherForecastId" NoWrap=true>@context.WeatherLocationId.AsShortGuid()</UIListColumn>
+        <UIListColumn HeaderTitle="Location" SortField="Location" IsMaxColumn=true>@context.Location</UIListColumn>
+        <UIListColumn HeaderTitle="" NoWrap=true class="text-right text-end">
+            @this.AuthorizedRowButtonMarkup(context, context.WeatherLocationId, true)
+        </UIListColumn>
+    </RowTemplate>
+</UIListControl>
+@code {
+    protected override RenderFragment BaseContent => (builder) => base.BuildRenderTree(builder);
+}

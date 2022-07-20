@@ -32,6 +32,15 @@ public readonly struct ListProviderRequest<TRecord>
         FilterExpressionString = null;
         FilterExpression = null;
     }
+    public ListProviderRequest(int startIndex, int pageSize)
+    {
+        StartIndex = startIndex;
+        PageSize = pageSize;
+        CancellationToken = new CancellationToken();
+        SortExpressionString = null;
+        FilterExpressionString = null;
+        FilterExpression = null;
+    }
 
     public ListProviderRequest(int startIndex, int pageSize, CancellationToken cancellationToken, string? sortExpressionString = null, string? filterExpressionString = null, Func<TRecord, bool>? filterExpression = null )
     {

@@ -16,9 +16,9 @@ public interface IEditService<TRecord, TEditRecord, TEntity>
 
     public string? Message { get; }
 
-    public void SetNotificationService(INotificationService<TEntity> service);
+    public void SetServices(IServiceProvider services);
 
-    public ValueTask LoadRecordAsync(Guid Id);
+    public ValueTask<bool> LoadRecordAsync(Guid Id);
 
     public ValueTask GetNewRecordAsync(TRecord? record);
 

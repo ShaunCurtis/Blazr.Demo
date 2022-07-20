@@ -45,7 +45,9 @@ public class UIComponent : UIComponentBase
             if (ClickEvent.HasDelegate)
                 builder.AddAttribute(4, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, ClickEvent));
 
-            builder.AddContent(5, ChildContent);
+            if (this.ChildContent is not null)
+                builder.AddContent(5, this.ChildContent);
+
             builder.CloseElement();
         }
     }

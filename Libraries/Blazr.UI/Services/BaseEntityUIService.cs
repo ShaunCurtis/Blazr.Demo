@@ -23,6 +23,12 @@ public class BaseEntityUIService<TEntity>
 
     public Type? ViewForm { get; set; } = null;
 
+    public string DefaultSortField { get; set; } = string.Empty;
+
+    public bool DefaultSortDescending { get; set; } = false;
+
+    public object? RecordAuthResource { get; set; } = null;
+
     public BaseEntityUIService(ModalService modalService, NavigationManager navigationManager)
     {
         _navigationManager = navigationManager;
