@@ -8,7 +8,7 @@ namespace Blazr.Core;
 
 public readonly struct ListProviderResult<TRecord>
 {
-    public IEnumerable<TRecord> Items { get; }
+    public IEnumerable<TRecord> Items { get; } = Enumerable.Empty<TRecord>();
 
     public int TotalItemCount { get; }
 

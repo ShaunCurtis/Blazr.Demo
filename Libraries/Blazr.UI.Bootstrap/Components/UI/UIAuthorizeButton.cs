@@ -9,48 +9,24 @@ public class UIAuthorizeButton : UIButton
 {
     [Parameter] public string Policy { get; set; } = String.Empty;
 
+    [Parameter] public object? AuthFields { get; set; } = null;
+
     [CascadingParameter] public Task<AuthenticationState> AuthTask { get; set; } = default!;
 
     [Inject] protected IAuthorizationService authorizationService { get; set; } =default!;
 
-
-    protected override Task OnPreRenderAsync(bool firstRender)
+    protected async override Task OnPreRenderAsync(bool firstRender)
     {
         if (AuthTask is null)
             throw new Exception($"{this.GetType().FullName} must have access to cascading Paramater {nameof(AuthTask)}");
 
-        _hide = await this.CheckPolicy();
-        return Task.CompletedTask;
-    }
-
-    protected override string HtmlTag => "button";
-
-    protected override async void BuildRenderTree(RenderTreeBuilder builder)
-    {
-        if (await this.CheckPolicy())
-        {
-            builder.OpenElement(0, this.HtmlTag);
-            builder.AddAttribute(1, "class", this.CssClass);
-            builder.AddMultipleAttributes(2, this.SplatterAttributes);
-
-            if (!UserAttributes.ContainsKey("type"))
-                builder.AddAttribute(3, "type", "button");
-
-            if (Disabled)
-                builder.AddAttribute(4, "disabled");
-
-            if (ClickEvent.HasDelegate)
-                builder.AddAttribute(5, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, ClickEvent));
-
-            builder.AddContent(6, ChildContent);
-            builder.CloseElement();
-        }
+        _show = await this.CheckPolicy();
     }
 
     protected virtual async Task<bool> CheckPolicy()
     {
         var state = await AuthTask!;
-        var result = await this.authorizationService.AuthorizeAsync(state.User, null, Policy);
+        var result = await this.authorizationService.AuthorizeAsync(state.User, AuthFields, Policy);
         return result.Succeeded;
     }
 }

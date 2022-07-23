@@ -9,8 +9,12 @@ namespace Blazr.UI.Bootstrap;
 
 public class UIButton : UIComponent
 {
+    [Parameter] public UIButtonType ButtonType { get; set; } = UIButtonType.None;
+
     protected override CSSBuilder CssBuilder => base.CssBuilder
-        .AddClass("btn mr-1");
+        .AddClass("btn")
+        .AddClass("btn-sm")
+        .AddClass(this.ButtonCssColour);
 
     protected override string HtmlTag => "button";
 
@@ -32,5 +36,32 @@ public class UIButton : UIComponent
         builder.AddContent(6, ChildContent);
         builder.CloseElement();
     }
+
+    protected string ButtonCssColour =>
+        ButtonType switch
+        {
+            UIButtonType.View => "btn-secondary",
+            UIButtonType.Dash => "btn-primary",
+            UIButtonType.New => "btn-success",
+            UIButtonType.Edit => "btn-danger",
+            UIButtonType.Exit => "btn-dark",
+            UIButtonType.ExitWithoutSave => "btn-danger",
+            UIButtonType.Warning => "btn-warning",
+            UIButtonType.Save => "btn-success",
+            _ => "btn-secondary",
+        };
+}
+
+public enum UIButtonType
+{
+    None,
+    View,
+    Dash,
+    New,
+    Edit,
+    Exit,
+    ExitWithoutSave,
+    Warning,
+    Save
 }
 

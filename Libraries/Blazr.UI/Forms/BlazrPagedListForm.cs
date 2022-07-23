@@ -5,7 +5,7 @@
 /// ============================================================
 namespace Blazr.UI;
 
-public class BlazrPagedListForm<TRecord, TEntity>
+public abstract class BlazrPagedListForm<TRecord, TEntity>
     : BlazrOwningComponentBase<IListService<TRecord, TEntity>>, IDisposable
     where TRecord : class, new()
     where TEntity : class, IEntity

@@ -18,7 +18,7 @@ public class FormViewControl<TValue> : ComponentBase
 
     [Parameter] public string LabelCssClass { get; set; } = "form-label small text-muted";
 
-    [Parameter] public Type ControlType { get; set; } = typeof(InputReadOnlyText<TValue>);
+    [Parameter] public Type ControlType { get; set; } = typeof(InputReadOnlyDisplay<TValue>);
 
     [Parameter] public bool ShowLabel { get; set; } = true;
 

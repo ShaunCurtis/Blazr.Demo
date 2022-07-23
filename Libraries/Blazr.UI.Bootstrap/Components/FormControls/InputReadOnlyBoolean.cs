@@ -4,13 +4,12 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-
 namespace Blazr.UI.Bootstrap;
 
 /// <summary>
 /// A display only Input box for Bools
 /// </summary>
-public class InputReadOnlyBoolean : ComponentBase
+public class InputReadOnlyBoolean : UIBlock
 {
     [Parameter] public bool Value { get; set; } = false;
 
@@ -20,11 +19,12 @@ public class InputReadOnlyBoolean : ComponentBase
 
     [Parameter] public string IsFalseValue { get; set; } = "Off";
 
-    private string css => new CSSBuilder("btn btn-sm")
+    private string css => new CSSBuilder("btn")
+        .AddClass("btn-sm")
         .AddClass(this.Value, "btn-success", "btn-outline-danger")
         .Build();
 
-    private string message => this.Value ? this.IsTrueValue : this.IsFalseValue;
+    protected virtual string message => this.Value ? this.IsTrueValue : this.IsFalseValue;
         
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {

@@ -5,10 +5,11 @@
     /// ============================================================*@
 
 @namespace Blazr.UI.Bootstrap
+@inherits UIBlock
 
 <UIContainer>
     <UIFormRow>
-        <UIColumn Columns=12>
+        <UIColumn>
             @if (this.ChildContent != null)
             {
                 <div class="@this.CssClass">@ChildContent</div> }
@@ -20,9 +21,12 @@
 </UIContainer>
 
 @code {
-    [Parameter] public RenderFragment? ChildContent { get; set; }
-
     [Parameter] public string Title { get; set; } = "No Title Set";
 
-    [Parameter] public string CssClass { get; set; } = "h2 border-bottom border-brand pt-2";
+    protected override CSSBuilder CssBuilder => new CSSBuilder()
+    .AddClass("h2")
+    .AddClass("border-bottom")
+    .AddClass("border-brand")
+    .AddClass("pt-2")
+    .AddClassFromAttributes(this.UserAttributes);
 }

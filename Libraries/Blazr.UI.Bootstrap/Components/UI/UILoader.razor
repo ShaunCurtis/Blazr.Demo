@@ -6,7 +6,8 @@
 
 @namespace Blazr.UI.Bootstrap
 
-@inherits ComponentBase
+@inherits UIBase
+
 @if (this.State == ComponentState.Loaded)
 {
     @this.ChildContent 
@@ -39,8 +40,6 @@ else
         <div class="m-2 p-2">Loading......</div>}
 }
 @code{
-    [Parameter] public RenderFragment? ChildContent { get; set; }
-
     [Parameter] public RenderFragment? LoadingContent { get; set; }
 
     [Parameter] public RenderFragment? ErrorContent { get; set; }

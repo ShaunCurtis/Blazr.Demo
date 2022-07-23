@@ -6,7 +6,8 @@
 
 @namespace Blazr.UI.Bootstrap
 
-@inherits ComponentBase
+@inherits UIBase
+
 <div class="@this.Css">
     @ChildContent
 </div>
@@ -21,9 +22,8 @@
 </style>
 
 @code {
-    [Parameter] public RenderFragment? ChildContent { get; set; }
 
     [Parameter] public bool Display { get; set; }
 
-    private string Css => this.Display ? "dislpay-on" : "display-off";
+    private string Css => this.Display ? "display-on" : "display-off";
 }
