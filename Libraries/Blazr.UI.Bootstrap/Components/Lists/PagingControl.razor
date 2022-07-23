@@ -5,11 +5,14 @@
     /// ============================================================*@
 
 @namespace Blazr.UI.Bootstrap
+@inherits UIComponent
 @implements IPagingControl
 
 @if (this.hasPages)
 {
-    <div class="">
+    <div class="row">
+        <div class="col-auto">
+
         @if (this.AreBlocks)
         {
             <div class="btn-group me-1" role="group" aria-label="Move Back Buttons">
@@ -32,9 +35,10 @@
                 <button type="button" class="btn btn-sm btn-dark" @onclick="() => this.MoveBlockAsync(int.MaxValue)">&gt;|</button>
             </div>
         }
+        </div>
         @if (this.ShowPageOf)
         {
-            <span class="mx-2">Page @this.DisplayPage of @this.LastDisplayPage</span>
+            <div class="mx-2 col-auto">Page @this.DisplayPage of @this.LastDisplayPage</div>
         }
     </div>
 }

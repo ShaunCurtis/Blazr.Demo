@@ -5,7 +5,7 @@
 /// ============================================================
 namespace Blazr.UI.Bootstrap;
 
-public class UIAuthorizeButton : UIComponent
+public class UIAuthorizeButton : UIButton
 {
     [Parameter] public string Policy { get; set; } = String.Empty;
 
@@ -13,20 +13,21 @@ public class UIAuthorizeButton : UIComponent
 
     [Inject] protected IAuthorizationService authorizationService { get; set; } =default!;
 
-    public UIAuthorizeButton()
-        => this.CssClasses.Add("btn");
 
-    protected override void OnInitialized()
+    protected override Task OnPreRenderAsync(bool firstRender)
     {
         if (AuthTask is null)
             throw new Exception($"{this.GetType().FullName} must have access to cascading Paramater {nameof(AuthTask)}");
+
+        _hide = await this.CheckPolicy();
+        return Task.CompletedTask;
     }
 
     protected override string HtmlTag => "button";
 
     protected override async void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (this.Show && await this.CheckPolicy())
+        if (await this.CheckPolicy())
         {
             builder.OpenElement(0, this.HtmlTag);
             builder.AddAttribute(1, "class", this.CssClass);

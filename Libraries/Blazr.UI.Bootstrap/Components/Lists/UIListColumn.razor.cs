@@ -6,7 +6,7 @@
 
 namespace Blazr.UI.Bootstrap;
 
-public partial class UIListColumn : UIComponentBase
+public partial class UIListColumn : UIBase
 {
     private bool isMaxRowColumn => IsMaxColumn && !this.IsHeader;
     private bool isNormalRowColumn => !IsMaxColumn && !this.IsHeader;

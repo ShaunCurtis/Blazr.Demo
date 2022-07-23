@@ -6,9 +6,8 @@
 
 namespace Blazr.UI.Bootstrap;
 
-    class UIRow : UIComponent
-    {
-        public UIRow()
-            => CssClasses.Add("row");
-    }
+class UIRow : UIBlock
+{
+    protected override CSSBuilder CssBuilder => base.CssBuilder.AddClass("row");
+}
 

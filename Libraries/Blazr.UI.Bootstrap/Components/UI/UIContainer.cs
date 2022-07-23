@@ -9,11 +9,11 @@ namespace Blazr.UI.Bootstrap;
 
 public enum BootstrapSize { ExtraSmall, Small, Medium, Large, XLarge, XXLarge, Fluid }
 
-public class UIContainer : UIComponent
+public class UIContainer : UIBlock
 {
     [Parameter] public BootstrapSize Size { get; set; } = BootstrapSize.Fluid;
 
-    private string Css => Size switch
+    private string _css => Size switch
     {
         BootstrapSize.Small => "container-sm",
         BootstrapSize.Medium => "container-md",
@@ -23,7 +23,6 @@ public class UIContainer : UIComponent
         _ => "container-fluid"
     };
 
-    protected override void OnInitialized()
-        => CssClasses.Add(Css);
+    protected override CSSBuilder CssBuilder => base.CssBuilder.AddClass(_css);
 }
 

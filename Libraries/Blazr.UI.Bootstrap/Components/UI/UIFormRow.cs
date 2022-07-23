@@ -6,11 +6,9 @@
 
 namespace Blazr.UI.Bootstrap;
 
-    public class UIFormRow : UIComponent
-    {
-        public UIFormRow()
-        {
-            CssClasses.Add("row form-group");
-        }
-    }
+public class UIFormRow : UIBlock
+{
+    protected override CSSBuilder CssBuilder => base.CssBuilder
+        .AddClass("row form-group");
+}
 

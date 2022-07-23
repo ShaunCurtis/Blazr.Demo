@@ -7,7 +7,7 @@
 namespace Blazr.UI.Bootstrap;
 
 public partial class PagingControl
-    : ComponentBase, IPagingControl
+    : UIComponent, IPagingControl
 {
     private int Page => this.ListContext?.Page ?? 0;
     private int ListCount => this.ListContext?.ListTotalCount ?? 0;
@@ -39,15 +39,18 @@ public partial class PagingControl
     public async void NotifyListChangedAsync()
         => await SetPageAsync();
 
-    protected async override Task OnInitializedAsync()
+    protected async override Task OnPreRenderAsync(bool firstRender)
     {
-        if (ListContext is null)
-            throw new NullReferenceException($"No cascaded {nameof(ListContext)} found.");
+        if (firstRender)
+        {
+            if (ListContext is null)
+                throw new NullReferenceException($"No cascaded {nameof(ListContext)} found.");
 
-        await this.SetPageAsync();
+            await this.SetPageAsync();
 
-        if (this.ListContext is not null)
-            this.ListContext.PagingReset += this.OnPagingReset;
+            if (this.ListContext is not null)
+                this.ListContext.PagingReset += this.OnPagingReset;
+        }
     }
 
     private async Task SetPageAsync(PagingRequest? request = null)
@@ -90,7 +93,7 @@ public partial class PagingControl
         => await this.GotToPageAsync(block * this.PageSize);
 
     private PagingRequest GetPagingRequest(int page)
-        =>  new PagingRequest { PageSize = this.PageSize, StartIndex = this.PageSize * page };
+        => new PagingRequest { PageSize = this.PageSize, StartIndex = this.PageSize * page };
 
     public void Dispose()
     {

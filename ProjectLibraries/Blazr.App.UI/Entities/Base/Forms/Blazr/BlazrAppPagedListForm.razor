@@ -10,10 +10,10 @@
     <ListForm ListContext=this.ListContext>
         <UIContainer Size=BootstrapSize.Fluid>
             <UIFormRow class="my-2">
-                <UIColumn Columns=12 LargeColumns=8 class="text-start">
+                <UIColumn LargeColumns=8 class="text-start">
                     <PagingControl @ref=this.pagingControl />
                 </UIColumn>
-                <UIColumn Columns=2 LargeColumns=4 class="text-right text-end">
+                <UIColumn LargeColumns=4 class="text-right text-end">
                     <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsUserPolicy class="btn-primary btn-sm" ClickEvent="() => this.AddRecordAsync()">@this.NewRecordText</UIAuthorizeButton>
                     <UIButton class="btn-secondary btn-sm" Show=(!this.IsSubForm) ClickEvent="this.Exit">Exit</UIButton>
                 </UIColumn>
@@ -31,7 +31,7 @@
             {
                 <UIButton type="button" class="btn-sm btn-primary" ClickEvent="() => this.RecordDashboard(id)">Dash</UIButton>
             }
-            
+
             <UIButton type="button" class="btn-sm btn-secondary" ClickEvent="() => this.ViewRecord(id)">View</UIButton>
             <UIButton type="button" class="btn-sm btn-danger" ClickEvent="() => this.EditRecord(id)">Edit</UIButton>
         </UIButtonGroup>
@@ -42,15 +42,15 @@
         <UIButtonGroup>
             @if (showDash)
             {
-            <UIAuthorizeRecordButton Policy=@AppAuthorizationPolicies.IsViewerPolicy AuthFields="this.GetAuthFields(record)" type="button" class="btn-sm btn-primary" 
-                ClickEvent="() => this.RecordDashboard(id)">Dash</UIAuthorizeRecordButton>
+                <UIAuthorizeRecordButton Policy=@AppAuthorizationPolicies.IsViewerPolicy AuthFields="this.GetAuthFields(record)" type="button" class="btn-sm btn-primary"
+                             ClickEvent="() => this.RecordDashboard(id)">Dash</UIAuthorizeRecordButton>
             }
-            
-            <UIAuthorizeRecordButton Policy=@AppAuthorizationPolicies.IsEditorPolicy AuthFields="this.GetAuthFields(record)" type="button" class="btn-sm btn-danger" 
-                ClickEvent="() => this.EditRecord(id)">Edit</UIAuthorizeRecordButton>
 
-            <UIAuthorizeRecordButton Policy=@AppAuthorizationPolicies.IsViewerPolicy AuthFields="this.GetAuthFields(record)" type="button" class="btn-sm btn-secondary" 
-                ClickEvent="() => this.ViewRecord(id)">View</UIAuthorizeRecordButton>
+            <UIAuthorizeRecordButton Policy=@AppAuthorizationPolicies.IsEditorPolicy AuthFields="this.GetAuthFields(record)" type="button" class="btn-sm btn-danger"
+                             ClickEvent="() => this.EditRecord(id)">Edit</UIAuthorizeRecordButton>
+
+            <UIAuthorizeRecordButton Policy=@AppAuthorizationPolicies.IsViewerPolicy AuthFields="this.GetAuthFields(record)" type="button" class="btn-sm btn-secondary"
+                             ClickEvent="() => this.ViewRecord(id)">View</UIAuthorizeRecordButton>
         </UIButtonGroup>
     };
 }

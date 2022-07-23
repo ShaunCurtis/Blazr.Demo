@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Blazr.UI;
 
-public static class ServiceCollectionExtensions
+public static class UIServiceCollection
 {
     public static void AddBlazrUIServices(this IServiceCollection services)
     {

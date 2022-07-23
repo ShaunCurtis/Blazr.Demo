@@ -4,6 +4,7 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
+//TODO - is this code redundant?
 namespace Blazr.UI;
 
 public abstract class BaseStateClass<TStateRecord>

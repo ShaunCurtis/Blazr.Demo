@@ -3,8 +3,6 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-
-
 namespace Blazr.UI.Bootstrap;
 
 public class UIColumn : UIComponent
@@ -21,21 +19,16 @@ public class UIColumn : UIComponent
 
     [Parameter] public virtual int XXLargeColumns { get; set; } = 0;
 
-    protected override void OnInitialized()
-    {
-        CssClasses.Add($"col");
-        if (Columns > 0)
-            CssClasses.Add($"col-{this.Columns}");
-        if (SmallColumns > 0)
-            CssClasses.Add($"col-sm-{this.SmallColumns}");
-        if (MediumColumns > 0)
-            CssClasses.Add($"col-md-{this.MediumColumns}");
-        if (LargeColumns > 0)
-            CssClasses.Add($"col-lg-{this.LargeColumns}");
-        if (XLargeColumns > 0)
-            CssClasses.Add($"col-xl-{this.XLargeColumns}");
-        if (XXLargeColumns > 0)
-            CssClasses.Add($"col-xxl-{this.XXLargeColumns}");
-    }
+    [Parameter] public bool AutoDefault { get; set; } = false;
+
+    protected override CSSBuilder CssBuilder => base.CssBuilder
+        .AddClass(AutoDefault, "col-auto", "col")
+        .AddClass(Columns > 0 && !AutoDefault, $"col-{this.Columns}", $"col-12")
+        .AddClass(SmallColumns > 0, $"col-sm-{this.SmallColumns}")
+        .AddClass(MediumColumns > 0, $"col-md-{this.MediumColumns}")
+        .AddClass(LargeColumns > 0, $"col-lg-{this.LargeColumns}")
+        .AddClass(XLargeColumns > 0, $"col-xl-{this.XLargeColumns}")
+        .AddClass(XXLargeColumns > 0, $"col-xxl-{this.XXLargeColumns}");
+
 }
 

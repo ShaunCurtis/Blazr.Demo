@@ -4,12 +4,10 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-
 namespace Blazr.UI;
 
-public class UIComponent : UIComponentBase
+public class UIBlock : UIBase
 {
-
     [Parameter] public bool Disabled { get; set; } = false;
 
     [Parameter] public string? Tag { get; set; }
@@ -26,24 +24,21 @@ public class UIComponent : UIComponentBase
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (this.Show)
-        {
-            builder.OpenElement(0, this.HtmlTag);
-            builder.AddMultipleAttributes(1, this.SplatterAttributes);
-            if (!string.IsNullOrWhiteSpace(this.CssClass))
-                builder.AddAttribute(2, "class", this.CssClass);
+        builder.OpenElement(0, this.HtmlTag);
+        builder.AddMultipleAttributes(1, this.SplatterAttributes);
+        if (!string.IsNullOrWhiteSpace(this.CssClass))
+            builder.AddAttribute(2, "class", this.CssClass);
 
-            if (Disabled)
-                builder.AddAttribute(3, "disabled");
+        if (Disabled)
+            builder.AddAttribute(3, "disabled");
 
-            if (ClickEvent.HasDelegate)
-                builder.AddAttribute(4, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, ClickEvent));
+        if (ClickEvent.HasDelegate)
+            builder.AddAttribute(4, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, ClickEvent));
 
-            if (this.ChildContent is not null)
-                builder.AddContent(5, this.ChildContent);
+        if (this.ChildContent is not null)
+            builder.AddContent(5, this.ChildContent);
 
-            builder.CloseElement();
-        }
+        builder.CloseElement();
     }
 }
 

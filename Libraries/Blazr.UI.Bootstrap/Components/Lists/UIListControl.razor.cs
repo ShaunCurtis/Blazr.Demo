@@ -6,7 +6,7 @@
 
 namespace Blazr.UI.Bootstrap;
 
-public partial class UIListControl<TRecord> : UIComponentBase
+public partial class UIListControl<TRecord> : UIBase
 {
     [Parameter] public ComponentState LoadState { get; set; }
 

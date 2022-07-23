@@ -4,29 +4,45 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-
 namespace Blazr.UI;
 
-public abstract class UIComponentBase : ComponentBase
+/// <summary>
+/// Base minimum footprint component for building simple UI Components
+/// with single PreRender event method
+/// </summary>
+public abstract class UIComponentBase : UIBase
 {
-    [Parameter] public RenderFragment? ChildContent { get; set; }
+    protected bool _initialized = false;
 
-    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
+    /// <summary>
+    /// Method that can be overridden by child components
+    /// Eqivalent to OnParametersSetAsync
+    /// </summary>
+    /// <param name="firstRender"></param>
+    /// <returns></returns>
+    protected virtual Task OnPreRenderAsync(bool firstRender)
+        => Task.CompletedTask;
 
-    protected virtual List<string> UnwantedAttributes { get; set; } = new List<string>();
+    /// <summary>
+    /// Classic StateHasChangedMethod
+    /// Do not call through InvokeAsync, it already does it.
+    /// </summary>
+    public void StateHasChanged()
+        => this.InvokeAsync(this.Render);
 
-    protected Dictionary<string, object> SplatterAttributes
+    /// <summary>
+    ///  IComponent implementation
+    /// Called by the Renderer at initialization and whenever any of the requested Parameters change
+    /// </summary>
+    /// <param name="parameters"></param>
+    /// <returns></returns>
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
-        get
-        {
-            var list = new Dictionary<string, object>();
-            foreach (var item in UserAttributes)
-            {
-                if (!UnwantedAttributes.Any(item1 => item1.Equals(item.Key)))
-                    list.Add(item.Key, item.Value);
-            }
-            return list;
-        }
+        parameters.SetParameterProperties(this);
+
+        await this.OnPreRenderAsync(!_initialized);
+        this.Render();
+        _initialized = true;
     }
 }
 

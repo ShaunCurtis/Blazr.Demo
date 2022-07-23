@@ -1,11 +1,19 @@
-﻿//  ===============================================================================
-//  This is direct copy of ComponentBase with minor changes
-//  These are changes to top class variables to protected
-//      _initialized;
-//      _hasNeverRendered
-//      _hasPendingQueuedRender;
-//      _hasCalledOnAfterRender;
-//   ==============================================================================
+﻿///  ===============================================================================
+///
+///  This is direct copy of ComponentBase with minor changes
+///  1. These are changes to top class variables to protected
+///      _initialized;
+///      _hasNeverRendered
+///      _hasPendingQueuedRender;
+///      _hasCalledOnAfterRender;
+///   2. Changes to StateHasChanged.  
+///         Adding a Render() method that replicates StateHasChanged
+///         Changing StateHasChanged so it's always invoked on the UI Context thread
+///   3. Changes to _renderFragment assignment in New
+///         Adding a new Protected virtual RenderFragment ComponentRenderFrsgment 
+///         that can overridden to change the rendering behaviour of the Component
+///
+///   ==============================================================================
 
 /// ============================================================
 /// Change Author: Shaun Curtis, Cold Elm Coders
@@ -30,10 +38,12 @@ public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfte
         {
             _hasPendingQueuedRender = false;
             _hasNeverRendered = false;
-            BuildRenderTree(builder);
+            builder.AddContent(0, ComponentRenderTree);
         };
     }
 
+    protected virtual RenderFragment ComponentRenderTree => (builder) => BuildRenderTree(builder);
+    
     protected virtual void BuildRenderTree(RenderTreeBuilder builder) { }
 
     protected virtual void OnInitialized() { }
@@ -45,6 +55,9 @@ public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfte
     protected virtual Task OnParametersSetAsync() => Task.CompletedTask;
 
     protected void StateHasChanged()
+        => this.InvokeAsync(this.Render);
+    
+    internal protected void Render()
     {
         if (_hasPendingQueuedRender)
             return;
@@ -107,7 +120,7 @@ public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfte
 
         if (task.Status != TaskStatus.RanToCompletion && task.Status != TaskStatus.Canceled)
         {
-            this.StateHasChanged();
+            this.Render();
 
             try
             {
@@ -131,7 +144,7 @@ public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfte
         var shouldAwaitTask = task.Status != TaskStatus.RanToCompletion &&
             task.Status != TaskStatus.Canceled;
 
-        StateHasChanged();
+        Render();
 
         return shouldAwaitTask ?
             this.CallStateHasChangedOnAsyncCompletion(task) :
@@ -151,7 +164,7 @@ public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfte
 
             throw;
         }
-        StateHasChanged();
+        Render();
     }
 
     Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg)
@@ -159,7 +172,7 @@ public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfte
         var task = callback.InvokeAsync(arg);
         var shouldAwaitTask = task.Status != TaskStatus.RanToCompletion && task.Status != TaskStatus.Canceled;
 
-        StateHasChanged();
+        Render();
 
         return shouldAwaitTask ?
             this.CallStateHasChangedOnAsyncCompletion(task) :
