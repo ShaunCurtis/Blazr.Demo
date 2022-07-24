@@ -24,6 +24,7 @@ public class CQSDataBroker<TDbContext>
         var result = await handler.ExecuteAsync();
         return result;
     }
+
     public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(IFilteredListQuery<TRecord> query) where TRecord : class, new()
     {
         var queryType = query.GetType();

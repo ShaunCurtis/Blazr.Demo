@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.UI", "ProjectLibr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.Auth.Server.Web", "Applications\Blazr.Demo.Auth.Server.Web\Blazr.Demo.Auth.Server.Web.csproj", "{E0125AFF-F91D-4A3C-BF78-471D7DEA3966}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.Demo.WASM.Server", "Applications\Blazr.Demo.WASM.Server\Blazr.Demo.WASM.Server.csproj", "{240652EA-1D7C-4011-9D47-DF08A9670D3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.WASM.Server", "Applications\Blazr.Demo.WASM.Server\Blazr.Demo.WASM.Server.csproj", "{240652EA-1D7C-4011-9D47-DF08A9670D3F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{E1582ED5-D53F-43C7-9FF3-03283FFE9729}"
 	ProjectSection(SolutionItems) = preProject
@@ -45,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 		readme.md = readme.md
 		documents\RepositoryDataBrokers.md = documents\RepositoryDataBrokers.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.Controllers", "Blazr.App.Controllers\Blazr.App.Controllers.csproj", "{242CD787-DF8C-4C55-90F7-B9BB6EFE18CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -96,6 +98,10 @@ Global
 		{240652EA-1D7C-4011-9D47-DF08A9670D3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{240652EA-1D7C-4011-9D47-DF08A9670D3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{240652EA-1D7C-4011-9D47-DF08A9670D3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{242CD787-DF8C-4C55-90F7-B9BB6EFE18CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{242CD787-DF8C-4C55-90F7-B9BB6EFE18CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{242CD787-DF8C-4C55-90F7-B9BB6EFE18CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{242CD787-DF8C-4C55-90F7-B9BB6EFE18CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +118,7 @@ Global
 		{95AA491E-82CA-4AD5-99FD-E0724A5233F8} = {20AC6B52-B88C-4C60-B271-BC4EA226C4EC}
 		{E0125AFF-F91D-4A3C-BF78-471D7DEA3966} = {CC2D9923-F4CC-48E1-A359-DC95D9B7DB26}
 		{240652EA-1D7C-4011-9D47-DF08A9670D3F} = {CC2D9923-F4CC-48E1-A359-DC95D9B7DB26}
+		{242CD787-DF8C-4C55-90F7-B9BB6EFE18CC} = {20AC6B52-B88C-4C60-B271-BC4EA226C4EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {796897AD-0035-48BF-9BF0-2F19BBA500FA}
