@@ -33,6 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.WASM.Server", "A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{E1582ED5-D53F-43C7-9FF3-03283FFE9729}"
 	ProjectSection(SolutionItems) = preProject
+		documents\Components.md = documents\Components.md
 		documents\Controls.md = documents\Controls.md
 		documents\CoreServices.md = documents\CoreServices.md
 		documents\CRSDataBrokers.md = documents\CRSDataBrokers.md
