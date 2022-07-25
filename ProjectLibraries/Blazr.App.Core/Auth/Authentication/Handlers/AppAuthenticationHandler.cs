@@ -55,7 +55,7 @@ public class AppAuthenticationHandler : AuthenticationHandler<AppAuthOptions>
     public async Task<ClaimsPrincipal?> GetUserAsync(Guid Id)
     {
         // Get the user object from the database
-        var query = new RecordGuidKeyQuery<DboUser>(Id);
+        var query = new RecordQuery<DboUser>(Id);
         var result = await _dataBroker.ExecuteAsync(query);
 
         // Construct a ClaimsPrincipal object if the have a valid user

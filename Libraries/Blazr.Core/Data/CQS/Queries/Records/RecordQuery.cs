@@ -6,13 +6,21 @@
 
 namespace Blazr.Core;
 
-public record RecordIntKeyQuery<TRecord>
+public record RecordQuery<TRecord>
     : ICQSRequest<ValueTask<RecordProviderResult<TRecord>>>
 {
     public Guid TransactionId { get; } = Guid.NewGuid();
 
-    public readonly int RecordId;
+    public readonly Guid GuidId;
+    public readonly int IntId;
+    public readonly long LongId;
 
-    public RecordIntKeyQuery(int recordId)
-        => this.RecordId = recordId;
+    public RecordQuery(Guid recordId)
+        => this.GuidId = recordId;
+
+    public RecordQuery(int recordId)
+        => this.IntId = recordId;
+
+    public RecordQuery(long recordId)
+        => this.LongId = recordId;
 }

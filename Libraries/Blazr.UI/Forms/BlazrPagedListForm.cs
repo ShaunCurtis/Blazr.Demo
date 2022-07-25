@@ -97,8 +97,8 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
     //    this.ListContext.SaveState();
     //}
 
-    protected virtual IFilteredListQuery<TRecord> GetListQuery(ListProviderRequest<TRecord> request)
-        => new FilteredListQuery<TRecord>(request);
+    protected virtual IListQuery<TRecord> GetListQuery(ListProviderRequest<TRecord> request)
+        => new ListQuery<TRecord>(request);
  
     public async ValueTask GetPagedItems()
     {

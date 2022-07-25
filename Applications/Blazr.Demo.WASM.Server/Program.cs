@@ -1,9 +1,31 @@
+using Blazr.App.Core;
+using Blazr.App.Data;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+{
+    var Services = builder.Services;
+    {
+        Services.AddRazorPages();
+        Services.AddServerSideBlazor();
+        Services.AddControllersWithViews();
+
+        Services.AddAppAuthServices();
+
+        Services.AddWeatherAppServerDataServices<InMemoryWeatherDbContext>(options
+            => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));
+
+        Services.AddControllers().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(Blazr.App.Controllers.DboWeatherForecastController).Assembly));
+    }
+}
 
 var app = builder.Build();
+
+// Add the test data to the In Memory Db
+WeatherAppDataServices.AddTestData(app.Services);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -14,6 +36,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -21,5 +44,8 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+app.MapControllers();
+app.MapFallbackToFile("index.html");
 
 app.Run();

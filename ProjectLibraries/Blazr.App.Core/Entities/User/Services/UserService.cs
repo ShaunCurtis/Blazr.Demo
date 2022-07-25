@@ -26,7 +26,7 @@ public class UserService
     private async Task GetUsersAsync()
     {
         UserList.Clear();
-        var query = new FilteredListQuery<DboUser>(new ListProviderRequest<DboUser>());
+        var query = new ListQuery<DboUser>(new ListProviderRequest<DboUser>());
         var result = await _dataBroker.ExecuteAsync(query);
         if (result.Success)
         {
@@ -38,7 +38,7 @@ public class UserService
     public async Task<ClaimsPrincipal> GetUserAsync(Guid Id)
     {
         await EnsureUsersAsync();
-        var query = new RecordGuidKeyQuery<DboUser>(Id);
+        var query = new RecordQuery<DboUser>(Id);
         var result = await _dataBroker.ExecuteAsync(query);
         if (result.Success && result.Record is not null && result.Record.Id.IsNotNull())
             return new ClaimsPrincipal(new ClaimsIdentity(new[]

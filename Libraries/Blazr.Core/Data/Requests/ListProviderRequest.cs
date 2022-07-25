@@ -19,8 +19,6 @@ public readonly struct ListProviderRequest<TRecord>
 
     public string? FilterExpressionString { get; }
 
-    public Func<TRecord, bool>? FilterExpression { get; }
-
     public ItemsProviderRequest Request => new (this.StartIndex, this.PageSize, this.CancellationToken);
 
     public ListProviderRequest()
@@ -30,7 +28,6 @@ public readonly struct ListProviderRequest<TRecord>
         CancellationToken = new CancellationToken();
         SortExpressionString = null;
         FilterExpressionString = null;
-        FilterExpression = null;
     }
     public ListProviderRequest(int startIndex, int pageSize)
     {
@@ -39,36 +36,32 @@ public readonly struct ListProviderRequest<TRecord>
         CancellationToken = new CancellationToken();
         SortExpressionString = null;
         FilterExpressionString = null;
-        FilterExpression = null;
     }
 
-    public ListProviderRequest(int startIndex, int pageSize, CancellationToken cancellationToken, string? sortExpressionString = null, string? filterExpressionString = null, Func<TRecord, bool>? filterExpression = null )
+    public ListProviderRequest(int startIndex, int pageSize, CancellationToken cancellationToken, string? sortExpressionString = null, string? filterExpressionString = null)
     {
         StartIndex = startIndex;
         PageSize = pageSize;
         CancellationToken = cancellationToken;
         SortExpressionString = sortExpressionString;
         FilterExpressionString = filterExpressionString;
-        FilterExpression = filterExpression;
     }
 
-    public ListProviderRequest(ItemsProviderRequest request, Func<TRecord, bool>? filterExpression = null)
+    public ListProviderRequest(ItemsProviderRequest request, string? filterExpressionString = null)
     {
         StartIndex = request.StartIndex;
         PageSize = request.Count;
         CancellationToken = request.CancellationToken;
         SortExpressionString = null;
-        FilterExpressionString = null;
-        FilterExpression = filterExpression;
+        FilterExpressionString = filterExpressionString;
     }
 
-    public ListProviderRequest(ListState options, Func<TRecord, bool>? filterExpression = null)
+    public ListProviderRequest(ListState options, string? filterExpressionString = null)
     {
         StartIndex = options.StartIndex;
         PageSize = options.PageSize;
         CancellationToken = new CancellationToken();
         SortExpressionString = options.SortExpression;
-        FilterExpressionString = null;
-        FilterExpression = filterExpression;
+        FilterExpressionString = filterExpressionString;
     }
 }

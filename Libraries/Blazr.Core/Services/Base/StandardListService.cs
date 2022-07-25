@@ -27,37 +27,16 @@ public class StandardListService<TRecord, TEntity>
         : base(dataBroker, notifier, authenticationState, authorizationService)
     { }
 
-    public async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(int startRecord, int pageSize)
-    {
-        this.StartIndex = startRecord;
-        this.PageSize = pageSize;
-
-        return await this.GetRecordsAsync();
-    }
-
     public async ValueTask<ItemsProviderResult<TRecord>> GetRecordsAsync(ItemsProviderRequest itemsRequest)
     {
         await this.GetRecordsAsync(new ListProviderRequest<TRecord>(itemsRequest));
-
         return new ItemsProviderResult<TRecord>(this.Records ?? new List<TRecord>(), this.ListCount);
     }
 
-    private async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync()
-        => await this.GetRecordsAsync(new ListProviderRequest<TRecord>(this.StartIndex, this.PageSize));
-
     public async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(ListProviderRequest<TRecord> request)
-    {
-        this.Message = String.Empty;
-        this.PageSize = request.PageSize;
-        this.StartIndex = request.StartIndex;
+        => await this.GetRecordsAsync(new ListQuery<TRecord>(request));
 
-        var query = new RecordListQuery<TRecord>(request);
-        var result = await this.DataBroker.ExecuteAsync<TRecord>(query);
-
-        return this.GetResult(result);
-    }
-
-    public async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(IFilteredListQuery<TRecord> query)
+    public async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(IListQuery<TRecord> query)
     {
         this.Message = String.Empty;
         this.PageSize = query.Request.PageSize;

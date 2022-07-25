@@ -25,12 +25,10 @@ public interface IListService<TRecord, TEntity>
 
     public void SetServices(IServiceProvider services);
 
-    public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(int startRecord, int pageSize);
-
     public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(ListProviderRequest<TRecord> request);
 
     public ValueTask<ItemsProviderResult<TRecord>> GetRecordsAsync(ItemsProviderRequest request);
 
-    public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(IFilteredListQuery<TRecord> query);
+    public ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(IListQuery<TRecord> query);
 }
 

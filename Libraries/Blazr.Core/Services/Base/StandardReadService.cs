@@ -26,7 +26,7 @@ public class StandardReadService<TRecord, TEntity>
         this.Message = String.Empty;
         this.Record = null;
 
-        var result = await this.DataBroker.ExecuteAsync<TRecord>(new RecordGuidKeyQuery<TRecord>(Id));
+        var result = await this.DataBroker.ExecuteAsync<TRecord>(new RecordQuery<TRecord>(Id));
 
         if (result.Success && result.Record is not null)
         {

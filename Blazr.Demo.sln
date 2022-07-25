@@ -47,7 +47,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 		documents\RepositoryDataBrokers.md = documents\RepositoryDataBrokers.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.Controllers", "Blazr.App.Controllers\Blazr.App.Controllers.csproj", "{242CD787-DF8C-4C55-90F7-B9BB6EFE18CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Controllers", "Blazr.App.Controllers\Blazr.App.Controllers.csproj", "{242CD787-DF8C-4C55-90F7-B9BB6EFE18CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.Demo.WASM", "Blazr.Demo.WASM\Blazr.Demo.WASM.csproj", "{64C3EFA1-84BA-49A5-9CB5-B9D4080E0F60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,6 +105,10 @@ Global
 		{242CD787-DF8C-4C55-90F7-B9BB6EFE18CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{242CD787-DF8C-4C55-90F7-B9BB6EFE18CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{242CD787-DF8C-4C55-90F7-B9BB6EFE18CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64C3EFA1-84BA-49A5-9CB5-B9D4080E0F60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64C3EFA1-84BA-49A5-9CB5-B9D4080E0F60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64C3EFA1-84BA-49A5-9CB5-B9D4080E0F60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64C3EFA1-84BA-49A5-9CB5-B9D4080E0F60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -120,6 +126,7 @@ Global
 		{E0125AFF-F91D-4A3C-BF78-471D7DEA3966} = {CC2D9923-F4CC-48E1-A359-DC95D9B7DB26}
 		{240652EA-1D7C-4011-9D47-DF08A9670D3F} = {CC2D9923-F4CC-48E1-A359-DC95D9B7DB26}
 		{242CD787-DF8C-4C55-90F7-B9BB6EFE18CC} = {20AC6B52-B88C-4C60-B271-BC4EA226C4EC}
+		{64C3EFA1-84BA-49A5-9CB5-B9D4080E0F60} = {CC2D9923-F4CC-48E1-A359-DC95D9B7DB26}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {796897AD-0035-48BF-9BF0-2F19BBA500FA}

@@ -15,13 +15,34 @@ public static class WeatherAppDataServices
         services.AddSingleton<IDataBroker, ServerDataBroker<InMemoryWeatherDbContext>>();
         services.AddSingleton<ICustomCQSDataBroker, ServerCustomCQSDataBroker<TDbContext>>();
 
-        services.AddTransient<IFilteredListQueryHandler<DvoWeatherForecast>, FilteredListQueryHandlerBase<DvoWeatherForecast, InMemoryWeatherDbContext>>();
-        services.AddTransient<IFilteredListQueryHandler<DboWeatherLocation>, FilteredListQueryHandlerBase<DboWeatherLocation, InMemoryWeatherDbContext>>();
-        services.AddTransient<IFilteredListQueryHandler<DboUser>, FilteredListQueryHandlerBase<DboUser, InMemoryWeatherDbContext>>();
-        services.AddTransient<ICustomQueryHandler<DvoWeatherForecast>, WeatherForecastListQueryHandler<InMemoryWeatherDbContext>>();
+        //services.AddTransient<IListQueryHandler<DvoWeatherForecast>, ListQueryHandler<DvoWeatherForecast, InMemoryWeatherDbContext>>();
+        services.AddTransient<IListQueryHandler<DboWeatherLocation>, ListQueryHandler<DboWeatherLocation, InMemoryWeatherDbContext>>();
+        services.AddTransient<IListQueryHandler<DboUser>, ListQueryHandler<DboUser, InMemoryWeatherDbContext>>();
+        services.AddTransient<IListQueryHandler<DvoWeatherForecast>, WeatherForecastListQueryHandler<InMemoryWeatherDbContext>>();
 
         services.AddWeatherServices();
     }
+
+    public static void AddWeatherAppWASMDataServices(this IServiceCollection services)
+    {
+        services.AddSingleton<ICQSDataBroker, CQSAPIDataBroker>();
+
+        services.AddTransient<IListQueryHandler<DboWeatherLocation>, ListQueryHandler<DboWeatherLocation, InMemoryWeatherDbContext>>();
+        services.AddTransient<IListQueryHandler<DboUser>, ListQueryHandler<DboUser, InMemoryWeatherDbContext>>();
+        services.AddTransient<IListQueryHandler<DvoWeatherForecast>, WeatherForecastListQueryHandler<InMemoryWeatherDbContext>>();
+
+        services.AddWeatherServices();
+    }
+
+    public static void AddWeatherAppWASMServerDataServices<TDbContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> options) where TDbContext : DbContext
+    {
+        services.AddDbContextFactory<TDbContext>(options);
+        services.AddSingleton<ICQSDataBroker, CQSDataBroker<InMemoryWeatherDbContext>>();
+        services.AddTransient<IListQueryHandler<DboWeatherLocation>, ListQueryHandler<DboWeatherLocation, InMemoryWeatherDbContext>>();
+        services.AddTransient<IListQueryHandler<DboUser>, ListQueryHandler<DboUser, InMemoryWeatherDbContext>>();
+        services.AddTransient<IListQueryHandler<DvoWeatherForecast>, WeatherForecastListQueryHandler<InMemoryWeatherDbContext>>();
+    }
+
 
     public static void AddInMemoryWeatherRepositoryAppServerDataServices(this IServiceCollection services)
     {

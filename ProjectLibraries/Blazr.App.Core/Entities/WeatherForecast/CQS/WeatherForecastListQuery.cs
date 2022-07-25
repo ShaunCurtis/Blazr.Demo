@@ -7,32 +7,26 @@
 namespace Blazr.App.Core;
 
 public record WeatherForecastListQuery
-    : IFilteredListQuery<DvoWeatherForecast>
+    : IListQuery<DvoWeatherForecast>
 {
 
     public ListProviderRequest<DvoWeatherForecast> Request { get; private set; }
 
-    public Func<DvoWeatherForecast, bool>? FilterExpression { get; private set; } = null;
-
     public Guid TransactionId => Guid.NewGuid();
 
-    public readonly Guid? WeatherSummaryId;
+    public readonly Guid? WeatherLocationId;
 
-    public WeatherForecastListQuery(Guid? weatherSummaryId, ListProviderRequest<DvoWeatherForecast> request)
+    public WeatherForecastListQuery(Guid? weatherLocationId, ListProviderRequest<DvoWeatherForecast> request)
     {
-        if (weatherSummaryId is not null && weatherSummaryId != Guid.Empty)
-        {
-            WeatherSummaryId = weatherSummaryId;
-            FilterExpression = (DvoWeatherForecast item) => item.WeatherSummaryId == weatherSummaryId;
-        }
+        if (weatherLocationId is not null && weatherLocationId != Guid.Empty)
+            WeatherLocationId = weatherLocationId;
 
         Request = request;
     }
 
-    public WeatherForecastListQuery(ListProviderRequest<DvoWeatherForecast> request, Func<DvoWeatherForecast, bool>? filter)
+    public WeatherForecastListQuery(ListProviderRequest<DvoWeatherForecast> request)
     {
-        WeatherSummaryId = Guid.Empty;
+        WeatherLocationId = Guid.Empty;
         Request = request;
-        FilterExpression = filter;
     }
 }

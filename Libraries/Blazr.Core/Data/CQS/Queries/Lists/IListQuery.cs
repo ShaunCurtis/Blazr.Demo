@@ -6,14 +6,9 @@
 
 namespace Blazr.Core;
 
-public record RecordListQuery<TRecord>
+public interface IListQuery<TRecord>
     : ICQSRequest<ValueTask<ListProviderResult<TRecord>>>
     where TRecord : class, new()
 {
-    public Guid TransactionId { get; } = Guid.NewGuid();
-    
-    public ListProviderRequest<TRecord> Request { get; protected set; }
-
-    public RecordListQuery(ListProviderRequest<TRecord> request)
-        => Request = request;
+    public ListProviderRequest<TRecord> Request { get; }
 }

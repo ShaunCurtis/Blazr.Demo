@@ -16,19 +16,19 @@ public abstract class AppControllerBase<TRecord>
     public AppControllerBase(ICQSDataBroker dataBroker)
         => _dataBroker = dataBroker;
 
-    [Mvc.Route("/api/[controller]/recordlistquery")]
+    [Mvc.Route("/api/[controller]/listquery")]
     [Mvc.HttpPost]
-    public async Task<ListProviderResult<TRecord>> RecordListQuery([FromBody] RecordListQuery<TRecord> query)
+    public async Task<ListProviderResult<TRecord>> ListQuery([FromBody] ListQuery<TRecord> query)
         => await _dataBroker.ExecuteAsync<TRecord>(query);
 
-    [Mvc.Route("/api/[controller]/ifilteredlistquery")]
+    [Mvc.Route("/api/[controller]/ilistquery")]
     [Mvc.HttpPost]
-    public async Task<ListProviderResult<TRecord>> IFilteredListQuery([FromBody] IFilteredListQuery<TRecord> query)
+    public async Task<ListProviderResult<TRecord>> IListQuery([FromBody] IListQuery<TRecord> query)
         => await _dataBroker.ExecuteAsync<TRecord>(query);
 
-    [Mvc.Route("/api/[controller]/recordguidkeyquery")]
+    [Mvc.Route("/api/[controller]/recordquery")]
     [Mvc.HttpPost]
-    public async Task<RecordProviderResult<TRecord>> RecordGuidKeyQuery([FromBody] RecordGuidKeyQuery<TRecord> query)
+    public async Task<RecordProviderResult<TRecord>> RecordGuidKeyQuery([FromBody] RecordQuery<TRecord> query)
         => await _dataBroker.ExecuteAsync<TRecord>(query);
 
     [Mvc.Route("/api/[controller]/addrecordcommand")]

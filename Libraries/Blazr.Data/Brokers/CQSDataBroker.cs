@@ -18,25 +18,17 @@ public class CQSDataBroker<TDbContext>
         _serviceProvider = serviceProvider;
     }
 
-    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordListQuery<TRecord> query) where TRecord : class, new()
+    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(ListQuery<TRecord> query) where TRecord : class, new()
     {
-        var handler = new RecordListQueryHandler<TRecord,TDbContext>(_factory, query);
+        var handler = new ListQueryHandler<TRecord, TDbContext>(_factory, query);
         var result = await handler.ExecuteAsync();
         return result;
     }
 
-
-    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(FilteredListQuery<TRecord> query) where TRecord : class, new()
-    {
-        var handler = new FilteredListQueryHandlerBase<TRecord, TDbContext>(_factory, query);
-        var result = await handler.ExecuteAsync();
-        return result;
-    }
-
-    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(IFilteredListQuery<TRecord> query) where TRecord : class, new()
+    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(IListQuery<TRecord> query) where TRecord : class, new()
     {
         var queryType = query.GetType();
-        var handler = _serviceProvider.GetService<IFilteredListQueryHandler<TRecord>>();
+        var handler = _serviceProvider.GetService<IListQueryHandler<TRecord>>();
         if (handler == null)
             throw new NullReferenceException("No Handler service registed for the List Query");
 
@@ -44,9 +36,9 @@ public class CQSDataBroker<TDbContext>
         return result;
     }
 
-    public async ValueTask<RecordProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordGuidKeyQuery<TRecord> query) where TRecord : class, new()
+    public async ValueTask<RecordProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordQuery<TRecord> query) where TRecord : class, new()
     {
-        var handler = new RecordGuidQueryHandler<TRecord, TDbContext>(_factory, query);
+        var handler = new RecordQueryHandler<TRecord, TDbContext>(_factory, query);
         var result = await handler.ExecuteAsync();
         return result;
     }

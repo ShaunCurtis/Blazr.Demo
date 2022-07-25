@@ -7,7 +7,7 @@
 namespace Blazr.App.Data;
 
 public class WeatherForecastListQueryHandler<TDbContext>
-    : ICustomQueryHandler<DvoWeatherForecast>
+    : IListQueryHandler<DvoWeatherForecast>
         where TDbContext : DbContext
 {
     protected IEnumerable<DvoWeatherForecast> items = Enumerable.Empty<DvoWeatherForecast>();
@@ -21,7 +21,7 @@ public class WeatherForecastListQueryHandler<TDbContext>
         this.factory = factory;
     }
 
-    public async ValueTask<ListProviderResult<DvoWeatherForecast>> ExecuteAsync(ICustomListQuery<DvoWeatherForecast> query)
+    public async ValueTask<ListProviderResult<DvoWeatherForecast>> ExecuteAsync(IListQuery<DvoWeatherForecast> query)
     {
         if (query is null || query is not WeatherForecastListQuery)
             return new ListProviderResult<DvoWeatherForecast>(new List<DvoWeatherForecast>(), 0, false, "No Query Defined");
@@ -40,9 +40,10 @@ public class WeatherForecastListQueryHandler<TDbContext>
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
         IQueryable<DvoWeatherForecast> query = dbContext.Set<DvoWeatherForecast>();
-        if (listQuery.FilterExpression is not null)
+
+        if (listQuery.WeatherLocationId is not null && listQuery.WeatherLocationId != Guid.Empty)
             query = query
-                .Where(listQuery.FilterExpression)
+                .Where(item => item.WeatherLocationId == listQuery.WeatherLocationId)
                 .AsQueryable();
 
         if (listQuery.Request.PageSize > 0)
@@ -64,8 +65,11 @@ public class WeatherForecastListQueryHandler<TDbContext>
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
         IQueryable<DvoWeatherForecast> query = dbContext.Set<DvoWeatherForecast>();
-        if (listQuery.FilterExpression is not null)
-            query = query.Where(listQuery.FilterExpression).AsQueryable();
+
+        if (listQuery.WeatherLocationId is not null && listQuery.WeatherLocationId != Guid.Empty)
+            query = query
+                .Where(item => item.WeatherLocationId == listQuery.WeatherLocationId)
+                .AsQueryable();
 
         if (query is IAsyncEnumerable<DvoWeatherForecast>)
             count = await query.CountAsync();

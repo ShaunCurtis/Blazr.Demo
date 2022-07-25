@@ -6,15 +6,15 @@
 
 namespace Blazr.Core;
 
-public class FilteredListQuery<TRecord>
-    :IFilteredListQuery<TRecord>
+public class ListQuery<TRecord>
+    :IListQuery<TRecord>
     where TRecord : class, new()
 {
     public ListProviderRequest<TRecord> Request { get; private set; }
 
     public Guid TransactionId => Guid.NewGuid();
 
-    public FilteredListQuery(ListProviderRequest<TRecord> request)
+    public ListQuery(ListProviderRequest<TRecord> request)
     {
         Request = request;
     }

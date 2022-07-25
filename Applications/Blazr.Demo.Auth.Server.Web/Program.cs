@@ -22,6 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
 
         Services.AddWeatherAppServerDataServices<InMemoryWeatherDbContext>(options
             => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));
+
         Services.AddBlazrUIServices();
         Services.AddAppUIServices();
     }

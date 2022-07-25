@@ -5,18 +5,17 @@
 /// ============================================================
 namespace Blazr.Data;
 
-public class RecordGuidQueryHandler<TRecord, TDbContext>
-    : ICQSHandler<RecordGuidKeyQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
+public class RecordQueryHandler<TRecord, TDbContext>
+    : ICQSHandler<RecordQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
         where TRecord : class, new()
         where TDbContext : DbContext
-
 {
-    private readonly RecordGuidKeyQuery<TRecord> _query;
+    private readonly RecordQuery<TRecord> _query;
     private IDbContextFactory<TDbContext> _factory;
     private bool _success = true;
     private string _message = string.Empty;
 
-    public RecordGuidQueryHandler(IDbContextFactory<TDbContext> factory, RecordGuidKeyQuery<TRecord> query)
+    public RecordQueryHandler(IDbContextFactory<TDbContext> factory, RecordQuery<TRecord> query)
     {
         _factory = factory;
         _query = query;
@@ -31,11 +30,20 @@ public class RecordGuidQueryHandler<TRecord, TDbContext>
 
         // first check if the record implements IRecord.  If so we can do a cast and then do the quesry via the Id property directly 
         if ((new TRecord()) is IRecord)
-            record = await dbContext.Set<TRecord>().SingleOrDefaultAsync(item => ((IRecord)item).Id == _query.RecordId);
+            record = await dbContext.Set<TRecord>().SingleOrDefaultAsync(item => ((IRecord)item).Id == _query.GuidId);
 
         // Try and use the EF FindAsync implementation
         if (record == null)
-            record = await dbContext.FindAsync<TRecord>(_query.RecordId);
+        {
+            if (_query.GuidId != Guid.Empty)
+                record = await dbContext.FindAsync<TRecord>(_query.GuidId);
+
+            if (_query.LongId > 0)
+                record = await dbContext.FindAsync<TRecord>(_query.LongId);
+
+            if (_query.IntId > 0)
+                record = await dbContext.FindAsync<TRecord>(_query.IntId);
+        }
 
         if (record is null)
         {

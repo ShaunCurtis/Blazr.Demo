@@ -14,29 +14,14 @@ public class CQSAPIDataBroker
     private HttpClient _httpClient;
 
     public CQSAPIDataBroker(HttpClient httpClient)
-    { 
-        _httpClient = httpClient;
-    }
+        => _httpClient = httpClient;
 
-    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordListQuery<TRecord> query) where TRecord : class, new()
+    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(ListQuery<TRecord> query) where TRecord : class, new()
     {
         ListProviderResult<TRecord> result = new ListProviderResult<TRecord>();
 
         var entityname = (new TRecord()).GetType().Name;
-        var response = await _httpClient.PostAsJsonAsync<RecordListQuery<TRecord>>($"/api/{entityname}/recordlistquery", query);
-
-        if (response.IsSuccessStatusCode)
-            result = await response.Content.ReadFromJsonAsync<ListProviderResult<TRecord>>();
-        
-        return result;
-    }
-
-    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(IFilteredListQuery<TRecord> query) where TRecord : class, new()
-    {
-        ListProviderResult<TRecord> result = new ListProviderResult<TRecord>();
-
-        var entityname = (new TRecord()).GetType().Name;
-        var response = await _httpClient.PostAsJsonAsync<IFilteredListQuery<TRecord>>($"/api/{entityname}/ifilteredlistquery", query);
+        var response = await _httpClient.PostAsJsonAsync<ListQuery<TRecord>>($"/api/{entityname}/listquery", query);
 
         if (response.IsSuccessStatusCode)
             result = await response.Content.ReadFromJsonAsync<ListProviderResult<TRecord>>();
@@ -44,12 +29,25 @@ public class CQSAPIDataBroker
         return result;
     }
 
-    public async ValueTask<RecordProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordGuidKeyQuery<TRecord> query) where TRecord : class, new()
+    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(IListQuery<TRecord> query) where TRecord : class, new()
+    {
+        ListProviderResult<TRecord> result = new ListProviderResult<TRecord>();
+
+        var entityname = (new TRecord()).GetType().Name;
+        var response = await _httpClient.PostAsJsonAsync<IListQuery<TRecord>>($"/api/{entityname}/ilistquery", query);
+
+        if (response.IsSuccessStatusCode)
+            result = await response.Content.ReadFromJsonAsync<ListProviderResult<TRecord>>();
+
+        return result;
+    }
+
+    public async ValueTask<RecordProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordQuery<TRecord> query) where TRecord : class, new()
     {
         RecordProviderResult<TRecord> result = new RecordProviderResult<TRecord>();
 
         var entityname = (new TRecord()).GetType().Name;
-        var response = await _httpClient.PostAsJsonAsync<RecordGuidKeyQuery<TRecord>>($"/api/{entityname}/recordguidkeyquery", query);
+        var response = await _httpClient.PostAsJsonAsync<RecordQuery<TRecord>>($"/api/{entityname}/recordquery", query);
 
         if (response.IsSuccessStatusCode)
             result = await response.Content.ReadFromJsonAsync<RecordProviderResult<TRecord>>();

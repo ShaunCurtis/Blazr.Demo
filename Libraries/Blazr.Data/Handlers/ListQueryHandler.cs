@@ -6,24 +6,23 @@
 
 namespace Blazr.Data;
 
-public class FilteredListQueryHandlerBase<TRecord, TDbContext>
-    : IFilteredListQueryHandler<TRecord>
+public class ListQueryHandler<TRecord, TDbContext>
+    : IListQueryHandler<TRecord>
         where TDbContext : DbContext
         where TRecord : class, new()
-
 {
     protected IEnumerable<TRecord> items = Enumerable.Empty<TRecord>();
     protected int count = 0;
 
     protected IDbContextFactory<TDbContext> factory;
-    protected IFilteredListQuery<TRecord> listQuery = default!;
+    protected IListQuery<TRecord> listQuery = default!;
 
-    public FilteredListQueryHandlerBase(IDbContextFactory<TDbContext> factory)
+    public ListQueryHandler(IDbContextFactory<TDbContext> factory)
     {
         this.factory = factory;
     }
 
-    public FilteredListQueryHandlerBase(IDbContextFactory<TDbContext> factory, IFilteredListQuery<TRecord> query)
+    public ListQueryHandler(IDbContextFactory<TDbContext> factory, IListQuery<TRecord> query)
     {
         this.factory = factory;
         this.listQuery = query;
@@ -40,7 +39,7 @@ public class FilteredListQueryHandlerBase<TRecord, TDbContext>
         return new ListProviderResult<TRecord>(this.items, this.count);
     }
 
-    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync(IFilteredListQuery<TRecord> query)
+    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync(IListQuery<TRecord> query)
     {
         if (query is null)
             return new ListProviderResult<TRecord>(new List<TRecord>(), 0, false, "No Query Defined");
@@ -59,9 +58,10 @@ public class FilteredListQueryHandlerBase<TRecord, TDbContext>
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
         IQueryable<TRecord> query = dbContext.Set<TRecord>();
-        if (listQuery.Request.FilterExpression is not null)
+
+        if (listQuery.Request.FilterExpressionString is not null)
             query = query
-                .Where(listQuery.Request.FilterExpression)
+                .Where(listQuery.Request.FilterExpressionString)
                 .AsQueryable();
 
         if (listQuery.Request.SortExpressionString is not null)
@@ -86,8 +86,11 @@ public class FilteredListQueryHandlerBase<TRecord, TDbContext>
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
         IQueryable<TRecord> query = dbContext.Set<TRecord>();
-        if (listQuery.Request.FilterExpression is not null)
-            query = query.Where(listQuery.Request.FilterExpression).AsQueryable();
+
+        if (listQuery.Request.FilterExpressionString is not null)
+            query = query
+                .Where(listQuery.Request.FilterExpressionString)
+                .AsQueryable();
 
         if (query is IAsyncEnumerable<TRecord>)
             count = await query.CountAsync();

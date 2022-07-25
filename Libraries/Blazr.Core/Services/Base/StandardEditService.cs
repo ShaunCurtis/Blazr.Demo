@@ -30,7 +30,7 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
 
         if (Id != Guid.Empty)
         {
-            var result = await this.DataBroker.ExecuteAsync<TRecord>(new RecordGuidKeyQuery<TRecord>(Id));
+            var result = await this.DataBroker.ExecuteAsync<TRecord>(new RecordQuery<TRecord>(Id));
 
             if (result.Success && result.Record is not null)
             {
