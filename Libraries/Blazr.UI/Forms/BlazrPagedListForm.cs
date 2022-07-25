@@ -84,9 +84,25 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
     public virtual Task PreLoadRecordAsync(bool isNew)
         => Task.CompletedTask;
 
+    //public async ValueTask GetPagedItems()
+    //{
+    //    var query = new FilteredListQuery<TRecord>(new ListProviderRequest<TRecord>(this.ListContext.ListStateRecord, this.ListFilter));
+    //    var result = await this.Service.GetRecordsAsync(query);
+
+    //    this.ListContext.ListTotalCount = result.TotalItemCount;
+
+    //    await this.OnAfterGetItems();
+    //    await this.InvokeAsync(StateHasChanged);
+
+    //    this.ListContext.SaveState();
+    //}
+
+    protected abstract IFilteredListQuery<TRecord> GetFilteredQuery(ListProviderRequest<TRecord> request);
+ 
     public async ValueTask GetPagedItems()
     {
-        var query = new FilteredListQuery<TRecord>(new ListProviderRequest<TRecord>(this.ListContext.ListStateRecord, this.ListFilter));
+        var request = new ListProviderRequest<TRecord>(this.ListContext.ListStateRecord);
+        var query = this.GetFilteredQuery(request);
         var result = await this.Service.GetRecordsAsync(query);
 
         this.ListContext.ListTotalCount = result.TotalItemCount;
@@ -97,9 +113,12 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
         this.ListContext.SaveState();
     }
 
-    public async ValueTask<(int, bool)> GetPagedItems(ListState request)
+
+    public async ValueTask<(int, bool)> GetPagedItems(ListState state)
     {
-        var query = new FilteredListQuery<TRecord>(new ListProviderRequest<TRecord>(request, this.ListFilter));
+        var request = new ListProviderRequest<TRecord>(state);
+        var query = this.GetFilteredQuery(request);
+
         var result = await this.Service.GetRecordsAsync(query);
 
         this.ListContext.ListTotalCount = result.TotalItemCount;
@@ -111,6 +130,21 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
 
         return (result.TotalItemCount, result.Success);
     }
+
+    //public async ValueTask<(int, bool)> GetPagedItems(ListState request)
+    //{
+    //    var query = new FilteredListQuery<TRecord>(new ListProviderRequest<TRecord>(request, this.ListFilter));
+    //    var result = await this.Service.GetRecordsAsync(query);
+
+    //    this.ListContext.ListTotalCount = result.TotalItemCount;
+
+    //    await this.OnAfterGetItems();
+    //    await this.InvokeAsync(StateHasChanged);
+
+    //    this.ListContext.SaveState();
+
+    //    return (result.TotalItemCount, result.Success);
+    //}
 
     protected virtual Task OnAfterGetItems()
         => Task.CompletedTask;
