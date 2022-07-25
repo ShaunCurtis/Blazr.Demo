@@ -97,12 +97,13 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
     //    this.ListContext.SaveState();
     //}
 
-    protected abstract IFilteredListQuery<TRecord> GetFilteredQuery(ListProviderRequest<TRecord> request);
+    protected virtual IFilteredListQuery<TRecord> GetListQuery(ListProviderRequest<TRecord> request)
+        => new FilteredListQuery<TRecord>(request);
  
     public async ValueTask GetPagedItems()
     {
         var request = new ListProviderRequest<TRecord>(this.ListContext.ListStateRecord);
-        var query = this.GetFilteredQuery(request);
+        var query = this.GetListQuery(request);
         var result = await this.Service.GetRecordsAsync(query);
 
         this.ListContext.ListTotalCount = result.TotalItemCount;
@@ -113,11 +114,10 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
         this.ListContext.SaveState();
     }
 
-
     public async ValueTask<(int, bool)> GetPagedItems(ListState state)
     {
         var request = new ListProviderRequest<TRecord>(state);
-        var query = this.GetFilteredQuery(request);
+        var query = this.GetListQuery(request);
 
         var result = await this.Service.GetRecordsAsync(query);
 

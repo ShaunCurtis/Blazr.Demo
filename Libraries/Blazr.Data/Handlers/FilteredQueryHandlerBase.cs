@@ -23,6 +23,23 @@ public class FilteredListQueryHandlerBase<TRecord, TDbContext>
         this.factory = factory;
     }
 
+    public FilteredListQueryHandlerBase(IDbContextFactory<TDbContext> factory, IFilteredListQuery<TRecord> query)
+    {
+        this.factory = factory;
+        this.listQuery = query;
+    }
+
+    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync()
+    {
+        if (this.listQuery is null)
+            return new ListProviderResult<TRecord>(new List<TRecord>(), 0, false, "No Query Defined");
+
+        if (await this.GetItemsAsync())
+            await this.GetCountAsync();
+
+        return new ListProviderResult<TRecord>(this.items, this.count);
+    }
+
     public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync(IFilteredListQuery<TRecord> query)
     {
         if (query is null)

@@ -37,7 +37,7 @@
             this.ListFilter = record => record.WeatherLocationId == this.WeatherLocationId;
     }
 
-    protected WeatherForecastListQuery GetListQuery(ListProviderRequest<DvoWeatherForecast> request)
+    protected override WeatherForecastListQuery GetListQuery(ListProviderRequest<DvoWeatherForecast> request)
         => new WeatherForecastListQuery(this.WeatherLocationId, request);
 
     protected override ModalOptions GetAddOptions(ModalOptions? options)
