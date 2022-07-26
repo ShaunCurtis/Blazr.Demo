@@ -6,13 +6,15 @@
 
 namespace Blazr.Core;
 
-public readonly struct RecordProviderResult<TRecord>
+public record RecordProviderResult<TRecord>
 {
-    public TRecord? Record { get; }
+    public TRecord? Record { get; init; }
      
-    public bool Success { get; }
+    public bool Success { get; init; }
 
-    public string? Message { get; }
+    public string? Message { get; init; }
+
+    public RecordProviderResult() { }
 
     public RecordProviderResult(TRecord? record, bool success = true, string? message = null)
     {

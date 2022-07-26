@@ -39,8 +39,8 @@ public class StandardListService<TRecord, TEntity>
     public async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync(IListQuery<TRecord> query)
     {
         this.Message = String.Empty;
-        this.PageSize = query.Request.PageSize;
-        this.StartIndex = query.Request.StartIndex;
+        this.PageSize = query.PageSize;
+        this.StartIndex = query.StartIndex;
 
         var result = await this.DataBroker.ExecuteAsync<TRecord>(query);
 

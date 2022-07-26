@@ -6,13 +6,15 @@
 
 namespace Blazr.Core;
 
-public readonly struct FKListProviderResult
+public record FKListProviderResult
 {
-    public IEnumerable<IFkListItem> Items { get; }
+    public IEnumerable<IFkListItem> Items { get; init; } = Enumerable.Empty<IFkListItem>();
 
-    public bool Success { get; }
+    public bool Success { get; init; }
 
-    public string? Message { get; }
+    public string? Message { get; init; }
+
+    public FKListProviderResult() { }
 
     public FKListProviderResult(IEnumerable<IFkListItem> items, bool success = true, string? message = null)
     {

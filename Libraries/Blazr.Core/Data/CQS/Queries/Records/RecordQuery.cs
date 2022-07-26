@@ -11,9 +11,11 @@ public record RecordQuery<TRecord>
 {
     public Guid TransactionId { get; } = Guid.NewGuid();
 
-    public readonly Guid GuidId;
-    public readonly int IntId;
-    public readonly long LongId;
+    public Guid GuidId { get; init; }
+    public int IntId { get; init; }
+    public long LongId { get; init; }
+
+    public RecordQuery() { }
 
     public RecordQuery(Guid recordId)
         => this.GuidId = recordId;

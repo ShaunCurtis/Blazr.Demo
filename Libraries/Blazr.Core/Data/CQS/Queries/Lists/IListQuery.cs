@@ -10,5 +10,11 @@ public interface IListQuery<TRecord>
     : ICQSRequest<ValueTask<ListProviderResult<TRecord>>>
     where TRecord : class, new()
 {
-    public ListProviderRequest<TRecord> Request { get; }
+    public int StartIndex { get; }
+
+    public int PageSize { get; }
+
+    public string? SortExpressionString { get; }
+
+    public string? FilterExpressionString { get; }
 }

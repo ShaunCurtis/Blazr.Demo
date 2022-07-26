@@ -12,4 +12,10 @@ public class DvoWeatherForecastController : AppControllerBase<DvoWeatherForecast
     public DvoWeatherForecastController(ICQSDataBroker dataBroker)
         : base(dataBroker)
     { }
+
+    [Mvc.Route("/api/[controller]/ilistquery")]
+    [Mvc.HttpPost]
+    public async Task<ListProviderResult<DvoWeatherForecast>> IListQuery([FromBody] WeatherForecastListQuery query)
+    => await _dataBroker.ExecuteAsync<DvoWeatherForecast>(query);
+
 }

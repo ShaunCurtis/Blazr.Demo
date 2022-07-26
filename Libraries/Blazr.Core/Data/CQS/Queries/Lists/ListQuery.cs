@@ -6,16 +6,27 @@
 
 namespace Blazr.Core;
 
-public class ListQuery<TRecord>
+public record ListQuery<TRecord>
     :IListQuery<TRecord>
     where TRecord : class, new()
 {
-    public ListProviderRequest<TRecord> Request { get; private set; }
+    public int StartIndex { get; init; }
 
-    public Guid TransactionId => Guid.NewGuid();
+    public int PageSize { get; init; }
+
+    public string? SortExpressionString { get; init; }
+
+    public string? FilterExpressionString { get; init; }
+
+    public Guid TransactionId { get; init; } = Guid.NewGuid();
+
+    public ListQuery() { }
 
     public ListQuery(ListProviderRequest<TRecord> request)
     {
-        Request = request;
+        this.StartIndex = request.StartIndex;
+        this.PageSize = request.PageSize;
+        this.SortExpressionString = request.SortExpressionString;
+        this.FilterExpressionString = request.FilterExpressionString;
     }
 }

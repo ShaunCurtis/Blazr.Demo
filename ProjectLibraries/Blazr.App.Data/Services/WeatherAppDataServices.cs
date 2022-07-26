@@ -8,12 +8,16 @@ namespace Blazr.App.Data;
 
 public static class WeatherAppDataServices
 {
+    /// <summary>
+    /// This set of services is used by the full Blazor Server version of the Application
+    /// </summary>
+    /// <typeparam name="TDbContext"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="options"></param>
     public static void AddWeatherAppServerDataServices<TDbContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> options) where TDbContext : DbContext
     {
         services.AddDbContextFactory<TDbContext>(options);
         services.AddSingleton<ICQSDataBroker, CQSDataBroker<InMemoryWeatherDbContext>>();
-        services.AddSingleton<IDataBroker, ServerDataBroker<InMemoryWeatherDbContext>>();
-        services.AddSingleton<ICustomCQSDataBroker, ServerCustomCQSDataBroker<TDbContext>>();
 
         //services.AddTransient<IListQueryHandler<DvoWeatherForecast>, ListQueryHandler<DvoWeatherForecast, InMemoryWeatherDbContext>>();
         services.AddTransient<IListQueryHandler<DboWeatherLocation>, ListQueryHandler<DboWeatherLocation, InMemoryWeatherDbContext>>();
@@ -23,9 +27,16 @@ public static class WeatherAppDataServices
         services.AddWeatherServices();
     }
 
+    /// <summary>
+    /// This set of services is used by the Blazxor WASM client side version of the Application
+    /// The data pipeline uses the HttpClient to make API calls to the WASM Application Server
+    /// </summary>
+    /// <param name="services"></param>
     public static void AddWeatherAppWASMDataServices(this IServiceCollection services)
     {
-        services.AddSingleton<ICQSDataBroker, CQSAPIDataBroker>();
+        // Set to scoped as it consumes the HttpClient service which is itself scoped.
+        services.AddScoped<ICQSDataBroker, CQSAPIDataBroker>();
+        services.AddScoped<ICQSAPIListHandlerFactory, CQSAPIListHandlerFactory>();
 
         services.AddTransient<IListQueryHandler<DboWeatherLocation>, ListQueryHandler<DboWeatherLocation, InMemoryWeatherDbContext>>();
         services.AddTransient<IListQueryHandler<DboUser>, ListQueryHandler<DboUser, InMemoryWeatherDbContext>>();
@@ -41,6 +52,8 @@ public static class WeatherAppDataServices
         services.AddTransient<IListQueryHandler<DboWeatherLocation>, ListQueryHandler<DboWeatherLocation, InMemoryWeatherDbContext>>();
         services.AddTransient<IListQueryHandler<DboUser>, ListQueryHandler<DboUser, InMemoryWeatherDbContext>>();
         services.AddTransient<IListQueryHandler<DvoWeatherForecast>, WeatherForecastListQueryHandler<InMemoryWeatherDbContext>>();
+
+        services.AddWeatherServices();
     }
 
 
@@ -48,7 +61,6 @@ public static class WeatherAppDataServices
     {
         services.AddDbContextFactory<InMemoryWeatherDbContext>(options => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));
         services.AddSingleton<IDataBroker, ServerDataBroker<InMemoryWeatherDbContext>>();
-        services.AddSingleton<ICustomCQSDataBroker, ServerCustomCQSDataBroker<InMemoryWeatherDbContext>>();
     }
 
     public static void AddTestData<TDbContext>(IServiceProvider provider) where TDbContext : DbContext

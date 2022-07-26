@@ -46,10 +46,10 @@ public class WeatherForecastListQueryHandler<TDbContext>
                 .Where(item => item.WeatherLocationId == listQuery.WeatherLocationId)
                 .AsQueryable();
 
-        if (listQuery.Request.PageSize > 0)
+        if (listQuery.PageSize > 0)
             query = query
-                .Skip(listQuery.Request.StartIndex)
-                .Take(listQuery.Request.PageSize);
+                .Skip(listQuery.StartIndex)
+                .Take(listQuery.PageSize);
 
         if (query is IAsyncEnumerable<DvoWeatherForecast>)
             this.items = await query.ToListAsync();

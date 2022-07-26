@@ -59,18 +59,18 @@ public class ListQueryHandler<TRecord, TDbContext>
 
         IQueryable<TRecord> query = dbContext.Set<TRecord>();
 
-        if (listQuery.Request.FilterExpressionString is not null)
+        if (listQuery.FilterExpressionString is not null)
             query = query
-                .Where(listQuery.Request.FilterExpressionString)
+                .Where(listQuery.FilterExpressionString)
                 .AsQueryable();
 
-        if (listQuery.Request.SortExpressionString is not null)
-            query = query.OrderBy(listQuery.Request.SortExpressionString);
+        if (listQuery.SortExpressionString is not null)
+            query = query.OrderBy(listQuery.SortExpressionString);
 
-        if (listQuery.Request.PageSize > 0)
+        if (listQuery.PageSize > 0)
             query = query
-                .Skip(listQuery.Request.StartIndex)
-                .Take(listQuery.Request.PageSize);
+                .Skip(listQuery.StartIndex)
+                .Take(listQuery.PageSize);
 
         if (query is IAsyncEnumerable<TRecord>)
             this.items = await query.ToListAsync();
@@ -87,9 +87,9 @@ public class ListQueryHandler<TRecord, TDbContext>
 
         IQueryable<TRecord> query = dbContext.Set<TRecord>();
 
-        if (listQuery.Request.FilterExpressionString is not null)
+        if (listQuery.FilterExpressionString is not null)
             query = query
-                .Where(listQuery.Request.FilterExpressionString)
+                .Where(listQuery.FilterExpressionString)
                 .AsQueryable();
 
         if (query is IAsyncEnumerable<TRecord>)

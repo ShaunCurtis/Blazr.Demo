@@ -11,7 +11,7 @@ public abstract class AppControllerBase<TRecord>
     : ControllerBase
     where TRecord : class, new()
 {
-    private ICQSDataBroker _dataBroker;
+    protected ICQSDataBroker _dataBroker;
 
     public AppControllerBase(ICQSDataBroker dataBroker)
         => _dataBroker = dataBroker;
@@ -21,14 +21,9 @@ public abstract class AppControllerBase<TRecord>
     public async Task<ListProviderResult<TRecord>> ListQuery([FromBody] ListQuery<TRecord> query)
         => await _dataBroker.ExecuteAsync<TRecord>(query);
 
-    [Mvc.Route("/api/[controller]/ilistquery")]
-    [Mvc.HttpPost]
-    public async Task<ListProviderResult<TRecord>> IListQuery([FromBody] IListQuery<TRecord> query)
-        => await _dataBroker.ExecuteAsync<TRecord>(query);
-
     [Mvc.Route("/api/[controller]/recordquery")]
     [Mvc.HttpPost]
-    public async Task<RecordProviderResult<TRecord>> RecordGuidKeyQuery([FromBody] RecordQuery<TRecord> query)
+    public async Task<RecordProviderResult<TRecord>> RecordQuery([FromBody] RecordQuery<TRecord> query)
         => await _dataBroker.ExecuteAsync<TRecord>(query);
 
     [Mvc.Route("/api/[controller]/addrecordcommand")]

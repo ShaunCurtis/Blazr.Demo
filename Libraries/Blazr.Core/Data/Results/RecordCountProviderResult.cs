@@ -6,13 +6,15 @@
 
 namespace Blazr.Core;
 
-public readonly struct RecordCountProviderResult
+public record RecordCountProviderResult
 {
-    public int Count { get; }
+    public int Count { get; init; }
      
-    public bool Success { get; }
+    public bool Success { get; init; }
 
-    public string? Message { get; }
+    public string? Message { get; init; }
+
+    public RecordCountProviderResult() { }
 
     public RecordCountProviderResult(int count, bool success = true, string? message = null)
     {

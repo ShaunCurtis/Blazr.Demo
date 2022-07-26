@@ -6,11 +6,13 @@
 
 namespace Blazr.Core;
 
-public readonly struct CommandResult
+public record CommandResult
 {
     public Guid NewId { get; init; }
     public bool Success { get; init; }
     public string Message { get; init; }
+
+    public CommandResult() { }
 
     public CommandResult( Guid newId, bool success, string message)
     {

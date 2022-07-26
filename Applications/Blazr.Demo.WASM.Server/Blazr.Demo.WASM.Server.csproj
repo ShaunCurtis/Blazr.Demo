@@ -8,12 +8,13 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Blazr.App.Controllers\Blazr.App.Controllers.csproj" />
+		<ProjectReference Include="..\..\Blazr.Demo.WASM\Blazr.Demo.WASM.csproj" />
 		<ProjectReference Include="..\..\ProjectLibraries\Blazr.App.Core\Blazr.App.Core.csproj" />
 		<ProjectReference Include="..\..\ProjectLibraries\Blazr.App.Data\Blazr.App.Data.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.4" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.7" />
 		<PackageReference Include="EntityFramework" Version="6.4.4" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.7" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.7">
@@ -23,6 +24,10 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.7" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.7" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.DynamicLinq" Version="6.2.19" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\css\" />
 	</ItemGroup>
 
 </Project>

@@ -6,39 +6,38 @@
 
 @implements IDisposable
 @namespace Blazr.App.UI
-@inject UserService UserService;
 
-<UILoader State=this.state >
+<UILoader State=this.state>
 
-<span class="mr-2 me-2">Change User:</span>
-<div class="w-25">
-    <select id="userselect" class="form-control" @onchange="ChangeUser">
-        @foreach (var value in UserService.UserList)
-        {
-            @if (value.Key == _currentUserId)
+    <span class="mr-2 me-2">Change User:</span>
+    <div class="w-25">
+        <select id="userselect" class="form-control" @onchange="ChangeUser">
+            @foreach (var value in this.Users)
             {
-                <option value="@value.Key" selected>@value.Value</option>
+                @if (value.Key == _currentUserId)
+                {
+                    <option value="@value.Key" selected>@value.Value</option>
+                }
+                else
+                {
+                    <option value="@value.Key">@value.Value</option>
+                }
             }
-            else
-            {
-                <option value="@value.Key">@value.Value</option>
-            }
-        }
-    </select>
-</div>
-<span class="text-nowrap ml-3 ms-3">
-    <AuthorizeView>
-        <Authorized>
-            @if (this.user is not null && this.user.Identity is not null)
-            {
-                <span>Hello, @this.user!.Identity!.Name</span>
-            }
-        </Authorized>
-        <NotAuthorized>
-            Not Logged In
-        </NotAuthorized>
-    </AuthorizeView>
-</span>
+        </select>
+    </div>
+    <span class="text-nowrap ml-3 ms-3">
+        <AuthorizeView>
+            <Authorized>
+                @if (this.user is not null && this.user.Identity is not null)
+                {
+                    <span>Hello, @this.user!.Identity!.Name</span>
+                }
+            </Authorized>
+            <NotAuthorized>
+                Not Logged In
+            </NotAuthorized>
+        </AuthorizeView>
+    </span>
 </UILoader>
 
 @code {
@@ -53,7 +52,6 @@
 
     protected async override Task OnInitializedAsync()
     {
-        await this.UserService.EnsureUsersAsync();
         var authState = await AuthTask!;
         this.user = authState.User;
         this.state = ComponentState.Loaded;
@@ -66,7 +64,7 @@
     private async Task ChangeUser(ChangeEventArgs e)
     {
         if (AuthState is TestAuthenticationStateProvider && e.Value is not null && Guid.TryParse(e.Value.ToString(), out Guid Id))
-                await ((TestAuthenticationStateProvider)AuthState).ChangeUser(Id);
+            await ((TestAuthenticationStateProvider)AuthState).ChangeUser(Id);
     }
 
     private async void OnUserChanged(Task<AuthenticationState> state)
@@ -77,6 +75,17 @@
         var authState = await state;
         this.user = authState.User;
     }
+
+    private Dictionary<Guid, string> Users = new Dictionary<Guid, string>
+    {
+        {GuidExtensions.Null, "Anonymous"},
+        {new Guid("00000000-0000-0000-0000-000000000001"), "Visitor"},
+        {new Guid("00000000-0000-0000-0000-100000000001"), "User-1"},
+        {new Guid("00000000-0000-0000-0000-100000000002"), "User-2"},
+        {new Guid("00000000-0000-0000-0000-100000000003"), "User-3"},
+        {new Guid("00000000-0000-0000-0000-200000000001"), "Admin"},
+    };
+
 
     public void Dispose()
         => AuthState!.AuthenticationStateChanged -= this.OnUserChanged;

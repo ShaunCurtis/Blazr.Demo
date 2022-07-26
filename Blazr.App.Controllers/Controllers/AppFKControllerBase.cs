@@ -22,11 +22,6 @@ public abstract class AppFKControllerBase<TRecord, TFKRecord>
     public async Task<ListProviderResult<TRecord>> ListQuery([FromBody] ListQuery<TRecord> query)
         => await _dataBroker.ExecuteAsync<TRecord>(query);
 
-    [Mvc.Route("/api/[controller]/ilistquery")]
-    [Mvc.HttpPost]
-    public async Task<ListProviderResult<TRecord>> IFilteredListQuery([FromBody] IListQuery<TRecord> query)
-        => await _dataBroker.ExecuteAsync<TRecord>(query);
-
     [Mvc.Route("/api/[controller]/recordquery")]
     [Mvc.HttpPost]
     public async Task<RecordProviderResult<TRecord>> RecordGuidKeyQuery([FromBody] RecordQuery<TRecord> query)

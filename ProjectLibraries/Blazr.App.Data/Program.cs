@@ -1,6 +1,7 @@
 ﻿global using System.ComponentModel.DataAnnotations;
 //global using System.Linq.Dynamic.Core;
 global using System.Reflection;
+global using System.Net.Http.Json;
 
 global using Blazr.App.Core;
 global using Blazr.Core;

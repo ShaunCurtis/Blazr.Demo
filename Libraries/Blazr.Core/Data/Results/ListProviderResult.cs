@@ -6,17 +6,17 @@
 
 namespace Blazr.Core;
 
-public readonly struct ListProviderResult<TRecord>
+public record ListProviderResult<TRecord>
 {
-    public IEnumerable<TRecord> Items { get; } = Enumerable.Empty<TRecord>();
+    public IEnumerable<TRecord> Items { get; init; } = Enumerable.Empty<TRecord>();
 
-    public int TotalItemCount { get; }
+    public int TotalItemCount { get; init; }
 
-    public bool Success { get; }
+    public bool Success { get; init; }
 
-    public string? Message { get; }
+    public string? Message { get; init; }
 
-    public ItemsProviderResult<TRecord> ItemsProviderResult => new ItemsProviderResult<TRecord>(this.Items, this.TotalItemCount);
+    public ListProviderResult() { }
 
     public ListProviderResult(IEnumerable<TRecord> items, int totalItemCount, bool success = true, string? message = null)
     {
