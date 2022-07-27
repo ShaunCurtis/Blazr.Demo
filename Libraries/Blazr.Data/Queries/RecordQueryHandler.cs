@@ -28,9 +28,9 @@ public class RecordQueryHandler<TRecord, TDbContext>
 
         TRecord? record = null;
 
-        // first check if the record implements IRecord.  If so we can do a cast and then do the quesry via the Id property directly 
+        // first check if the record implements IRecord.  If so we can do a cast and then do the query via the Uid property directly 
         if ((new TRecord()) is IRecord)
-            record = await dbContext.Set<TRecord>().SingleOrDefaultAsync(item => ((IRecord)item).Id == _query.GuidId);
+            record = await dbContext.Set<TRecord>().SingleOrDefaultAsync(item => ((IRecord)item).Uid == _query.GuidId);
 
         // Try and use the EF FindAsync implementation
         if (record == null)

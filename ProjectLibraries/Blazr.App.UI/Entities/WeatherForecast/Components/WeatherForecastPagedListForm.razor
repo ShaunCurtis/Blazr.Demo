@@ -13,14 +13,14 @@
 
 <UIListControl TRecord=DvoWeatherForecast Records=this.Service.Records LoadState=this.loadState class="@this.TableCss">
     <RowTemplate>
-        <UIListColumn HeaderTitle="ID" SortField="WeatherForecastId" NoWrap=true>@context.Id.AsShortGuid()</UIListColumn>
+        <UIListColumn HeaderTitle="ID" SortField="Uid" NoWrap=true>@context.Uid.AsShortGuid()</UIListColumn>
         <UIListColumn HeaderTitle="Date" SortField="Date" NoWrap=true>@context.Date.AsGlobalDate()</UIListColumn>
         <UIListColumn HeaderTitle="Location" SortField="Location">@context.Location</UIListColumn>
         <UIListColumn HeaderTitle="Temp &deg;C" SortField="TemperatureC" NoWrap=true>@context.TemperatureC.AsDegC()</UIListColumn>
         <UIListColumn HeaderTitle="Temp &deg;F" SortField="TemperatureC" NoWrap=true>@context.TemperatureC.AsDegF()</UIListColumn>
         <UIListColumn HeaderTitle="Summary" SortField="Summary" IsMaxColumn=true>@context.Summary</UIListColumn>
         <UIListColumn HeaderTitle="" NoWrap=true class="text-right text-end">
-            @this.AuthorizedRowButtonMarkup(context, context.Id)
+            @this.AuthorizedRowButtonMarkup(context, context.Uid)
         </UIListColumn>
     </RowTemplate>
 </UIListControl>
@@ -30,12 +30,6 @@
     protected override RenderFragment BaseContent => (builder) => base.BuildRenderTree(builder);
 
     [Parameter] public Guid WeatherLocationId { get; set; } = Guid.Empty;
-
-    protected override void OnInitialized()
-    {
-        if (this.WeatherLocationId != Guid.Empty)
-            this.ListFilter = record => record.WeatherLocationId == this.WeatherLocationId;
-    }
 
     protected override WeatherForecastListQuery GetListQuery(ListProviderRequest<DvoWeatherForecast> request)
         => new WeatherForecastListQuery(this.WeatherLocationId, request);

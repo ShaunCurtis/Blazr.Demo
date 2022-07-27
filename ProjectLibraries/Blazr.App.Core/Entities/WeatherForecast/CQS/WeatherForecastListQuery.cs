@@ -7,13 +7,13 @@
 namespace Blazr.App.Core;
 
 public record WeatherForecastListQuery
-    : ListQuery<DvoWeatherForecast>
+    : ListQueryBase<DvoWeatherForecast>
 {
-    public readonly Guid? WeatherLocationId;
+    public Guid? WeatherLocationId { get; init; }
 
     public WeatherForecastListQuery()
     : base()
-    => WeatherLocationId = Guid.Empty;
+        => WeatherLocationId = Guid.Empty;
 
 
     public WeatherForecastListQuery(Guid? weatherLocationId, ListProviderRequest<DvoWeatherForecast> request)

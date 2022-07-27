@@ -9,7 +9,7 @@ namespace Blazr.Core;
 public interface IEditRecord<TRecord> 
     where TRecord : class, new()
 {
-    public Guid Id { get; set; }
+    public Guid Uid { get; set; }
 
     public TRecord Record { get; }
 

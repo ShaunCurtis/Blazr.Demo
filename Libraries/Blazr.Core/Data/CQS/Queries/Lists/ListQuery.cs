@@ -7,26 +7,11 @@
 namespace Blazr.Core;
 
 public record ListQuery<TRecord>
-    :IListQuery<TRecord>
+    :ListQueryBase<TRecord>
     where TRecord : class, new()
 {
-    public int StartIndex { get; init; }
-
-    public int PageSize { get; init; }
-
-    public string? SortExpressionString { get; init; }
-
-    public string? FilterExpressionString { get; init; }
-
-    public Guid TransactionId { get; init; } = Guid.NewGuid();
-
     public ListQuery() { }
 
     public ListQuery(ListProviderRequest<TRecord> request)
-    {
-        this.StartIndex = request.StartIndex;
-        this.PageSize = request.PageSize;
-        this.SortExpressionString = request.SortExpressionString;
-        this.FilterExpressionString = request.FilterExpressionString;
-    }
+        :base(request) { }
 }

@@ -36,7 +36,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 		documents\Components.md = documents\Components.md
 		documents\Controls.md = documents\Controls.md
 		documents\CoreServices.md = documents\CoreServices.md
-		documents\CRSDataBrokers.md = documents\CRSDataBrokers.md
+		documents\CQS-Data-Pipeline.md = documents\CQS-Data-Pipeline.md
+		documents\CQSDataBrokers.md = documents\CQSDataBrokers.md
 		documents\Data.md = documents\Data.md
 		documents\DataServices.md = documents\DataServices.md
 		documents\Design.md = documents\Design.md
@@ -49,7 +50,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Controllers", "Blazr.App.Controllers\Blazr.App.Controllers.csproj", "{242CD787-DF8C-4C55-90F7-B9BB6EFE18CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.Demo.WASM", "Blazr.Demo.WASM\Blazr.Demo.WASM.csproj", "{64C3EFA1-84BA-49A5-9CB5-B9D4080E0F60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.WASM", "Blazr.Demo.WASM\Blazr.Demo.WASM.csproj", "{64C3EFA1-84BA-49A5-9CB5-B9D4080E0F60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

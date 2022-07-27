@@ -129,7 +129,7 @@ public abstract class BlazrViewerForm<TRecord, TEntity>
     protected virtual bool IsThisRecord(Guid Id)
     {
         if (this.Service.Record is IRecord)
-            return ((IRecord)this.Service.Record).Id == Id;
+            return ((IRecord)this.Service.Record).Uid == Id;
 
         return true;
     }

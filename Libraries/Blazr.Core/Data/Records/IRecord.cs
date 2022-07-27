@@ -8,5 +8,5 @@ namespace Blazr.Core;
 
 public interface IRecord 
 {
-    public Guid Id { get; }
+    public Guid Uid { get; }
 }

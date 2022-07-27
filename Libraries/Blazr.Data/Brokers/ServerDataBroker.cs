@@ -25,7 +25,7 @@ public class ServerDataBroker<TDbContext>
 
         // first check if the record implements IRecord.  If so we can do a cast and then do the query via the Id property directly 
         if ((new TRecord()) is IRecord)
-            record = await dbContext.Set<TRecord>().SingleOrDefaultAsync(item => ((IRecord)item).Id == id);
+            record = await dbContext.Set<TRecord>().SingleOrDefaultAsync(item => ((IRecord)item).Uid == id);
 
         // Try and use the EF FindAsync implementation
         if (record == null)

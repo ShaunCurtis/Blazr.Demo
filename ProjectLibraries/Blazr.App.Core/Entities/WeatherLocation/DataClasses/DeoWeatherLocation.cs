@@ -11,15 +11,15 @@ public class DeoWeatherLocation
     private DboWeatherLocation _baseRecord = new DboWeatherLocation();
     private Guid _newId = Guid.NewGuid();
 
-    public Guid Id { get; set; } = GuidExtensions.Null;
+    public Guid Uid { get; set; } = GuidExtensions.Null;
 
     public Guid OwnerId { get; set; } = Guid.Empty;
 
     public string Location { get; set; } = string.Empty;
 
-    public bool IsNull => Id == GuidExtensions.Null;
+    public bool IsNull => Uid == GuidExtensions.Null;
 
-    public bool IsNew => Id == Guid.Empty;
+    public bool IsNew => Uid == Guid.Empty;
 
     public bool IsDirty => _baseRecord != this.Record;
 
@@ -41,7 +41,7 @@ public class DeoWeatherLocation
     {
         _baseRecord = record with { };
 
-        this.Id = record.WeatherLocationId;
+        this.Uid = record.Uid;
         this.OwnerId = record.OwnerId;
         this.Location = record.Location;
     }
@@ -49,7 +49,7 @@ public class DeoWeatherLocation
     public DboWeatherLocation Record =>
         new DboWeatherLocation()
         {
-            WeatherLocationId = this.Id,
+            Uid = this.Uid,
             OwnerId = this.OwnerId,
             Location = this.Location
         };
@@ -57,7 +57,7 @@ public class DeoWeatherLocation
     public DboWeatherLocation AsNewRecord =>
         new DboWeatherLocation()
         {
-            WeatherLocationId = _newId,
+            Uid = _newId,
             OwnerId = this.OwnerId,
             Location = this.Location
         };

@@ -84,7 +84,7 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
         }
 
         this.EditModel.Load(record);
-        this.NotifyChange(EditModel.Id);
+        this.NotifyChange(EditModel.Uid);
         return true;
     }
 
@@ -107,7 +107,7 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
         }
 
         this.EditModel.Load(record);
-        this.NotifyChange(EditModel.Id);
+        this.NotifyChange(EditModel.Uid);
         return true;
     }
 
@@ -126,7 +126,7 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
         this.EditModel.Reset();
 
         var record = EditModel.Record;
-        var id = EditModel.Id;
+        var id = EditModel.Uid;
         var command = new DeleteRecordCommand<TRecord>(record);
 
         var result = await this.DataBroker.ExecuteAsync<TRecord>(command);

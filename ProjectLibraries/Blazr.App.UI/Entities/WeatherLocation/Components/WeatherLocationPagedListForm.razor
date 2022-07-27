@@ -12,10 +12,10 @@
 
 <UIListControl TRecord=DboWeatherLocation Records=this.Service.Records LoadState=this.loadState class="@this.TableCss">
     <RowTemplate>
-        <UIListColumn HeaderTitle="ID" SortField="WeatherForecastId" NoWrap=true>@context.WeatherLocationId.AsShortGuid()</UIListColumn>
+        <UIListColumn HeaderTitle="ID" SortField="Uid" NoWrap=true>@context.Uid.AsShortGuid()</UIListColumn>
         <UIListColumn HeaderTitle="Location" SortField="Location" IsMaxColumn=true>@context.Location</UIListColumn>
         <UIListColumn HeaderTitle="" NoWrap=true class="text-right text-end">
-            @this.AuthorizedRowButtonMarkup(context, context.WeatherLocationId, true)
+            @this.AuthorizedRowButtonMarkup(context, context.Uid, true)
         </UIListColumn>
     </RowTemplate>
 </UIListControl>

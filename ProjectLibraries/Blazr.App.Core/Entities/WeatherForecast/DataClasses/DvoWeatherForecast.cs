@@ -10,7 +10,7 @@ public record DvoWeatherForecast
     : IRecord, IAuthRecord
 {
     [Key]
-    public Guid Id { get; init; }
+    public Guid Uid { get; init; }
 
     public Guid WeatherSummaryId { get; init; }
 

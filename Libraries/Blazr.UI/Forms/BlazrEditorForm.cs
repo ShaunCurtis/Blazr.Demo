@@ -142,7 +142,7 @@ public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
             if (result)
             {
                 this.SetMessage("Record Added", "alert-success");
-                await this.Service.LoadRecordAsync(this.Service.EditModel.Id);
+                await this.Service.LoadRecordAsync(this.Service.EditModel.Uid);
                 hasSaved = true;
             }
             else

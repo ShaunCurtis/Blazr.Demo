@@ -63,26 +63,26 @@ public class WeatherTestDataProvider
     private void LoadSummaries()
     {
         this.WeatherSummaries = new List<DboWeatherSummary> {
-            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Freezing"},
-            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Bracing"},
-            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Chilly"},
-            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Cool"},
-            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Mild"},
-            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Warm"},
-            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Balmy"},
-            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Hot"},
-            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Sweltering"},
-            new DboWeatherSummary { WeatherSummaryId = Guid.NewGuid(), Summary = "Scorching"},
+            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Freezing"},
+            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Bracing"},
+            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Chilly"},
+            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Cool"},
+            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Mild"},
+            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Warm"},
+            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Balmy"},
+            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Hot"},
+            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Sweltering"},
+            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Scorching"},
         };
     }
 
     private void LoadLocations()
     {
         this.WeatherLocations = new List<DboWeatherLocation> {
-            new DboWeatherLocation { WeatherLocationId = Guid.NewGuid(), Location = "Gloucester", OwnerId = new Guid($"00000000-0000-0000-0000-100000000001") },
-            new DboWeatherLocation { WeatherLocationId = Guid.NewGuid(), Location = "Capestang", OwnerId = new Guid($"00000000-0000-0000-0000-100000000002")},
-            new DboWeatherLocation { WeatherLocationId = Guid.NewGuid(), Location = "Alvor", OwnerId = new Guid($"00000000-0000-0000-0000-100000000003")},
-            new DboWeatherLocation { WeatherLocationId = Guid.NewGuid(), Location = "Adelaide", OwnerId = new Guid($"00000000-0000-0000-0000-100000000003")},
+            new DboWeatherLocation { Uid = Guid.NewGuid(), Location = "Gloucester", OwnerId = new Guid($"00000000-0000-0000-0000-100000000001") },
+            new DboWeatherLocation { Uid = Guid.NewGuid(), Location = "Capestang", OwnerId = new Guid($"00000000-0000-0000-0000-100000000002")},
+            new DboWeatherLocation { Uid = Guid.NewGuid(), Location = "Alvor", OwnerId = new Guid($"00000000-0000-0000-0000-100000000003")},
+            new DboWeatherLocation { Uid = Guid.NewGuid(), Location = "Adelaide", OwnerId = new Guid($"00000000-0000-0000-0000-100000000003")},
         };
     }
 
@@ -98,9 +98,9 @@ public class WeatherTestDataProvider
                     .Range(1, RecordsToGenerate)
                     .Select(index => new DboWeatherForecast
                     {
-                        WeatherForecastId = Guid.NewGuid(),
-                        WeatherSummaryId = summaryArray[Random.Shared.Next(summaryArray.Length)].WeatherSummaryId,
-                        WeatherLocationId = location.WeatherLocationId,
+                        Uid = Guid.NewGuid(),
+                        WeatherSummaryId = summaryArray[Random.Shared.Next(summaryArray.Length)].Uid,
+                        WeatherLocationId = location.Uid,
                         Date = DateTime.Now.AddDays(index),
                         TemperatureC = Random.Shared.Next(-20, 55),
                         OwnerId = location.OwnerId,
@@ -129,8 +129,8 @@ public class WeatherTestDataProvider
 
         return new DboWeatherForecast
         {
-            WeatherForecastId = Guid.NewGuid(),
-            WeatherSummaryId = summaryArray[Random.Shared.Next(summaryArray.Length)].WeatherSummaryId,
+            Uid = Guid.NewGuid(),
+            WeatherSummaryId = summaryArray[Random.Shared.Next(summaryArray.Length)].Uid,
             Date = DateTime.Now.AddDays(-1),
             TemperatureC = Random.Shared.Next(-20, 55),
         };
@@ -150,11 +150,12 @@ public class WeatherTestDataProvider
     {
         return new DvoWeatherForecast
         {
-            Id = record.WeatherForecastId,
+            Uid = record.Uid,
+            WeatherLocationId = record.WeatherLocationId,
             WeatherSummaryId = record.WeatherSummaryId,
             Date = record.Date,
             TemperatureC = record.TemperatureC,
-            Summary = this.WeatherSummaries.SingleOrDefault(item => item.WeatherSummaryId == record.WeatherSummaryId)?.Summary ?? String.Empty
+            Summary = this.WeatherSummaries.SingleOrDefault(item => item.Uid == record.Uid)?.Summary ?? String.Empty
         };
     }
 

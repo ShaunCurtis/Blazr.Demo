@@ -6,9 +6,10 @@
 namespace Blazr.App.Core;
 
 public record DboWeatherSummary
+    : IRecord
 {
     [Key]
-    public Guid WeatherSummaryId { get; init; } = Guid.Empty;
+    public Guid Uid { get; init; } = Guid.Empty;
 
     public string Summary { get; init; } = string.Empty;
 }

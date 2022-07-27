@@ -11,7 +11,7 @@ public class DeoWeatherForecast
     private DboWeatherForecast _baseRecord = new DboWeatherForecast();
     private Guid _newId = Guid.NewGuid();
 
-    public Guid Id { get; set; } = GuidExtensions.Null;
+    public Guid Uid { get; set; } = GuidExtensions.Null;
 
     public Guid SummaryId { get; set; }
 
@@ -23,9 +23,9 @@ public class DeoWeatherForecast
 
     public int TemperatureC { get; set; }
 
-    public bool IsNull => Id == GuidExtensions.Null;
+    public bool IsNull => Uid == GuidExtensions.Null;
 
-    public bool IsNew => Id == Guid.Empty;
+    public bool IsNew => Uid == Guid.Empty;
 
     public bool IsDirty => _baseRecord != this.Record;
 
@@ -47,7 +47,7 @@ public class DeoWeatherForecast
     {
         _baseRecord = record with { };
 
-        this.Id = record.WeatherForecastId;
+        this.Uid = record.Uid;
         this.SummaryId = record.WeatherSummaryId;
         this.LocationId = record.WeatherLocationId;
         this.OwnerId = record.OwnerId;
@@ -58,7 +58,7 @@ public class DeoWeatherForecast
     public DboWeatherForecast Record =>
         new DboWeatherForecast()
         {
-            WeatherForecastId = this.Id,
+            Uid = this.Uid,
             WeatherSummaryId = this.SummaryId,
             WeatherLocationId = this.LocationId,
             OwnerId = this.OwnerId,
@@ -69,7 +69,7 @@ public class DeoWeatherForecast
     public DboWeatherForecast AsNewRecord =>
         new DboWeatherForecast()
         {
-            WeatherForecastId = _newId,
+            Uid = _newId,
             WeatherSummaryId = this.SummaryId,
             WeatherLocationId = this.LocationId,
             OwnerId = this.OwnerId,

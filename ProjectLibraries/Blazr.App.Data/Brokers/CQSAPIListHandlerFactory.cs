@@ -5,6 +5,13 @@
 /// ============================================================
 namespace Blazr.App.Data;
 
+// ===========================
+// Interfaces can't be serialized so we can't pass custom list queries through the IListQuery interface in web API calls.
+// This factory matches custom ListQueries passed as IListQuery to the ICQSDataBroker to their matching concrete classes and 
+// makes API calls using the concrete class.
+// You need to add a `ExecuteAsync` handler and add a switch case to the public `ExecuteAsync` method 
+// Note: there needs to be a corresponding Controller to receive the call.
+// ===========================
 public class CQSAPIListHandlerFactory : ICQSAPIListHandlerFactory
 {
     private HttpClient _httpClient;
@@ -29,7 +36,7 @@ public class CQSAPIListHandlerFactory : ICQSAPIListHandlerFactory
 
     private async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(WeatherForecastListQuery query) where TRecord : class, new()
     {
-        ListProviderResult<TRecord> result = new ListProviderResult<TRecord>();
+        ListProviderResult<TRecord>? result = null;
 
         var entityname = (new TRecord()).GetType().Name;
         var response = await _httpClient.PostAsJsonAsync<WeatherForecastListQuery>($"/api/{entityname}/ilistquery", query);
@@ -37,12 +44,12 @@ public class CQSAPIListHandlerFactory : ICQSAPIListHandlerFactory
         if (response.IsSuccessStatusCode)
             result = await response.Content.ReadFromJsonAsync<ListProviderResult<TRecord>>();
 
-        return result;
+        return result ?? new ListProviderResult<TRecord>();
     }
 
     private async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(ListQuery<TRecord> query) where TRecord : class, new()
     {
-        ListProviderResult<TRecord> result = new ListProviderResult<TRecord>();
+        ListProviderResult<TRecord>? result = null;
 
         var entityname = (new TRecord()).GetType().Name;
         var response = await _httpClient.PostAsJsonAsync<ListQuery<TRecord>>($"/api/{entityname}/listquery", query);
@@ -50,7 +57,6 @@ public class CQSAPIListHandlerFactory : ICQSAPIListHandlerFactory
         if (response.IsSuccessStatusCode)
             result = await response.Content.ReadFromJsonAsync<ListProviderResult<TRecord>>();
 
-        return result;
+        return result ?? new ListProviderResult<TRecord>();
     }
-
 }

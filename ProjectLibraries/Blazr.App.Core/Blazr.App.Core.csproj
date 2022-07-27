@@ -7,8 +7,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Compile Remove="Entities\WeatherSummary\CQS\**" />
 		<Compile Remove="Utilities\**" />
+		<EmbeddedResource Remove="Entities\WeatherSummary\CQS\**" />
 		<EmbeddedResource Remove="Utilities\**" />
+		<None Remove="Entities\WeatherSummary\CQS\**" />
 		<None Remove="Utilities\**" />
 	</ItemGroup>
 
@@ -20,10 +23,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Libraries\Blazr.Core\Blazr.Core.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Entities\WeatherSummary\CQS\" />
 	</ItemGroup>
 
 </Project>

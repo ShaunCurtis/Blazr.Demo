@@ -48,7 +48,9 @@ public static class WeatherAppDataServices
     public static void AddWeatherAppWASMServerDataServices<TDbContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> options) where TDbContext : DbContext
     {
         services.AddDbContextFactory<TDbContext>(options);
+
         services.AddSingleton<ICQSDataBroker, CQSDataBroker<InMemoryWeatherDbContext>>();
+
         services.AddTransient<IListQueryHandler<DboWeatherLocation>, ListQueryHandler<DboWeatherLocation, InMemoryWeatherDbContext>>();
         services.AddTransient<IListQueryHandler<DboUser>, ListQueryHandler<DboUser, InMemoryWeatherDbContext>>();
         services.AddTransient<IListQueryHandler<DvoWeatherForecast>, WeatherForecastListQueryHandler<InMemoryWeatherDbContext>>();

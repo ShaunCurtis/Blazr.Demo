@@ -6,10 +6,10 @@
 namespace Blazr.App.Core;
 
 public record DboWeatherForecast
-    : IAuthRecord
+    : IAuthRecord, IRecord
 {
     [Key]
-    public Guid WeatherForecastId { get; init; }
+    public Guid Uid { get; init; }
 
     public Guid WeatherSummaryId { get; init; }
 

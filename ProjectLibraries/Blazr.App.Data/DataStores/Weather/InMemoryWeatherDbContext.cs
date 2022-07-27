@@ -6,7 +6,7 @@
 namespace Blazr.App.Data;
 
 public class InMemoryWeatherDbContext
-    : DbContext, IWeatherDbContext
+    : DbContext
 {
     public DbSet<DboWeatherForecast> DboWeatherForecast { get; set; } = default!;
 
@@ -34,15 +34,15 @@ public class InMemoryWeatherDbContext
         modelBuilder.Entity<DvoWeatherForecast>()
             .ToInMemoryQuery(()
             => from f in this.DboWeatherForecast
-               join s in this.DboWeatherSummary! on f.WeatherSummaryId equals s.WeatherSummaryId into fs
+               join s in this.DboWeatherSummary! on f.WeatherSummaryId equals s.Uid into fs
                from fsjoin in fs
-               join l in this.DboWeatherLocation! on f.WeatherLocationId equals l.WeatherLocationId into fl
+               join l in this.DboWeatherLocation! on f.WeatherLocationId equals l.Uid into fl
                from fljoin in fl
                join u in this.DboUser! on f.OwnerId equals u.Id into fu
                from fujoin in fu
                select new DvoWeatherForecast
                {
-                   Id = f.WeatherForecastId,
+                   Uid = f.Uid,
                    WeatherSummaryId = f.WeatherSummaryId,
                    WeatherLocationId = f.WeatherLocationId,
                    Date = f.Date,
@@ -52,14 +52,14 @@ public class InMemoryWeatherDbContext
                    OwnerId = f.OwnerId,
                    Owner = fujoin.Name
                })
-            .HasKey(x => x.Id);
+            .HasKey(x => x.Uid);
 
         modelBuilder.Entity<FkWeatherSummary>()
             .ToInMemoryQuery(()
             => from s in this.DboWeatherSummary!
                select new FkWeatherSummary
                {
-                   Id =s.WeatherSummaryId,
+                   Id =s.Uid,
                    Name = s.Summary
                })
             .HasKey(x => x.Id);
@@ -69,7 +69,7 @@ public class InMemoryWeatherDbContext
             => from l in this.DboWeatherLocation!
                select new FkWeatherLocation
                {
-                   Id = l.WeatherLocationId,
+                   Id = l.Uid,
                    Name = l.Location
                })
             .HasKey(x => x.Id);

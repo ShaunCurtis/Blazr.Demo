@@ -1,3 +1,5 @@
+> Old Version
+> 
 # Building a Command/Query Data Pipeline for Blazor in DotNetCore
 
 The first time I came across CQS - the answer to my problems with the Repository pattern.  My excitment quickly disipated when I discovered how many classes I needed to create to implement it.  My generic repository framework, even with it's design problems, trumped it hands down.
