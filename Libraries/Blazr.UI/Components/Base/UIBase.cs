@@ -13,10 +13,12 @@ namespace Blazr.UI;
 /// </summary>
 public abstract class UIBase : IComponent
 {
-    protected RenderFragment _renderFragment;
-    protected internal RenderHandle _renderHandle;
-    protected bool _hasPendingQueuedRender = false;
-    protected bool _show = true;
+    protected RenderFragment renderFragment;
+    protected internal RenderHandle renderHandle;
+    private bool _hasPendingQueuedRender = false;
+    protected internal bool hasNeverRendered = true;
+    protected bool initialized;
+    protected bool show = true;
 
 /// <summary>
 /// Content to render within the component
@@ -63,11 +65,12 @@ public abstract class UIBase : IComponent
     /// </summary>
     public UIBase()
     {
-        _renderFragment = builder =>
+        this.renderFragment = builder =>
         {
             _hasPendingQueuedRender = false;
-            if (!this.Hidden && _show)
-                BuildRenderTree(builder);
+            hasNeverRendered = false;
+            if (!this.Hidden && this.show)
+                this.BuildRenderTree(builder);
         };
     }
 
@@ -90,7 +93,7 @@ public abstract class UIBase : IComponent
 
         try
         {
-            _renderHandle.Render(_renderFragment);
+            renderHandle.Render(this.renderFragment);
         }
         catch
         {
@@ -100,21 +103,11 @@ public abstract class UIBase : IComponent
     }
 
     /// <summary>
-    /// Method to invoke an Action on the UI Context thread
+    /// Classic StateHasChangedMethod
+    /// Do not call through InvokeAsync, it already does it.
     /// </summary>
-    /// <param name="workItem"></param>
-    /// <returns></returns>
-    protected Task InvokeAsync(Action workItem)
-        => _renderHandle.Dispatcher.InvokeAsync(workItem);
-
-    /// <summary>
-    /// Method to invoke a Task Method on the UI Context thread
-    /// </summary>
-    /// <param name="workItem"></param>
-    /// <returns></returns>
-    protected Task InvokeAsync(Func<Task> workItem)
-        => _renderHandle.Dispatcher.InvokeAsync(workItem);
-
+    protected void StateHasChanged()
+        => renderHandle.Dispatcher.InvokeAsync(Render);
 
     /// <summary>
     ///  IComponent implementation
@@ -123,12 +116,7 @@ public abstract class UIBase : IComponent
     /// <param name="renderHandle"></param>
     /// <exception cref="InvalidOperationException"></exception>
     public void Attach(RenderHandle renderHandle)
-    {
-        if (_renderHandle.IsInitialized)
-            throw new InvalidOperationException($"The render handle is already set. Cannot initialize a {nameof(ComponentBase)} more than once.");
-
-        _renderHandle = renderHandle;
-    }
+        => this.renderHandle = renderHandle;
 
     /// <summary>
     ///  IComponent implementation
@@ -139,8 +127,18 @@ public abstract class UIBase : IComponent
     public virtual Task SetParametersAsync(ParameterView parameters)
     {
         parameters.SetParameterProperties(this);
-        this.Render();
+        var shouldRender = this.ShouldRenderOnParameterChange(initialized);
+
+        if (hasNeverRendered || shouldRender || renderHandle.IsRenderingOnMetadataUpdate)
+            this.Render();
+
+        this.initialized = true;
+
         return Task.CompletedTask;
     }
+
+    protected virtual bool ShouldRenderOnParameterChange(bool initialized)
+        => true;
+
 }
 

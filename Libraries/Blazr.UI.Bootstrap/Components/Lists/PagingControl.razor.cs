@@ -39,7 +39,7 @@ public partial class PagingControl
     public async void NotifyListChangedAsync()
         => await SetPageAsync();
 
-    protected async override Task OnPreRenderAsync(bool firstRender)
+    protected async override Task OnParametersChangedAsync(bool firstRender)
     {
         if (firstRender)
         {
@@ -62,7 +62,7 @@ public partial class PagingControl
     private void OnPagingReset(object? sender, PagingEventArgs e)
     {
         this.ListContext?.Set(e.Request);
-        this.InvokeAsync(StateHasChanged);
+        this.StateHasChanged();
     }
 
     private async Task GotToPageAsync(int page)

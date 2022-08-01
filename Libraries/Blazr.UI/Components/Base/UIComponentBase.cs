@@ -12,23 +12,14 @@ namespace Blazr.UI;
 /// </summary>
 public abstract class UIComponentBase : UIBase
 {
-    protected bool _initialized = false;
-
     /// <summary>
     /// Method that can be overridden by child components
     /// Eqivalent to OnParametersSetAsync
     /// </summary>
     /// <param name="firstRender"></param>
     /// <returns></returns>
-    protected virtual Task OnPreRenderAsync(bool firstRender)
+    protected virtual Task OnParametersChangedAsync(bool firstRender)
         => Task.CompletedTask;
-
-    /// <summary>
-    /// Classic StateHasChangedMethod
-    /// Do not call through InvokeAsync, it already does it.
-    /// </summary>
-    public void StateHasChanged()
-        => this.InvokeAsync(this.Render);
 
     /// <summary>
     ///  IComponent implementation
@@ -39,10 +30,16 @@ public abstract class UIComponentBase : UIBase
     public override async Task SetParametersAsync(ParameterView parameters)
     {
         parameters.SetParameterProperties(this);
+        var shouldRender = this.ShouldRenderOnParameterChange(initialized);
 
-        await this.OnPreRenderAsync(!_initialized);
-        this.Render();
-        _initialized = true;
+        if (hasNeverRendered || shouldRender || renderHandle.IsRenderingOnMetadataUpdate)
+        {
+            await this.OnParametersChangedAsync(!initialized);
+            this.Render();
+        }
+
+        this.initialized = true;
     }
+
 }
 
