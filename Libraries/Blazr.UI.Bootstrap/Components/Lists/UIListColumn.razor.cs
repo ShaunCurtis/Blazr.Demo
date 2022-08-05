@@ -8,6 +8,7 @@ namespace Blazr.UI.Bootstrap;
 
 public partial class UIListColumn : UIBase
 {
+    private bool showSortingDropdown = false;
     private bool isMaxRowColumn => IsMaxColumn && !this.IsHeader;
     private bool isNormalRowColumn => !IsMaxColumn && !this.IsHeader;
     private bool _isSortField => !string.IsNullOrWhiteSpace(this.SortField);
@@ -27,24 +28,42 @@ public partial class UIListColumn : UIBase
     
     [Parameter] public string SortField { get; set; } = string.Empty;
 
-    private void SortClick(MouseEventArgs e)
+    private string showCss => showSortingDropdown ? "show" : String.Empty;
+
+    private void ShowSorting(bool show)
+    {
+        showSortingDropdown = show;
+        Render();
+    }
+
+    private void SortClick(bool descending)
     {
         if (this._listContext is null)
             return;
 
-        // TODO - currwnt sort issue is here
         SortRequest request = this.IsCurrentSortField()
-            ?  new SortRequest { SortDescending = !this._listContext.SortDescending, SortField = this._listContext.SortField }
-            : new SortRequest { SortDescending = false, SortField = this.SortField };
+            ? new SortRequest { SortDescending = descending, SortField = this._listContext.SortField }
+            : new SortRequest { SortDescending = descending, SortField = this.SortField };
 
         this._listContext?.SortAsync(request);
     }
+
     private bool IsCurrentSortField()
     {
         if (this._listContext is null || String.IsNullOrWhiteSpace(_listContext.SortField))
             return false;
 
         return _listContext.SortField.Equals(this.SortField);
+    }
+
+    private string GetActive(bool dir)
+    {
+        bool sortDescending = this._listContext?.SortDescending ?? false;
+
+        if (this.IsCurrentSortField())
+            return dir == sortDescending ? "active" : string.Empty;
+
+        return string.Empty;
     }
 
 

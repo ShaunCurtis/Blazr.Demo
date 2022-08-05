@@ -33,24 +33,25 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.WASM.Server", "A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{E1582ED5-D53F-43C7-9FF3-03283FFE9729}"
 	ProjectSection(SolutionItems) = preProject
-		documents\Components.md = documents\Components.md
-		documents\Controls.md = documents\Controls.md
-		documents\CoreServices.md = documents\CoreServices.md
 		documents\CQS-Data-Pipeline.md = documents\CQS-Data-Pipeline.md
-		documents\CQSDataBrokers.md = documents\CQSDataBrokers.md
 		documents\Data.md = documents\Data.md
-		documents\DataServices.md = documents\DataServices.md
 		documents\Design.md = documents\Design.md
-		documents\EditState.md = documents\EditState.md
-		documents\Forms.md = documents\Forms.md
-		documents\ListForms.md = documents\ListForms.md
 		readme.md = readme.md
-		documents\RepositoryDataBrokers.md = documents\RepositoryDataBrokers.md
+		documents\ViewServices.md = documents\ViewServices.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Controllers", "Blazr.App.Controllers\Blazr.App.Controllers.csproj", "{242CD787-DF8C-4C55-90F7-B9BB6EFE18CC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.WASM", "Blazr.Demo.WASM\Blazr.Demo.WASM.csproj", "{64C3EFA1-84BA-49A5-9CB5-B9D4080E0F60}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WIP", "WIP", "{EF828804-D173-4C9C-ACFE-BA67F82B72D9}"
+	ProjectSection(SolutionItems) = preProject
+		documents\WIP\Components.md = documents\WIP\Components.md
+		documents\WIP\Controls.md = documents\WIP\Controls.md
+		documents\WIP\EditState.md = documents\WIP\EditState.md
+		documents\WIP\Forms.md = documents\WIP\Forms.md
+		documents\WIP\ListForms.md = documents\WIP\ListForms.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -128,6 +129,7 @@ Global
 		{240652EA-1D7C-4011-9D47-DF08A9670D3F} = {CC2D9923-F4CC-48E1-A359-DC95D9B7DB26}
 		{242CD787-DF8C-4C55-90F7-B9BB6EFE18CC} = {20AC6B52-B88C-4C60-B271-BC4EA226C4EC}
 		{64C3EFA1-84BA-49A5-9CB5-B9D4080E0F60} = {CC2D9923-F4CC-48E1-A359-DC95D9B7DB26}
+		{EF828804-D173-4C9C-ACFE-BA67F82B72D9} = {E1582ED5-D53F-43C7-9FF3-03283FFE9729}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {796897AD-0035-48BF-9BF0-2F19BBA500FA}

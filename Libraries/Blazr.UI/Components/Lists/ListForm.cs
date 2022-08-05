@@ -15,8 +15,10 @@ public class ListForm : ComponentBase
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         builder.OpenComponent<CascadingValue<ListContext>>(0);
-        builder.AddAttribute(1, "value", this.ListContext);
-        builder.AddAttribute(2, "ChildContent", ChildContent);
+        builder.AddAttribute(1, "Value", this.ListContext);
+        builder.AddAttribute(2, "IsFixed", true);
+        builder.AddAttribute(3, "ChildContent", ChildContent);
         builder.CloseComponent();
     }
 }
+

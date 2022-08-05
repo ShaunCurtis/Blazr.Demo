@@ -1,14 +1,14 @@
 # Building A Succinct CQS Data Pipeline
 
-The first time I came across CQS I though it might answer some issues I had with the Repository pattern.  My exitement quickly dissipated when I discovered how many classes I needed to create to implement it.  My generic repository framework trumped it hands down.
+The first time I came across CQS I though it was the answer to my issues with the Repository pattern.  My exitement quickly dissipated when I discovered how many classes I would neede to create to implement it.  My generic repository framework trumped it hands down.
 
 I recently had cause to revisit CQS on an application re-write and decided to work on creating a more succinct version.  This article is about what I've managed to achieve.
 
 ## Test Data
 
-There's an article here on the test data set and data pipeline:
+There's a separate article in this series that describes the data store and pipeline used:
 
-[The Weather Application Data](./data.md)
+[The Weather Application Data Strore](./data.md)
 
 
 ## The CQS Pattern
@@ -125,14 +125,13 @@ Relatively small classes, but you need 3 sets (one each for add, update and dele
 To build a more succinct implementation we need to accept:
 
  - The 80/20 rule.  Not every request can be fulfilled by our standard implementation.  We need a custom approach for these.
- - We need a "compliant" generics based ORM to interface with our data store.  This implementation uses *Entity Framework* which gives us that. 
- - There's going to be some quite complicated generics implemented in the base classes.
-
+ - We need a "compliant" generics based ORM to interface with our data store.  This implementation uses *Entity Framework* which provides that. 
+ - There will be some quite complicated generics implemented in the base classes.
 
 
 ## Results
 
-Before diving into requests and handlers, we need a set of standard results they return: `TResult` of the request.  Each is defined a `record` containing status information and, if a request, the data set.  They must be JSON serializable as they are used in Web APIs.  They're self explanatory.
+Before diving into requests and handlers, we need a set of standard results they return: `TResult` of the request.  Each is defined a `record` containing status information and, if a request, the data set.  They are used in Web APIs so must be serializable.  They are shown below and need no explanation.
 
 ```csharp
 public record ListProviderResult<TRecord>
@@ -174,7 +173,7 @@ public record FKListProviderResult
 
 ## Base Classes
 
-`TRecord` represents data classes retrieved from the data store using the ORM.  It's qualified as a `class` and implements an empty constructor `new()`.
+`TRecord` represents the data classes retrieved from the data store using the ORM.  It's qualified as a `class` and implements an empty constructor `new()`.
 
 ### Commands
 
@@ -231,22 +230,20 @@ public class UpdateRecordCommand<TRecord>
 }
 ```
 
-> Why implement these empty classes?  
-
-We need a one-to-one relationship (requests -> handlers) so we need a handler for each type of command.
+We need a one-to-one relationship (requests -> handlers) so we define a handler for each type of command.
 
 ### The Handlers
 
 There's no benefit in creating interfaces or base classes for handlers so we implement Create/Update/Delete commands as three separate classes.  `TRecord` defines the record class and `TDbContext` the `DbContext` used in the DI `DbContextFactory`.
 
-We don't need the actual `DbContext` class: we use the built in generic methods in `DbContext`.   `Set<TRecord>` method finds the `DbSet` instances of `TRecord` and `Update<TRecord>`, `Add<TRecord>` and `Delete<TRecord>` methods with `SaveChangesAsync` implement the commands. 
+We use the built in generic methods in `DbContext`, so don't need the specific `DbContext`.   `Set<TRecord>` method finds the `DbSet` instances of `TRecord` and `Update<TRecord>`, `Add<TRecord>` and `Delete<TRecord>` methods with `SaveChangesAsync` implement the commands. 
 
 All the handlers follow the same pattern.
 
 1. The constructor passes in the DbContext factory and the command request to execute.
 2. `Execute`:
    1. Gets a DbContext.
-   2. Calls the generic `Add/Update/Delete` on the contexct passing in the record.  Internally EF finds the recordset and the specific record and replaces it with the one supplied.
+   2. Calls the generic `Add/Update/Delete` on the context passing in the record.  Internally EF finds the recordset and the specific record and replaces it with the one supplied.
    3. Calls `SaveChanges` on the DbContext that commits the changes to the data store.
    4. Checks we have one change and returns a `CommandResult`.
 

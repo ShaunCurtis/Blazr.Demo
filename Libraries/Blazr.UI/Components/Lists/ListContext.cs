@@ -83,6 +83,24 @@ public class ListContext
         }
     }
 
+    public bool Set(SortRequest? request)
+    {
+        if (request is not null)
+        {
+            bool isPagingReset = !request.SortField?.Equals(this.SortField) ?? false;
+
+            this.SortField = request.SortField;
+            this.SortDescending = request.SortDescending;
+
+            // If we are sorting on a new field then we need to reset the page
+            if (isPagingReset)
+                this.StartIndex = 0;
+
+            return isPagingReset;
+        }
+        return false;
+    }
+
     public ListContext(IUiStateService uiStateService)
     {
         _uiStateService = uiStateService;
@@ -91,7 +109,7 @@ public class ListContext
     public async ValueTask<bool> PageAsync(PagingRequest? request = null)
     {
         if (!_hasLoaded)
-            throw new InvalidOperationException("You can't use the ListContext untill you have loaded it.");
+            throw new InvalidOperationException("You can't use the ListContext until you have loaded it.");
 
         this.Set(request);
 
@@ -112,18 +130,11 @@ public class ListContext
     public async ValueTask SortAsync(SortRequest request)
     {
         if (!_hasLoaded)
-            throw new InvalidOperationException("You can't use the ListContext untill you have loaded it.");
-
-        var isPagingReset = !request.SortField?.Equals(this.SortField);
+            throw new InvalidOperationException("You can't use the ListContext until you have loaded it.");
 
         this.GetState();
 
-        // If we are sorting on a new field then we need to reset the page
-        if (isPagingReset ??= false)
-            this.StartIndex = 0;
-
-        this.SortField = request.SortField;
-        this.SortDescending = request.SortDescending;
+        var reset = this.Set(request);
 
         if (_listProvider is not null)
         {
@@ -135,7 +146,7 @@ public class ListContext
 
         this.SaveState();
 
-        if (isPagingReset ??= false)
+        if (reset)
             PagingReset?.Invoke(this, new PagingEventArgs(this.PagingState));
     }
 

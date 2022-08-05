@@ -9,7 +9,7 @@ namespace Blazr.UI.Bootstrap;
 public static class UICssClasses
 {
     // List Sort Strings
-    public static readonly string NotSortedClass = "sort-column oi oi-resize-height";
+    public static readonly string NotSortedClass = "sort-column oi oi-menu";
     public static readonly string AscendingClass = "sort-column oi oi-sort-ascending";
     public static readonly string DescendingClass = "sort-column oi oi-sort-descending";
 }

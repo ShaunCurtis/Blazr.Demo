@@ -6,10 +6,10 @@ The documentation is divid into a set of articles that cover various aspects and
 
 Articles:
 
-1, [The application Data](./documents/data.md) descibes the basic data architecture, database and test data sets.
+1. [The application Data](./documents/data.md) descibes the basic data architecture, database and test data sets.
 
-2, [The Repository Data Pipeline](./documents/RepositoryDataBrokers.md) descibes a generic Repository pattern data pipeline.
+2. [The CQS Data Pipeline](./documents/CQS-Data-Pipeline.md) descibes a generic CQS pattern data pipeline.
 
-2, [The CQS Data Pipeline](./documents/CQSDataBrokers.md) descibes a generic CQS pattern data pipeline.
+3. [View Services](./documents/ViewServices.md) descibes the views that provide data services for the UI.
 
 More detail to be added soon!  

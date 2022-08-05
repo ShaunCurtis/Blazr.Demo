@@ -53,9 +53,12 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
+        // Sets the parameters as per the base method
         parameters.SetParameterProperties(this);
 
-        this.Service.SetServices(SPAServiceProvider);
+        // If this is the first set we pass the SPA Service container set the IListServices to the SPA instances
+        if (_isNew)
+            this.Service.SetServices(SPAServiceProvider);
 
         if (!string.IsNullOrWhiteSpace(this.EntityUIService.SingleTitle))
         {
@@ -84,7 +87,7 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
 
     protected virtual IListQuery<TRecord> GetListQuery(ListProviderRequest<TRecord> request)
         => new ListQuery<TRecord>(request);
- 
+
     public async ValueTask GetPagedItems()
     {
         var request = new ListProviderRequest<TRecord>(this.ListContext.ListStateRecord);

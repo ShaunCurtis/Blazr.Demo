@@ -1,8 +1,8 @@
 ﻿@*/// ============================================================
-/// Author: Shaun Curtis, Cold Elm Coders
-/// License: Use And Donate
-/// If you use it, donate something to a charity somewhere
-/// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================
 *@
 
 @namespace Blazr.UI.Bootstrap
@@ -10,18 +10,29 @@
 
 @if (this.IsHeader)
 {
-    @if(_isSortField)
+    @if (_isSortField)
     {
-    <th class="@this.HeaderCss" @onclick="SortClick">
-        <span class="@SortIconCss"></span>
-        @((MarkupString)this.HeaderTitle)
-    </th>
+        <th class="@this.HeaderCss" @onmouseover="@(() => ShowSorting(true))" @onmouseout="@(() => ShowSorting(false))">
+            <div class="dropdown">
+                <div data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="me-1 mr-1">
+                    @((MarkupString)this.HeaderTitle)
+                    </span>
+                    <span class="@SortIconCss"></span>
+                </div>
+                <ul class="dropdown-menu @showCss " aria-labelledby="dropdownMenuButton2">
+                    <li class="dropdown-item @GetActive(false)" @onclick="() => this.SortClick(false)">Ascending</li>
+                    <li class="dropdown-item @GetActive(true)" @onclick="() => this.SortClick(true)">Descending</li>
+                </ul>
+            </div>
+
+        </th>
     }
     else
     {
-    <th class="@this.HeaderCss">
-        @((MarkupString)this.HeaderTitle)
-    </th>
+        <th class="@this.HeaderCss">
+            @((MarkupString)this.HeaderTitle)
+        </th>
     }
 }
 else if (this.isMaxRowColumn)

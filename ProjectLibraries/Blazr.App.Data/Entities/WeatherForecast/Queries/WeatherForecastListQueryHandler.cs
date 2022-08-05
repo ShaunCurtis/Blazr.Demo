@@ -46,6 +46,9 @@ public class WeatherForecastListQueryHandler<TDbContext>
                 .Where(item => item.WeatherLocationId == listQuery.WeatherLocationId)
                 .AsQueryable();
 
+        if (listQuery.SortExpressionString is not null)
+            query = query.OrderBy(listQuery.SortExpressionString);
+
         if (listQuery.PageSize > 0)
             query = query
                 .Skip(listQuery.StartIndex)
