@@ -12,7 +12,6 @@ public partial class UIListColumn : UIBase
     private bool isMaxRowColumn => IsMaxColumn && !this.IsHeader;
     private bool isNormalRowColumn => !IsMaxColumn && !this.IsHeader;
     private bool _isSortField => !string.IsNullOrWhiteSpace(this.SortField);
-    protected override List<string> UnwantedAttributes { get; set; } = new List<string>() { "class" };
 
     [CascadingParameter(Name = "IsHeader")] public bool IsHeader { get; set; }
  
@@ -72,14 +71,14 @@ public partial class UIListColumn : UIBase
             .AddClass(IsHeaderNoWrap, "header-column-nowrap", "header-column")
             .AddClass(NoWrap, "text-nowrap")
             .AddClass("align-baseline")
-            .AddClassFromAttributes(UserAttributes)
+            .AddClassFromAttributes(SplatterAttributes)
             .Build();
 
     private string TDCss
         => CSSBuilder.Class()
             .AddClass(this.isMaxRowColumn, "max-column", "data-column")
             .AddClass(this.NoWrap, "text-nowrap")
-            .AddClassFromAttributes(UserAttributes)
+            .AddClassFromAttributes(SplatterAttributes)
             .Build();
 
     private string SortIconCss

@@ -19,10 +19,10 @@ public abstract partial class BlazrAppPagedListForm<TRecord, TEntity>
 
     public BlazrAppPagedListForm()
     {
-        _renderFragment = builder =>
+        renderFragment = builder =>
         {
-            _hasPendingQueuedRender = false;
-            _hasNeverRendered = false;
+            hasPendingQueuedRender = false;
+            hasNeverRendered = false;
             builder.AddContent(0, BaseContent);
         };
     }

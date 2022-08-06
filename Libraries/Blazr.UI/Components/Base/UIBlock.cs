@@ -16,9 +16,7 @@ public class UIBlock : UIBase
 
     protected virtual string HtmlTag => this.Tag ?? "div";
 
-    protected override List<string> UnwantedAttributes { get; set; } = new List<string>() { "class" };
-
-    protected virtual CSSBuilder CssBuilder => new CSSBuilder().AddClassFromAttributes(this.UserAttributes);
+    protected virtual CSSBuilder CssBuilder => new CSSBuilder().AddClassFromAttributes(this.SplatterAttributes);
 
     protected string CssClass => this.CssBuilder.Build();
 

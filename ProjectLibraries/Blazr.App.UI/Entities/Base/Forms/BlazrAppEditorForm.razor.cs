@@ -21,10 +21,10 @@ public abstract partial class BlazrAppEditorForm<TRecord, TEditRecord, TEntity>
 
     public BlazrAppEditorForm()
     {
-        _renderFragment = builder =>
+        renderFragment = builder =>
         {
-            _hasPendingQueuedRender = false;
-            _hasNeverRendered = false;
+            hasPendingQueuedRender = false;
+            hasNeverRendered = false;
             builder.AddContent(0, BaseContent);
         };
     }

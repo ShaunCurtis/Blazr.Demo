@@ -5,7 +5,6 @@
 ///      _initialized;
 ///      _hasNeverRendered
 ///      _hasPendingQueuedRender;
-///      _hasCalledOnAfterRender;
 ///   2. Changes to StateHasChanged.  
 ///         Adding a Render() method that replicates StateHasChanged
 ///         Changing StateHasChanged so it's always invoked on the UI Context thread
@@ -25,19 +24,19 @@ namespace Blazr.UI;
 
 public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfterRender
 {
-    protected RenderFragment _renderFragment;
+    protected RenderFragment renderFragment;
     private RenderHandle _renderHandle;
-    protected bool _initialized;
-    protected bool _hasNeverRendered = true;
-    protected bool _hasPendingQueuedRender;
-    protected bool _hasCalledOnAfterRender;
+    protected bool initialized;
+    protected bool hasNeverRendered = true;
+    protected bool hasPendingQueuedRender;
+    private bool _hasCalledOnAfterRender;
 
     public BlazrComponentBase()
     {
-        _renderFragment = builder =>
+        renderFragment = builder =>
         {
-            _hasPendingQueuedRender = false;
-            _hasNeverRendered = false;
+            hasPendingQueuedRender = false;
+            hasNeverRendered = false;
             builder.AddContent(0, ComponentRenderTree);
         };
     }
@@ -55,24 +54,24 @@ public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfte
     protected virtual Task OnParametersSetAsync() => Task.CompletedTask;
 
     protected void StateHasChanged()
-        => this.InvokeAsync(this.Render);
-    
+        => _renderHandle.Dispatcher.InvokeAsync(Render);
+
     internal protected void Render()
     {
-        if (_hasPendingQueuedRender)
+        if (hasPendingQueuedRender)
             return;
 
-        if (_hasNeverRendered || ShouldRender() || _renderHandle.IsRenderingOnMetadataUpdate)
+        if (hasNeverRendered || ShouldRender() || _renderHandle.IsRenderingOnMetadataUpdate)
         {
-            _hasPendingQueuedRender = true;
+            hasPendingQueuedRender = true;
 
             try
             {
-                _renderHandle.Render(_renderFragment);
+                _renderHandle.Render(renderFragment);
             }
             catch
             {
-                _hasPendingQueuedRender = false;
+                hasPendingQueuedRender = false;
                 throw;
             }
         }
@@ -102,9 +101,9 @@ public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfte
     {
         parameters.SetParameterProperties(this);
 
-        if (!_initialized)
+        if (!initialized)
         {
-            _initialized = true;
+            initialized = true;
 
             return this.RunInitAndSetParametersAsync();
         }

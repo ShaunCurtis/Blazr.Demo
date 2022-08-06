@@ -24,7 +24,7 @@ public class UIButton : UIComponent
         builder.AddAttribute(1, "class", this.CssClass);
         builder.AddMultipleAttributes(2, this.SplatterAttributes);
 
-        if (!UserAttributes.ContainsKey("type"))
+        if (!SplatterAttributes.ContainsKey("type"))
             builder.AddAttribute(3, "type", "button");
 
         if (Disabled)

@@ -28,35 +28,12 @@ public abstract class UIBase : IComponent
     /// <summary>
     /// Collection of attributes assigned to the componebnt
     /// </summary>
-    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> SplatterAttributes { get; set; } = new Dictionary<string, object>();
 
     /// <summary>
     /// Parameter to control the display of the component
     /// </summary>
     [Parameter] public bool Hidden { get; set; } = false;
-
-    /// <summary>
-    /// A list of attributes to be removed from the UserAttributes before render
-    /// </summary>
-    protected virtual List<string> UnwantedAttributes { get; set; } = new List<string>();
-
-    /// <summary>
-    /// Attributes to be added to the primary component element
-    /// It's the list of UserAttributes with any Unwanted attributes removed
-    /// </summary>
-    protected Dictionary<string, object> SplatterAttributes
-    {
-        get
-        {
-            var list = new Dictionary<string, object>();
-            foreach (var item in UserAttributes)
-            {
-                if (!UnwantedAttributes.Any(item1 => item1.Equals(item.Key)))
-                    list.Add(item.Key, item.Value);
-            }
-            return list;
-        }
-    }
 
     /// <summary>
     /// New method
@@ -129,7 +106,7 @@ public abstract class UIBase : IComponent
         parameters.SetParameterProperties(this);
         var shouldRender = this.ShouldRenderOnParameterChange(initialized);
 
-        if (hasNeverRendered || shouldRender || renderHandle.IsRenderingOnMetadataUpdate)
+        if (hasNeverRendered || shouldRender)
             this.Render();
 
         this.initialized = true;
