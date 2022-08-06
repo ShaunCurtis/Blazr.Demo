@@ -9,7 +9,6 @@ namespace Blazr.UI;
 
 public class UIComponent : UIComponentBase
 {
-
     [Parameter] public bool Disabled { get; set; } = false;
 
     [Parameter] public string? Tag { get; set; }
@@ -18,26 +17,17 @@ public class UIComponent : UIComponentBase
 
     protected virtual string HtmlTag => this.Tag ?? "div";
 
-    protected virtual CSSBuilder CssBuilder => new CSSBuilder().AddClassFromAttributes(this.SplatterAttributes);
+    protected virtual CSSBuilder CssBuilder => new CSSBuilder().AddClass(this.Class);
 
     protected string CssClass => this.CssBuilder.Build();
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         builder.OpenElement(0, this.HtmlTag);
-        builder.AddMultipleAttributes(1, this.SplatterAttributes);
-        if (!string.IsNullOrWhiteSpace(this.CssClass))
-            builder.AddAttribute(2, "class", this.CssClass);
-
-        if (Disabled)
-            builder.AddAttribute(3, "disabled");
-
-        if (ClickEvent.HasDelegate)
-            builder.AddAttribute(4, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, ClickEvent));
-
-        if (this.ChildContent is not null)
-            builder.AddContent(5, this.ChildContent);
-
+        builder.AddAttributeIfNotEmpty(2, "class", this.CssClass);
+        builder.AddAttributeIfTrue(this.Disabled, 3, "disabled");
+        builder.AddAttributeIfTrue(ClickEvent.HasDelegate, 4, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, ClickEvent));
+        builder.AddContentIfNotNull(5, this.ChildContent);
         builder.CloseElement();
     }
 }

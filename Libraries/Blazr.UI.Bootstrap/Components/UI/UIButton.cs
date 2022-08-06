@@ -11,6 +11,8 @@ public class UIButton : UIComponent
 {
     [Parameter] public UIButtonType ButtonType { get; set; } = UIButtonType.None;
 
+    [Parameter] public string Type { get; set; } = "button";
+
     protected override CSSBuilder CssBuilder => base.CssBuilder
         .AddClass("btn")
         .AddClass("btn-sm")
@@ -22,17 +24,9 @@ public class UIButton : UIComponent
     {
         builder.OpenElement(0, this.HtmlTag);
         builder.AddAttribute(1, "class", this.CssClass);
-        builder.AddMultipleAttributes(2, this.SplatterAttributes);
-
-        if (!SplatterAttributes.ContainsKey("type"))
-            builder.AddAttribute(3, "type", "button");
-
-        if (Disabled)
-            builder.AddAttribute(4, "disabled");
-
-        if (ClickEvent.HasDelegate)
-            builder.AddAttribute(5, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, ClickEvent));
-
+        builder.AddAttribute(3, "type", this.Type);
+        builder.AddAttributeIfTrue(this.Disabled, 3, "disabled");
+        builder.AddAttributeIfTrue(ClickEvent.HasDelegate, 4, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, ClickEvent));
         builder.AddContent(6, ChildContent);
         builder.CloseElement();
     }

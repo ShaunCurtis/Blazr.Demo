@@ -11,7 +11,7 @@
 
 @if (this.LoadState == ComponentState.Loaded && this.HasRecords)
 {
-    <table @attributes="this.SplatterAttributes">
+    <table class="@this.Class">
         <thead class="@this.HeaderCss">
             <CascadingValue Name="IsHeader" Value="true">
                 <tr>

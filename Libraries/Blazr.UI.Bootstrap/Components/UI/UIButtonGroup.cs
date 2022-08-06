@@ -19,7 +19,6 @@ public class UIButtonGroup : UIBlock
             builder.OpenElement(0, this.HtmlTag);
             builder.AddAttribute(1, "class", this.CssClass);
             builder.AddAttribute(2, "role", "group");
-            builder.AddMultipleAttributes(3, this.SplatterAttributes);
             builder.AddContent(4, ChildContent);
             builder.CloseElement();
     }

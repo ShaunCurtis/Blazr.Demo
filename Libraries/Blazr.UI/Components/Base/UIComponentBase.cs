@@ -32,7 +32,7 @@ public abstract class UIComponentBase : UIBase
         parameters.SetParameterProperties(this);
         var shouldRender = this.ShouldRenderOnParameterChange(initialized);
 
-        if (hasNeverRendered || shouldRender || renderHandle.IsRenderingOnMetadataUpdate)
+        if (hasNeverRendered || shouldRender)
         {
             await this.OnParametersChangedAsync(!initialized);
             this.Render();
@@ -40,6 +40,5 @@ public abstract class UIComponentBase : UIBase
 
         this.initialized = true;
     }
-
 }
 

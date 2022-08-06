@@ -33,6 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.WASM.Server", "A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{E1582ED5-D53F-43C7-9FF3-03283FFE9729}"
 	ProjectSection(SolutionItems) = preProject
+		documents\Base-Components.md = documents\Base-Components.md
 		documents\CQS-Data-Pipeline.md = documents\CQS-Data-Pipeline.md
 		documents\Data.md = documents\Data.md
 		documents\Design.md = documents\Design.md
@@ -48,7 +49,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WIP", "WIP", "{EF828804-D17
 	ProjectSection(SolutionItems) = preProject
 		documents\WIP\Components.md = documents\WIP\Components.md
 		documents\WIP\Controls.md = documents\WIP\Controls.md
-		CustomComponentBase.md = CustomComponentBase.md
 		documents\WIP\EditState.md = documents\WIP\EditState.md
 		documents\WIP\Forms.md = documents\WIP\Forms.md
 		documents\WIP\ListForms.md = documents\WIP\ListForms.md

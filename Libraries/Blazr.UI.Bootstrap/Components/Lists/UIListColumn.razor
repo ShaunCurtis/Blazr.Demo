@@ -37,7 +37,7 @@
 }
 else if (this.isMaxRowColumn)
 {
-    <td class="@this.TDCss" @attributes="this.SplatterAttributes">
+    <td class="@this.TDCss">
         <div class="grid-overflow">
             <div class="grid-overflowinner">
                 @ChildContent
@@ -47,7 +47,7 @@ else if (this.isMaxRowColumn)
 }
 else
 {
-    <td class="@this.TDCss" @attributes="this.SplatterAttributes">
+    <td class="@this.TDCss">
         @this.ChildContent
     </td>
 }

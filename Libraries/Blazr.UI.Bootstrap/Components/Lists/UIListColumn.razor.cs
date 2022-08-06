@@ -71,14 +71,14 @@ public partial class UIListColumn : UIBase
             .AddClass(IsHeaderNoWrap, "header-column-nowrap", "header-column")
             .AddClass(NoWrap, "text-nowrap")
             .AddClass("align-baseline")
-            .AddClassFromAttributes(SplatterAttributes)
+            .AddClass(this.Class)
             .Build();
 
     private string TDCss
         => CSSBuilder.Class()
             .AddClass(this.isMaxRowColumn, "max-column", "data-column")
             .AddClass(this.NoWrap, "text-nowrap")
-            .AddClassFromAttributes(SplatterAttributes)
+            .AddClass(this.Class)
             .Build();
 
     private string SortIconCss

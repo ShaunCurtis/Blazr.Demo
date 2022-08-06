@@ -20,20 +20,21 @@ public abstract class UIBase : IComponent
     protected bool initialized;
     protected bool show = true;
 
-/// <summary>
-/// Content to render within the component
-/// </summary>
-    [Parameter] public RenderFragment? ChildContent { get; set; }
-
     /// <summary>
-    /// Collection of attributes assigned to the componebnt
+    /// Content to render within the component
     /// </summary>
-    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> SplatterAttributes { get; set; } = new Dictionary<string, object>();
+    [Parameter] public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
     /// Parameter to control the display of the component
     /// </summary>
+
     [Parameter] public bool Hidden { get; set; } = false;
+
+    /// <summary>
+    /// Parameter to capture any Class settings
+    /// </summary>
+    [Parameter] public string Class { get; set; } = String.Empty;
 
     /// <summary>
     /// New method
@@ -114,6 +115,11 @@ public abstract class UIBase : IComponent
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Method that can be overridden to make the render decision based on manual parameters checks
+    /// </summary>
+    /// <param name="initialized"></param>
+    /// <returns></returns>
     protected virtual bool ShouldRenderOnParameterChange(bool initialized)
         => true;
 
