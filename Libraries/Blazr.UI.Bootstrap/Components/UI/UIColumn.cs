@@ -7,17 +7,17 @@ namespace Blazr.UI.Bootstrap;
 
 public class UIColumn : UIComponent
 {
-    [Parameter] public virtual int Columns { get; set; } = 0;
+    [Parameter] public int Columns { get; set; } = 0;
 
-    [Parameter] public virtual int SmallColumns { get; set; } = 0;
+    [Parameter] public int SmallColumns { get; set; } = 0;
 
-    [Parameter] public virtual int MediumColumns { get; set; } = 0;
+    [Parameter] public int MediumColumns { get; set; } = 0;
 
-    [Parameter] public virtual int LargeColumns { get; set; } = 0;
+    [Parameter] public int LargeColumns { get; set; } = 0;
 
-    [Parameter] public virtual int XLargeColumns { get; set; } = 0;
+    [Parameter] public int XLargeColumns { get; set; } = 0;
 
-    [Parameter] public virtual int XXLargeColumns { get; set; } = 0;
+    [Parameter] public int XXLargeColumns { get; set; } = 0;
 
     [Parameter] public bool AutoDefault { get; set; } = false;
 
@@ -29,6 +29,5 @@ public class UIColumn : UIComponent
         .AddClass(LargeColumns > 0, $"col-lg-{this.LargeColumns}")
         .AddClass(XLargeColumns > 0, $"col-xl-{this.XLargeColumns}")
         .AddClass(XXLargeColumns > 0, $"col-xxl-{this.XXLargeColumns}");
-
 }
 
