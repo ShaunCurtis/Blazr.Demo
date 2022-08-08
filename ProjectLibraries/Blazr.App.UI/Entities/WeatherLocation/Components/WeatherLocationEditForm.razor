@@ -18,5 +18,6 @@
 </UIContainer>
 
 @code {
-    protected override RenderFragment BaseContent => (builder) => base.BuildRenderTree(builder);
+    public WeatherLocationEditForm()
+        => TemplateContent = (builder) => base.BuildRenderTree(builder);
 }

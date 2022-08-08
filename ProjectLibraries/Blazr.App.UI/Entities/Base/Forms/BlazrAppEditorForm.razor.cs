@@ -16,16 +16,16 @@ public abstract partial class BlazrAppEditorForm<TRecord, TEditRecord, TEntity>
         ? "p-2 bg-light border border-brand mt-2"
         : "p-2 bg-light";
 
-    protected virtual RenderFragment? Childcontent => (builder) => this.BuildRenderTree(builder);
-    protected abstract RenderFragment BaseContent { get; }
+    protected RenderFragment? Childcontent => (builder) => this.BuildRenderTree(builder);
+    protected RenderFragment? TemplateContent { get; set; }
 
     public BlazrAppEditorForm()
     {
-        renderFragment = builder =>
+        componentRenderFragment = builder =>
         {
             hasPendingQueuedRender = false;
             hasNeverRendered = false;
-            builder.AddContent(0, BaseContent);
+            TemplateContent?.Invoke(builder);
         };
     }
 }

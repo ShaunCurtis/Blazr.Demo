@@ -24,7 +24,7 @@ namespace Blazr.UI;
 
 public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfterRender
 {
-    protected RenderFragment renderFragment;
+    protected RenderFragment componentRenderFragment;
     private RenderHandle _renderHandle;
     protected bool initialized;
     protected bool hasNeverRendered = true;
@@ -33,7 +33,7 @@ public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfte
 
     public BlazrComponentBase()
     {
-        renderFragment = builder =>
+        componentRenderFragment = builder =>
         {
             hasPendingQueuedRender = false;
             hasNeverRendered = false;
@@ -67,7 +67,7 @@ public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfte
 
             try
             {
-                _renderHandle.Render(renderFragment);
+                _renderHandle.Render(componentRenderFragment);
             }
             catch
             {

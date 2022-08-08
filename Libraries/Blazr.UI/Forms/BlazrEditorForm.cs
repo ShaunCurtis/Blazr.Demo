@@ -7,7 +7,7 @@
 namespace Blazr.UI;
 
 public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
-    : BlazrOwningComponentBase<IEditService<TRecord, TEditRecord, TEntity>>, IDisposable
+    : BlazrOwningComponentBase<IEditService<TRecord, TEditRecord, TEntity>>, IDisposable, IHandleEvent, IHandleAfterRender
     where TRecord : class, new()
     where TEditRecord : class, IEditRecord<TRecord>, new()
     where TEntity : class, IEntity
@@ -167,12 +167,12 @@ public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
         => this.isConfirmDelete = true;
 
     protected void OnRecordChanged(object? sender, EventArgs e)
-        => this.InvokeAsync(StateHasChanged);
+        => this.StateHasChanged();
 
     protected void OnEditStateChanged(object? sender, EditStateEventArgs e)
     {
         this.blazrNavManager?.SetLockState(e.IsDirty);
-        this.InvokeAsync(StateHasChanged);
+        this.StateHasChanged();
     }
 
     protected async void Exit()
@@ -210,6 +210,15 @@ public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
         this.alertId = Guid.NewGuid();
         this.StateHasChanged();
     }
+
+    async Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg)
+    {
+        await callback.InvokeAsync(arg);
+        Render();
+    }
+
+    Task IHandleAfterRender.OnAfterRenderAsync()
+        => Task.CompletedTask;
 
     public virtual void Dispose()
     {

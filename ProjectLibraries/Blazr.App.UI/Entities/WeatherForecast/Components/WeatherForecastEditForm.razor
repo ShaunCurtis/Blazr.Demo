@@ -34,7 +34,8 @@
 </UIContainer>
 
 @code {
-    protected override RenderFragment BaseContent => (builder) => base.BuildRenderTree(builder);
+    public WeatherForecastEditForm()
+        => TemplateContent = (builder) => base.BuildRenderTree(builder);
 
     // If we come to this form from the Weather Location Dash we already have the WeatherLocationId
     // So we have a parameter property to accept it

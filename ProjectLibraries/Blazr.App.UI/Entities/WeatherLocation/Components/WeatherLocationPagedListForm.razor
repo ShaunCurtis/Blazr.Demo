@@ -19,6 +19,8 @@
         </UIListColumn>
     </RowTemplate>
 </UIListControl>
+
 @code {
-    protected override RenderFragment BaseContent => (builder) => base.BuildRenderTree(builder);
+    public WeatherLocationPagedListForm()
+        => TemplateContent = (builder) => base.BuildRenderTree(builder);
 }

@@ -15,19 +15,19 @@ public abstract partial class BlazrAppViewerForm<TRecord, TEntity>
         ? "p-2 bg-light border border-brand mt-2"
         : "p-2 bg-light";
 
-    protected virtual RenderFragment? FormContent => (builder) => this.BuildRenderTree(builder);
-    protected abstract RenderFragment BaseContent { get; }
+    protected RenderFragment? FormContent => (builder) => this.BuildRenderTree(builder);
+    protected RenderFragment? TemplateContent { get; set; }
 
     public BlazrAppViewerForm()
     {
-        renderFragment = builder =>
+        componentRenderFragment = builder =>
         {
             hasPendingQueuedRender = false;
             hasNeverRendered = false;
-            builder.AddContent(0, BaseContent);
+            TemplateContent?.Invoke(builder);
         };
     }
+
     protected virtual AppAuthFields GetAuthFields(TRecord? record)
     => new AppAuthFields { OwnerId = (record as IAuthRecord)?.OwnerId ?? Guid.Empty };
-
 }

@@ -8,7 +8,7 @@
 @namespace Blazr.UI.Bootstrap
 @using System.Timers
 
-<UIComponent Show=this.show class="@this.Css">@this.displayMessage</UIComponent>
+<UIComponent Hidden=this.isHidden class="@this.Css">@this.displayMessage</UIComponent>
 @*@if (show)
     {
     <div class="@this.Css">@this.displayMessage</div>
@@ -25,7 +25,7 @@
 
     private System.Timers.Timer _timer = new System.Timers.Timer();
     private string currentMessage = string.Empty;
-    private bool show => this.currentMessage != string.Empty && !this.hidden;
+    private bool isHidden => this.currentMessage == string.Empty || this.hidden;
     private MarkupString displayMessage => (MarkupString)Message;
 
     private string Css => new CSSBuilder("alert")

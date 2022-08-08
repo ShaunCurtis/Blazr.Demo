@@ -12,11 +12,11 @@ public partial class UICard : UIBase
 
     [Parameter] public bool Dirty { get; set; } = false;
 
-    [Parameter] public string? MoreCardCss { get; set; }
+    [Parameter] public string? CardClass { get; set; }
 
-    [Parameter] public string? MoreHeaderCss { get; set; }
+    [Parameter] public string? HeaderClass { get; set; }
 
-    [Parameter] public string? MoreBodyCss { get; set; }
+    [Parameter] public string? BodyClass { get; set; }
 
     [Parameter] public RenderFragment? Body { get; set; }
 
@@ -34,12 +34,12 @@ public partial class UICard : UIBase
 
     protected string CardCss => new CSSBuilder()
         .AddClass(Dirty, "card border-danger", "card border-dark")
-        .AddClass(this.MoreCardCss)
+        .AddClass(this.CardClass)
         .Build();
 
     protected string CardHeaderCss => new CSSBuilder()
         .AddClass(Dirty, "card-header text-white bg-danger", "card-header text-brand bg-dark")
-        .AddClass(this.MoreHeaderCss)
+        .AddClass(this.HeaderClass)
         .Build();
 
     protected string CardHeaderButtonCss => new CSSBuilder()
@@ -51,7 +51,7 @@ public partial class UICard : UIBase
     protected string CardBodyCss => new CSSBuilder()
         .AddClass("card-body card-body-light p-0")
         .AddClass(this.Collapsed, "collapse", "collapse show")
-        .AddClass(this.MoreBodyCss)
+        .AddClass(this.BodyClass)
         .Build();
 
     protected void Toggle()

@@ -7,7 +7,7 @@
 namespace Blazr.UI;
 
 public abstract class BlazrViewerForm<TRecord, TEntity>
-    : BlazrOwningComponentBase<IReadService<TRecord, TEntity>>, IDisposable
+    : BlazrOwningComponentBase<IReadService<TRecord, TEntity>>, IDisposable, IHandleEvent, IHandleAfterRender
     where TRecord : class, new()
     where TEntity : class, IEntity
 {
@@ -141,7 +141,7 @@ public abstract class BlazrViewerForm<TRecord, TEntity>
     protected virtual async Task EditRecordAsync()
     {
         // There are three possible options:
-        //     1. We aren't in a modal but there's a modal available and we have a editform defined
+        //     1. We aren't in a modal but there's a modal available and we have an editform defined
         //     2. We are in a modal and want to switch the control in the modal to the edit form
         //     3. We don't have all the options available to use a modal so navigate to the edit form 
         //         (We don't know if one exists, but that's not our problem!)
@@ -202,6 +202,15 @@ public abstract class BlazrViewerForm<TRecord, TEntity>
     /// </summary>
     protected virtual void BaseExit()
         => this.NavManager?.NavigateTo($"/{this.EntityUIService.Url}");
+
+    async Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg)
+    {
+        await callback.InvokeAsync(arg);
+        Render();
+    }
+
+    Task IHandleAfterRender.OnAfterRenderAsync()
+        => Task.CompletedTask;
 
     public void Dispose()
         => this.NotificationService.RecordChanged -= OnChange;

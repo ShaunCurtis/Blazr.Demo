@@ -27,7 +27,8 @@
 
 
 @code {
-    protected override RenderFragment BaseContent => (builder) => base.BuildRenderTree(builder);
+    public WeatherForecastPagedListForm()
+        => TemplateContent = (builder) => base.BuildRenderTree(builder);
 
     [Parameter] public Guid WeatherLocationId { get; set; } = Guid.Empty;
 

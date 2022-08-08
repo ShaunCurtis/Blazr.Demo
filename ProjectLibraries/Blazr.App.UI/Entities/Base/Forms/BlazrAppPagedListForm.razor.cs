@@ -14,16 +14,16 @@ public abstract partial class BlazrAppPagedListForm<TRecord, TEntity>
     protected readonly string TableCss = "table table-sm table-striped table-hover border-bottom no-margin";
     protected string ContainerCss = "bg-light border border-brand p-0 mt-2";
 
-    protected virtual RenderFragment? Childcontent => (builder) => this.BuildRenderTree(builder);
-    protected abstract RenderFragment BaseContent { get; }
+    protected RenderFragment? Childcontent => (builder) => this.BuildRenderTree(builder);
+    protected RenderFragment? TemplateContent { get; set; }
 
     public BlazrAppPagedListForm()
     {
-        renderFragment = builder =>
+        componentRenderFragment = builder =>
         {
             hasPendingQueuedRender = false;
             hasNeverRendered = false;
-            builder.AddContent(0, BaseContent);
+            TemplateContent?.Invoke(builder);
         };
     }
 

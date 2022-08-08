@@ -6,7 +6,7 @@
 namespace Blazr.UI;
 
 public abstract class BlazrPagedListForm<TRecord, TEntity>
-    : BlazrOwningComponentBase<IListService<TRecord, TEntity>>, IDisposable
+    : BlazrOwningComponentBase<IListService<TRecord, TEntity>>, IDisposable, IHandleEvent, IHandleAfterRender
     where TRecord : class, new()
     where TEntity : class, IEntity
 {
@@ -181,6 +181,15 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
         this.pagingControl?.NotifyListChangedAsync();
         this.InvokeAsync(this.StateHasChanged);
     }
+
+    async Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg)
+    {
+        await callback.InvokeAsync(arg);
+        Render();
+    }
+
+    Task IHandleAfterRender.OnAfterRenderAsync()
+        => Task.CompletedTask;
 
     public virtual void Dispose()
         => this.NotificationService.ListUpdated += this.OnListChanged;
