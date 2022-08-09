@@ -7,46 +7,18 @@
 namespace Blazr.UI;
 
 public abstract class BlazrViewerForm<TRecord, TEntity>
-    : BlazrOwningComponentBase<IReadService<TRecord, TEntity>>, IDisposable, IHandleEvent, IHandleAfterRender
+    : BlazrForm<IReadService<TRecord, TEntity>, TEntity> , IDisposable, IHandleEvent, IHandleAfterRender
     where TRecord : class, new()
     where TEntity : class, IEntity
 {
     private bool _isNew = true;
     protected virtual Type? EditControl => this.EntityUIService.EditForm;
-    protected string FormTitle = "Record Viewer";
 
-    /// <summary>
-    /// Id for the record
-    /// </summary>
-    [Parameter] public Guid Id { get; set; }
 
     /// <summary>
     /// Specify a specific exit mechanism
     /// </summary>
     [Parameter] public EventCallback ExitAction { get; set; }
-
-    /// <summary>
-    /// Pick up a Cascaded IModalDialog if one is configured on the parent
-    /// </summary>
-    [CascadingParameter] public IModalDialog? Modal { get; set; }
-
-    // Get all the DI Services we need
-    [Inject] protected NavigationManager NavManager { get; set; } = default!;
-
-    [Inject] protected ModalService ModalService { get; set; } = default!;
-
-    [Inject] protected INotificationService<TEntity> NotificationService { get; set; } = default!;
-
-    [Inject] protected IEntityService<TEntity> EntityService { get; set; } = default!;
-
-    [Inject] protected IEntityUIService<TEntity> EntityUIService { get; set; } = default!;
-
-    [Inject] protected IServiceProvider SPAServiceProvider { get; set; } = default!;
-
-    /// <summary>
-    /// The component state
-    /// </summary>
-    public ComponentState LoadState { get; protected set; } = ComponentState.New;
 
     /// <summary>
     /// Overloaded component SetParametersAsync
@@ -84,13 +56,6 @@ public abstract class BlazrViewerForm<TRecord, TEntity>
         // We aren't new any more
         _isNew = false;
     }
-
-    /// <summary>
-    /// Method in the component event chain prior to loading the record 
-    /// </summary>
-    /// <returns></returns>
-    protected virtual Task PreLoadRecordAsync()
-        => Task.CompletedTask;
 
     /// <summary>
     /// Method to load the Record
@@ -175,7 +140,7 @@ public abstract class BlazrViewerForm<TRecord, TEntity>
     /// <summary>
     /// Default Exit for buttons
     /// </summary>
-    protected async void Exit()
+    protected override async void Exit()
         => await DoExit();
 
     /// <summary>
@@ -203,16 +168,6 @@ public abstract class BlazrViewerForm<TRecord, TEntity>
     protected virtual void BaseExit()
         => this.NavManager?.NavigateTo($"/{this.EntityUIService.Url}");
 
-    async Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg)
-    {
-        await callback.InvokeAsync(arg);
-        Render();
-    }
-
-    Task IHandleAfterRender.OnAfterRenderAsync()
-        => Task.CompletedTask;
-
     public void Dispose()
         => this.NotificationService.RecordChanged -= OnChange;
-
 }
