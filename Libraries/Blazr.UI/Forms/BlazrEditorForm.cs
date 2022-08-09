@@ -7,30 +7,12 @@
 namespace Blazr.UI;
 
 public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
-    : BlazrOwningComponentBase<IEditService<TRecord, TEditRecord, TEntity>>, IDisposable, IHandleEvent, IHandleAfterRender
+    : BlazrForm<IEditService<TRecord, TEditRecord, TEntity>, TEntity>, IDisposable, IHandleEvent, IHandleAfterRender
     where TRecord : class, new()
     where TEditRecord : class, IEditRecord<TRecord>, new()
     where TEntity : class, IEntity
 {
-    private bool _isNew = true;
     protected EditContext editContext = default!;
-    protected string FormTitle = "Record Editor";
-
-    [Parameter] public Guid Id { get; set; }
-
-    [Parameter] public EventCallback ExitAction { get; set; }
-
-    [CascadingParameter] public IModalDialog? Modal { get; set; }
-
-    [Inject] private INotificationService<TEntity> NotificationService { get; set; } = default!;
-
-    [Inject] protected IBlazrNavigationManager NavManager { get; set; } = default!;
-
-    [Inject] protected IEntityService<TEntity> EntityService { get; set; } = default!;
-
-    [Inject] protected IEntityUIService<TEntity> EntityUIService { get; set; } = default!;
-
-    [Inject] protected IServiceProvider SPAServiceProvider { get; set; } = default!;
 
     protected BlazrNavigationManager? blazrNavManager => NavManager is BlazrNavigationManager ? NavManager as BlazrNavigationManager : null;
 
@@ -39,8 +21,6 @@ public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
     protected int alertTimeOut = 0;
     protected Guid alertId;
     protected bool isConfirmDelete = false;
-
-    public ComponentState LoadState { get; protected set; } = ComponentState.New;
 
     protected bool IsModal => this.Modal != null;
 
@@ -52,8 +32,8 @@ public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
     {
         parameters.SetParameterProperties(this);
 
-        await PreLoadRecordAsync(_isNew);
-        if (_isNew)
+        await PreLoadRecordAsync();
+        if (isNew)
         {
             if (!string.IsNullOrWhiteSpace(this.EntityUIService.SingleTitle))
                 this.FormTitle = $"{this.EntityUIService.SingleTitle} Editor";
@@ -80,11 +60,8 @@ public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
         }
 
         await base.SetParametersAsync(ParameterView.Empty);
-        _isNew = false;
+        isNew = false;
     }
-
-    public virtual Task PreLoadRecordAsync(bool isNew)
-        => Task.CompletedTask;
 
     protected virtual Task<TRecord> GetNewRecord()
         => Task.FromResult(new TRecord());
@@ -175,32 +152,11 @@ public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
         this.StateHasChanged();
     }
 
-    protected async void Exit()
-        => await DoExit();
-
     protected async void ExitWithoutSaving()
     {
         this.blazrNavManager?.SetLockState(false);
         await DoExit();
     }
-
-    protected virtual async Task DoExit()
-    {
-        // If we're in a modal context, call Close on the cascaded Modal object
-        if (this.Modal is not null)
-            this.Modal.Close(ModalResult.OK());
-        
-        // If there's a delegate registered on the ExitAction, execute it. 
-        else if (ExitAction.HasDelegate)
-            await ExitAction.InvokeAsync();
-        
-        // else fallback action is to navigate to root
-        else
-            this.BaseExit();
-    }
-
-    protected virtual void BaseExit()
-        => this.NavManager?.NavigateTo($"/{this.EntityUIService.Url}");
 
     protected void SetMessage(string message, string colour)
     {
@@ -210,15 +166,6 @@ public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
         this.alertId = Guid.NewGuid();
         this.StateHasChanged();
     }
-
-    async Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg)
-    {
-        await callback.InvokeAsync(arg);
-        Render();
-    }
-
-    Task IHandleAfterRender.OnAfterRenderAsync()
-        => Task.CompletedTask;
 
     public virtual void Dispose()
     {
