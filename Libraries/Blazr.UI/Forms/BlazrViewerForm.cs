@@ -11,14 +11,7 @@ public abstract class BlazrViewerForm<TRecord, TEntity>
     where TRecord : class, new()
     where TEntity : class, IEntity
 {
-    private bool _isNew = true;
     protected virtual Type? EditControl => this.EntityUIService.EditForm;
-
-
-    /// <summary>
-    /// Specify a specific exit mechanism
-    /// </summary>
-    [Parameter] public EventCallback ExitAction { get; set; }
 
     /// <summary>
     /// Overloaded component SetParametersAsync
@@ -30,7 +23,7 @@ public abstract class BlazrViewerForm<TRecord, TEntity>
         // Applies the component parameter changes
         parameters.SetParameterProperties(this);
 
-        if (_isNew)
+        if (isNew)
         {
             // Get the Title for the form
             if (!string.IsNullOrWhiteSpace(this.EntityUIService.SingleTitle))
@@ -54,7 +47,7 @@ public abstract class BlazrViewerForm<TRecord, TEntity>
         await base.SetParametersAsync(ParameterView.Empty);
 
         // We aren't new any more
-        _isNew = false;
+        isNew = false;
     }
 
     /// <summary>
@@ -136,37 +129,6 @@ public abstract class BlazrViewerForm<TRecord, TEntity>
     /// <returns></returns>
     protected virtual ModalOptions GetEditOptions(ModalOptions? options)
         => options ?? new ModalOptions();
-
-    /// <summary>
-    /// Default Exit for buttons
-    /// </summary>
-    protected override async void Exit()
-        => await DoExit();
-
-    /// <summary>
-    /// Exit method that figures out the correct exit method i.e. exit from a modal dialog or exit from a form
-    /// </summary>
-    /// <returns></returns>
-    protected virtual async Task DoExit()
-    {
-        // If we're in a modal context, call Close on the cascaded Modal object
-        if (this.Modal is not null)
-            this.Modal.Close(ModalResult.OK());
-
-        // If there's a delegate registered on the ExitAction, execute it. 
-        else if (ExitAction.HasDelegate)
-            await ExitAction.InvokeAsync();
-
-        // else fallback action is to navigate to root
-        else
-            this.BaseExit();
-    }
-
-    /// <summary>
-    /// Exit to the Entity defined Url
-    /// </summary>
-    protected virtual void BaseExit()
-        => this.NavManager?.NavigateTo($"/{this.EntityUIService.Url}");
 
     public void Dispose()
         => this.NotificationService.RecordChanged -= OnChange;

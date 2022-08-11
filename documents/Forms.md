@@ -21,9 +21,51 @@ Forms are a top level design component in the UI.  This is a typical form - it's
 }
 ```
 
-It inherits from a vase form `BlazrAppViewerForm` that contains all the functionality.  It only contains component controls, no markup.
+It inherits from a base form `BlazrAppViewerForm` that contains all the functionality.  It only contains component controls, no markup.
 
 The View form is the simplest of the main forms so we'll look at it in detail.
+
+## Forms Inheritance
+
+The diagram below shows the inheritance structure of the Form components.
+
+![Forms Inheritance](./images/forms-inheritance.png)
+
+### Blazr Form
+ 
+This is the base view and edit form.  It contains the shared functionality.
+
+```csharp
+public abstract class BlazrForm<TService, TEntity>
+    : BlazrOwningComponentBase<TService>, IDisposable, IHandleEvent, IHandleAfterRender
+    where TService : class
+    where TEntity : class, IEntity
+{
+    protected bool isNew = true;
+    protected string FormTitle = "Record Viewer";
+```
+
+It's based on generics:
+
+ - `TService` is the edot or view service for the component.
+ - `TEntity` is the entity that `TRecord` belongs to.
+
+
+All the required services are injected:
+
+```csharp
+    [Inject] protected NavigationManager NavManager { get; set; } = default!;
+    [Inject] protected ModalService ModalService { get; set; } = default!;
+    [Inject] protected INotificationService<TEntity> NotificationService { get; set; } = default!;
+    [Inject] protected IEntityService<TEntity> EntityService { get; set; } = default!;
+    [Inject] protected IEntityUIService<TEntity> EntityUIService { get; set; } = default!;
+    [Inject] protected IServiceProvider SPAServiceProvider { get; set; } = default!;
+```
+
+There are set of methods to handle form exiting from a modal or page context.
+
+The form defines a simply event hander and turns off the after render handlers.
+
 
 ### Blazr View Form
  
