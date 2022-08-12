@@ -48,16 +48,17 @@ public class BaseViewService<TRecord, TEntity>
     {
         var id = Guid.Empty;
         if (record is IAuthRecord rec)
+        {
             id = rec.OwnerId;
+            var authstate = await this.AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var result = await this.AuthorizationService.AuthorizeAsync(authstate.User, id, policyName);
 
-        var authstate = await this.AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var result = await this.AuthorizationService.AuthorizeAsync(authstate.User, id, policyName);
+            if (!result.Succeeded)
+                this.Message = "You don't have the necessary permissions on the object for this action";
 
-        if (!result.Succeeded)
-            this.Message = "You don't have the necessary permissions oin the object for this action";
-
-        return result.Succeeded;
+            return result.Succeeded;
+        }
+        return false;
     }
-
 }
 

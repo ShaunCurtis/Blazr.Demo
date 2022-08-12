@@ -7,13 +7,12 @@ namespace Blazr.App.Core;
 
 public static class AppAuthorizationPolicies
 {
+    // Role constants
     public const string AdminRole = "AdminRole";
     public const string UserRole = "UserRole";
     public const string VisitorRole = "VisitorRole";
 
-    //public const string IsAdmin = "IsAdmin";
-    //public const string IsUser = "IsUser";
-
+    //Policy Name constants
     public const string IsEditorPolicy = "IsEditorPolicy";
     public const string IsViewerPolicy = "IsViewerPolicy";
     public const string IsManagerPolicy = "IsManagerPolicy";
@@ -42,10 +41,10 @@ public static class AppAuthorizationPolicies
             .Build();
 
         public static AuthorizationPolicy IsEditorAuthorizationPolicy
-        => new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .AddRequirements(new RecordEditorAuthorizationRequirement())
-        .Build();
+            => new AuthorizationPolicyBuilder()
+            .RequireAuthenticatedUser()
+            .AddRequirements(new RecordEditorAuthorizationRequirement())
+            .Build();
 
         public static AuthorizationPolicy IsManagerAuthorizationPolicy
             => new AuthorizationPolicyBuilder()
@@ -85,6 +84,8 @@ public static class AppAuthorizationPolicies
         services.AddSingleton<IAuthorizationHandler, RecordEditorAuthorizationHandler>();
         services.AddSingleton<IAuthorizationHandler, RecordManagerAuthorizationHandler>();
         services.AddSingleton<IAuthorizationHandler, RecordOwnerManagerAuthorizationHandler>();
+        services.AddSingleton<IAuthorizationHandler, RecordOwnerAsUidEditorAuthorizationHandler>();
+        services.AddSingleton<IAuthorizationHandler, RecordEditorAsUidAuthorizationHandler>();
 
         // Add Authorization and all the Policies
         services.AddAuthorizationCore(config =>

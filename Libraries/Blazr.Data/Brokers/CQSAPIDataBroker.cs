@@ -5,6 +5,7 @@
 /// ============================================================
 
 using System.Net.Http.Json;
+using System.Net.Http.Headers;
 
 namespace Blazr.Data;
 
@@ -14,7 +15,7 @@ public class CQSAPIDataBroker
     private HttpClient _httpClient;
     private ICQSAPIListHandlerFactory _CQSAPIListHandlerFactory;
 
-    public CQSAPIDataBroker(HttpClient httpClient, ICQSAPIListHandlerFactory cQSAPIListHandlerFactory )
+    public CQSAPIDataBroker(HttpClient httpClient, ICQSAPIListHandlerFactory cQSAPIListHandlerFactory, Auth )
     { 
         _httpClient = httpClient;
         _CQSAPIListHandlerFactory = cQSAPIListHandlerFactory ;
@@ -25,6 +26,7 @@ public class CQSAPIDataBroker
         ListProviderResult<TRecord>? result = null;
 
         var entityname = (new TRecord()).GetType().Name;
+        //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("BlazrAuth", AuthHelper)
         var response = await _httpClient.PostAsJsonAsync<ListQuery<TRecord>>($"/api/{entityname}/listquery", query);
 
         if (response.IsSuccessStatusCode)

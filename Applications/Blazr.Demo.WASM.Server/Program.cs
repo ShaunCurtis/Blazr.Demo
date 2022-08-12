@@ -19,6 +19,8 @@ var builder = WebApplication.CreateBuilder(args);
             => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));
 
         Services.AddControllers().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(Blazr.App.Controllers.DboWeatherForecastController).Assembly));
+
+        Services.AddAppAuthServerServices();
     }
 }
 

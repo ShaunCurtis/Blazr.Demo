@@ -20,7 +20,19 @@ public class RecordOwnerEditorAuthorizationHandler : AuthorizationHandler<Record
     }
 }
 
-public class RecordOwnerIdEditorAuthorizationHandler : AuthorizationHandler<RecordEditorAuthorizationRequirement, Guid>
+public class RecordEditorAuthorizationHandler : AuthorizationHandler<RecordEditorAuthorizationRequirement, AppAuthFields>
+{
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, RecordEditorAuthorizationRequirement requirement, AppAuthFields data)
+    {
+        if (context.User.IsInRole(AppAuthorizationPolicies.AdminRole))
+            context.Succeed(requirement);
+
+        return Task.CompletedTask;
+    }
+}
+
+// This policy takes a Guid field instead of AppAuthFields
+public class RecordOwnerAsUidEditorAuthorizationHandler : AuthorizationHandler<RecordEditorAuthorizationRequirement, Guid>
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, RecordEditorAuthorizationRequirement requirement, Guid id)
     {
@@ -32,9 +44,10 @@ public class RecordOwnerIdEditorAuthorizationHandler : AuthorizationHandler<Reco
     }
 }
 
-public class RecordEditorAuthorizationHandler : AuthorizationHandler<RecordEditorAuthorizationRequirement, AppAuthFields>
+// This policy takes a Guid field instead of AppAuthFields
+public class RecordEditorAsUidAuthorizationHandler : AuthorizationHandler<RecordEditorAuthorizationRequirement, Guid>
 {
-    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, RecordEditorAuthorizationRequirement requirement, AppAuthFields data)
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, RecordEditorAuthorizationRequirement requirement, Guid id)
     {
         if (context.User.IsInRole(AppAuthorizationPolicies.AdminRole))
             context.Succeed(requirement);
