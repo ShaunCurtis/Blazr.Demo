@@ -10,18 +10,14 @@ public class RecordQueryHandler<TRecord, TDbContext>
         where TRecord : class, new()
         where TDbContext : DbContext
 {
-    private readonly RecordQuery<TRecord> _query;
     private IDbContextFactory<TDbContext> _factory;
     private bool _success = true;
     private string _message = string.Empty;
 
-    public RecordQueryHandler(IDbContextFactory<TDbContext> factory, RecordQuery<TRecord> query)
-    {
-        _factory = factory;
-        _query = query;
-    }
+    public RecordQueryHandler(IDbContextFactory<TDbContext> factory)
+        => _factory = factory;
 
-    public async ValueTask<RecordProviderResult<TRecord>> ExecuteAsync()
+    public async ValueTask<RecordProviderResult<TRecord>> ExecuteAsync(RecordQuery<TRecord> query)
     {
         var dbContext = _factory.CreateDbContext();
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
@@ -30,19 +26,19 @@ public class RecordQueryHandler<TRecord, TDbContext>
 
         // first check if the record implements IRecord.  If so we can do a cast and then do the query via the Uid property directly 
         if ((new TRecord()) is IRecord)
-            record = await dbContext.Set<TRecord>().SingleOrDefaultAsync(item => ((IRecord)item).Uid == _query.GuidId);
+            record = await dbContext.Set<TRecord>().SingleOrDefaultAsync(item => ((IRecord)item).Uid == query.GuidId);
 
         // Try and use the EF FindAsync implementation
         if (record == null)
         {
-            if (_query.GuidId != Guid.Empty)
-                record = await dbContext.FindAsync<TRecord>(_query.GuidId);
+            if (query.GuidId != Guid.Empty)
+                record = await dbContext.FindAsync<TRecord>(query.GuidId);
 
-            if (_query.LongId > 0)
-                record = await dbContext.FindAsync<TRecord>(_query.LongId);
+            if (query.LongId > 0)
+                record = await dbContext.FindAsync<TRecord>(query.LongId);
 
-            if (_query.IntId > 0)
-                record = await dbContext.FindAsync<TRecord>(_query.IntId);
+            if (query.IntId > 0)
+                record = await dbContext.FindAsync<TRecord>(query.IntId);
         }
 
         if (record is null)

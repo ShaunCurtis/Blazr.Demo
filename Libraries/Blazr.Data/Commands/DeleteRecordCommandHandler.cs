@@ -12,15 +12,11 @@ public class DeleteRecordCommandHandler<TRecord, TDbContext>
     where TRecord : class, new()
 {
     protected IDbContextFactory<TDbContext> factory;
-    protected readonly IRecordCommand<TRecord> command;
 
-    public DeleteRecordCommandHandler(IDbContextFactory<TDbContext> factory, IRecordCommand<TRecord> command)
-    {
-        this.command = command;
-        this.factory = factory;
-    }
+    public DeleteRecordCommandHandler(IDbContextFactory<TDbContext> factory)
+        => this.factory = factory;
 
-    public async ValueTask<CommandResult> ExecuteAsync()
+    public async ValueTask<CommandResult> ExecuteAsync( DeleteRecordCommand<TRecord> command)
     {
         using var dbContext = factory.CreateDbContext();
         dbContext.Remove<TRecord>(command.Record);

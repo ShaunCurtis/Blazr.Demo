@@ -4,10 +4,8 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.Core;
+namespace Blazr.App.Core;
 
-public interface ICQSHandler<in TRequest, out TResult>
-    where TRequest : ICQSRequest<TResult>
+public class APIIdentityService
 {
-    TResult ExecuteAsync(TRequest request);
 }

@@ -20,8 +20,8 @@ public class CQSDataBroker<TDbContext>
 
     public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(ListQuery<TRecord> query) where TRecord : class, new()
     {
-        var handler = new ListQueryHandler<TRecord, TDbContext>(_factory, query);
-        var result = await handler.ExecuteAsync();
+        var handler = new ListQueryHandler<TRecord, TDbContext>(_factory);
+        var result = await handler.ExecuteAsync(query);
         return result;
     }
 
@@ -38,36 +38,36 @@ public class CQSDataBroker<TDbContext>
 
     public async ValueTask<RecordProviderResult<TRecord>> ExecuteAsync<TRecord>(RecordQuery<TRecord> query) where TRecord : class, new()
     {
-        var handler = new RecordQueryHandler<TRecord, TDbContext>(_factory, query);
-        var result = await handler.ExecuteAsync();
+        var handler = new RecordQueryHandler<TRecord, TDbContext>(_factory);
+        var result = await handler.ExecuteAsync(query);
         return result;
     }
 
     public async ValueTask<FKListProviderResult> ExecuteAsync<TRecord>(FKListQuery<TRecord> query) where TRecord : class, IFkListItem, new()
     {
-        var handler = new FKListQueryHandler<TRecord, TDbContext>(_factory, query);
-        var result = await handler.ExecuteAsync();
+        var handler = new FKListQueryHandler<TRecord, TDbContext>(_factory);
+        var result = await handler.ExecuteAsync(query);
         return result;
     }
 
     public async ValueTask<CommandResult> ExecuteAsync<TRecord>(AddRecordCommand<TRecord> command) where TRecord : class, new()
     {
-        var handler = new AddRecordCommandHandler<TRecord, TDbContext>(_factory, command);
-        var result = await handler.ExecuteAsync();
+        var handler = new AddRecordCommandHandler<TRecord, TDbContext>(_factory);
+        var result = await handler.ExecuteAsync(command);
         return result;
     }
 
     public async ValueTask<CommandResult> ExecuteAsync<TRecord>(UpdateRecordCommand<TRecord> command) where TRecord : class, new()
     {
-        var handler = new UpdateRecordCommandHandler<TRecord, TDbContext>(_factory, command);
-        var result = await handler.ExecuteAsync();
+        var handler = new UpdateRecordCommandHandler<TRecord, TDbContext>(_factory);
+        var result = await handler.ExecuteAsync(command);
         return result;
     }
 
     public async ValueTask<CommandResult> ExecuteAsync<TRecord>(DeleteRecordCommand<TRecord> command) where TRecord : class, new()
     {
-        var handler = new DeleteRecordCommandHandler<TRecord, TDbContext>(_factory, command);
-        var result = await handler.ExecuteAsync();
+        var handler = new DeleteRecordCommandHandler<TRecord, TDbContext>(_factory);
+        var result = await handler.ExecuteAsync(command);
         return result;
     }
 

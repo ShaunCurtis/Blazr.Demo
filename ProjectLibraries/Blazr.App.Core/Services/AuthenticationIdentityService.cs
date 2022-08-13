@@ -6,19 +6,19 @@
 
 namespace Blazr.App.Core;
 
-//TODO - need Blazr.Core Itnerface
-public class AuthenticationIdentityService
+public class AuthenticationIdentityService 
+    : IAuthenticationIdentityService, IDisposable
 {
-    public ClaimsPrincipal? User = null;
+    private AuthenticationStateProvider _authenticationStateProvider;
+
+    public ClaimsPrincipal? Identity { get; private set; } = null;
 
     public Guid Uid { get; private set; }
-
-    private AuthenticationStateProvider _authenticationStateProvider;
 
     public AuthenticationIdentityService(AuthenticationStateProvider auth)
     {
         _authenticationStateProvider = auth;
-        _authenticationStateProvider.AuthenticationStateChanged += this.AuthStateChanged;
+        //_authenticationStateProvider.AuthenticationStateChanged += this.AuthStateChanged;
     }
 
     public async ValueTask GetUser()
@@ -27,19 +27,17 @@ public class AuthenticationIdentityService
     public async ValueTask GetUser(Task<AuthenticationState> task)
     {
         var state = await task;
-        User = state.User;
-        this.Uid = User.GetIdentityId();
+        this.Identity = state.User;
+        this.Uid = this.Identity.GetIdentityId();
     }
 
-    public async void AuthStateChanged(Task<AuthenticationState> task)
+    private async void AuthStateChanged(Task<AuthenticationState> task)
         => await this.GetUser(task);
 
     public AuthenticationHeaderValue GetAPIAuthenticationHeader()
-    {
-        return new AuthenticationHeaderValue("BlazrAuth", this.GetAuthToken());
-    }
+        => new AuthenticationHeaderValue("BlazrAuth", this.GetAuthToken());
 
-    public string GetAuthToken()
+    private string GetAuthToken()
     {
         var bytes = Encoding.UTF8.GetBytes(this.Uid.ToString());
         return Convert.ToBase64String(bytes);

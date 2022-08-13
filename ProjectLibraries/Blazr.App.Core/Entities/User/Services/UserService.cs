@@ -9,45 +9,30 @@ namespace Blazr.App.Core;
 public class UserService
     : BaseEntityService<UserEntity>
 {
-    public readonly SortedDictionary<Guid, string> UserList = new SortedDictionary<Guid, string>();
-    private ICQSDataBroker _dataBroker;
+    //public readonly SortedDictionary<Guid, string> UserList = new SortedDictionary<Guid, string>();
+    private IIdentityService _identityService;
 
-    public UserService(ICQSDataBroker cQSDataBroker)
-    {
-        _dataBroker = cQSDataBroker;
-    }
+    public Guid UserId { get; private set; }
 
-    public async Task EnsureUsersAsync(bool reload = false)
-    {
-        if (reload || UserList.Count == 0)
-            await GetUsersAsync();
-    }
-
-    private async Task GetUsersAsync()
-    {
-        UserList.Clear();
-        var query = new ListQuery<DboUser>(new ListProviderRequest<DboUser>());
-        var result = await _dataBroker.ExecuteAsync(query);
-        if (result.Success)
-        {
-            foreach (var item in result.Items)
-                UserList.Add(item.Id, item.Name);
-        }
-    }
+    public UserService(IIdentityService identityService)
+        => _identityService = identityService;
 
     public async Task<ClaimsPrincipal> GetUserAsync(Guid Id)
     {
-        await EnsureUsersAsync();
-        var query = new RecordQuery<DboUser>(Id);
-        var result = await _dataBroker.ExecuteAsync(query);
-        if (result.Success && result.Record is not null && result.Record.Id.IsNotNull())
-            return new ClaimsPrincipal(new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Sid, result.Record.Id.ToString()),
-                    new Claim(ClaimTypes.Name, result.Record.Name),
-                    new Claim(ClaimTypes.Role, result.Record.Role)
-                }, "Test authentication type"));
+        this.UserId = Id;
+        var result = await _identityService.GetIdentity(Id);
+        if (result.Success && result.Identity is not null)
+            return result.Identity;
 
         return new ClaimsPrincipal(new ClaimsIdentity(new Claim[0], null));
+    }
+
+    public AuthenticationHeaderValue GetAPIAuthenticationHeader()
+        => new AuthenticationHeaderValue("BlazrAuth", this.GetAuthToken());
+
+    private string GetAuthToken()      
+        {
+        var bytes = Encoding.UTF8.GetBytes(this.UserId.ToString());
+        return Convert.ToBase64String(bytes);
     }
 }

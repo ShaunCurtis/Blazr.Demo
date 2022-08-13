@@ -4,21 +4,18 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-using System.Net.Http.Json;
-using System.Net.Http.Headers;
-
 namespace Blazr.Data;
 
 public class CQSAPIDataBroker
-    :ICQSDataBroker
+    : ICQSDataBroker
 {
     private HttpClient _httpClient;
     private ICQSAPIListHandlerFactory _CQSAPIListHandlerFactory;
 
-    public CQSAPIDataBroker(HttpClient httpClient, ICQSAPIListHandlerFactory cQSAPIListHandlerFactory, Auth )
-    { 
+    public CQSAPIDataBroker(HttpClient httpClient, ICQSAPIListHandlerFactory cQSAPIListHandlerFactory)
+    {
         _httpClient = httpClient;
-        _CQSAPIListHandlerFactory = cQSAPIListHandlerFactory ;
+        _CQSAPIListHandlerFactory = cQSAPIListHandlerFactory;
     }
 
     public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync<TRecord>(ListQuery<TRecord> query) where TRecord : class, new()
@@ -26,7 +23,7 @@ public class CQSAPIDataBroker
         ListProviderResult<TRecord>? result = null;
 
         var entityname = (new TRecord()).GetType().Name;
-        //_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("BlazrAuth", AuthHelper)
+        this.SetHTTPClientSecurityHeader();
         var response = await _httpClient.PostAsJsonAsync<ListQuery<TRecord>>($"/api/{entityname}/listquery", query);
 
         if (response.IsSuccessStatusCode)
@@ -43,6 +40,7 @@ public class CQSAPIDataBroker
         RecordProviderResult<TRecord>? result = null;
 
         var entityname = (new TRecord()).GetType().Name;
+        this.SetHTTPClientSecurityHeader();
         var response = await _httpClient.PostAsJsonAsync<RecordQuery<TRecord>>($"/api/{entityname}/recordquery", query);
 
         if (response.IsSuccessStatusCode)
@@ -56,6 +54,7 @@ public class CQSAPIDataBroker
         FKListProviderResult? result = null;
 
         var entityname = (new TRecord()).GetType().Name;
+        this.SetHTTPClientSecurityHeader();
         var response = await _httpClient.PostAsJsonAsync<FKListQuery<TRecord>>($"/api/{entityname}/fklistquery", query);
 
         if (response.IsSuccessStatusCode)
@@ -69,6 +68,7 @@ public class CQSAPIDataBroker
         CommandResult? result = null;
 
         var entityname = (new TRecord()).GetType().Name;
+        this.SetHTTPClientSecurityHeader();
         var response = await _httpClient.PostAsJsonAsync<AddRecordCommand<TRecord>>($"/api/{entityname}/addrecordcommand", command);
 
         if (response.IsSuccessStatusCode)
@@ -82,6 +82,7 @@ public class CQSAPIDataBroker
         CommandResult? result = null;
 
         var entityname = (new TRecord()).GetType().Name;
+        this.SetHTTPClientSecurityHeader();
         var response = await _httpClient.PostAsJsonAsync<UpdateRecordCommand<TRecord>>($"/api/{entityname}/updaterecordcommand", command);
 
         if (response.IsSuccessStatusCode)
@@ -95,6 +96,7 @@ public class CQSAPIDataBroker
         CommandResult? result = null;
 
         var entityname = (new TRecord()).GetType().Name;
+        this.SetHTTPClientSecurityHeader();
         var response = await _httpClient.PostAsJsonAsync<DeleteRecordCommand<TRecord>>($"/api/{entityname}/deleterecordcommand", command);
 
         if (response.IsSuccessStatusCode)
@@ -105,4 +107,7 @@ public class CQSAPIDataBroker
 
     public ValueTask<object> ExecuteAsync<TRecord>(object query)
         => throw new NotImplementedException();
+
+    protected virtual void SetHTTPClientSecurityHeader()
+    { }
 }

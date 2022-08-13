@@ -18,26 +18,7 @@ public class ListQueryHandler<TRecord, TDbContext>
     protected IListQuery<TRecord> listQuery = default!;
 
     public ListQueryHandler(IDbContextFactory<TDbContext> factory)
-    {
-        this.factory = factory;
-    }
-
-    public ListQueryHandler(IDbContextFactory<TDbContext> factory, IListQuery<TRecord> query)
-    {
-        this.factory = factory;
-        this.listQuery = query;
-    }
-
-    public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync()
-    {
-        if (this.listQuery is null)
-            return new ListProviderResult<TRecord>(new List<TRecord>(), 0, false, "No Query Defined");
-
-        if (await this.GetItemsAsync())
-            await this.GetCountAsync();
-
-        return new ListProviderResult<TRecord>(this.items, this.count);
-    }
+        => this.factory = factory;
 
     public async ValueTask<ListProviderResult<TRecord>> ExecuteAsync(IListQuery<TRecord> query)
     {

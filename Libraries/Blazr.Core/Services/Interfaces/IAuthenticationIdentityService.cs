@@ -6,8 +6,9 @@
 
 namespace Blazr.Core;
 
-public interface ICQSHandler<in TRequest, out TResult>
-    where TRequest : ICQSRequest<TResult>
+public interface IAuthenticationIdentityService
 {
-    TResult ExecuteAsync(TRequest request);
+    public ClaimsPrincipal? Identity { get; }
+
+    public AuthenticationHeaderValue GetAPIAuthenticationHeader();
 }

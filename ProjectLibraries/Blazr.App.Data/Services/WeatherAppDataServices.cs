@@ -18,6 +18,7 @@ public static class WeatherAppDataServices
     {
         services.AddDbContextFactory<TDbContext>(options);
         services.AddSingleton<ICQSDataBroker, CQSDataBroker<InMemoryWeatherDbContext>>();
+        services.AddScoped<IIdentityCQSHandler, IdentityCQSHandler<InMemoryWeatherDbContext>>();
 
         //services.AddTransient<IListQueryHandler<DvoWeatherForecast>, ListQueryHandler<DvoWeatherForecast, InMemoryWeatherDbContext>>();
         services.AddTransient<IListQueryHandler<DboWeatherLocation>, ListQueryHandler<DboWeatherLocation, InMemoryWeatherDbContext>>();
@@ -37,6 +38,8 @@ public static class WeatherAppDataServices
         // Set to scoped as it consumes the HttpClient service which is itself scoped.
         services.AddScoped<ICQSDataBroker, CQSAPIDataBroker>();
         services.AddScoped<ICQSAPIListHandlerFactory, CQSAPIListHandlerFactory>();
+        services.AddScoped<IAuthenticationIdentityService, AuthenticationIdentityService>();
+        services.AddScoped<IIdentityService, APIIdentityService>();
 
         services.AddTransient<IListQueryHandler<DboWeatherLocation>, ListQueryHandler<DboWeatherLocation, InMemoryWeatherDbContext>>();
         services.AddTransient<IListQueryHandler<DboUser>, ListQueryHandler<DboUser, InMemoryWeatherDbContext>>();
@@ -50,6 +53,7 @@ public static class WeatherAppDataServices
         services.AddDbContextFactory<TDbContext>(options);
 
         services.AddSingleton<ICQSDataBroker, CQSDataBroker<InMemoryWeatherDbContext>>();
+        services.AddScoped<IIdentityCQSHandler, IdentityCQSHandler<InMemoryWeatherDbContext>>();
 
         services.AddTransient<IListQueryHandler<DboWeatherLocation>, ListQueryHandler<DboWeatherLocation, InMemoryWeatherDbContext>>();
         services.AddTransient<IListQueryHandler<DboUser>, ListQueryHandler<DboUser, InMemoryWeatherDbContext>>();

@@ -4,10 +4,14 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.Core;
+namespace Blazr.App.Core;
 
-public interface ICQSHandler<in TRequest, out TResult>
-    where TRequest : ICQSRequest<TResult>
+public class ServerIdentityService
 {
-    TResult ExecuteAsync(TRequest request);
+    public ServerIdentityService(Identitycq)
+
+    //public Task<ClaimsPrincipal> GetIdentity(Guid Uid)
+    //{
+
+    //}
 }

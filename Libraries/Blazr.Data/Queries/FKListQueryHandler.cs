@@ -12,20 +12,18 @@ public class FKListQueryHandler<TRecord, TDbContext>
 {
     protected IEnumerable<TRecord> items = Enumerable.Empty<TRecord>();
     protected IDbContextFactory<TDbContext> factory;
-    protected readonly FKListQuery<TRecord> listQuery;
 
-    public FKListQueryHandler(IDbContextFactory<TDbContext> factory, FKListQuery<TRecord> query)
+    public FKListQueryHandler(IDbContextFactory<TDbContext> factory)
     {
         this.factory = factory;
-        this.listQuery = query;
     }
 
-    public async ValueTask<FKListProviderResult> ExecuteAsync()
+    public async ValueTask<FKListProviderResult> ExecuteAsync(FKListQuery<TRecord> query)
     {
         var dbContext = this.factory.CreateDbContext();
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-        if (listQuery is null)
+        if (query is null)
             return new FKListProviderResult(Enumerable.Empty<IFkListItem>(), false, "No Query defined");
 
         IEnumerable<TRecord> dbSet = await dbContext.Set<TRecord>().ToListAsync();

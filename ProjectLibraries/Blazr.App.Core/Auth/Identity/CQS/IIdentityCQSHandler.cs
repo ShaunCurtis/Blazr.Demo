@@ -3,11 +3,9 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
+namespace Blazr.App.Core;
 
-namespace Blazr.Core;
-
-public interface ICQSHandler<in TRequest, out TResult>
-    where TRequest : ICQSRequest<TResult>
+public interface IIdentityCQSHandler
 {
-    TResult ExecuteAsync(TRequest request);
+    public ValueTask<IdentityQueryResult> ExecuteAsync(IdentityQuery query);
 }

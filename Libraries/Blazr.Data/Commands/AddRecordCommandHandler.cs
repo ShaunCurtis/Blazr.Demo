@@ -11,15 +11,11 @@ public class AddRecordCommandHandler<TRecord, TDbContext>
     where TRecord : class, new()
 {
     protected IDbContextFactory<TDbContext> factory;
-    protected readonly AddRecordCommand<TRecord> command;
 
-    public AddRecordCommandHandler(IDbContextFactory<TDbContext> factory, AddRecordCommand<TRecord> command)
-    {
-        this.command = command;
-        this.factory = factory;
-    }
+    public AddRecordCommandHandler(IDbContextFactory<TDbContext> factory)
+        => this.factory = factory;
 
-    public async ValueTask<CommandResult> ExecuteAsync()
+    public async ValueTask<CommandResult> ExecuteAsync(AddRecordCommand<TRecord> command)
     {
         using var dbContext = factory.CreateDbContext();
         dbContext.Add<TRecord>(command.Record);
