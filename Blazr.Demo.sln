@@ -48,6 +48,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.WASM", "Blazr.De
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WIP", "WIP", "{EF828804-D173-4C9C-ACFE-BA67F82B72D9}"
 	ProjectSection(SolutionItems) = preProject
+		Auth.md = Auth.md
 		documents\WIP\Components.md = documents\WIP\Components.md
 		documents\WIP\Controls.md = documents\WIP\Controls.md
 		documents\WIP\EditState.md = documents\WIP\EditState.md
