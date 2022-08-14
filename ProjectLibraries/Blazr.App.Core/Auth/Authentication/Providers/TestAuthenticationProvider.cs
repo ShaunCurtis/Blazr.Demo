@@ -7,16 +7,17 @@ namespace Blazr.App.Core;
 
 public class TestAuthenticationStateProvider : AuthenticationStateProvider
 {
-    private UserService _userService;
+    private IIdentityService _identityService;
+
     public Guid UserId { get; private set; } = Guid.Empty;
 
-    public TestAuthenticationStateProvider(UserService userService)
-        => _userService = userService;
+    public TestAuthenticationStateProvider(IIdentityService identityService)
+        => _identityService = identityService;
 
     public async override Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var user = await _userService.GetUserAsync(UserId);
-        return new AuthenticationState(user);
+        var result = await _identityService.GetIdentityAsync(UserId);
+        return new AuthenticationState(result.Identity ?? new ClaimsPrincipal());
     }
 
     public Task<AuthenticationState> ChangeUser(Guid userId)

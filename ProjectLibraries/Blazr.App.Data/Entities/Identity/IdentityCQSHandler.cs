@@ -38,6 +38,6 @@ public class IdentityCQSHandler<TDbContext>
                 return new IdentityQueryResult { Identity = identity, Success = true };
             }
         }
-        return new IdentityQueryResult { Identity = null, Success = false, Message = "No query defined" };
+        return new IdentityQueryResult {Success = false, Message = "No query defined" };
     }
 }

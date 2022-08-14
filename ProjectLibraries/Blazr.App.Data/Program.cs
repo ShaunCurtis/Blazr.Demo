@@ -3,7 +3,6 @@ global using System.Linq.Dynamic.Core;
 global using System.Reflection;
 global using System.Net.Http.Json;
 global using System.Security.Claims;
-
 global using Blazr.App.Core;
 global using Blazr.Core;
 global using Blazr.Data;

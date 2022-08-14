@@ -8,5 +8,9 @@ namespace Blazr.App.Core;
 
 public interface IIdentityService
 {
-    public ValueTask<IdentityQueryResult> GetIdentity(Guid Uid);
+    public ClaimsPrincipal Identity { get; }   
+    
+    public ValueTask<IdentityQueryResult> GetIdentityAsync(Guid Uid);
+
+    public event EventHandler? IdentityChanged;
 }

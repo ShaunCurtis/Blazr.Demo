@@ -9,12 +9,12 @@ public class AppAuthenticationHandler : AuthenticationHandler<AppAuthOptions>
 {
     private const string AuthorizationHeaderName = "Authorization";
     private const string BasicSchemeName = "BlazrAuth";
-    private ICQSDataBroker _dataBroker;
+    private IIdentityService _identityService;
 
-    public AppAuthenticationHandler(IOptionsMonitor<AppAuthOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock, ICQSDataBroker dataBroker)
+    public AppAuthenticationHandler(IOptionsMonitor<AppAuthOptions> options, IIdentityService identityService, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
         : base(options, logger, encoder, clock)
     {
-        _dataBroker = dataBroker;
+        _identityService = identityService;
     }
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -55,17 +55,11 @@ public class AppAuthenticationHandler : AuthenticationHandler<AppAuthOptions>
     public async Task<ClaimsPrincipal?> GetUserAsync(Guid Id)
     {
         // Get the user object from the database
-        var query = new RecordQuery<DboUser>(Id);
-        var result = await _dataBroker.ExecuteAsync(query);
-
+        var result = await _identityService.GetIdentityAsync(Id);
+        
         // Construct a ClaimsPrincipal object if the have a valid user
-        if (result.Success && result.Record is not null && result.Record.Id.IsNotNull())
-            return new ClaimsPrincipal(new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Sid, result.Record.Id.ToString()),
-                    new Claim(ClaimTypes.Name, result.Record.Name),
-                    new Claim(ClaimTypes.Role, result.Record.Role)
-                }, BasicSchemeName));
+        if (result.Success && result.Identity is not null)
+            return result.Identity;
 
         // No user so return null
         return null;
