@@ -14,5 +14,6 @@ public static class WeatherAppServices
         services.AddWeatherSummaryServices();
         services.AddWeatherLocationServices();
         services.AddUserServices();
+        services.AddAppAuthServerServices();
     }
 }

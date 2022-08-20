@@ -11,5 +11,7 @@ public static class AuthServicesCollection
     public static void AddAppAuthServerServices(this IServiceCollection services)
     {
         services.AddAuthentication("BlazrAuth").AddScheme<AppAuthOptions, AppAuthenticationHandler>("BlazrAuth", null);
+
+        services.AddScoped<IIdentityService, IdentityService>();
     }
 }

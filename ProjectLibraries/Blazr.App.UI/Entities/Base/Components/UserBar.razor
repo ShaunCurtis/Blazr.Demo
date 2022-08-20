@@ -63,8 +63,8 @@
 
     private async Task ChangeUser(ChangeEventArgs e)
     {
-        if (AuthState is TestAuthenticationStateProvider && e.Value is not null && Guid.TryParse(e.Value.ToString(), out Guid Id))
-            await ((TestAuthenticationStateProvider)AuthState).ChangeUser(Id);
+        if (AuthState is AppAuthenticationStateProvider && e.Value is not null && Guid.TryParse(e.Value.ToString(), out Guid Id))
+            await ((AppAuthenticationStateProvider)AuthState).ChangeUser(Id);
     }
 
     private async void OnUserChanged(Task<AuthenticationState> state)
@@ -85,7 +85,6 @@
         {new Guid("00000000-0000-0000-0000-100000000003"), "User-3"},
         {new Guid("00000000-0000-0000-0000-200000000001"), "Admin"},
     };
-
 
     public void Dispose()
         => AuthState!.AuthenticationStateChanged -= this.OnUserChanged;

@@ -18,6 +18,9 @@ var builder = WebApplication.CreateBuilder(args);
 
         Services.AddBlazrNavigationManager();
 
+        Services.AddAuthentication();
+        Services.AddAuthorization();
+
         Services.AddAppAuthServices();
 
         Services.AddWeatherAppServerDataServices<InMemoryWeatherDbContext>(options
@@ -46,6 +49,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapBlazorHub();
 app.MapControllers();

@@ -7,8 +7,7 @@ namespace Blazr.App.Core;
 
 public record DboUser
 {
-    [Key]
-    public Guid Id { get; init; } = Guid.Empty;
+    [Key] public Guid Id { get; init; } = Guid.Empty;
 
     public string Name { get; init; } = String.Empty;
 

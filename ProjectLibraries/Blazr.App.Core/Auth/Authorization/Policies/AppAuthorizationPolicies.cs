@@ -77,7 +77,7 @@ public static class AppAuthorizationPolicies
 
     public static void AddAppAuthServices(this IServiceCollection services)
     {
-        services.AddScoped<AuthenticationStateProvider, TestAuthenticationStateProvider>();
+        services.AddScoped<AuthenticationStateProvider, AppAuthenticationStateProvider>();
 
         // Add the Authorization Handlers
         services.AddSingleton<IAuthorizationHandler, RecordOwnerEditorAuthorizationHandler>();

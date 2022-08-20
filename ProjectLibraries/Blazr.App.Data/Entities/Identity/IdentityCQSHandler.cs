@@ -10,18 +10,15 @@ public class IdentityCQSHandler<TDbContext>
         where TDbContext : DbContext
 {
     private IDbContextFactory<TDbContext> _factory;
-    private IdentityQuery _query = default!;
 
     public IdentityCQSHandler(IDbContextFactory<TDbContext> factory)
-    {
-        _factory = factory;
-    }
+        => _factory = factory;
 
     public async ValueTask<IdentityQueryResult> ExecuteAsync(IdentityQuery query)
     {
         if (query is not null)
         {
-            var dbContext = _factory.CreateDbContext();
+            using var dbContext = _factory.CreateDbContext();
             dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
             var record = await dbContext.Set<DboUser>().SingleOrDefaultAsync(item => item.Id == query.IdentityId);
@@ -38,6 +35,7 @@ public class IdentityCQSHandler<TDbContext>
                 return new IdentityQueryResult { Identity = identity, Success = true };
             }
         }
+
         return new IdentityQueryResult {Success = false, Message = "No query defined" };
     }
 }

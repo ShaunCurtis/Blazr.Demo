@@ -4,30 +4,18 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
+namespace Blazr.App.Core;
 
-namespace Blazr.App.Core
+public static class ClaimsPrincipalExtensions
 {
-    public static class ClaimsPrincipalExtensions
+    public static Guid GetIdentityId(this ClaimsPrincipal principal)
     {
-        public static Guid GetIdentityId(this ClaimsPrincipal principal)
+        if (principal is not null)
         {
-            if (principal is not null)
-            {
-                var claim = principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Sid);
-                if (claim is not null && Guid.TryParse(claim.Value, out Guid id))
-                    return id;
-            }
-            return Guid.Empty;
+            var claim = principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Sid);
+            if (claim is not null && Guid.TryParse(claim.Value, out Guid id))
+                return id;
         }
-        public static Guid GetIdentityId(this ClaimsIdentity principal)
-        {
-            if (principal is not null)
-            {
-                var claim = principal.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Sid);
-                if (claim is not null && Guid.TryParse(claim.Value, out Guid id))
-                    return id;
-            }
-            return Guid.Empty;
-        }
+        return Guid.Empty;
     }
 }

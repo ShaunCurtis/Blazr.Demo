@@ -3,19 +3,18 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-namespace Blazr.App.Data;
+namespace Blazr.App.Core;
 
-public class ServerIdentityService<TDbContext>
+public class IdentityService
     : IIdentityService
-     where TDbContext : DbContext
 {
-    private IdentityCQSHandler<TDbContext> _identityCQSHandler;
+    private IIdentityCQSHandler _identityCQSHandler;
 
     public ClaimsPrincipal Identity { get; private set; } = new ClaimsPrincipal();
 
     public event EventHandler? IdentityChanged;
 
-    public ServerIdentityService(IdentityCQSHandler<TDbContext> identityCQSHandler)
+    public IdentityService(IIdentityCQSHandler identityCQSHandler)
         => _identityCQSHandler = identityCQSHandler;
 
     public async ValueTask<IdentityQueryResult> GetIdentityAsync(Guid Uid)

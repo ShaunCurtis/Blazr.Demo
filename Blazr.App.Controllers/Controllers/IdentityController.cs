@@ -15,6 +15,7 @@ public class IdentityController
         => _identityCQSHandler = identityCQSHandler;
 
     [Mvc.HttpPost]
+    [Mvc.Route("/api/[controller]/authenicate")]
     public async Task<IdentityQueryResult> GetIdentity([FromBody] IdentityQuery query)
         => await _identityCQSHandler.ExecuteAsync(query);
 }

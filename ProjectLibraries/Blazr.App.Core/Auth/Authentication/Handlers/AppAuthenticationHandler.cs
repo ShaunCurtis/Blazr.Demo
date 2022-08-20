@@ -64,6 +64,4 @@ public class AppAuthenticationHandler : AuthenticationHandler<AppAuthOptions>
         // No user so return null
         return null;
     }
-
-
 }
