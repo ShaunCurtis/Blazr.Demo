@@ -38,7 +38,7 @@ public abstract class LeanComponentBase : IComponent
         parameters.SetParameterProperties(this);
         var shouldRender = this.ShouldRenderOnParameterChange(initialized);
 
-        if (_hasNeverRendered || shouldRender || _renderHandle.IsRenderingOnMetadataUpdate)
+        if (_hasNeverRendered || shouldRender)
         {
             await this.OnParametersChangedAsync(!initialized);
             this.Render();
@@ -53,31 +53,15 @@ public abstract class LeanComponentBase : IComponent
         => ValueTask.CompletedTask;
 
     protected virtual bool ShouldRenderOnParameterChange(bool initialized)
-    {
-        var tripwire = new TripWire();
+        => true;
 
-        tripwire.TripOnFalse(this.Hidden == _hidden);
-        _hidden = this.Hidden;
-
-        return tripwire.IsTripped;
-    }
-
-    private void Render()
+    protected void Render()
     {
         if (_hasPendingQueuedRender)
             return;
 
         _hasPendingQueuedRender = true;
-
-        try
-        {
-            _renderHandle.Render(renderFragment);
-        }
-        catch
-        {
-            _hasPendingQueuedRender = false;
-            throw;
-        }
+        _renderHandle.Render(renderFragment);
     }
 
     protected void StateHasChanged()

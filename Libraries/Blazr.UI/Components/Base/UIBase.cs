@@ -68,16 +68,7 @@ public abstract class UIBase : IComponent
             return;
 
         _hasPendingQueuedRender = true;
-
-        try
-        {
-            renderHandle.Render(this.renderFragment);
-        }
-        catch
-        {
-            _hasPendingQueuedRender = false;
-            throw;
-        }
+        renderHandle.Render(this.renderFragment);
     }
 
     /// <summary>
