@@ -18,5 +18,16 @@ public record ListState
 
     public int ListTotalCount { get; init; } = 0;
 
-    public string SortExpression { get; init; } = string.Empty;
+    public string? FilterExpression { get; init; }
+
+    public int Page => StartIndex / PageSize;
+
+    public string? SortExpression()
+    {
+        string _sortDescendingText = this.SortDescending ? "Desc" : string.Empty;
+
+        return SortField is not null
+            ? $"{SortField} {_sortDescendingText}".Trim()
+            : null;
+    }
 }

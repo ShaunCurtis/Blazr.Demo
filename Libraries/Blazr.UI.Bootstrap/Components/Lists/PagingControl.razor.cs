@@ -9,9 +9,9 @@ namespace Blazr.UI.Bootstrap;
 public partial class PagingControl
     : UIComponent, IPagingControl
 {
-    private int Page => this.ListContext?.Page ?? 0;
-    private int ListCount => this.ListContext?.ListTotalCount ?? 0;
-    private int PageSize => this.ListContext?.PageSize ?? 10;
+    private int Page => this.ListContext?.ListState.Page ?? 0;
+    private int ListCount => this.ListContext?.ListState.ListTotalCount ?? 0;
+    private int PageSize => this.ListContext?.ListState.PageSize ?? 10;
     private bool hasPages => LastPage > 0;
     private int DisplayPage => this.Page + 1;
     private int LastPage => PageSize == 0 || ListCount == 0

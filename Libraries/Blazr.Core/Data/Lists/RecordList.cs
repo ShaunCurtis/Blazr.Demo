@@ -30,14 +30,20 @@ public class RecordList<TRecord> : IEnumerable<TRecord>
 
     public void Set(ListProviderRequest<TRecord> request, ListProviderResult<TRecord> result)
     {
+        bool sortDecending = request.SortExpressionString?.Contains("Desc", StringComparison.CurrentCultureIgnoreCase) ?? false;
+        string? sortField = request.SortExpressionString?.Replace("Desc", string.Empty, StringComparison.CurrentCultureIgnoreCase);
+
         _records = result.Items.ToList();
-        _listState = _listState with { PageSize = request.PageSize, StartIndex = request.StartIndex, ListTotalCount = result.TotalItemCount };
+        _listState = _listState with { PageSize = request.PageSize, StartIndex = request.StartIndex, ListTotalCount = result.TotalItemCount, SortDescending = sortDecending, SortField = sortField };
     }
 
     public void Set(IListQuery<TRecord> request, ListProviderResult<TRecord> result)
     {
+        bool sortDecending = request.SortExpressionString?.Contains("Desc", StringComparison.CurrentCultureIgnoreCase) ?? false;
+        string? sortField = request.SortExpressionString?.Replace("Desc", string.Empty, StringComparison.CurrentCultureIgnoreCase).Trim();
+
         _records = result.Items.ToList();
-        _listState = _listState with { PageSize = request.PageSize, StartIndex = request.StartIndex, ListTotalCount = result.TotalItemCount };
+        _listState = _listState with { PageSize = request.PageSize, StartIndex = request.StartIndex, ListTotalCount = result.TotalItemCount, SortDescending = sortDecending, SortField = sortField };
     }
 
     public void Set(List<TRecord>? records, ListState listState)

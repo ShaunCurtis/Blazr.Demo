@@ -32,8 +32,8 @@
 
     [Parameter] public Guid WeatherLocationId { get; set; } = Guid.Empty;
 
-    protected override WeatherForecastListQuery GetListQuery(ListProviderRequest<DvoWeatherForecast> request)
-        => new WeatherForecastListQuery(this.WeatherLocationId, request);
+    //protected override WeatherForecastListQuery GetListQuery(ListProviderRequest<DvoWeatherForecast> request)
+    //    => new WeatherForecastListQuery(this.WeatherLocationId, request);
 
     protected override ModalOptions GetAddOptions(ModalOptions? options)
     {

@@ -6,7 +6,7 @@
 
 namespace Blazr.UI.Bootstrap;
 
-public partial class UIListColumn : UIBase
+public partial class UIListColumn : UIComponentBase
 {
     private bool showSortingDropdown = false;
     private bool isMaxRowColumn => IsMaxColumn && !this.IsHeader;
@@ -15,7 +15,7 @@ public partial class UIListColumn : UIBase
 
     [CascadingParameter(Name = "IsHeader")] public bool IsHeader { get; set; }
  
-    [CascadingParameter] private ListContext? _listContext { get; set; }
+    [CascadingParameter] private ListContext _listContext { get; set; } = default!;
     
     [Parameter] public bool IsMaxColumn { get; set; }
     
@@ -29,6 +29,14 @@ public partial class UIListColumn : UIBase
 
     private string showCss => showSortingDropdown ? "show" : String.Empty;
 
+    protected override Task OnParametersChangedAsync(bool firstRender)
+    {
+        if (_listContext is null)
+            throw new NullReferenceException("There's no cascaded ListContext.");
+        
+        return Task.CompletedTask;
+    }
+
     private void ShowSorting(bool show)
     {
         showSortingDropdown = show;
@@ -37,11 +45,8 @@ public partial class UIListColumn : UIBase
 
     private void SortClick(bool descending)
     {
-        if (this._listContext is null)
-            return;
-
         SortRequest request = this.IsCurrentSortField()
-            ? new SortRequest { SortDescending = descending, SortField = this._listContext.SortField }
+            ? new SortRequest { SortDescending = descending, SortField = this._listContext.ListState.SortField }
             : new SortRequest { SortDescending = descending, SortField = this.SortField };
 
         this._listContext?.NotifySortingRequested(this, request);
@@ -49,22 +54,21 @@ public partial class UIListColumn : UIBase
 
     private bool IsCurrentSortField()
     {
-        if (this._listContext is null || String.IsNullOrWhiteSpace(_listContext.SortField))
+        if (string.IsNullOrWhiteSpace(_listContext.ListState.SortField))
             return false;
 
-        return _listContext.SortField.Equals(this.SortField);
+        return _listContext.ListState.SortField.Equals(this.SortField);
     }
 
     private string GetActive(bool dir)
     {
-        bool sortDescending = this._listContext?.SortDescending ?? false;
+        bool sortDescending = this._listContext?.ListState.SortDescending ?? false;
 
         if (this.IsCurrentSortField())
             return dir == sortDescending ? "active" : string.Empty;
 
         return string.Empty;
     }
-
 
     private string HeaderCss
         => CSSBuilder.Class()
@@ -84,8 +88,7 @@ public partial class UIListColumn : UIBase
     private string SortIconCss
     => _listContext is null || !this.IsCurrentSortField()
         ? UICssClasses.NotSortedClass
-        : this._listContext.SortDescending
+        : this._listContext.ListState.SortDescending
             ? UICssClasses.AscendingClass
             : UICssClasses.DescendingClass;
 }
-

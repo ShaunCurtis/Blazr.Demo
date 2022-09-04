@@ -30,41 +30,12 @@ public readonly struct ListProviderRequest<TRecord>
         FilterExpressionString = null;
     }
 
-    //TODO - check not needed
-
-    //public ListProviderRequest(int startIndex, int pageSize)
-    //{
-    //    StartIndex = startIndex;
-    //    PageSize = pageSize;
-    //    CancellationToken = new CancellationToken();
-    //    SortExpressionString = null;
-    //    FilterExpressionString = null;
-    //}
-
-    //public ListProviderRequest(int startIndex, int pageSize, CancellationToken cancellationToken, string? sortExpressionString = null, string? filterExpressionString = null)
-    //{
-    //    StartIndex = startIndex;
-    //    PageSize = pageSize;
-    //    CancellationToken = cancellationToken;
-    //    SortExpressionString = sortExpressionString;
-    //    FilterExpressionString = filterExpressionString;
-    //}
-
-    //public ListProviderRequest(ItemsProviderRequest request, string? filterExpressionString = null)
-    //{
-    //    StartIndex = request.StartIndex;
-    //    PageSize = request.Count;
-    //    CancellationToken = request.CancellationToken;
-    //    SortExpressionString = null;
-    //    FilterExpressionString = filterExpressionString;
-    //}
-
     public ListProviderRequest(ListState options, string? filterExpressionString = null)
     {
         StartIndex = options.StartIndex;
         PageSize = options.PageSize;
         CancellationToken = new CancellationToken();
-        SortExpressionString = options.SortExpression;
+        SortExpressionString = options.SortExpression();
         FilterExpressionString = filterExpressionString;
     }
 }

@@ -17,6 +17,6 @@ public interface IListService<TRecord, TEntity>
 
     public ValueTask<bool> GetRecordsAsync(ListProviderRequest<TRecord> request);
 
-    public ValueTask<bool> GetRecordsAsync(IListQuery<TRecord> query);
+    public ValueTask<bool> GetRecordsAsync(ListQuery<TRecord> query);
 }
 

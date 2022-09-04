@@ -96,7 +96,7 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
 
         if (await this.Service.GetRecordsAsync(query))
         {
-            this.ListContext.NotifyPageUpdated(this, this.Service.Records.ListState);
+            this.ListContext.NotifyStateUpdated(this, this.Service.Records.ListState);
             this.SaveState();
             return true;
         }
@@ -117,7 +117,7 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
     protected ListProviderRequest<TRecord> GetListProviderRequest(SortRequest request)
         => new ListProviderRequest<TRecord>(this.Service.Records.ListState with { SortDescending = request.SortDescending, SortField =request.SortField });
 
-    protected virtual IListQuery<TRecord> GetListQuery(ListProviderRequest<TRecord> request)
+    protected virtual ListQuery<TRecord> GetListQuery(ListProviderRequest<TRecord> request)
         => new ListQuery<TRecord>(request);
 
     protected virtual void RecordDashboard(Guid Id)
