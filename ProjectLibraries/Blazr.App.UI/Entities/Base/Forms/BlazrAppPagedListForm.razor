@@ -14,7 +14,7 @@
                     <PagingControl @ref=this.pagingControl />
                 </UIColumn>
                 <UIColumn LargeColumns=4 class="text-right text-end">
-                    <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsUserPolicy ButtonType=UIButtonType.New ClickEvent="() => this.AddRecordAsync()">@this.NewRecordText</UIAuthorizeButton>
+                    <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsUserPolicy ButtonType=UIButtonType.New ClickEvent="() => this.LoadAddFormAsync()">@this.NewRecordText</UIAuthorizeButton>
                     <UIButton ButtonType=UIButtonType.Exit Hidden=(this.IsSubForm) ClickEvent="this.Exit">Exit</UIButton>
                 </UIColumn>
             </UIFormRow>
@@ -32,8 +32,8 @@
                 <UIButton type="button" ButtonType=UIButtonType.Dash ClickEvent="() => this.RecordDashboard(id)">Dash</UIButton>
             }
 
-            <UIButton type="button" ButtonType=UIButtonType.View ClickEvent="() => this.ViewRecord(id)">View</UIButton>
-            <UIButton type="button" ButtonType=UIButtonType.Edit ClickEvent="() => this.EditRecord(id)">Edit</UIButton>
+            <UIButton type="button" ButtonType=UIButtonType.View ClickEvent="() => this.LoadViewFormAsync(id)">View</UIButton>
+            <UIButton type="button" ButtonType=UIButtonType.Edit ClickEvent="() => this.LoadEditFormAsync(id)">Edit</UIButton>
         </UIButtonGroup>
     };
 
@@ -47,10 +47,10 @@
             }
 
             <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsEditorPolicy AuthFields="this.GetAuthFields(record)" type="button" ButtonType=UIButtonType.Edit
-                             ClickEvent="() => this.EditRecord(id)">Edit</UIAuthorizeButton>
+                             ClickEvent="() => this.LoadEditFormAsync(id)">Edit</UIAuthorizeButton>
 
             <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsViewerPolicy AuthFields="this.GetAuthFields(record)" type="button" ButtonType=UIButtonType.View
-                             ClickEvent="() => this.ViewRecord(id)">View</UIAuthorizeButton>
+                             ClickEvent="() => this.LoadViewFormAsync(id)">View</UIAuthorizeButton>
         </UIButtonGroup>
     };
 }

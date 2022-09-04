@@ -44,7 +44,7 @@ public partial class UIListColumn : UIBase
             ? new SortRequest { SortDescending = descending, SortField = this._listContext.SortField }
             : new SortRequest { SortDescending = descending, SortField = this.SortField };
 
-        this._listContext?.SortAsync(request);
+        this._listContext?.NotifySortingRequested(this, request);
     }
 
     private bool IsCurrentSortField()

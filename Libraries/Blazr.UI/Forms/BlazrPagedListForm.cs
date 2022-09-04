@@ -3,6 +3,7 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
+
 namespace Blazr.UI;
 
 public abstract class BlazrPagedListForm<TRecord, TEntity>
@@ -14,6 +15,7 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
     protected string FormTitle = "Record Editor";
     protected string NewRecordText = "Add Record";
     private bool _isNew = true;
+
     protected virtual Type? ViewControl => this.EntityUIService.ViewForm;
     protected virtual Type? EditControl => this.EntityUIService.EditForm;
     protected bool isLoading => Service.Records is null;
@@ -70,11 +72,8 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
 
         if (_isNew)
         {
-            this.ListContext.PageSize = this.PageSize;
-            this.ListContext.Load(this.RouteId, GetPagedItems);
-            this.ListContext.SortDescending = this.EntityUIService.DefaultSortDescending;
-            this.ListContext.SortField = this.EntityUIService.DefaultSortField;
-
+            this.ListContext.PagingRequested += this.OnPagingRequested;
+            this.ListContext.SortingRequested += this.OnSortingRequested;
             this.NotificationService.ListUpdated += this.OnListChanged;
         }
 
@@ -85,47 +84,46 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
     public virtual Task PreLoadRecordAsync(bool isNew)
         => Task.CompletedTask;
 
+    protected async void OnPagingRequested(object? sender, PagingRequest? request)
+        => await this.GetRecordsAsync(this.GetListProviderRequest(request));
+
+    protected async void OnSortingRequested(object? sender, SortRequest request)
+        => await this.GetRecordsAsync(this.GetListProviderRequest(request));
+
+    protected async ValueTask<bool> GetRecordsAsync(ListProviderRequest<TRecord> listProviderRequest)
+    {
+        var query = this.GetListQuery(listProviderRequest);
+
+        if (await this.Service.GetRecordsAsync(query))
+        {
+            this.ListContext.NotifyPageUpdated(this, this.Service.Records.ListState);
+            this.SaveState();
+            return true;
+        }
+
+        //TODO -  add code if fails to show message
+        return false;
+    }
+
+    protected ListProviderRequest<TRecord> GetListProviderRequest(PagingRequest? request)
+    {
+        if (request is null && this.TryGetState(this.RouteId, out ListState? state))
+            return new ListProviderRequest<TRecord>(state);
+
+        request ??= new PagingRequest { StartIndex = 0, PageSize = this.PageSize };
+        return new ListProviderRequest<TRecord>(this.Service.Records.ListState with { PageSize = request.PageSize, StartIndex = request.StartIndex });
+    }
+
+    protected ListProviderRequest<TRecord> GetListProviderRequest(SortRequest request)
+        => new ListProviderRequest<TRecord>(this.Service.Records.ListState with { SortDescending = request.SortDescending, SortField =request.SortField });
+
     protected virtual IListQuery<TRecord> GetListQuery(ListProviderRequest<TRecord> request)
         => new ListQuery<TRecord>(request);
-
-    public async ValueTask GetPagedItems()
-    {
-        var request = new ListProviderRequest<TRecord>(this.ListContext.ListStateRecord);
-        var query = this.GetListQuery(request);
-        var result = await this.Service.GetRecordsAsync(query);
-
-        this.ListContext.ListTotalCount = result.TotalItemCount;
-
-        await this.OnAfterGetItems();
-        await this.InvokeAsync(StateHasChanged);
-
-        this.ListContext.SaveState();
-    }
-
-    public async ValueTask<(int, bool)> GetPagedItems(ListState state)
-    {
-        var request = new ListProviderRequest<TRecord>(state);
-        var query = this.GetListQuery(request);
-
-        var result = await this.Service.GetRecordsAsync(query);
-
-        this.ListContext.ListTotalCount = result.TotalItemCount;
-
-        await this.OnAfterGetItems();
-        await this.InvokeAsync(StateHasChanged);
-
-        this.ListContext.SaveState();
-
-        return (result.TotalItemCount, result.Success);
-    }
-
-    protected virtual Task OnAfterGetItems()
-        => Task.CompletedTask;
 
     protected virtual void RecordDashboard(Guid Id)
         => this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/dashboard/{Id}");
 
-    protected async Task EditRecord(Guid Id)
+    protected async Task LoadEditFormAsync(Guid Id)
     {
         if (this.ModalService.IsModalFree && this.UseModalForms && this.EditControl is not null)
         {
@@ -138,7 +136,7 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
             this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/edit/{Id}");
     }
 
-    protected async Task ViewRecord(Guid Id)
+    protected async Task LoadViewFormAsync(Guid Id)
     {
         if (this.ModalService.IsModalFree && this.UseModalForms && this.ViewControl is not null)
         {
@@ -150,7 +148,7 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
             this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/view/{Id}");
     }
 
-    protected async Task AddRecordAsync(ModalOptions? options = null)
+    protected async Task LoadAddFormAsync(ModalOptions? options = null)
     {
         if (this.ModalService.IsModalFree && this.UseModalForms && this.EditControl is not null)
         {
@@ -178,9 +176,20 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
 
     private void OnListChanged(object? sender, EventArgs e)
     {
-        this.pagingControl?.NotifyListChangedAsync();
+        this.pagingControl?.NotifyListChanged();
         this.InvokeAsync(this.StateHasChanged);
     }
+
+    public bool TryGetState(Guid stateId, [NotNullWhen(true)] out ListState? state)
+    {
+        var result = UiStateService.TryGetStateData<ListState>(this.RouteId, out ListState? listState);
+        state = listState;
+        return result;
+    }
+
+    public void SaveState()
+        => UiStateService?.AddStateData(this.RouteId, this.Service.Records.ListState);
+
 
     async Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg)
     {
@@ -191,6 +200,11 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
     Task IHandleAfterRender.OnAfterRenderAsync()
         => Task.CompletedTask;
 
-    public virtual void Dispose()
-        => this.NotificationService.ListUpdated += this.OnListChanged;
+    protected override void Dispose(bool disposing)
+    {
+        this.ListContext.PagingRequested -= this.OnPagingRequested;
+        this.ListContext.SortingRequested -= this.OnSortingRequested;
+        this.NotificationService.ListUpdated -= this.OnListChanged;
+        base.Dispose(disposing);
+    }
 }

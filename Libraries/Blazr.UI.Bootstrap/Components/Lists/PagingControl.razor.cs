@@ -36,40 +36,39 @@ public partial class PagingControl
 
     [CascadingParameter] private ListContext? ListContext { get; set; }
 
-    public async void NotifyListChangedAsync()
-        => await SetPageAsync();
+    public void NotifyListChanged()
+        => SetPage();
 
-    protected async override Task OnParametersChangedAsync(bool firstRender)
+    protected override Task OnParametersChangedAsync(bool firstRender)
     {
         if (firstRender)
         {
             if (ListContext is null)
                 throw new NullReferenceException($"No cascaded {nameof(ListContext)} found.");
 
-            await this.SetPageAsync();
+            this.SetPage();
 
             if (this.ListContext is not null)
                 this.ListContext.PagingReset += this.OnPagingReset;
         }
+        return Task.CompletedTask;
     }
 
-    private async Task SetPageAsync(PagingRequest? request = null)
+    private void SetPage(PagingRequest? request = null)
     {
         if (this.ListContext is not null)
-            await this.ListContext.PageAsync(request);
+            this.ListContext.NotifyPagingRequested(this, request);
     }
 
-    private void OnPagingReset(object? sender, PagingEventArgs e)
-    {
-        this.ListContext?.Set(e.Request);
-        this.StateHasChanged();
-    }
+    private void OnPagingReset(object? sender, EventArgs e)
+        => this.StateHasChanged();
 
-    private async Task GotToPageAsync(int page)
+    private void GotToPage(int page)
     {
         if (page != this.Page)
         {
-            await SetPageAsync(this.GetPagingRequest(page));
+            SetPage(this.GetPagingRequest(page));
+            // TODO - is this right?
             this.StateHasChanged();
         }
     }
@@ -77,7 +76,7 @@ public partial class PagingControl
     private string GetCss(int page)
         => page == this.Page ? "btn-primary" : "btn-secondary";
 
-    private async Task MoveBlockAsync(int block)
+    private void MoveBlock(int block)
     {
         var _page = block switch
         {
@@ -86,11 +85,11 @@ public partial class PagingControl
             -1 => this.Block - 1 < 0 ? 0 : this.BlockStartPage - BlockSize,
             _ => 0
         };
-        await this.GotToPageAsync(_page);
+        this.GotToPage(_page);
     }
 
-    private async Task GoToBlockAsync(int block)
-        => await this.GotToPageAsync(block * this.PageSize);
+    private void GoToBlock(int block)
+        => this.GotToPage(block * this.PageSize);
 
     private PagingRequest GetPagingRequest(int page)
         => new PagingRequest { PageSize = this.PageSize, StartIndex = this.PageSize * page };
