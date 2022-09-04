@@ -8,106 +8,71 @@ namespace Blazr.Core.Validation;
 
 public abstract class Validator<T>
 {
-    /// <summary>
-    /// True if the values passed Validation
-    /// </summary>
-    public bool IsValid => !Trip;
+    protected readonly string fieldName;
+    protected readonly T value;
+    protected readonly string defaultMessage = "The value failed validation";
+    protected readonly ValidationState validationState;
+    protected readonly ValidationMessageStore? validationMessageStore;
+    protected readonly object model;
+    protected readonly List<string> messages = new List<string>();
+    private bool _tripped;
 
-    /// <summary>
-    /// Messages to display if validation fails
-    /// </summary>
-    public List<string> Messages { get; } = new List<string>();
+    public IEnumerable<string> Messages => this.messages;
 
-    /// <summary>
-    /// Tripwire for validation failure
-    /// </summary>
-    protected bool Trip { get; set; } = false;
-
-    /// <summary>
-    /// Class Contructor
-    /// </summary>
-    /// <param name="value"></param>
-    /// <param name="fieldName"></param>
-    /// <param name="model"></param>
-    /// <param name="validationMessageStore"></param>
-    /// <param name="message"></param>
-    public Validator(T value, string fieldName, object model, ValidationMessageStore? validationMessageStore, string? message)
+    public Validator(T value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message)
     {
-        this.FieldName = fieldName;
-        this.Value = value;
-        this.Model = model;
-        this.ValidationMessageStore = validationMessageStore;
-        this.DefaultMessage = string.IsNullOrWhiteSpace(message) 
-            ? this.DefaultMessage 
+        this.fieldName = fieldName;
+        this.value = value;
+        this.model = model;
+        this.validationMessageStore = validationMessageStore;
+        this.validationState = validationState;
+        this.defaultMessage = string.IsNullOrWhiteSpace(message) 
+            ? this.defaultMessage 
             : message;
     }
 
-    /// <summary>
-    /// Method to Log the Validation to the Validation Store and trip a tripwire
-    /// </summary>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    public virtual bool Validate(ref bool tripwire, string? fieldname, string? message = null)
+    public virtual void Validate(string? fieldname, string? message = null)
     {
-        if (string.IsNullOrEmpty(fieldname) || this.FieldName.Equals(fieldname))
+        var needToLogMessages = string.IsNullOrEmpty(fieldname) || this.fieldName.Equals(fieldname);
+
+        if (needToLogMessages && _tripped)
         {
-            this.Validate(message);
-            if (!this.IsValid)
-                tripwire = true;
-        }
-        else this.Trip = false;
-        return this.IsValid;
-    }
+            message ??= this.defaultMessage;
 
-    /// <summary>
-    /// Name of the Field
-    /// </summary>
-    protected string FieldName { get; set; }
-
-    /// <summary>
-    /// Field Value
-    /// </summary>
-    protected T Value { get; set; }
-
-    /// <summary>
-    /// Default message to diplay if failed validation
-    /// </summary>
-    protected string DefaultMessage { get; set; } = "The value failed validation";
-
-    /// <summary>
-    /// Reference to the current Edit Context ValidationMessageStore
-    /// </summary>
-    protected ValidationMessageStore? ValidationMessageStore { get; set; }
-
-    protected object Model { get; set; }
-
-
-    /// <summary>
-    /// Method to Log the Validation to the Validation Store
-    /// </summary>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    protected virtual bool Validate(string? message = null)
-    {
-        if (!this.IsValid)
-        {
-            message ??= this.DefaultMessage;
             // Check if we've logged specific messages.  If not add the default message
-            if (this.Messages.Count == 0) Messages.Add(message);
+            if (this.messages.Count == 0) this.messages.Add(message);
+
             //set up a FieldIdentifier and add the message to the Edit Context ValidationMessageStore
-            var fi = new FieldIdentifier(this.Model, this.FieldName);
-            this.ValidationMessageStore?.Add(fi, this.Messages);
+            var fi = new FieldIdentifier(this.model, this.fieldName);
+
+            this.validationMessageStore?.Add(fi, this.Messages);
         }
-        return this.IsValid;
     }
 
-    /// <summary>
-    /// Method to add a message to the log
-    /// </summary>
-    /// <param name="message"></param>
     protected void LogMessage(string? message)
     {
-        if (!string.IsNullOrWhiteSpace(message)) Messages.Add(message);
+        if (!string.IsNullOrWhiteSpace(message)) messages.Add(message);
+    }
+
+    protected void SetTripped()
+        => _tripped = true;
+
+    protected void FailIfFalse(bool test, string? message)
+    {
+        if (!test)
+        {
+            this.SetTripped();
+            LogMessage(message);
+        }
+    }
+
+    protected void FailIfTrue(bool test, string? message)
+    {
+        if (!test)
+        {
+            this.SetTripped();
+            LogMessage(message);
+        }
     }
 }
 

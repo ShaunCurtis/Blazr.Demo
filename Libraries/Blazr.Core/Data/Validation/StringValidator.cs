@@ -1,4 +1,5 @@
-﻿/// ============================================================
+﻿using static System.Net.Mime.MediaTypeNames;
+/// ============================================================
 /// Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
@@ -7,80 +8,46 @@ namespace Blazr.Core.Validation;
 
 public class StringValidator : Validator<string>
 {
+    public StringValidator(string value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState , string? message)
+        : base(value, fieldName, model, validationMessageStore, validationState, message) { }
 
-    /// <summary>
-    /// Class Contructor
-    /// </summary>
-    /// <param name="value"></param>
-    /// <param name="fieldName"></param>
-    /// <param name="model"></param>
-    /// <param name="validationMessageStore"></param>
-    /// <param name="message"></param>
-    public StringValidator(string value, string fieldName, object model, ValidationMessageStore? validationMessageStore, string? message)
-        : base(value, fieldName, model, validationMessageStore, message) { }
-
-    /// <summary>
-    /// Check of the string is longer than test
-    /// </summary>
-    /// <param name="test"></param>
-    /// <returns></returns>
     public StringValidator LongerThan(int test, string? message = null)
     {
-        if (string.IsNullOrEmpty(this.Value) || !(this.Value.Length > test))
-        {
-            Trip = true;
-            LogMessage(message);
-        }
+        this.FailIfFalse(
+            test: string.IsNullOrEmpty(this.value) || !(this.value.Length > test),
+            message: message);
+
         return this;
     }
 
-    /// <summary>
-    /// Check if the string is shorter than
-    /// </summary>
-    /// <param name="test"></param>
-    /// <returns></returns>
     public StringValidator ShorterThan(int test, string? message = null)
     {
+        this.FailIfFalse(
+            test: string.IsNullOrEmpty(this.value) || !(this.value.Length < test),
+            message: message);
 
-        if (string.IsNullOrEmpty(this.Value) || !(this.Value.Length < test))
-        {
-            Trip = true;
-            LogMessage(message);
-        }
         return this;
     }
 
-    /// <summary>
-    /// Check if the string matches a regex pattern
-    /// </summary>
-    /// <param name="test"></param>
-    /// <returns></returns>
     public StringValidator Matches(string pattern, string? message = null)
     {
-        if (!string.IsNullOrWhiteSpace(this.Value))
+        var result = false;
+
+        if (!string.IsNullOrWhiteSpace(this.value))
         {
-            var match = Regex.Match(this.Value, pattern);
-            if (match.Success && match.Value.Equals(this.Value)) return this;
+            var match = Regex.Match(this.value, pattern);
+            if (match.Success && match.Value.Equals(this.value)) 
+                result = true;
         }
-        this.Trip = true;
-        LogMessage(message);
+        
+        this.FailIfFalse(result, message);
+
         return this;
     }
 }
 
 public static class StringValidatorExtensions
 {
-    /// <summary>
-    /// String Validation Extension
-    /// </summary>
-    /// <param name="value"></param>
-    /// <param name="fieldName"></param>
-    /// <param name="model"></param>
-    /// <param name="validationMessageStore"></param>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    public static StringValidator Validation(this string value, string fieldName, object model, ValidationMessageStore? validationMessageStore, string? message = null)
-    {
-            return new StringValidator(value, fieldName, model, validationMessageStore, message);
-    }
+    public static StringValidator Validation(this string value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
+        => new StringValidator(value, fieldName, model, validationMessageStore, validationState, message);
 }

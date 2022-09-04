@@ -79,26 +79,26 @@ public class DeoWeatherForecast
 
     public bool Validate(ValidationMessageStore? validationMessageStore, string? fieldname, object? model = null)
     {
-        model = model ?? this;
-        bool trip = false;
+        model ??= this;
+        ValidationState validationState = new ValidationState();
 
-        this.Date.Validation("Date", model, validationMessageStore)
+        this.Date.Validation("Date", model, validationMessageStore, validationState)
             .GreaterThan(DateTime.Now, true, "The weather forecast must be for a future date")
-            .Validate(ref trip, fieldname);
+            .Validate(fieldname);
 
-        this.SummaryId.Validation("SummaryId", model, validationMessageStore)
+        this.SummaryId.Validation("SummaryId", model, validationMessageStore, validationState)
             .NotEmpty("You must select a weather summary")
-            .Validate(ref trip, fieldname);
+            .Validate(fieldname);
 
-        this.LocationId.Validation("LocationId", model, validationMessageStore)
+        this.LocationId.Validation("LocationId", model, validationMessageStore, validationState)
             .NotEmpty("You must select a location")
-            .Validate(ref trip, fieldname);
+            .Validate(fieldname);
 
-        this.TemperatureC.Validation("TemperatureC", model, validationMessageStore)
+        this.TemperatureC.Validation("TemperatureC", model, validationMessageStore, validationState)
             .GreaterThan(-61, "The minimum Temperatore is -60C")
             .LessThan(81, "The maximum temperature is 80C")
-            .Validate(ref trip, fieldname);
+            .Validate(fieldname);
 
-        return !trip;
+        return validationState.IsValid;
     }
 }

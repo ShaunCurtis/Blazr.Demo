@@ -64,13 +64,13 @@ public class DeoWeatherLocation
 
     public bool Validate(ValidationMessageStore? validationMessageStore, string? fieldname, object? model = null)
     {
-        model = model ?? this;
-        bool trip = false;
+        model ??= this;
+        ValidationState validationState = new ValidationState();
 
-        this.Location.Validation("Location", model, validationMessageStore)
+        this.Location.Validation("Location", model, validationMessageStore, validationState)
             .LongerThan(2, "The location miust be at least 2 characters")
-            .Validate(ref trip, fieldname);
+            .Validate(fieldname);
 
-        return !trip;
+        return validationState.IsValid;
     }
 }
