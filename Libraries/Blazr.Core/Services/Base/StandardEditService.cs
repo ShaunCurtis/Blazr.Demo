@@ -11,7 +11,7 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
     where TEditRecord : class, IEditRecord<TRecord>, new()
     where TEntity : class, IEntity
 {
-    protected string AddPolicy = "IsEditorPolicy";
+    protected string AddPolicy = "IsUserPolicy";
     protected string EditPolicy = "IsEditorPolicy";
     protected string DeletePolicy = "IsEditorPolicy";
     protected string ReadPolicy = "IsViewerPolicy";

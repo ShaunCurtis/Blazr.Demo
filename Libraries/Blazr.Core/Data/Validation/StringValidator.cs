@@ -14,7 +14,7 @@ public class StringValidator : Validator<string>
     public StringValidator LongerThan(int test, string? message = null)
     {
         this.FailIfFalse(
-            test: string.IsNullOrEmpty(this.value) || !(this.value.Length > test),
+            test: !string.IsNullOrEmpty(this.value) || (this.value.Length > test),
             message: message);
 
         return this;
@@ -23,7 +23,7 @@ public class StringValidator : Validator<string>
     public StringValidator ShorterThan(int test, string? message = null)
     {
         this.FailIfFalse(
-            test: string.IsNullOrEmpty(this.value) || !(this.value.Length < test),
+            test: !string.IsNullOrEmpty(this.value) || (this.value.Length < test),
             message: message);
 
         return this;
