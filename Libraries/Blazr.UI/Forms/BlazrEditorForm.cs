@@ -145,13 +145,7 @@ public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
 
     protected void OnRecordChanged(object? sender, EventArgs e)
         => this.StateHasChanged();
-
-    protected void OnEditStateChanged(object? sender, EditStateEventArgs e)
-    {
-        this.blazrNavManager?.SetLockState(e.IsDirty);
-        this.StateHasChanged();
-    }
-
+     
     protected async void ExitWithoutSaving()
     {
         this.blazrNavManager?.SetLockState(false);

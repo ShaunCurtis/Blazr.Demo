@@ -32,6 +32,12 @@
 
     [Parameter] public Guid WeatherLocationId { get; set; } = Guid.Empty;
 
+    protected override void OnInitialized()
+    {
+        if (WeatherLocationId != Guid.Empty)
+            this.initialFilterExpressionString = $"item == {this.WeatherLocationId}";
+    }
+
     //protected override WeatherForecastListQuery GetListQuery(ListProviderRequest<DvoWeatherForecast> request)
     //    => new WeatherForecastListQuery(this.WeatherLocationId, request);
 

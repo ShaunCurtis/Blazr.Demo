@@ -13,6 +13,7 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
 {
     protected string FormTitle = "Record Editor";
     protected string NewRecordText = "Add Record";
+    protected string? initialFilterExpressionString; 
     private bool _isNew = true;
 
     [Parameter] public Guid RouteId { get; set; } = Guid.Empty;
@@ -42,17 +43,6 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
     [Inject] protected ListContext ListContext { get; set; } = default!;
 
     [Inject] protected IServiceProvider SPAServiceProvider { get; set; } = default!;
-
-    protected string FormCss 
-        => new CSSBuilder()
-            .AddClassFromAttributes(UserAttributes)
-            .Build();
-
-    protected bool isLoading 
-        => Service.Records is null;
-
-    protected ComponentState loadState 
-        => isLoading ? ComponentState.Loading : ComponentState.Loaded;
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
@@ -85,6 +75,17 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
     public virtual Task PreLoadRecordAsync(bool isNew)
         => Task.CompletedTask;
 
+    protected string FormCss
+        => new CSSBuilder()
+            .AddClassFromAttributes(UserAttributes)
+            .Build();
+
+    protected bool isLoading
+        => Service.Records is null;
+
+    protected ComponentState loadState
+        => isLoading ? ComponentState.Loading : ComponentState.Loaded;
+
     protected async void OnPagingRequested(object? sender, PagingRequest? request)
         => await this.GetRecordsAsync(this.GetListProviderRequest(request));
 
@@ -108,15 +109,29 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
 
     protected ListProviderRequest<TRecord> GetListProviderRequest(PagingRequest? request)
     {
-        if (request is null && this.TryGetState(this.RouteId, out ListState? state))
-            return new ListProviderRequest<TRecord>(state);
+        var listState = this.Service.Records.ListState;
 
-        request ??= new PagingRequest { StartIndex = 0, PageSize = this.PageSize };
-        return new ListProviderRequest<TRecord>(this.Service.Records.ListState with { PageSize = request.PageSize, StartIndex = request.StartIndex });
+        if (request != null)
+            listState = this.Service.Records.ListState with { 
+                PageSize = request.PageSize, 
+                StartIndex = request.StartIndex };
+
+        if (request is null && this.TryGetState(this.RouteId, out ListState? state))
+            listState = state;
+
+        if (request is null)
+            listState = this.Service.Records.ListState with { 
+                FilterExpression = this.initialFilterExpressionString, 
+                PageSize = this.PageSize, 
+                StartIndex = 0 };
+
+        return new ListProviderRequest<TRecord>(listState);
     }
 
     protected ListProviderRequest<TRecord> GetListProviderRequest(SortRequest request)
-        => new ListProviderRequest<TRecord>(this.Service.Records.ListState with { SortDescending = request.SortDescending, SortField =request.SortField });
+        => new ListProviderRequest<TRecord>(this.Service.Records.ListState with { 
+            SortDescending = request.SortDescending, 
+            SortField = request.SortField });
 
     protected virtual ListQuery<TRecord> GetListQuery(ListProviderRequest<TRecord> request)
         => new ListQuery<TRecord>(request);
@@ -126,15 +141,18 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
 
     protected async Task LoadEditFormAsync(Guid Id)
     {
+        var useModal = this.ModalService.IsModalFree && this.UseModalForms && this.EntityUIService.EditForm is not null;
+
         if (this.ModalService.IsModalFree && this.UseModalForms && this.EntityUIService.EditForm is not null)
         {
             var options = new ModalOptions();
             options.ControlParameters.Add("Id", Id);
             options = this.GetEditOptions(options);
             await this.ModalService.Modal.ShowAsync(this.EntityUIService.EditForm, options);
+            return;
         }
-        else
-            this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/edit/{Id}");
+
+        this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/edit/{Id}");
     }
 
     protected async Task LoadViewFormAsync(Guid Id)
@@ -144,9 +162,10 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
             var options = GetViewOptions(null);
             options.ControlParameters.Add("Id", Id);
             await this.ModalService.Modal.ShowAsync(this.EntityUIService.ViewForm, options);
+            return;
         }
-        else
-            this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/view/{Id}");
+
+        this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/view/{Id}");
     }
 
     protected async Task LoadAddFormAsync(ModalOptions? options = null)
@@ -155,9 +174,10 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
         {
             options = this.GetAddOptions(options);
             await this.ModalService.Modal.ShowAsync(this.EntityUIService.EditForm, options);
+            return;
         }
-        else
-            this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/edit/0");
+
+        this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/edit/0");
     }
 
     protected virtual ModalOptions GetAddOptions(ModalOptions? options)
