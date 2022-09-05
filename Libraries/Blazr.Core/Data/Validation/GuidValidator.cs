@@ -8,7 +8,6 @@ namespace Blazr.Core.Validation;
 
 public class GuidValidator : Validator<Guid>
 {
-
     public GuidValidator(Guid value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message) 
         : base(value, fieldName, model, validationMessageStore, validationState, message) { }
 

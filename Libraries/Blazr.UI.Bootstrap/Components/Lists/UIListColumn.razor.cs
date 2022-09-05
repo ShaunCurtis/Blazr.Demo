@@ -9,9 +9,6 @@ namespace Blazr.UI.Bootstrap;
 public partial class UIListColumn : UIComponentBase
 {
     private bool showSortingDropdown = false;
-    private bool isMaxRowColumn => IsMaxColumn && !this.IsHeader;
-    private bool isNormalRowColumn => !IsMaxColumn && !this.IsHeader;
-    private bool _isSortField => !string.IsNullOrWhiteSpace(this.SortField);
 
     [CascadingParameter(Name = "IsHeader")] public bool IsHeader { get; set; }
  
@@ -36,6 +33,15 @@ public partial class UIListColumn : UIComponentBase
         
         return Task.CompletedTask;
     }
+
+    private bool isMaxRowColumn 
+        => IsMaxColumn && !this.IsHeader;
+    
+    private bool isNormalRowColumn 
+        => !IsMaxColumn && !this.IsHeader;
+    
+    private bool _isSortField 
+        => !string.IsNullOrWhiteSpace(this.SortField);
 
     private void ShowSorting(bool show)
     {

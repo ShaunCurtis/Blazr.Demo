@@ -26,7 +26,7 @@ public class FKListQueryHandler<TRecord, TDbContext>
         if (query is null)
             return new FKListProviderResult(Enumerable.Empty<IFkListItem>(), false, "No Query defined");
 
-        IEnumerable<TRecord> dbSet = await dbContext.Set<TRecord>().ToListAsync();
+        IEnumerable<TRecord> dbSet = await dbContext.Set<TRecord>().ToListAsync(query.CancellationToken);
 
         return new FKListProviderResult(dbSet);
     }

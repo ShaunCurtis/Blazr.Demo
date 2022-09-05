@@ -11,4 +11,6 @@ public record FKListQuery<TRecord>
     where TRecord : class, IFkListItem, new()
 {
     public Guid TransactionId { get; } = Guid.NewGuid();
+
+    public CancellationToken CancellationToken { get; } = new CancellationToken();
 }

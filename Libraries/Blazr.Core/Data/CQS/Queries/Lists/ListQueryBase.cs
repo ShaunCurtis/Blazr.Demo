@@ -7,7 +7,7 @@
 namespace Blazr.Core;
 
 public abstract record ListQueryBase<TRecord>
-    :IListQuery<TRecord>
+    : IListQuery<TRecord>
     where TRecord : class, new()
 {
     public int StartIndex { get; init; }
@@ -20,7 +20,10 @@ public abstract record ListQueryBase<TRecord>
 
     public Guid TransactionId { get; init; } = Guid.NewGuid();
 
-    public ListQueryBase() { }
+    public CancellationToken CancellationToken { get; }
+
+    public ListQueryBase()
+        => this.CancellationToken = new CancellationToken();
 
     public ListQueryBase(ListProviderRequest<TRecord> request)
     {
@@ -28,5 +31,6 @@ public abstract record ListQueryBase<TRecord>
         this.PageSize = request.PageSize;
         this.SortExpressionString = request.SortExpressionString;
         this.FilterExpressionString = request.FilterExpressionString;
+        this.CancellationToken = request.CancellationToken;
     }
 }

@@ -14,6 +14,8 @@ public abstract class RecordCommandBase<TRecord>
     
     public TRecord Record { get; protected set; } = default!;
 
+    public CancellationToken CancellationToken { get; } = new CancellationToken();
+
     public RecordCommandBase(TRecord record)
         => this.Record = record;
 }

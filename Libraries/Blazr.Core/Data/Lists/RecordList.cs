@@ -12,11 +12,14 @@ public class RecordList<TRecord> : IEnumerable<TRecord>
     private List<TRecord>? _records = new List<TRecord>();
     private ListState _listState = new ListState();
 
-    public ListState ListState => _listState with { };
+    public ListState ListState 
+        => _listState with { };
 
-    public bool IsPaging => (_listState.PageSize > 0);
+    public bool IsPaging 
+        => (_listState.PageSize > 0);
 
-    public bool HasList => _records is not null;
+    public bool HasList 
+        => _records is not null;
 
     public void Set(ListProviderRequest<TRecord> request, ListProviderResult<TRecord> result)
     {
@@ -48,7 +51,7 @@ public class RecordList<TRecord> : IEnumerable<TRecord>
         => sortExpressionString?.Contains("Desc", StringComparison.CurrentCultureIgnoreCase) ?? false;
 
     private string? GetSortField(string? sortExpressionString)
-        => sortExpressionString?.Replace("Desc", string.Empty, StringComparison.CurrentCultureIgnoreCase);
+        => sortExpressionString?.Replace("Desc", string.Empty, StringComparison.CurrentCultureIgnoreCase).Trim();
 
     public void Reset()
     {

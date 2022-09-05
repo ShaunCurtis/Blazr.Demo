@@ -54,7 +54,7 @@ public class ListQueryHandler<TRecord, TDbContext>
                 .Take(listQuery.PageSize);
 
         if (query is IAsyncEnumerable<TRecord>)
-            this.items = await query.ToListAsync();
+            this.items = await query.ToListAsync(listQuery.CancellationToken);
         else
             this.items = query.ToList();
 
@@ -74,7 +74,7 @@ public class ListQueryHandler<TRecord, TDbContext>
                 .AsQueryable();
 
         if (query is IAsyncEnumerable<TRecord>)
-            count = await query.CountAsync();
+            count = await query.CountAsync(listQuery.CancellationToken);
         else
             count = query.Count();
 

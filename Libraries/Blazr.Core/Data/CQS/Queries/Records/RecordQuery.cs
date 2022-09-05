@@ -12,8 +12,12 @@ public record RecordQuery<TRecord>
     public Guid TransactionId { get; } = Guid.NewGuid();
 
     public Guid GuidId { get; init; }
+
     public int IntId { get; init; }
+
     public long LongId { get; init; }
+
+    public CancellationToken CancellationToken { get; } = new CancellationToken();
 
     public RecordQuery() { }
 

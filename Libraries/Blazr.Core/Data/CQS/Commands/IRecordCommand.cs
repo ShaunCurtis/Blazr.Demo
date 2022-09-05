@@ -11,4 +11,7 @@ public interface IRecordCommand<TRecord>
     where TRecord : class, new()
 {
     public TRecord Record { get;}
+
+    public CancellationToken CancellationToken { get; }
+
 }

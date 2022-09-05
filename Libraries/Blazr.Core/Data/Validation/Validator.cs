@@ -68,7 +68,7 @@ public abstract class Validator<T>
 
     protected void FailIfTrue(bool test, string? message)
     {
-        if (!test)
+        if (test)
         {
             this.SetTripped();
             LogMessage(message);

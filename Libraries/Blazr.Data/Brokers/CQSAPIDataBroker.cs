@@ -24,7 +24,7 @@ public class CQSAPIDataBroker
 
         var entityname = (new TRecord()).GetType().Name;
         this.SetHTTPClientSecurityHeader();
-        var response = await _httpClient.PostAsJsonAsync<ListQuery<TRecord>>($"/api/{entityname}/listquery", query);
+        var response = await _httpClient.PostAsJsonAsync<ListQuery<TRecord>>($"/api/{entityname}/listquery", query, query.CancellationToken);
 
         if (response.IsSuccessStatusCode)
             result = await response.Content.ReadFromJsonAsync<ListProviderResult<TRecord>>();
@@ -41,7 +41,7 @@ public class CQSAPIDataBroker
 
         var entityname = (new TRecord()).GetType().Name;
         this.SetHTTPClientSecurityHeader();
-        var response = await _httpClient.PostAsJsonAsync<RecordQuery<TRecord>>($"/api/{entityname}/recordquery", query);
+        var response = await _httpClient.PostAsJsonAsync<RecordQuery<TRecord>>($"/api/{entityname}/recordquery", query, query.CancellationToken);
 
         if (response.IsSuccessStatusCode)
             result = await response.Content.ReadFromJsonAsync<RecordProviderResult<TRecord>>();
@@ -55,7 +55,7 @@ public class CQSAPIDataBroker
 
         var entityname = (new TRecord()).GetType().Name;
         this.SetHTTPClientSecurityHeader();
-        var response = await _httpClient.PostAsJsonAsync<FKListQuery<TRecord>>($"/api/{entityname}/fklistquery", query);
+        var response = await _httpClient.PostAsJsonAsync<FKListQuery<TRecord>>($"/api/{entityname}/fklistquery", query, query.CancellationToken);
 
         if (response.IsSuccessStatusCode)
             result = await response.Content.ReadFromJsonAsync<FKListProviderResult>();
@@ -69,7 +69,7 @@ public class CQSAPIDataBroker
 
         var entityname = (new TRecord()).GetType().Name;
         this.SetHTTPClientSecurityHeader();
-        var response = await _httpClient.PostAsJsonAsync<AddRecordCommand<TRecord>>($"/api/{entityname}/addrecordcommand", command);
+        var response = await _httpClient.PostAsJsonAsync<AddRecordCommand<TRecord>>($"/api/{entityname}/addrecordcommand", command, command.CancellationToken);
 
         if (response.IsSuccessStatusCode)
             result = await response.Content.ReadFromJsonAsync<CommandResult>();
@@ -83,7 +83,7 @@ public class CQSAPIDataBroker
 
         var entityname = (new TRecord()).GetType().Name;
         this.SetHTTPClientSecurityHeader();
-        var response = await _httpClient.PostAsJsonAsync<UpdateRecordCommand<TRecord>>($"/api/{entityname}/updaterecordcommand", command);
+        var response = await _httpClient.PostAsJsonAsync<UpdateRecordCommand<TRecord>>($"/api/{entityname}/updaterecordcommand", command, command.CancellationToken);
 
         if (response.IsSuccessStatusCode)
             result = await response.Content.ReadFromJsonAsync<CommandResult>();
@@ -97,7 +97,7 @@ public class CQSAPIDataBroker
 
         var entityname = (new TRecord()).GetType().Name;
         this.SetHTTPClientSecurityHeader();
-        var response = await _httpClient.PostAsJsonAsync<DeleteRecordCommand<TRecord>>($"/api/{entityname}/deleterecordcommand", command);
+        var response = await _httpClient.PostAsJsonAsync<DeleteRecordCommand<TRecord>>($"/api/{entityname}/deleterecordcommand", command, command.CancellationToken);
 
         if (response.IsSuccessStatusCode)
             result = await response.Content.ReadFromJsonAsync<CommandResult>();

@@ -113,12 +113,12 @@ public class ServerDataBroker<TDbContext>
             : new CommandResult(id, false, "Failed to Delete Record");
     }
 
-    public async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync<TRecord>(ListProviderRequest<TRecord> options) where TRecord : class, new()
+    public async ValueTask<ListProviderResult<TRecord>> GetRecordsAsync<TRecord>(ListProviderRequest<TRecord> listProviderRequest) where TRecord : class, new()
     {
         _message = null;
         _success = true;
-        var list = await this.GetItemsAsync<TRecord>(options);
-        var count = await this.GetCountAsync<TRecord>(options);
+        var list = await this.GetItemsAsync<TRecord>(listProviderRequest);
+        var count = await this.GetCountAsync<TRecord>(listProviderRequest);
         return new ListProviderResult<TRecord>(list, count, _success, _message);    
     }
 
@@ -144,7 +144,7 @@ public class ServerDataBroker<TDbContext>
 
         try
         {
-            return await query.ToListAsync();
+            return await query.ToListAsync(request.CancellationToken);
         }
         catch
         {
@@ -167,7 +167,7 @@ public class ServerDataBroker<TDbContext>
 
         try
         {
-            return await query.CountAsync();
+            return await query.CountAsync(request.CancellationToken);
         }
         catch
         {

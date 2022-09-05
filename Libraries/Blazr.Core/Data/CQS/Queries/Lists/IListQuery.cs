@@ -17,4 +17,6 @@ public interface IListQuery<TRecord>
     public string? SortExpressionString { get; }
 
     public string? FilterExpressionString { get; }
+
+    public CancellationToken CancellationToken { get; }
 }
