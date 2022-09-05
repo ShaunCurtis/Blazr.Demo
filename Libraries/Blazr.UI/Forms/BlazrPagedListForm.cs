@@ -11,15 +11,9 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
     where TRecord : class, new()
     where TEntity : class, IEntity
 {
-    protected IPagingControl? pagingControl;
     protected string FormTitle = "Record Editor";
     protected string NewRecordText = "Add Record";
     private bool _isNew = true;
-
-    protected virtual Type? ViewControl => this.EntityUIService.ViewForm;
-    protected virtual Type? EditControl => this.EntityUIService.EditForm;
-    protected bool isLoading => Service.Records is null;
-    protected ComponentState loadState => isLoading ? ComponentState.Loading : ComponentState.Loaded;
 
     [Parameter] public Guid RouteId { get; set; } = Guid.Empty;
 
@@ -49,9 +43,16 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
 
     [Inject] protected IServiceProvider SPAServiceProvider { get; set; } = default!;
 
-    protected string FormCss => new CSSBuilder()
-        .AddClassFromAttributes(UserAttributes)
-        .Build();
+    protected string FormCss 
+        => new CSSBuilder()
+            .AddClassFromAttributes(UserAttributes)
+            .Build();
+
+    protected bool isLoading 
+        => Service.Records is null;
+
+    protected ComponentState loadState 
+        => isLoading ? ComponentState.Loading : ComponentState.Loaded;
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
@@ -96,7 +97,7 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
 
         if (await this.Service.GetRecordsAsync(query))
         {
-            this.ListContext.NotifyStateUpdated(this, this.Service.Records.ListState);
+            this.ListContext.NotifyStateChanged(this, this.Service.Records.ListState);
             this.SaveState();
             return true;
         }
@@ -125,12 +126,12 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
 
     protected async Task LoadEditFormAsync(Guid Id)
     {
-        if (this.ModalService.IsModalFree && this.UseModalForms && this.EditControl is not null)
+        if (this.ModalService.IsModalFree && this.UseModalForms && this.EntityUIService.EditForm is not null)
         {
             var options = new ModalOptions();
             options.ControlParameters.Add("Id", Id);
             options = this.GetEditOptions(options);
-            await this.ModalService.Modal.ShowAsync(this.EditControl, options);
+            await this.ModalService.Modal.ShowAsync(this.EntityUIService.EditForm, options);
         }
         else
             this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/edit/{Id}");
@@ -138,11 +139,11 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
 
     protected async Task LoadViewFormAsync(Guid Id)
     {
-        if (this.ModalService.IsModalFree && this.UseModalForms && this.ViewControl is not null)
+        if (this.ModalService.IsModalFree && this.UseModalForms && this.EntityUIService.ViewForm is not null)
         {
             var options = GetViewOptions(null);
             options.ControlParameters.Add("Id", Id);
-            await this.ModalService.Modal.ShowAsync(this.ViewControl, options);
+            await this.ModalService.Modal.ShowAsync(this.EntityUIService.ViewForm, options);
         }
         else
             this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/view/{Id}");
@@ -150,10 +151,10 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
 
     protected async Task LoadAddFormAsync(ModalOptions? options = null)
     {
-        if (this.ModalService.IsModalFree && this.UseModalForms && this.EditControl is not null)
+        if (this.ModalService.IsModalFree && this.UseModalForms && this.EntityUIService.EditForm is not null)
         {
             options = this.GetAddOptions(options);
-            await this.ModalService.Modal.ShowAsync(this.EditControl, options);
+            await this.ModalService.Modal.ShowAsync(this.EntityUIService.EditForm, options);
         }
         else
             this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/edit/0");
@@ -176,7 +177,7 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
 
     private void OnListChanged(object? sender, EventArgs e)
     {
-        this.pagingControl?.NotifyListChanged();
+        this.ListContext.NotifyListChanged(this);
         this.InvokeAsync(this.StateHasChanged);
     }
 

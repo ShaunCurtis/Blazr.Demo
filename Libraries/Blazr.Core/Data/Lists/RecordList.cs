@@ -10,52 +10,50 @@ public class RecordList<TRecord> : IEnumerable<TRecord>
     where TRecord : class, new()
 {
     private List<TRecord>? _records = new List<TRecord>();
-
     private ListState _listState = new ListState();
 
     public ListState ListState => _listState with { };
 
-    public int PageSize => _listState.PageSize;
-
-    public int StartIndex => _listState.StartIndex;
-
-    public int ListTotalCount => _listState.ListTotalCount;
-
-    public bool IsPaging => (PageSize > 0);
+    public bool IsPaging => (_listState.PageSize > 0);
 
     public bool HasList => _records is not null;
 
-    public RecordList()
-    { }
-
     public void Set(ListProviderRequest<TRecord> request, ListProviderResult<TRecord> result)
     {
-        bool sortDecending = request.SortExpressionString?.Contains("Desc", StringComparison.CurrentCultureIgnoreCase) ?? false;
-        string? sortField = request.SortExpressionString?.Replace("Desc", string.Empty, StringComparison.CurrentCultureIgnoreCase);
-
         _records = result.Items.ToList();
-        _listState = _listState with { PageSize = request.PageSize, StartIndex = request.StartIndex, ListTotalCount = result.TotalItemCount, SortDescending = sortDecending, SortField = sortField };
+        _listState = _listState with
+        {
+            PageSize = request.PageSize,
+            StartIndex = request.StartIndex,
+            ListTotalCount = result.TotalItemCount,
+            SortDescending = this.GetSortDescending(request.SortExpressionString),
+            SortField = this.GetSortField(request.SortExpressionString)
+        };
     }
 
     public void Set(IListQuery<TRecord> request, ListProviderResult<TRecord> result)
     {
-        bool sortDecending = request.SortExpressionString?.Contains("Desc", StringComparison.CurrentCultureIgnoreCase) ?? false;
-        string? sortField = request.SortExpressionString?.Replace("Desc", string.Empty, StringComparison.CurrentCultureIgnoreCase).Trim();
-
         _records = result.Items.ToList();
-        _listState = _listState with { PageSize = request.PageSize, StartIndex = request.StartIndex, ListTotalCount = result.TotalItemCount, SortDescending = sortDecending, SortField = sortField };
+        _listState = _listState with
+        {
+            PageSize = request.PageSize,
+            StartIndex = request.StartIndex,
+            ListTotalCount = result.TotalItemCount,
+            SortDescending = this.GetSortDescending(request.SortExpressionString),
+            SortField = this.GetSortField(request.SortExpressionString)
+        };
     }
 
-    public void Set(List<TRecord>? records, ListState listState)
-    {
-        _records = records;
-        _listState = listState;
-    }
+    private bool GetSortDescending(string? sortExpressionString)
+        => sortExpressionString?.Contains("Desc", StringComparison.CurrentCultureIgnoreCase) ?? false;
+
+    private string? GetSortField(string? sortExpressionString)
+        => sortExpressionString?.Replace("Desc", string.Empty, StringComparison.CurrentCultureIgnoreCase);
 
     public void Reset()
     {
         _records = null;
-        _listState = _listState with {StartIndex = 0, ListTotalCount = 0 };
+        _listState = _listState with { StartIndex = 0, ListTotalCount = 0 };
     }
 
     public IEnumerator<TRecord> GetEnumerator()

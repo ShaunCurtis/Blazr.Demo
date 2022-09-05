@@ -14,7 +14,9 @@ public class ListContext
 
     public event EventHandler<PagingRequest?>? PagingRequested;
 
-    public event EventHandler<ListState>? StateUpdated;
+    public event EventHandler<ListState>? StateChanged;
+
+    public event EventHandler<EventArgs>? ListChanged;
 
     public event EventHandler<EventArgs>? PagingReset;
 
@@ -31,9 +33,12 @@ public class ListContext
     public void NotifyPagingReset(object? sender)
         => this.PagingReset?.Invoke(sender, EventArgs.Empty);
 
-    public void NotifyStateUpdated(object? sender, ListState listState)
+    public void NotifyStateChanged(object? sender, ListState listState)
     {
         this.ListState = listState;
-        this.StateUpdated?.Invoke(sender, listState);
+        this.StateChanged?.Invoke(sender, listState);
     }
+
+    public void NotifyListChanged(object? sender)
+        => this.ListChanged?.Invoke(sender, EventArgs.Empty);
 }

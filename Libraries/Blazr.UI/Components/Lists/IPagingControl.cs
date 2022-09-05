@@ -8,5 +8,4 @@ namespace Blazr.UI;
 
 public interface IPagingControl : IDisposable
 {
-    public void NotifyListChanged();
 }

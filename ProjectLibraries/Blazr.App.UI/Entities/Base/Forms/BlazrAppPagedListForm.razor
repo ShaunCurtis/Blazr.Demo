@@ -11,7 +11,7 @@
         <UIContainer Size=BootstrapSize.Fluid>
             <UIFormRow class="my-2">
                 <UIColumn LargeColumns=8 class="text-start">
-                    <PagingControl @ref=this.pagingControl />
+                    <PagingControl/>
                 </UIColumn>
                 <UIColumn LargeColumns=4 class="text-right text-end">
                     <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsUserPolicy ButtonType=UIButtonType.New ClickEvent="() => this.LoadAddFormAsync()">@this.NewRecordText</UIAuthorizeButton>

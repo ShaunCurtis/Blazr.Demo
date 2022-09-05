@@ -9,35 +9,11 @@ namespace Blazr.UI.Bootstrap;
 public partial class PagingControl
     : UIComponent, IPagingControl
 {
-    private int Page => this.ListContext?.ListState.Page ?? 0;
-    private int ListCount => this.ListContext?.ListState.ListTotalCount ?? 0;
-    private int PageSize => this.ListContext?.ListState.PageSize ?? 10;
-    private bool hasPages => LastPage > 0;
-    private int DisplayPage => this.Page + 1;
-    private int LastPage => PageSize == 0 || ListCount == 0
-        ? 0
-        : ((int)Math.Ceiling(Decimal.Divide(this.ListCount, this.PageSize))) - 1;
-
-    private int LastDisplayPage => this.LastPage + 1;
-    private int ReadStartRecord => this.Page * this.PageSize;
-    private int Block => (int)Math.Floor(Decimal.Divide(this.Page, this.BlockSize));
-    private bool AreBlocks => this.ListCount > this.BlockSize * this.PageSize;
-    private int BlockStartPage => this.Block * this.BlockSize;
-    private int BlockEndPage => this.LastPage > (this.BlockStartPage + (BlockSize)) - 1
-        ? (this.BlockStartPage + BlockSize) - 1
-        : this.LastPage;
-
-    private int LastBlock => (int)Math.Floor(Decimal.Divide(this.LastPage, this.BlockSize));
-    private int LastBlockStartPage => LastBlock * this.BlockSize;
-
     [Parameter] public int BlockSize { get; set; } = 10;
 
     [Parameter] public bool ShowPageOf { get; set; } = true;
 
     [CascadingParameter] private ListContext? ListContext { get; set; }
-
-    public void NotifyListChanged()
-        => SetPage();
 
     protected override Task OnParametersChangedAsync(bool firstRender)
     {
@@ -48,11 +24,58 @@ public partial class PagingControl
 
             this.SetPage();
 
-            if (this.ListContext is not null)
-                this.ListContext.PagingReset += this.OnPagingReset;
+            this.ListContext.PagingReset += this.OnPagingReset;
+            this.ListContext.StateChanged += this.OnStateChanged;
+            this.ListContext.ListChanged += this.OnListChanged;
         }
         return Task.CompletedTask;
     }
+
+    private int Page
+        => this.ListContext?.ListState.Page ?? 0;
+
+    private int ListCount
+        => this.ListContext?.ListState.ListTotalCount ?? 0;
+
+    private int PageSize
+        => this.ListContext?.ListState.PageSize ?? 10;
+
+    private bool hasPages
+        => LastPage > 0;
+
+    private int DisplayPage
+        => this.Page + 1;
+
+    private int LastPage
+        => PageSize == 0 || ListCount == 0
+            ? 0
+            : ((int)Math.Ceiling(Decimal.Divide(this.ListCount, this.PageSize))) - 1;
+
+    private int LastDisplayPage
+        => this.LastPage + 1;
+
+    private int ReadStartRecord
+        => this.Page * this.PageSize;
+
+    private int Block
+        => (int)Math.Floor(Decimal.Divide(this.Page, this.BlockSize));
+
+    private bool AreBlocks
+        => this.ListCount > this.BlockSize * this.PageSize;
+
+    private int BlockStartPage
+        => this.Block * this.BlockSize;
+
+    private int BlockEndPage
+        => this.LastPage > (this.BlockStartPage + (BlockSize)) - 1
+            ? (this.BlockStartPage + BlockSize) - 1
+            : this.LastPage;
+
+    private int LastBlock
+        => (int)Math.Floor(Decimal.Divide(this.LastPage, this.BlockSize));
+
+    private int LastBlockStartPage
+        => LastBlock * this.BlockSize;
 
     private void SetPage(PagingRequest? request = null)
     {
@@ -62,6 +85,12 @@ public partial class PagingControl
 
     private void OnPagingReset(object? sender, EventArgs e)
         => this.StateHasChanged();
+
+    private void OnStateChanged(object? sender, ListState listState)
+        => this.StateHasChanged();
+
+    private void OnListChanged(object? sender, EventArgs e)
+        => SetPage();
 
     private void GotToPage(int page)
     {
@@ -85,6 +114,7 @@ public partial class PagingControl
             -1 => this.Block - 1 < 0 ? 0 : this.BlockStartPage - BlockSize,
             _ => 0
         };
+
         this.GotToPage(_page);
     }
 
@@ -96,7 +126,11 @@ public partial class PagingControl
 
     public void Dispose()
     {
-        if (this.ListContext is not null)
-            this.ListContext.PagingReset -= this.OnPagingReset;
+        if (this.ListContext is null)
+            return;
+
+        this.ListContext.PagingReset -= this.OnPagingReset;
+        this.ListContext.StateChanged -= this.OnStateChanged;
+        this.ListContext.ListChanged -= this.OnListChanged;
     }
 }
