@@ -6,7 +6,7 @@
 namespace Blazr.Data;
 
 public class FKListQueryHandler<TRecord, TDbContext>
-    : ICQSHandler<FKListQuery<TRecord>, ValueTask<FKListProviderResult>>
+    : IHandler<FKListQuery<TRecord>, ValueTask<FKListProviderResult>>
         where TDbContext : DbContext
         where TRecord : class, IFkListItem, new()
 {

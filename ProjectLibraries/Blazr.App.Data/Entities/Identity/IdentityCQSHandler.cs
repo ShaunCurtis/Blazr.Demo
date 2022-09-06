@@ -6,7 +6,7 @@
 namespace Blazr.App.Data;
 
 public class IdentityCQSHandler<TDbContext>
-    : ICQSHandler<IdentityQuery, ValueTask<IdentityQueryResult>>, IIdentityCQSHandler
+    : IHandler<IdentityQuery, ValueTask<IdentityQueryResult>>, IIdentityCQSHandler
         where TDbContext : DbContext
 {
     private IDbContextFactory<TDbContext> _factory;

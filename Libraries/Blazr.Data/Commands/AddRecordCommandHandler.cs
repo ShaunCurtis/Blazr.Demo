@@ -6,7 +6,7 @@
 namespace Blazr.Data;
 
 public class AddRecordCommandHandler<TRecord, TDbContext>
-    : ICQSHandler<AddRecordCommand<TRecord>, ValueTask<CommandResult>>
+    : IHandler<AddRecordCommand<TRecord>, ValueTask<CommandResult>>
     where TDbContext : DbContext
     where TRecord : class, new()
 {

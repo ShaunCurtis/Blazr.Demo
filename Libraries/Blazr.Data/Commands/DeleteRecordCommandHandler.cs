@@ -7,7 +7,7 @@
 namespace Blazr.Data;
 
 public class DeleteRecordCommandHandler<TRecord, TDbContext>
-    : ICQSHandler<DeleteRecordCommand<TRecord>, ValueTask<CommandResult>>
+    : IHandler<DeleteRecordCommand<TRecord>, ValueTask<CommandResult>>
     where TDbContext : DbContext
     where TRecord : class, new()
 {

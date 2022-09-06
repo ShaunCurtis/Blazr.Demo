@@ -7,7 +7,7 @@
 namespace Blazr.Core;
 
 public interface IListQuery<TRecord>
-    : ICQSRequest<ValueTask<ListProviderResult<TRecord>>>
+    : IRequest<ValueTask<ListProviderResult<TRecord>>>
     where TRecord : class, new()
 {
     public int StartIndex { get; }

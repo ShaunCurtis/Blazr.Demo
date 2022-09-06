@@ -6,7 +6,7 @@
 namespace Blazr.App.Data;
 
 public class IdentityAPICQSHandler
-    : ICQSHandler<IdentityQuery, ValueTask<IdentityQueryResult>>, IIdentityCQSHandler
+    : IHandler<IdentityQuery, ValueTask<IdentityQueryResult>>, IIdentityCQSHandler
 {
     private HttpClient _httpClient;
 

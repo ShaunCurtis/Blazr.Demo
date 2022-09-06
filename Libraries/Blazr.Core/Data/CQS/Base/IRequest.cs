@@ -6,7 +6,7 @@
 
 namespace Blazr.Core;
 
-public interface ICQSRequest<out TResult>
+public interface IRequest<out TResult>
 {
     public Guid TransactionId { get;}
 }
