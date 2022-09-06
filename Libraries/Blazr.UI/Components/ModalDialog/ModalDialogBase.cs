@@ -4,7 +4,6 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-
 namespace Blazr.UI;
 
 public abstract class ModalDialogBase : ComponentBase, IModalDialog
