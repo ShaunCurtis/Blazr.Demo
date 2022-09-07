@@ -18,7 +18,7 @@ public interface IEditService<TRecord, TEditRecord, TEntity>
 
     public ValueTask<bool> LoadRecordAsync(Guid Id);
 
-    public ValueTask GetNewRecordAsync(TRecord? record);
+    public ValueTask<bool> GetNewEditRecordAsync(TRecord? record);
 
     public ValueTask<bool> AddRecordAsync();
 

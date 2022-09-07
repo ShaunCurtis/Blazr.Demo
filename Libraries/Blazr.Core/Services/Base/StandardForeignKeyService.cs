@@ -31,6 +31,7 @@ public class StandardForeignKeyService<TFkRecord, TEntity>
         _firstLoad = false;
         var result = await this.DataBroker.ExecuteAsync<TFkRecord>(new FKListQuery<TFkRecord>());
         this.Items = result.Items;
+     
         return result.Success;
     }
 

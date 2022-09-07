@@ -20,7 +20,7 @@ public abstract class BlazrForm<TService, TEntity>
     [Parameter] public Guid Id { get; set; }
 
     /// <summary>
-    /// Pick up a Cascaded IModalDialog if one is configured on the parent
+    /// Pick up a Cascaded IModalDialog if we're hosted within a Modal Dialog context
     /// </summary>
     [CascadingParameter] public IModalDialog? Modal { get; set; }
 
@@ -76,15 +76,20 @@ public abstract class BlazrForm<TService, TEntity>
     {
         // If we're in a modal context, call Close on the cascaded Modal object
         if (this.Modal is not null)
+        {
             this.Modal.Close(ModalResult.OK());
+            return;
+        }
 
         // If there's a delegate registered on the ExitAction, execute it. 
-        else if (ExitAction.HasDelegate)
+        if (ExitAction.HasDelegate)
+        {
             await ExitAction.InvokeAsync();
+            return;
+        }
 
-        // else fallback action is to navigate to root
-        else
-            this.BaseExit();
+        // fallback action is to navigate to root
+        this.BaseExit();
     }
 
     /// <summary>

@@ -25,4 +25,8 @@
 		<ProjectReference Include="..\..\Libraries\Blazr.Core\Blazr.Core.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Entities\Base\Interfaces\" />
+	</ItemGroup>
+
 </Project>

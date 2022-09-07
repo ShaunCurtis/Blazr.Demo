@@ -7,7 +7,7 @@
 namespace Blazr.UI;
 
 public abstract class BlazrViewerForm<TRecord, TEntity>
-    : BlazrForm<IReadService<TRecord, TEntity>, TEntity> , IDisposable, IHandleEvent, IHandleAfterRender
+    : BlazrForm<IReadService<TRecord, TEntity>, TEntity>, IDisposable, IHandleEvent, IHandleAfterRender
     where TRecord : class, new()
     where TEntity : class, IEntity
 {
@@ -59,10 +59,11 @@ public abstract class BlazrViewerForm<TRecord, TEntity>
     {
         this.LoadState = ComponentState.Loading;
 
-        if (await this.Service.LoadRecordAsync(Id))
-            this.LoadState = ComponentState.Loaded;
-        else
-            this.LoadState = ComponentState.UnAuthorized;
+        var result = await this.Service.LoadRecordAsync(Id);
+
+        this.LoadState = result
+            ? ComponentState.Loaded
+            : this.LoadState = ComponentState.UnAuthorized;
 
         if (render)
             await this.InvokeAsync(this.StateHasChanged);

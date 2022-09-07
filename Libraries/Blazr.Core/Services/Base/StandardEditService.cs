@@ -21,7 +21,7 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
     {
         if (Id == Guid.Empty)
         {
-            await GetNewRecordAsync(null);
+            await GetNewEditRecordAsync(null);
             return true;
         }
 
@@ -34,7 +34,7 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
         this.Message = result.Success && !haveAuthorizedRecord
             ? "You are not authorized to access the record"
             : this.Message;
-      
+
         var record = haveAuthorizedRecord
             ? result.Record!
             : new TRecord();
@@ -44,10 +44,10 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
         return haveAuthorizedRecord;
     }
 
-    public ValueTask GetNewRecordAsync(TRecord? record)
+    public ValueTask<bool> GetNewEditRecordAsync(TRecord? record)
     {
         this.EditModel.Load(record ?? new TRecord());
-        return ValueTask.CompletedTask;
+        return ValueTask.FromResult(true);
     }
 
     public async ValueTask<bool> AddRecordAsync()
@@ -55,7 +55,10 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
         this.Message = string.Empty;
 
         if (!await this.CheckAuthorization(this.AddPolicy))
+        {
+            this.Message = "You are not authorized to add a record";
             return false;
+        }
 
         if (!EditModel.IsNew)
         {
@@ -67,21 +70,21 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
         var command = new AddRecordCommand<TRecord>(record);
         var result = await this.DataBroker.ExecuteAsync<TRecord>(command);
 
-        if (!result.Success)
+        if (result.Success)
         {
-            this.Message = "Failed to add the record";
-            return false;
+            this.EditModel.Load(record);
+            this.NotifyChange(EditModel.Uid);
         }
 
-        this.EditModel.Load(record);
-        this.NotifyChange(EditModel.Uid);
-        return true;
+        this.Message = result.Success
+            ? String.Empty
+            : "Failed to add the record";
+
+        return result.Success;
     }
 
     public async ValueTask<bool> UpdateRecordAsync()
     {
-        this.Message = string.Empty;
-
         var record = EditModel.Record;
 
         if (!await this.CheckRecordAuthorization(this.EditModel.CleanRecord, this.EditPolicy))
@@ -90,45 +93,47 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
         var command = new UpdateRecordCommand<TRecord>(record);
         var result = await this.DataBroker.ExecuteAsync<TRecord>(command);
 
-        if (!result.Success)
+        if (result.Success)
         {
-            this.Message = "Failed to update the record";
-            return false;
+            this.EditModel.Load(record);
+            this.NotifyChange(EditModel.Uid);
         }
 
-        this.EditModel.Load(record);
-        this.NotifyChange(EditModel.Uid);
-        return true;
+        this.Message = result.Success
+            ? String.Empty
+            : "Failed to update the record";
+
+        return result.Success;
     }
 
     public async ValueTask<bool> DeleteRecordAsync()
     {
-        if (!await this.CheckRecordAuthorization( this.EditModel.CleanRecord ,this.DeletePolicy))
-            return false;
+        var record = EditModel.CleanRecord;
+        var id = EditModel.Uid;
 
-        if (this.EditModel.Record is null)
+        if (id == Guid.Empty)
         {
             this.Message = "No record to delete";
             return false;
         }
 
-        // make sure we have the original record data
-        this.EditModel.Reset();
+        if (!await this.CheckRecordAuthorization(record, this.DeletePolicy))
+            return false;
 
-        var record = EditModel.Record;
-        var id = EditModel.Uid;
         var command = new DeleteRecordCommand<TRecord>(record);
-
         var result = await this.DataBroker.ExecuteAsync<TRecord>(command);
 
-        if (!result.Success)
+        if (result.Success)
         {
-            this.Message = "Failed to update the record";
-            return false;
+            this.EditModel.Load(new TRecord());
+            this.NotifyChange(id);
         }
-        this.EditModel.Load(new TRecord());
-        this.NotifyChange(id);
-        return true;
+
+        this.Message = result.Success
+            ? string.Empty
+            : result.Message;
+
+        return result.Success;
     }
 
     private void NotifyChange(Guid? Uid = null)
