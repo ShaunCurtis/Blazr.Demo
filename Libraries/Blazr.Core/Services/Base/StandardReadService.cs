@@ -11,38 +11,29 @@ public class StandardReadService<TRecord, TEntity>
     where TRecord : class, new()
     where TEntity : class, IEntity
 {
-    protected string ReadPolicy = "IsViewerPolicy";
-
     public TRecord? Record { get; private set; }
-
-    public bool HasRecord => this.Record is not null;
 
     public StandardReadService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier, AuthenticationStateProvider authenticationState, IAuthorizationService authorizationService)
         : base(dataBroker, notifier, authenticationState, authorizationService)
     { }
 
-    public async ValueTask<bool> GetRecordAsync(Guid Id)
+    public async ValueTask<bool> LoadRecordAsync(Guid Id)
     {
-        this.Message = String.Empty;
-        this.Record = null;
+        var result = await this.GetRecordAsync(Id);
 
-        var result = await this.DataBroker.ExecuteAsync<TRecord>(new RecordQuery<TRecord>(Id));
+        var haveAuthorizedRecord = result.Success
+            && result.Record is not null
+            && await this.CheckRecordAuthorization(result.Record, this.ReadPolicy);
 
-        if (result.Success && result.Record is not null)
-        {
-            if (!await this.CheckRecordAuthorization(result.Record, this.ReadPolicy))
-            {
-                this.Record = new TRecord();
-                return false;
-            }
+        this.Record = haveAuthorizedRecord
+            ? result.Record
+            : new TRecord();
 
-            this.Record = result.Record;
+        this.Message = result.Success && !haveAuthorizedRecord
+            ? "You are not authorized to access the record"
+            : this.Message;
 
-        }
-        else
-            this.Message = $"Failed to retrieve the record with Id - {Id}";
-
-        return result.Success;
+        return haveAuthorizedRecord;
     }
 }
 

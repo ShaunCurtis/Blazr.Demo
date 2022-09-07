@@ -59,7 +59,7 @@ public abstract class BlazrViewerForm<TRecord, TEntity>
     {
         this.LoadState = ComponentState.Loading;
 
-        if (await this.Service.GetRecordAsync(Id))
+        if (await this.Service.LoadRecordAsync(Id))
             this.LoadState = ComponentState.Loaded;
         else
             this.LoadState = ComponentState.UnAuthorized;

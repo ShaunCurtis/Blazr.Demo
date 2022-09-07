@@ -12,6 +12,8 @@ public interface IModalDialog
 
     public bool IsActive { get; }
 
+    public bool Display { get; }
+
     public Task<ModalResult> ShowAsync<TModal>(ModalOptions options) where TModal : IComponent;
 
     public Task<ModalResult> ShowAsync(Type control, ModalOptions options);
@@ -25,7 +27,5 @@ public interface IModalDialog
     public void Close(ModalResult result);
 
     public void Update(ModalOptions? options = null);
-
-    public bool Display { get; }
 }
 

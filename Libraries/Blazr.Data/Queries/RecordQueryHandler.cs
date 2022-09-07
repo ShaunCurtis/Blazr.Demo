@@ -43,7 +43,18 @@ public class RecordQueryHandler<TRecord, TDbContext>
 
         if (record is null)
         {
-            _message = "No record retrieved";
+            string idString = string.Empty;
+
+            if (query.GuidId != Guid.Empty)
+                idString = query.GuidId.ToString();
+
+            if (query.LongId > 0)
+                idString = query.LongId.ToString();
+
+            if (query.IntId > 0)
+                idString = query.IntId.ToString();
+
+            _message = $"Can't find a record with the provided Id : {idString}";
             _success = false;
         }
 

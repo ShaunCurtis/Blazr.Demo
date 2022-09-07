@@ -12,8 +12,6 @@ public interface IEditService<TRecord, TEditRecord, TEntity>
 {
     public TEditRecord EditModel { get; }
 
-    public bool IsNewRecord { get; }
-
     public string? Message { get; }
 
     public void SetServices(IServiceProvider services);

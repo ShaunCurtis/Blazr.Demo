@@ -13,10 +13,8 @@ public interface IReadService<TRecord, TEntity>
 
     public string? Message { get; }
 
-    public bool HasRecord => this.Record is not null;
-
     public void SetServices(IServiceProvider services);
 
-    public ValueTask<bool> GetRecordAsync(Guid Id);
+    public ValueTask<bool> LoadRecordAsync(Guid Id);
 }
 

@@ -15,6 +15,11 @@ public class BaseViewService<TRecord, TEntity>
     protected AuthenticationStateProvider AuthenticationStateProvider;
     protected IAuthorizationService AuthorizationService;
 
+    protected readonly string AddPolicy = "IsUserPolicy";
+    protected readonly string EditPolicy = "IsEditorPolicy";
+    protected readonly string DeletePolicy = "IsEditorPolicy";
+    protected readonly string ReadPolicy = "IsViewerPolicy";
+
     public string? Message { get; protected set; }
 
     public BaseViewService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier, AuthenticationStateProvider authenticationState, IAuthorizationService authorizationService)
@@ -31,11 +36,18 @@ public class BaseViewService<TRecord, TEntity>
         this.AuthenticationStateProvider = services.GetService(typeof(AuthenticationStateProvider)) as AuthenticationStateProvider ?? default!;
         this.AuthorizationService = services.GetService(typeof(IAuthorizationService)) as IAuthorizationService ?? default!;
     }
+    protected async ValueTask<RecordProviderResult<TRecord>> GetRecordAsync(Guid Id)
+    {
+        var result = await this.DataBroker.ExecuteAsync<TRecord>(new RecordQuery<TRecord>(Id));
+        this.Message = result.Message;
+
+        return result;
+    }
+
 
     protected async ValueTask<bool> CheckAuthorization(string policyName)
     {
         var authstate = await this.AuthenticationStateProvider.GetAuthenticationStateAsync();
-
         var result = await this.AuthorizationService.AuthorizeAsync(authstate.User, null, policyName);
 
         if (!result.Succeeded)
@@ -44,7 +56,7 @@ public class BaseViewService<TRecord, TEntity>
         return result.Succeeded;
     }
 
-    protected async ValueTask<bool> CheckRecordAuthorization(TRecord record ,string policyName)
+    protected async ValueTask<bool> CheckRecordAuthorization(TRecord record, string policyName)
     {
         var id = Guid.Empty;
         if (record is IAuthRecord rec)

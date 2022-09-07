@@ -11,14 +11,7 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
     where TEditRecord : class, IEditRecord<TRecord>, new()
     where TEntity : class, IEntity
 {
-    protected string AddPolicy = "IsUserPolicy";
-    protected string EditPolicy = "IsEditorPolicy";
-    protected string DeletePolicy = "IsEditorPolicy";
-    protected string ReadPolicy = "IsViewerPolicy";
-
     public TEditRecord EditModel { get; private set; } = new TEditRecord();
-
-    public bool IsNewRecord => this.EditModel.IsNew;
 
     public StandardEditService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier, AuthenticationStateProvider authenticationState, IAuthorizationService authorizationService)
         : base(dataBroker, notifier, authenticationState, authorizationService)
@@ -26,32 +19,29 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
 
     public async ValueTask<bool> LoadRecordAsync(Guid Id)
     {
-        this.Message = string.Empty;
-
-        if (Id != Guid.Empty)
+        if (Id == Guid.Empty)
         {
-            var result = await this.DataBroker.ExecuteAsync<TRecord>(new RecordQuery<TRecord>(Id));
-
-            if (result.Success && result.Record is not null)
-            {
-
-                if (!await this.CheckRecordAuthorization(result.Record, this.ReadPolicy))
-                {
-                    this.EditModel.Load(new TRecord());
-                    return false;
-                }
-
-                this.EditModel.Load(result.Record);
-                return true;
-            }
-
-            this.Message = $"Unable to retrieve record with Id : {Id.ToString()}";
-            return false;
-        }
-        else
             await GetNewRecordAsync(null);
+            return true;
+        }
 
-        return true;
+        var result = await this.GetRecordAsync(Id);
+
+        var haveAuthorizedRecord = result.Success
+            && result.Record is not null
+            && await this.CheckRecordAuthorization(result.Record, this.ReadPolicy);
+
+        this.Message = result.Success && !haveAuthorizedRecord
+            ? "You are not authorized to access the record"
+            : this.Message;
+      
+        var record = haveAuthorizedRecord
+            ? result.Record!
+            : new TRecord();
+
+        this.EditModel.Load(record);
+
+        return haveAuthorizedRecord;
     }
 
     public ValueTask GetNewRecordAsync(TRecord? record)
