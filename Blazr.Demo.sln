@@ -55,6 +55,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WIP", "WIP", "{EF828804-D17
 		documents\WIP\ListForms.md = documents\WIP\ListForms.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3E77B16E-3B41-4F07-BE27-DF20625EA9B3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Tests", "Tests\Blazr.App.Tests\Blazr.App.Tests.csproj", "{37BEE4FA-F334-4F50-9768-9D74B5433150}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +117,10 @@ Global
 		{64C3EFA1-84BA-49A5-9CB5-B9D4080E0F60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64C3EFA1-84BA-49A5-9CB5-B9D4080E0F60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64C3EFA1-84BA-49A5-9CB5-B9D4080E0F60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37BEE4FA-F334-4F50-9768-9D74B5433150}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37BEE4FA-F334-4F50-9768-9D74B5433150}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37BEE4FA-F334-4F50-9768-9D74B5433150}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37BEE4FA-F334-4F50-9768-9D74B5433150}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -132,6 +140,7 @@ Global
 		{242CD787-DF8C-4C55-90F7-B9BB6EFE18CC} = {20AC6B52-B88C-4C60-B271-BC4EA226C4EC}
 		{64C3EFA1-84BA-49A5-9CB5-B9D4080E0F60} = {CC2D9923-F4CC-48E1-A359-DC95D9B7DB26}
 		{EF828804-D173-4C9C-ACFE-BA67F82B72D9} = {E1582ED5-D53F-43C7-9FF3-03283FFE9729}
+		{37BEE4FA-F334-4F50-9768-9D74B5433150} = {3E77B16E-3B41-4F07-BE27-DF20625EA9B3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {796897AD-0035-48BF-9BF0-2F19BBA500FA}
