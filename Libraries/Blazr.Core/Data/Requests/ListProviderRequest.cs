@@ -3,6 +3,9 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
+using Serialize.Linq.Serializers;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace Blazr.Core;
 
@@ -15,9 +18,9 @@ public readonly struct ListProviderRequest<TRecord>
 
     public CancellationToken CancellationToken { get; }
 
-    public string? SortExpressionString { get; }
+    public Expression<Func<TRecord, bool>>? FilterExpression { get; init; }
 
-    public string? FilterExpressionString { get; }
+    public Expression<Func<TRecord, object>>? SortExpression { get; init; }
 
     public ItemsProviderRequest Request => new (this.StartIndex, this.PageSize, this.CancellationToken);
 
@@ -26,16 +29,27 @@ public readonly struct ListProviderRequest<TRecord>
         StartIndex = 0;
         PageSize = 10000;
         CancellationToken = new CancellationToken();
-        SortExpressionString = null;
-        FilterExpressionString = null;
+        SortExpression = null;
+        FilterExpression = null;
     }
 
-    public ListProviderRequest(ListState options, string? filterExpressionString = null)
+    public ListProviderRequest(ListState<TRecord> options, Expression<Func<TRecord, bool>>? filter = null)
     {
         StartIndex = options.StartIndex;
         PageSize = options.PageSize;
         CancellationToken = new CancellationToken();
-        SortExpressionString = options.SortExpression();
-        FilterExpressionString = filterExpressionString;
+        SortExpression = options.SortExpression;
+        FilterExpression = options. SerializeFilter(filter);
+    }
+
+    public static string? SerializeFilter(Expression<Func<TRecord, bool>>? filter)
+    {
+        if (filter is not null)
+        {
+            var serializer = new ExpressionSerializer(new JsonSerializer());
+            return serializer.SerializeText(filter);
+        }
+
+        return null;
     }
 }

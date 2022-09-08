@@ -14,9 +14,11 @@ public abstract record ListQueryBase<TRecord>
 
     public int PageSize { get; init; }
 
-    public string? SortExpressionString { get; init; }
+    public bool SortDescending { get; init; }
 
-    public string? FilterExpressionString { get; init; }
+    public Expression<Func<TRecord, bool>>? FilterExpression { get; init; }
+
+    public Expression<Func<TRecord, object>>? SortExpression { get; init; }
 
     public Guid TransactionId { get; init; } = Guid.NewGuid();
 
@@ -29,8 +31,38 @@ public abstract record ListQueryBase<TRecord>
     {
         this.StartIndex = request.StartIndex;
         this.PageSize = request.PageSize;
-        this.SortExpressionString = request.SortExpressionString;
-        this.FilterExpressionString = request.FilterExpressionString;
+        this.SortExpression = request.SortExpression;
+        this.FilterExpression = request.FilterExpression;
         this.CancellationToken = request.CancellationToken;
+    }
+
+    public ListQueryBase(APIListProviderRequest<TRecord> request)
+    {
+        this.StartIndex = request.StartIndex;
+        this.PageSize = request.PageSize;
+        this.SortExpression = DeSerializeSorter(request.SortExpressionString);
+        this.FilterExpression = DeSerializeFilter(request.FilterExpressionString);
+    }
+
+    protected static Expression<Func<TRecord, bool>>? DeSerializeFilter(string? filter)
+    {
+        if (filter is not null)
+        {
+            var serializer = new ExpressionSerializer(new JsonSerializer());
+            return (Expression<Func<TRecord, bool>>)serializer.DeserializeText(filter);
+        }
+
+        return null;
+    }
+
+    protected static Expression<Func<TRecord, object>>? DeSerializeSorter(string? sorter)
+    {
+        if (sorter is not null)
+        {
+            var serializer = new ExpressionSerializer(new JsonSerializer());
+            return (Expression<Func<TRecord, object>>)serializer.DeserializeText(sorter);
+        }
+
+        return null;
     }
 }

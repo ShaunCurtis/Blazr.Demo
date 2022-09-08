@@ -6,7 +6,8 @@
 
 namespace Blazr.Core;
 
-public record ListState
+public record ListState<TRecord>
+    where TRecord : class, new()
 {
     public string? SortField { get; init; }
 
@@ -18,16 +19,18 @@ public record ListState
 
     public int ListTotalCount { get; init; } = 0;
 
-    public string? FilterExpression { get; init; }
+    Expression<Func<TRecord, bool>>? FilterExpression { get; init; }
+
+    Expression<Func<TRecord, object>>? SortExpression { get; init; }
 
     public int Page => StartIndex / PageSize;
 
-    public string? SortExpression()
-    {
-        string _sortDescendingText = this.SortDescending ? "Desc" : string.Empty;
+    //public string? SortExpression()
+    //{
+    //    string _sortDescendingText = this.SortDescending ? "Desc" : string.Empty;
 
-        return SortField is not null
-            ? $"{SortField} {_sortDescendingText}".Trim()
-            : null;
-    }
+    //    return SortField is not null
+    //        ? $"{SortField} {_sortDescendingText}".Trim()
+    //        : null;
+    //}
 }

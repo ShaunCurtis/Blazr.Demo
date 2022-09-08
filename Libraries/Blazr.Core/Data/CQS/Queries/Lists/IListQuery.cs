@@ -1,4 +1,6 @@
-﻿/// ============================================================
+﻿
+using System.Linq.Expressions;
+/// ============================================================
 /// Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
@@ -14,9 +16,11 @@ public interface IListQuery<TRecord>
 
     public int PageSize { get; }
 
-    public string? SortExpressionString { get; }
+    public bool SortDescending { get; }
 
-    public string? FilterExpressionString { get; }
+    public Expression<Func<TRecord, bool>>? FilterExpression { get; }
+
+    public Expression<Func<TRecord, object>>? SortExpression { get; }
 
     public CancellationToken CancellationToken { get; }
 }
