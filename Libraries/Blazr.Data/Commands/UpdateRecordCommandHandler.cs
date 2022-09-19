@@ -6,12 +6,12 @@
 
 namespace Blazr.Data;
 
-public class UpdateRecordCommandHandler<TRecord, TDbContext>
-    : IHandler<UpdateRecordCommand<TRecord>, ValueTask<CommandResult>>
+public sealed class UpdateRecordCommandHandler<TRecord, TDbContext>
+    : IHandlerAsync<UpdateRecordCommand<TRecord>, ValueTask<CommandResult>>
     where TDbContext : DbContext
     where TRecord : class, new()
 {
-    protected IDbContextFactory<TDbContext> factory;
+    private readonly IDbContextFactory<TDbContext> factory;
 
     public UpdateRecordCommandHandler(IDbContextFactory<TDbContext> factory)
         => this.factory = factory;
@@ -21,7 +21,7 @@ public class UpdateRecordCommandHandler<TRecord, TDbContext>
         using var dbContext = factory.CreateDbContext();
         dbContext.Update<TRecord>(command.Record);
         return await dbContext.SaveChangesAsync(command.CancellationToken) == 1
-            ? new CommandResult(Guid.Empty, true, "Record Saved")
-            : new CommandResult(Guid.Empty, false, "Error saving Record");
+            ? CommandResult.Successful("Record Updated")
+            : CommandResult.Failure("Error updating Record");
     }
 }

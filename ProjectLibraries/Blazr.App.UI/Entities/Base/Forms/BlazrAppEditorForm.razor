@@ -4,33 +4,55 @@
 @typeparam TEntity where TEntity  : class, IEntity
 @inherits BlazrEditorForm<TRecord, TEditRecord, TEntity>
 
-<PageLocker />
-<CascadingAuthenticationState>
-    <UIContainer Size=BootstrapSize.Fluid class="m-2 border-danger">
-        <UILoader State="this.LoadState">
-            <FormViewTitle>
-                @this.FormTitle
-            </FormViewTitle>
-            <EditForm EditContext="this.editContext">
-                <ValidationFormState />
-                @this.Childcontent
-            </EditForm>
-        </UILoader>
-        <UIContainer class="mb-4" Size=BootstrapSize.Fluid>
-            <UIFormRow>
-                <UIColumn Columns=12 MediumColumns=7 class="">
-                    <UIAlertMessage AlertColour="@this.alertColour" Message="@this.alertMessage" />
-                </UIColumn>
-                <UIColumn Columns=12 MediumColumns=5 class="text-end text-right">
-                    <UIButton ButtonType=UIButtonType.Warning Hidden="!this.IsDirty && this.IsNew" ClickEvent="this.ResetRecord">Reset Fields</UIButton>
-                    <UIButton ButtonType=UIButtonType.New Hidden=!this.IsNew Disabled="!this.IsDirty" ClickEvent="this.AddRecord">Add</UIButton>
-                    <UIButton ButtonType=UIButtonType.New Hidden=!this.IsNew Disabled="!this.IsDirty" ClickEvent="this.AddRecordAndExit">Add and Exit</UIButton>
-                    <UIButton ButtonType=UIButtonType.Save Hidden=this.IsNew Disabled="!this.IsDirty" ClickEvent="this.SaveRecord">Save</UIButton>
-                    <UIButton ButtonType=UIButtonType.Save Hidden=this.IsNew Disabled="!this.IsDirty" ClickEvent="this.SaveRecordAndExit">Save and Exit</UIButton>
-                    <UIButton ButtonType=UIButtonType.Exit Hidden="this.IsDirty" ClickEvent="this.Exit">Exit</UIButton>
-                    <UIButton ButtonType=UIButtonType.ExitWithoutSave Hidden="!this.IsDirty" ClickEvent="this.ExitWithoutSaving">Exit Without Saving</UIButton>
-                </UIColumn>
-            </UIFormRow>
-        </UIContainer>
-    </UIContainer>
-</CascadingAuthenticationState>
+@code {
+    protected RenderFragment? Childcontent => (builder) => this.BuildRenderTree(builder);
+
+    protected RenderFragment TemplateContent => __builder =>
+    {
+        <PageLocker />
+        <CascadingAuthenticationState>
+            <UIContainer Size=BootstrapSize.Fluid class="m-2 border-danger">
+                <UILoader State="this.LoadState">
+                    <FormViewTitle>
+                        @this.FormTitle
+                    </FormViewTitle>
+                    <EditForm EditContext="this.editContext">
+                        <ValidationFormState />
+                        @this.Childcontent
+                    </EditForm>
+                </UILoader>
+                <UIContainer class="mb-4" Size=BootstrapSize.Fluid>
+                    <UIFormRow>
+                        <UIColumn Columns=12 MediumColumns=7 class="">
+                            <UIAlertMessage AlertColour="@this.alertColour" Message="@this.alertMessage" />
+                        </UIColumn>
+                        <UIColumn Columns=12 MediumColumns=5 class="text-end text-right">
+                            <UIButton ButtonType=UIButtonType.Warning Hidden="!this.IsDirty && this.IsNew" ClickEvent="this.ResetRecord">Reset Fields</UIButton>
+                            <UIButton ButtonType=UIButtonType.New Hidden=!this.IsNew Disabled="!this.IsDirty" ClickEvent="this.AddRecord">Add</UIButton>
+                            <UIButton ButtonType=UIButtonType.New Hidden=!this.IsNew Disabled="!this.IsDirty" ClickEvent="this.AddRecordAndExit">Add and Exit</UIButton>
+                            <UIButton ButtonType=UIButtonType.Save Hidden=this.IsNew Disabled="!this.IsDirty" ClickEvent="this.SaveRecord">Save</UIButton>
+                            <UIButton ButtonType=UIButtonType.Save Hidden=this.IsNew Disabled="!this.IsDirty" ClickEvent="this.SaveRecordAndExit">Save and Exit</UIButton>
+                            <UIButton ButtonType=UIButtonType.Exit Hidden="this.IsDirty" ClickEvent="this.Exit">Exit</UIButton>
+                            <UIButton ButtonType=UIButtonType.ExitWithoutSave Hidden="!this.IsDirty" ClickEvent="this.ExitWithoutSaving">Exit Without Saving</UIButton>
+                        </UIColumn>
+                    </UIFormRow>
+                </UIContainer>
+            </UIContainer>
+        </CascadingAuthenticationState>
+    };
+
+    protected string ContainerCss => this.Modal is null
+    ? "p-2 bg-light border border-brand mt-2"
+    : "p-2 bg-light";
+
+    public BlazrAppEditorForm()
+    {
+        componentRenderFragment = builder =>
+        {
+            hasPendingQueuedRender = false;
+            hasNeverRendered = false;
+            TemplateContent?.Invoke(builder);
+        };
+    }
+
+}

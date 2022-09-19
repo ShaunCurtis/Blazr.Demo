@@ -16,7 +16,7 @@ public class AppAuthenticationStateProvider : AuthenticationStateProvider
     public async override Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         var result = await _identityService.GetIdentityAsync(_userId);
-        return new AuthenticationState(result.Identity);
+        return new AuthenticationState(new ClaimsPrincipal(result?.Identity ?? new ClaimsIdentity()));
     }
 
     public Task<AuthenticationState> ChangeUser(Guid userId)

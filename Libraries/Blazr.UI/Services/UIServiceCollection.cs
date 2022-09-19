@@ -15,7 +15,6 @@ public static class UIServiceCollection
         services.AddScoped<IUiStateService, UiStateService>();
         services.AddSingleton<ModalService>();
         services.AddSingleton<ToasterService>();
-        services.AddTransient<ListContext>();
     }
 }
 

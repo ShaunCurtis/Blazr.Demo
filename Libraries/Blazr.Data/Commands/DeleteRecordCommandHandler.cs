@@ -6,22 +6,22 @@
 
 namespace Blazr.Data;
 
-public class DeleteRecordCommandHandler<TRecord, TDbContext>
-    : IHandler<DeleteRecordCommand<TRecord>, ValueTask<CommandResult>>
+public sealed class DeleteRecordCommandHandler<TRecord, TDbContext>
+    : IHandlerAsync<DeleteRecordCommand<TRecord>, ValueTask<CommandResult>>
     where TDbContext : DbContext
     where TRecord : class, new()
 {
-    protected IDbContextFactory<TDbContext> factory;
+    private readonly IDbContextFactory<TDbContext> factory;
 
     public DeleteRecordCommandHandler(IDbContextFactory<TDbContext> factory)
         => this.factory = factory;
 
-    public async ValueTask<CommandResult> ExecuteAsync( DeleteRecordCommand<TRecord> command)
+    public async ValueTask<CommandResult> ExecuteAsync(DeleteRecordCommand<TRecord> command)
     {
         using var dbContext = factory.CreateDbContext();
         dbContext.Remove<TRecord>(command.Record);
         return await dbContext.SaveChangesAsync(command.CancellationToken) == 1
-            ? new CommandResult(Guid.Empty, true, "Record Saved")
-            : new CommandResult(Guid.Empty, false, "Error saving Record");
+            ? CommandResult.Successful("Record Deleted")
+            : CommandResult.Failure("Error deleting Record");
     }
 }

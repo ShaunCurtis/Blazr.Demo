@@ -15,8 +15,9 @@ var builder = WebApplication.CreateBuilder(args);
 
         Services.AddAppAuthServices();
 
-        Services.AddWeatherAppWASMServerDataServices<InMemoryWeatherDbContext>(options
-            => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));
+        //TODO - fix
+        //Services.AddWeatherAppWASMServerDataServices<InMemoryWeatherDbContext>(options
+        //    => options.UseInMemoryDatabase($"WeatherDatabase-{Guid.NewGuid().ToString()}"));
 
         Services.AddControllers().PartManager.ApplicationParts.Add(new AssemblyPart(typeof(Blazr.App.Controllers.DboWeatherForecastController).Assembly));
 

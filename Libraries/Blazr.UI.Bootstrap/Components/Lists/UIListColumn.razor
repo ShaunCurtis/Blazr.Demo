@@ -1,4 +1,5 @@
-﻿@*/// ============================================================
+﻿@*
+    /// ============================================================
     /// Author: Shaun Curtis, Cold Elm Coders
     /// License: Use And Donate
     /// If you use it, donate something to a charity somewhere
@@ -6,7 +7,8 @@
 *@
 
 @namespace Blazr.UI.Bootstrap
-@inherits UIComponentBase
+@inherits UIListColumnBase<TRecord>
+@typeparam TRecord where TRecord : class, new()
 
 @if (this.IsHeader)
 {
@@ -16,7 +18,7 @@
             <div class="dropdown">
                 <div data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="me-1 mr-1">
-                    @((MarkupString)this.HeaderTitle)
+                        @((MarkupString)this.HeaderTitle)
                     </span>
                     <span class="@SortIconCss"></span>
                 </div>
@@ -25,7 +27,6 @@
                     <li class="dropdown-item @GetActive(true)" @onclick="() => this.SortClick(true)">Descending</li>
                 </ul>
             </div>
-
         </th>
     }
     else
@@ -50,4 +51,29 @@ else
     <td class="@this.TDCss">
         @this.ChildContent
     </td>
+}
+
+@code {
+
+    private string HeaderCss
+     => CSSBuilder.Class()
+         .AddClass(IsHeaderNoWrap, "header-column-nowrap", "header-column")
+         .AddClass(NoWrap, "text-nowrap")
+         .AddClass("align-baseline")
+         .AddClass(this.Class)
+         .Build();
+
+    private string TDCss
+        => CSSBuilder.Class()
+            .AddClass(this.isMaxRowColumn, "max-column", "data-column")
+            .AddClass(this.NoWrap, "text-nowrap")
+            .AddClass(this.Class)
+            .Build();
+
+    private string SortIconCss
+    => this.ListContext is null || !this.IsCurrentSortField()
+        ? UICssClasses.NotSortedClass
+        : this.ListContext.ListState.SortDescending
+            ? UICssClasses.AscendingClass
+            : UICssClasses.DescendingClass;
 }

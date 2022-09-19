@@ -11,9 +11,7 @@ public interface IDataBroker
 
     public ValueTask<RecordProviderResult<TRecord>> GetRecordAsync<TRecord>(Guid id) where TRecord : class, new();
 
-    public ValueTask<FKListProviderResult> GetFKListAsync<TRecord>() where TRecord : class, IFkListItem, new();
-
-    public ValueTask<RecordCountProviderResult> GetRecordCountAsync<TRecord>() where TRecord : class, new();
+    public ValueTask<FKListProviderResult<TFKRecord>> GetFKListAsync<TFKRecord>() where TFKRecord : class, IFkListItem, new();
 
     public ValueTask<CommandResult> AddRecordAsync<TRecord>(TRecord record) where TRecord : class, new();
 

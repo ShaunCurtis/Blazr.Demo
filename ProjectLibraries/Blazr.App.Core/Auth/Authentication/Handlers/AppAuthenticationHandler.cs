@@ -59,7 +59,7 @@ public class AppAuthenticationHandler : AuthenticationHandler<AppAuthOptions>
         
         // Construct a ClaimsPrincipal object if the have a valid user
         if (result.Success && result.Identity is not null)
-            return result.Identity;
+            return new ClaimsPrincipal(result.Identity);
 
         // No user so return null
         return null;

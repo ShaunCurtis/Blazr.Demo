@@ -6,15 +6,16 @@
 
 namespace Blazr.UI;
 
-public class ListForm : ComponentBase
+public class ListForm<TRecord> : ComponentBase
+    where TRecord : class, new()
 {
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
-    [Parameter] [EditorRequired] public ListContext? ListContext { get; set; }
+    [Parameter] [EditorRequired] public ListContext<TRecord>? ListContext { get; set; }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        builder.OpenComponent<CascadingValue<ListContext>>(0);
+        builder.OpenComponent<CascadingValue<ListContext<TRecord>>>(0);
         builder.AddAttribute(1, "Value", this.ListContext);
         builder.AddAttribute(2, "IsFixed", true);
         builder.AddAttribute(3, "ChildContent", ChildContent);

@@ -1,4 +1,6 @@
-﻿/// ============================================================
+﻿
+using Blazr.Core;
+/// ============================================================
 /// Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
@@ -8,13 +10,14 @@ namespace Blazr.UI;
 
 public abstract class BlazrPagedListForm<TRecord, TEntity>
     : BlazrOwningComponentBase<IListService<TRecord, TEntity>>, IDisposable, IHandleEvent, IHandleAfterRender
-    where TRecord : class, new()
     where TEntity : class, IEntity
+    where TRecord : class, new()
 {
+    private bool _isNew = true;
     protected string FormTitle = "Record Editor";
     protected string NewRecordText = "Add Record";
-    protected string? initialFilterExpressionString; 
-    private bool _isNew = true;
+    protected Expression<Func<TRecord, bool>>? InitialFilterExpression;
+    protected readonly ListContext<TRecord> ListContext = new ListContext<TRecord>();
 
     [Parameter] public Guid RouteId { get; set; } = Guid.Empty;
 
@@ -39,8 +42,6 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
     [Inject] protected IUiStateService UiStateService { get; set; } = default!;
 
     [Inject] protected ModalService ModalService { get; set; } = default!;
-
-    [Inject] protected ListContext ListContext { get; set; } = default!;
 
     [Inject] protected IServiceProvider SPAServiceProvider { get; set; } = default!;
 
@@ -112,29 +113,29 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
         var listState = this.Service.Records.ListState;
 
         if (request != null)
-            listState = this.Service.Records.ListState with { 
-                PageSize = request.PageSize, 
-                StartIndex = request.StartIndex };
+        {
+            listState.SetPaging(request);
+            return new ListProviderRequest<TRecord>(listState);
+        }
 
-        if (request is null && this.TryGetState(this.RouteId, out ListState? state))
-            listState = state;
+        if (this.TryGetState(this.RouteId, out ListState<TRecord>? state))
+        {
+            listState.SetFromListState(state);
+            return new ListProviderRequest<TRecord>(listState);
+        }
 
-        if (request is null)
-            listState = this.Service.Records.ListState with { 
-                FilterExpression = this.initialFilterExpressionString, 
-                PageSize = this.PageSize, 
-                StartIndex = 0 };
-
+        listState.SetPaging(0, this.PageSize, this.InitialFilterExpression);
         return new ListProviderRequest<TRecord>(listState);
     }
 
     protected ListProviderRequest<TRecord> GetListProviderRequest(SortRequest request)
-        => new ListProviderRequest<TRecord>(this.Service.Records.ListState with { 
-            SortDescending = request.SortDescending, 
-            SortField = request.SortField });
+    {
+        this.Service.Records.ListState.SetSorting(request);
+        return new ListProviderRequest<TRecord>(this.Service.Records.ListState);
+    }
 
     protected virtual ListQuery<TRecord> GetListQuery(ListProviderRequest<TRecord> request)
-        => new ListQuery<TRecord>(request);
+        => ListQuery<TRecord>.GetQuery(request);
 
     protected virtual void RecordDashboard(Guid Id)
         => this.NavigationManager!.NavigateTo($"/{this.EntityUIService.Url}/dashboard/{Id}");
@@ -201,9 +202,9 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
         this.InvokeAsync(this.StateHasChanged);
     }
 
-    public bool TryGetState(Guid stateId, [NotNullWhen(true)] out ListState? state)
+    public bool TryGetState(Guid stateId, [NotNullWhen(true)] out ListState<TRecord>? state)
     {
-        var result = UiStateService.TryGetStateData<ListState>(this.RouteId, out ListState? listState);
+        var result = UiStateService.TryGetStateData<ListState<TRecord>>(this.RouteId, out ListState<TRecord>? listState);
         state = listState;
         return result;
     }

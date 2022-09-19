@@ -6,10 +6,23 @@
 
 namespace Blazr.Core;
 
-public class DeleteRecordCommand<TRecord>
+public sealed record DeleteRecordCommand<TRecord>
      : RecordCommandBase<TRecord>
     where TRecord : class, new()
 {
-    public DeleteRecordCommand(TRecord record) : base(record)
-    {}
+    public DeleteRecordCommand() { }
+
+    public static DeleteRecordCommand<TRecord> GetCommand(TRecord record)
+        => new() { Record = record };
+
+    public static DeleteRecordCommand<TRecord> GetCommand(
+        in APICommandProviderRequest<TRecord> request,
+        CancellationToken? cancellationToken = null)
+            => new()
+            {
+                TransactionId = request.TransactionId,
+                Record = request.Record,
+                CancellationToken = cancellationToken ?? new CancellationToken()
+            };
+
 }

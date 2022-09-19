@@ -15,7 +15,7 @@ public static class DisplayExtensions
         => value.ToString("dd-MMM-yyyy");
 
     public static string AsShortGuid(this Guid value)
-        => value.ToString().Substring(0, 13);
+        => value.ToString().Substring(27);
 
     public static MarkupString AsDegC(this int value)
     => new MarkupString($"{value} &deg;C");

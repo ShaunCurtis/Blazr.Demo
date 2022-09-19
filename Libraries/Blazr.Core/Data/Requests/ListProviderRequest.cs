@@ -3,10 +3,6 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-using Serialize.Linq.Serializers;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-
 namespace Blazr.Core;
 
 public readonly struct ListProviderRequest<TRecord>
@@ -16,40 +12,30 @@ public readonly struct ListProviderRequest<TRecord>
 
     public int PageSize { get; }
 
+    public bool SortDescending { get; } = false;
+
+    public Expression<Func<TRecord, bool>>? FilterExpression { get; }
+
+    public Expression<Func<TRecord, object>>? SortExpression { get; }
+
     public CancellationToken CancellationToken { get; }
 
-    public Expression<Func<TRecord, bool>>? FilterExpression { get; init; }
-
-    public Expression<Func<TRecord, object>>? SortExpression { get; init; }
-
-    public ItemsProviderRequest Request => new (this.StartIndex, this.PageSize, this.CancellationToken);
-
     public ListProviderRequest()
-    {
-        StartIndex = 0;
-        PageSize = 10000;
-        CancellationToken = new CancellationToken();
-        SortExpression = null;
-        FilterExpression = null;
+    { 
+        this.StartIndex = 0;
+        this.PageSize = 10000;
+        this.CancellationToken = new CancellationToken();
+        this.SortExpression = null;
+        this.FilterExpression = null;
     }
 
-    public ListProviderRequest(ListState<TRecord> options, Expression<Func<TRecord, bool>>? filter = null)
+    public ListProviderRequest(ListState<TRecord> state, CancellationToken? cancellationToken = null)
     {
-        StartIndex = options.StartIndex;
-        PageSize = options.PageSize;
-        CancellationToken = new CancellationToken();
-        SortExpression = options.SortExpression;
-        FilterExpression = options. SerializeFilter(filter);
-    }
-
-    public static string? SerializeFilter(Expression<Func<TRecord, bool>>? filter)
-    {
-        if (filter is not null)
-        {
-            var serializer = new ExpressionSerializer(new JsonSerializer());
-            return serializer.SerializeText(filter);
-        }
-
-        return null;
+        this.StartIndex = state.StartIndex;
+        this.PageSize = state.PageSize;
+        this.CancellationToken = cancellationToken ?? new CancellationToken();
+        this.SortDescending = state.SortDescending;
+        this.SortExpression = state.SortExpression;
+        this.FilterExpression = state.FilterExpression;
     }
 }

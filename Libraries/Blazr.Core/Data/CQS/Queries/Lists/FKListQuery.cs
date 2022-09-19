@@ -6,11 +6,14 @@
 
 namespace Blazr.Core;
 
-public record FKListQuery<TRecord>
-    : IRequest<ValueTask<FKListProviderResult>>
-    where TRecord : class, IFkListItem, new()
+public sealed record FKListQuery<TFKRecord>
+    : IRequestAsync<ValueTask<FKListProviderResult<TFKRecord>>>
+    where TFKRecord : class, IFkListItem, new()
 {
-    public Guid TransactionId { get; } = Guid.NewGuid();
+    public Guid TransactionId { get; init; } = Guid.NewGuid();
 
-    public CancellationToken CancellationToken { get; } = new CancellationToken();
+    public CancellationToken CancellationToken { get; init; } = default;
+
+    public static FKListQuery<TFKRecord> GetQuery(APIFKListQueryProviderRequest<TFKRecord> request, CancellationToken? cancellationToken = default)
+        => new FKListQuery<TFKRecord> { TransactionId = request.TransactionId, CancellationToken = cancellationToken ?? new CancellationToken() };
 }

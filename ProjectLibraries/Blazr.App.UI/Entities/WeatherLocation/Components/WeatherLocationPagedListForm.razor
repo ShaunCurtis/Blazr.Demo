@@ -12,15 +12,13 @@
 
 <UIListControl TRecord=DboWeatherLocation Records=this.Service.Records LoadState=this.loadState class="@this.TableCss">
     <RowTemplate>
-        <UIListColumn HeaderTitle="ID" SortField="Uid" NoWrap=true>@context.Uid.AsShortGuid()</UIListColumn>
-        <UIListColumn HeaderTitle="Location" SortField="Location" IsMaxColumn=true>@context.Location</UIListColumn>
-        <UIListColumn HeaderTitle="" NoWrap=true class="text-right text-end">
+        <UIListColumn TRecord=DboWeatherLocation HeaderTitle="ID" SortField="Uid" NoWrap=true>@context.Uid.AsShortGuid()</UIListColumn>
+        <UIListColumn TRecord=DboWeatherLocation HeaderTitle="Location" SortField="Location" IsMaxColumn=true>@context.Location</UIListColumn>
+        <UIListColumn TRecord=DboWeatherLocation HeaderTitle="" NoWrap=true class="text-right text-end">
             @this.AuthorizedRowButtonMarkup(context, context.Uid, true)
         </UIListColumn>
     </RowTemplate>
 </UIListControl>
 
 @code {
-    public WeatherLocationPagedListForm()
-        => TemplateContent = (builder) => base.BuildRenderTree(builder);
 }

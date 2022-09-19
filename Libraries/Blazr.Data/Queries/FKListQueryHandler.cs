@@ -5,23 +5,27 @@
 /// ============================================================
 namespace Blazr.Data;
 
-public class FKListQueryHandler<TRecord, TDbContext>
-    : IHandler<FKListQuery<TRecord>, ValueTask<FKListProviderResult>>
+public sealed class FKListQueryHandler<TRecord, TDbContext>
+    : IHandlerAsync<FKListQuery<TRecord>, ValueTask<FKListProviderResult<TRecord>>>
         where TDbContext : DbContext
         where TRecord : class, IFkListItem, new()
 {
-    protected IDbContextFactory<TDbContext> factory;
+    private IEnumerable<TRecord> items = Enumerable.Empty<TRecord>();
+    private readonly IDbContextFactory<TDbContext> factory;
 
     public FKListQueryHandler(IDbContextFactory<TDbContext> factory)
         => this.factory = factory;
 
-    public async ValueTask<FKListProviderResult> ExecuteAsync(FKListQuery<TRecord> query)
+    public async ValueTask<FKListProviderResult<TRecord>> ExecuteAsync(FKListQuery<TRecord> listQuery)
     {
-        var dbContext = this.factory.CreateDbContext();
+        using var dbContext = this.factory.CreateDbContext();
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-        IEnumerable<TRecord> dbSet = await dbContext.Set<TRecord>().ToListAsync(query.CancellationToken);
+        if (listQuery is null)
+            return FKListProviderResult<TRecord>.Failure("No Query defined");
 
-        return new FKListProviderResult(dbSet);
+        IEnumerable<TRecord> dbSet = await dbContext.Set<TRecord>().ToListAsync(listQuery.CancellationToken);
+
+        return FKListProviderResult<TRecord>.Successful(dbSet);
     }
 }

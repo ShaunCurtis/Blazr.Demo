@@ -6,27 +6,28 @@
 
 namespace Blazr.Core;
 
-public record RecordQuery<TRecord>
-    : IRequest<ValueTask<RecordProviderResult<TRecord>>>
+public sealed record RecordQuery<TRecord>
+    : IRequestAsync<ValueTask<RecordProviderResult<TRecord>>>
+    where TRecord : class, new()
 {
-    public Guid TransactionId { get; } = Guid.NewGuid();
+    public Guid TransactionId { get; private init; } = Guid.NewGuid();
 
-    public Guid GuidId { get; init; }
+    public Guid Uid { get; private init; }
 
-    public int IntId { get; init; }
+    public CancellationToken CancellationToken { get; init; } = default;
 
-    public long LongId { get; init; }
+    private RecordQuery() { }
 
-    public CancellationToken CancellationToken { get; } = new CancellationToken();
+    public static RecordQuery<TRecord> GetQuery(Guid recordId)
+        => new() { Uid = recordId };
 
-    public RecordQuery() { }
-
-    public RecordQuery(Guid recordId)
-        => this.GuidId = recordId;
-
-    public RecordQuery(int recordId)
-        => this.IntId = recordId;
-
-    public RecordQuery(long recordId)
-        => this.LongId = recordId;
+    public static RecordQuery<TRecord> GetQuery(
+        APIRecordProviderRequest<TRecord> request,
+        CancellationToken? cancellationToken = default)
+            => new()
+            {
+                TransactionId = request.TransactionId,
+                Uid = request.Uid,
+                CancellationToken = cancellationToken ?? new CancellationToken()
+            };
 }

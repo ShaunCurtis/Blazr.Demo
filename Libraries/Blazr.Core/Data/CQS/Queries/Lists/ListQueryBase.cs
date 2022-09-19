@@ -10,59 +10,58 @@ public abstract record ListQueryBase<TRecord>
     : IListQuery<TRecord>
     where TRecord : class, new()
 {
-    public int StartIndex { get; init; }
+    public int StartIndex { get; protected init; }
 
-    public int PageSize { get; init; }
+    public int PageSize { get; protected init; }
 
-    public bool SortDescending { get; init; }
+    public bool SortDescending { get; protected init; }
 
-    public Expression<Func<TRecord, bool>>? FilterExpression { get; init; }
+    public Expression<Func<TRecord, bool>>? FilterExpression { get; protected init; }
 
-    public Expression<Func<TRecord, object>>? SortExpression { get; init; }
+    public Expression<Func<TRecord, object>>? SortExpression { get; protected init; }
 
     public Guid TransactionId { get; init; } = Guid.NewGuid();
 
-    public CancellationToken CancellationToken { get; }
+    public CancellationToken CancellationToken { get; protected init; } = default;
 
-    public ListQueryBase()
-        => this.CancellationToken = new CancellationToken();
+    protected ListQueryBase() { }
 
-    public ListQueryBase(ListProviderRequest<TRecord> request)
+    protected ListQueryBase(in ListProviderRequest<TRecord> request)
     {
         this.StartIndex = request.StartIndex;
         this.PageSize = request.PageSize;
+        this.SortDescending = request.SortDescending;
         this.SortExpression = request.SortExpression;
         this.FilterExpression = request.FilterExpression;
         this.CancellationToken = request.CancellationToken;
     }
 
-    public ListQueryBase(APIListProviderRequest<TRecord> request)
+    protected ListQueryBase(in APIListProviderRequest<TRecord> request, CancellationToken? cancellationToken = null)
     {
+        this.TransactionId = request.TransactionId;
         this.StartIndex = request.StartIndex;
         this.PageSize = request.PageSize;
+        this.SortDescending = request.SortDescending;
         this.SortExpression = DeSerializeSorter(request.SortExpressionString);
         this.FilterExpression = DeSerializeFilter(request.FilterExpressionString);
+        this.CancellationToken = cancellationToken ?? new CancellationToken();
     }
 
     protected static Expression<Func<TRecord, bool>>? DeSerializeFilter(string? filter)
     {
-        if (filter is not null)
-        {
-            var serializer = new ExpressionSerializer(new JsonSerializer());
-            return (Expression<Func<TRecord, bool>>)serializer.DeserializeText(filter);
-        }
+        if (filter is null)
+            return null;
 
-        return null;
+        var serializer = new ExpressionSerializer(new JsonSerializer());
+        return (Expression<Func<TRecord, bool>>)serializer.DeserializeText(filter);
     }
 
     protected static Expression<Func<TRecord, object>>? DeSerializeSorter(string? sorter)
     {
-        if (sorter is not null)
-        {
-            var serializer = new ExpressionSerializer(new JsonSerializer());
-            return (Expression<Func<TRecord, object>>)serializer.DeserializeText(sorter);
-        }
+        if (sorter is null)
+            return null;
 
-        return null;
+        var serializer = new ExpressionSerializer(new JsonSerializer());
+        return (Expression<Func<TRecord, object>>)serializer.DeserializeText(sorter);
     }
 }

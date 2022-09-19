@@ -5,12 +5,12 @@
 /// ============================================================
 namespace Blazr.Data;
 
-public class AddRecordCommandHandler<TRecord, TDbContext>
-    : IHandler<AddRecordCommand<TRecord>, ValueTask<CommandResult>>
+public sealed class AddRecordCommandHandler<TRecord, TDbContext>
+    : IHandlerAsync<AddRecordCommand<TRecord>, ValueTask<CommandResult>>
     where TDbContext : DbContext
     where TRecord : class, new()
 {
-    protected IDbContextFactory<TDbContext> factory;
+    private readonly IDbContextFactory<TDbContext> factory;
 
     public AddRecordCommandHandler(IDbContextFactory<TDbContext> factory)
         => this.factory = factory;
@@ -19,8 +19,8 @@ public class AddRecordCommandHandler<TRecord, TDbContext>
     {
         using var dbContext = factory.CreateDbContext();
         dbContext.Add<TRecord>(command.Record);
-        return await dbContext.SaveChangesAsync() == 1
-            ? new CommandResult(Guid.Empty, true, "Record Saved")
-            : new CommandResult(Guid.Empty, false, "Error saving Record");
+        return await dbContext.SaveChangesAsync(command.CancellationToken) == 1
+            ? CommandResult.Successful("Record Saved")
+            : CommandResult.Failure("Error saving Record");
     }
 }

@@ -5,6 +5,10 @@
 /// ============================================================
 namespace Blazr.App.Data;
 
+/// <summary>
+/// A class to build a fixed data set for testing
+/// The data varied but the count and Uids are always the same
+/// </summary>
 public class WeatherTestDataProvider
 {
     private int RecordsToGenerate;
@@ -15,7 +19,7 @@ public class WeatherTestDataProvider
 
     public IEnumerable<DboWeatherLocation> WeatherLocations { get; private set; } = Enumerable.Empty<DboWeatherLocation>();
 
-    public IEnumerable<DboUser> Users { get; private set; } = Enumerable.Empty<DboUser>();
+    public IEnumerable<DboIdentity> Identities { get; private set; } = Enumerable.Empty<DboIdentity>();
 
     private WeatherTestDataProvider()
         => this.Load();
@@ -27,22 +31,21 @@ public class WeatherTestDataProvider
         var weatherForcasts = dbContext.Set<DboWeatherForecast>();
         var weatherSummaries = dbContext.Set<DboWeatherSummary>();
         var weatherLocations = dbContext.Set<DboWeatherLocation>();
-        var users = dbContext.Set<DboUser>();
+        var identities = dbContext.Set<DboIdentity>();
 
         // Check if we already have a full data set
         // If not clear down any existing data and start again
         if (weatherSummaries.Count() == 0 || weatherForcasts.Count() == 0)
         {
-
             dbContext.RemoveRange(weatherSummaries.ToList());
             dbContext.RemoveRange(weatherForcasts.ToList());
             dbContext.RemoveRange(weatherLocations.ToList());
-            dbContext.RemoveRange(users.ToList());
+            dbContext.RemoveRange(identities.ToList());
             dbContext.SaveChanges();
             dbContext.AddRange(this.WeatherSummaries);
             dbContext.AddRange(this.WeatherForecasts);
             dbContext.AddRange(this.WeatherLocations);
-            dbContext.AddRange(this.Users);
+            dbContext.AddRange(this.Identities);
             dbContext.SaveChanges();
         }
     }
@@ -52,37 +55,53 @@ public class WeatherTestDataProvider
         RecordsToGenerate = records;
 
         if (WeatherSummaries.Count() == 0)
-        {
-            this.LoadLocations();
             this.LoadSummaries();
+
+        if (WeatherLocations.Count() == 0)
+            this.LoadLocations();
+
+        if (WeatherForecasts.Count() == 0)
             this.LoadForecasts();
-            this.LoadUsers();
-        }
+
+        if (Identities.Count() == 0)
+            this.LoadIdentities();
     }
 
     private void LoadSummaries()
     {
         this.WeatherSummaries = new List<DboWeatherSummary> {
-            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Freezing"},
-            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Bracing"},
-            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Chilly"},
-            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Cool"},
-            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Mild"},
-            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Warm"},
-            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Balmy"},
-            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Hot"},
-            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Sweltering"},
-            new DboWeatherSummary { Uid = Guid.NewGuid(), Summary = "Scorching"},
+            new DboWeatherSummary { Uid = new Guid("00000099-0000-0000-0000-000000000001"), Summary = "Freezing"},
+            new DboWeatherSummary { Uid = new Guid("00000099-0000-0000-0000-000000000002"), Summary = "Bracing"},
+            new DboWeatherSummary { Uid = new Guid("00000099-0000-0000-0000-000000000003"), Summary = "Chilly"},
+            new DboWeatherSummary { Uid = new Guid("00000099-0000-0000-0000-000000000004"), Summary = "Cool"},
+            new DboWeatherSummary { Uid = new Guid("00000099-0000-0000-0000-000000000005"), Summary = "Mild"},
+            new DboWeatherSummary { Uid = new Guid("00000099-0000-0000-0000-000000000006"), Summary = "Warm"},
+            new DboWeatherSummary { Uid = new Guid("00000099-0000-0000-0000-000000000007"), Summary = "Balmy"},
+            new DboWeatherSummary { Uid = new Guid("00000099-0000-0000-0000-000000000008"), Summary = "Hot"},
+            new DboWeatherSummary { Uid = new Guid("00000099-0000-0000-0000-000000000009"), Summary = "Sweltering"},
+            new DboWeatherSummary { Uid = new Guid("00000099-0000-0000-0000-000000000010"), Summary = "Scorching"},
         };
     }
 
     private void LoadLocations()
     {
         this.WeatherLocations = new List<DboWeatherLocation> {
-            new DboWeatherLocation { Uid = Guid.NewGuid(), Location = "Gloucester", OwnerId = new Guid($"00000000-0000-0000-0000-100000000001") },
-            new DboWeatherLocation { Uid = Guid.NewGuid(), Location = "Capestang", OwnerId = new Guid($"00000000-0000-0000-0000-100000000002")},
-            new DboWeatherLocation { Uid = Guid.NewGuid(), Location = "Alvor", OwnerId = new Guid($"00000000-0000-0000-0000-100000000003")},
-            new DboWeatherLocation { Uid = Guid.NewGuid(), Location = "Adelaide", OwnerId = new Guid($"00000000-0000-0000-0000-100000000003")},
+            new DboWeatherLocation { Uid = new Guid("00000009-0000-0000-0000-000000000001"), Location = "Gloucester"},
+            new DboWeatherLocation { Uid = new Guid("00000009-0000-0000-0000-000000000002"), Location = "Capestang"},
+            new DboWeatherLocation { Uid = new Guid("00000009-0000-0000-0000-000000000003"), Location = "Alvor"},
+            new DboWeatherLocation { Uid = new Guid("00000009-0000-0000-0000-000000000004"), Location = "Adelaide"},
+        };
+    }
+
+    private void LoadIdentities()
+    {
+        this.Identities = new List<DboIdentity> {
+            new DboIdentity { Id = Guid.Empty, Name="Anonymous"},
+            new DboIdentity { Id = new Guid("00000000-0000-0000-0000-000000000001"), Name="Visitor", Role= "VisitorRole"},
+            new DboIdentity { Id = new Guid("00000000-0000-0000-0000-100000000001"), Name="User-1", Role="UserRole"},
+            new DboIdentity { Id = new Guid("00000000-0000-0000-0000-100000000002"), Name="User-2", Role="UserRole"},
+            new DboIdentity { Id = new Guid("00000000-0000-0000-0000-100000000003"), Name="User-3", Role="UserRole"},
+            new DboIdentity { Id = new Guid("00000000-0000-0000-0000-200000000001"), Name="Admin", Role="AdminRole"},
         };
     }
 
@@ -91,36 +110,25 @@ public class WeatherTestDataProvider
         var summaryArray = this.WeatherSummaries.ToArray();
         var forecasts = new List<DboWeatherForecast>();
 
+        int uniqueIndex = 0;
         foreach (var location in WeatherLocations)
         {
-            forecasts
-                .AddRange(Enumerable
-                    .Range(1, RecordsToGenerate)
-                    .Select(index => new DboWeatherForecast
-                    {
-                        Uid = Guid.NewGuid(),
-                        WeatherSummaryId = summaryArray[Random.Shared.Next(summaryArray.Length)].Uid,
-                        WeatherLocationId = location.Uid,
-                        Date = DateTime.Now.AddDays(index),
-                        TemperatureC = Random.Shared.Next(-20, 55),
-                        OwnerId = location.OwnerId,
-                    })
-                );
+            for(var index = 0; index < RecordsToGenerate; index++)
+            {
+                uniqueIndex++;
+                var rec = new DboWeatherForecast
+                {
+                    Uid = new Guid($"00000000-0000-0000-9999-{uniqueIndex.ToString("D12")}"),
+                    WeatherSummaryId = summaryArray[Random.Shared.Next(summaryArray.Length)].Uid,
+                    WeatherLocationId = location.Uid,
+                    Date = DateTime.Now.AddDays(index),
+                    TemperatureC = Random.Shared.Next(-20, 55),
+                };
+                forecasts.Add(rec);
+            }
         }
 
         this.WeatherForecasts = forecasts;
-    }
-
-    private void LoadUsers()
-    {
-        this.Users = new List<DboUser> {
-            new DboUser { Id = GuidExtensions.Null, Name="Anonymous"},
-            new DboUser { Id = new Guid("00000000-0000-0000-0000-000000000001"), Name="Visitor", Role= AppAuthorizationPolicies.VisitorRole},
-            new DboUser { Id = new Guid("00000000-0000-0000-0000-100000000001"), Name="User-1", Role=AppAuthorizationPolicies.UserRole},
-            new DboUser { Id = new Guid("00000000-0000-0000-0000-100000000002"), Name="User-2", Role=AppAuthorizationPolicies.UserRole},
-            new DboUser { Id = new Guid("00000000-0000-0000-0000-100000000003"), Name="User-3", Role=AppAuthorizationPolicies.UserRole},
-            new DboUser { Id = new Guid("00000000-0000-0000-0000-200000000001"), Name="Admin", Role=AppAuthorizationPolicies.AdminRole},
-        };
     }
 
     public DboWeatherForecast GetForecast()
@@ -138,6 +146,7 @@ public class WeatherTestDataProvider
 
     public DboWeatherForecast? GetRandomRecord()
     {
+        var record = new DboWeatherForecast();
         if (this.WeatherForecasts.Count() > 0)
         {
             var ran = new Random().Next(0, WeatherForecasts.Count());
@@ -155,7 +164,8 @@ public class WeatherTestDataProvider
             WeatherSummaryId = record.WeatherSummaryId,
             Date = record.Date,
             TemperatureC = record.TemperatureC,
-            Summary = this.WeatherSummaries.SingleOrDefault(item => item.Uid == record.Uid)?.Summary ?? String.Empty
+            Location = this.WeatherLocations.SingleOrDefault(item => item.Uid == record.WeatherLocationId)?.Location ?? string.Empty,
+            Summary = this.WeatherSummaries.SingleOrDefault(item => item.Uid == record.WeatherSummaryId)?.Summary ?? string.Empty
         };
     }
 

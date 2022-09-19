@@ -67,7 +67,7 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
         }
 
         var record = EditModel.AsNewRecord;
-        var command = new AddRecordCommand<TRecord>(record);
+        var command = AddRecordCommand<TRecord>.GetCommand(record);
         var result = await this.DataBroker.ExecuteAsync<TRecord>(command);
 
         if (result.Success)
@@ -90,7 +90,7 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
         if (!await this.CheckRecordAuthorization(this.EditModel.CleanRecord, this.EditPolicy))
             return false;
 
-        var command = new UpdateRecordCommand<TRecord>(record);
+        var command = UpdateRecordCommand<TRecord>.GetCommand(record);
         var result = await this.DataBroker.ExecuteAsync<TRecord>(command);
 
         if (result.Success)
@@ -120,7 +120,7 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
         if (!await this.CheckRecordAuthorization(record, this.DeletePolicy))
             return false;
 
-        var command = new DeleteRecordCommand<TRecord>(record);
+        var command = DeleteRecordCommand<TRecord>.GetCommand(record);
         var result = await this.DataBroker.ExecuteAsync<TRecord>(command);
 
         if (result.Success)

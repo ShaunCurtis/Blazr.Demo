@@ -3,22 +3,46 @@
 @typeparam TEntity where TEntity  : class, IEntity
 @inherits BlazrViewerForm<TRecord, TEntity>
 
-<CascadingAuthenticationState>
-    <UIContainer Size=BootstrapSize.Fluid class="@this.ContainerCss">
-            <FormViewTitle>
-                @this.FormTitle
-            </FormViewTitle>
-            <UIContainer Size=BootstrapSize.Fluid>
-                <UIFormRow>
-                    <UIColumn Columns=12 class="text-end text-right mt-2">
-                        <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsEditorPolicy AuthFields="this.GetAuthFields(Service.Record)" type="button" ButtonType=UIButtonType.Edit
-                                                 ClickEvent=this.EditRecordAsync>Edit</UIAuthorizeButton>
-                        <UIButton ButtonType=UIButtonType.Exit ClickEvent=this.Exit>Exit</UIButton>
-                    </UIColumn>
-                </UIFormRow>
-            </UIContainer>
-        <UILoader State="this.LoadState">
-            @this.FormContent
-        </UILoader>
-    </UIContainer>
-</CascadingAuthenticationState>
+@code {
+    protected RenderFragment TemplateContent => __builder =>
+        {
+            <CascadingAuthenticationState>
+                <UIContainer Size=BootstrapSize.Fluid class="@this.ContainerCss">
+                    <FormViewTitle>
+                        @this.FormTitle
+                    </FormViewTitle>
+                    <UIContainer Size=BootstrapSize.Fluid>
+                        <UIFormRow>
+                            <UIColumn Columns=12 class="text-end text-right mt-2">
+                                <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsEditorPolicy AuthFields="this.GetAuthFields(Service.Record)" type="button" ButtonType=UIButtonType.Edit
+                                       ClickEvent=this.EditRecordAsync>Edit</UIAuthorizeButton>
+                                <UIButton ButtonType=UIButtonType.Exit ClickEvent=this.Exit>Exit</UIButton>
+                            </UIColumn>
+                        </UIFormRow>
+                    </UIContainer>
+                    <UILoader State="this.LoadState">
+                        @this.FormContent
+                    </UILoader>
+                </UIContainer>
+            </CascadingAuthenticationState>
+        };
+
+    protected RenderFragment? FormContent => (builder) => this.BuildRenderTree(builder);
+
+    protected string ContainerCss => this.Modal is null
+    ? "p-2 bg-light border border-brand mt-2"
+    : "p-2 bg-light";
+
+    public BlazrAppViewerForm()
+    {
+        componentRenderFragment = builder =>
+        {
+            hasPendingQueuedRender = false;
+            hasNeverRendered = false;
+            TemplateContent?.Invoke(builder);
+        };
+    }
+
+    protected virtual AppAuthFields GetAuthFields(TRecord? record)
+        => new AppAuthFields { OwnerId = (record as IAuthRecord)?.OwnerId ?? Guid.Empty };
+}

@@ -13,8 +13,4 @@ public record SortRequest
     public bool SortDescending { get; init; }
 
     public bool IsSorting => !string.IsNullOrWhiteSpace(SortField);
-
-    public string SortExpression => $"{SortField}{sortDirectionText}";
-
-    private string sortDirectionText => SortDescending ? " Desc" : string.Empty;
 }

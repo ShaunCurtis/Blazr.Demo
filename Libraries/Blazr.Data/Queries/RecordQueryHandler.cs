@@ -5,59 +5,34 @@
 /// ============================================================
 namespace Blazr.Data;
 
-public class RecordQueryHandler<TRecord, TDbContext>
-    : IHandler<RecordQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
+public sealed class RecordQueryHandler<TRecord, TDbContext>
+    : IHandlerAsync<RecordQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
         where TRecord : class, new()
         where TDbContext : DbContext
 {
-    private IDbContextFactory<TDbContext> _factory;
-    private bool _success = true;
-    private string _message = string.Empty;
+    private readonly IDbContextFactory<TDbContext> _factory;
 
     public RecordQueryHandler(IDbContextFactory<TDbContext> factory)
-        => _factory = factory;
+        =>  _factory = factory;
 
     public async ValueTask<RecordProviderResult<TRecord>> ExecuteAsync(RecordQuery<TRecord> query)
     {
-        var dbContext = _factory.CreateDbContext();
+        using var dbContext = _factory.CreateDbContext();
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
         TRecord? record = null;
 
         // first check if the record implements IRecord.  If so we can do a cast and then do the query via the Uid property directly 
         if ((new TRecord()) is IRecord)
-            record = await dbContext.Set<TRecord>().SingleOrDefaultAsync(item => ((IRecord)item).Uid == query.GuidId, query.CancellationToken);
+            record = await dbContext.Set<TRecord>().SingleOrDefaultAsync(item => ((IRecord)item).Uid == query.Uid, query.CancellationToken);
 
         // Try and use the EF FindAsync implementation
-        if (record == null)
-        {
-            if (query.GuidId != Guid.Empty)
-                record = await dbContext.FindAsync<TRecord>(query.GuidId, query.CancellationToken);
-
-            if (query.LongId > 0)
-                record = await dbContext.FindAsync<TRecord>(query.LongId, query.CancellationToken);
-
-            if (query.IntId > 0)
-                record = await dbContext.FindAsync<TRecord>(query.IntId, query.CancellationToken);
-        }
+        if (record is null)
+                record = await dbContext.FindAsync<TRecord>(query.Uid);
 
         if (record is null)
-        {
-            string idString = string.Empty;
+            return RecordProviderResult<TRecord>.Failure("No record retrieved");
 
-            if (query.GuidId != Guid.Empty)
-                idString = query.GuidId.ToString();
-
-            if (query.LongId > 0)
-                idString = query.LongId.ToString();
-
-            if (query.IntId > 0)
-                idString = query.IntId.ToString();
-
-            _message = $"Can't find a record with the provided Id : {idString}";
-            _success = false;
-        }
-
-        return new RecordProviderResult<TRecord>(record, _success, _message);
+        return RecordProviderResult<TRecord>.Successful(record);
     }
 }

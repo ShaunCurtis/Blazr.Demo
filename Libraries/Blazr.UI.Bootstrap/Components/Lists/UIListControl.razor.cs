@@ -17,7 +17,7 @@ public partial class UIListControl<TRecord> : UIComponentBase
 
     [Parameter] public string? HeaderCss { get; set; }
 
-    [CascadingParameter] private ListContext? listContext { get; set; }
+    [CascadingParameter] private ListContext<TRecord>? listContext { get; set; }
 
     protected override Task OnParametersChangedAsync(bool firstRender)
     {
@@ -30,7 +30,7 @@ public partial class UIListControl<TRecord> : UIComponentBase
     private bool HasRecords
         => Records?.Count() > 0;
 
-    private void OnStateChanged(object? sender, ListState listState)
+    private void OnStateChanged(object? sender, ListState<TRecord> listState)
         => this.StateHasChanged();
 
     public void Dispose()

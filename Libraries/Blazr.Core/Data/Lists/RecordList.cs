@@ -10,10 +10,10 @@ public class RecordList<TRecord> : IEnumerable<TRecord>
     where TRecord : class, new()
 {
     private List<TRecord>? _records = new List<TRecord>();
-    private ListState _listState = new ListState();
+    private ListState<TRecord> _listState = new ListState<TRecord>();
 
-    public ListState ListState 
-        => _listState with { };
+    public ListState<TRecord> ListState 
+        => _listState;
 
     public bool IsPaging 
         => (_listState.PageSize > 0);
@@ -24,39 +24,19 @@ public class RecordList<TRecord> : IEnumerable<TRecord>
     public void Set(ListProviderRequest<TRecord> request, ListProviderResult<TRecord> result)
     {
         _records = result.Items.ToList();
-        _listState = _listState with
-        {
-            PageSize = request.PageSize,
-            StartIndex = request.StartIndex,
-            ListTotalCount = result.TotalItemCount,
-            SortDescending = this.GetSortDescending(request.SortExpressionString),
-            SortField = this.GetSortField(request.SortExpressionString)
-        };
+        _listState.Set(request, result);
     }
 
     public void Set(IListQuery<TRecord> request, ListProviderResult<TRecord> result)
     {
         _records = result.Items.ToList();
-        _listState = _listState with
-        {
-            PageSize = request.PageSize,
-            StartIndex = request.StartIndex,
-            ListTotalCount = result.TotalItemCount,
-            SortDescending = this.GetSortDescending(request.SortExpressionString),
-            SortField = this.GetSortField(request.SortExpressionString)
-        };
+        _listState.Set(request, result);
     }
-
-    private bool GetSortDescending(string? sortExpressionString)
-        => sortExpressionString?.Contains("Desc", StringComparison.CurrentCultureIgnoreCase) ?? false;
-
-    private string? GetSortField(string? sortExpressionString)
-        => sortExpressionString?.Replace("Desc", string.Empty, StringComparison.CurrentCultureIgnoreCase).Trim();
 
     public void Reset()
     {
         _records = null;
-        _listState = _listState with { StartIndex = 0, ListTotalCount = 0 };
+        _listState.SetPaging(0);
     }
 
     public IEnumerator<TRecord> GetEnumerator()

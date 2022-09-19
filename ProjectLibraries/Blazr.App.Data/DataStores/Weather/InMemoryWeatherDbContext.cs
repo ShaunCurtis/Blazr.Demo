@@ -16,11 +16,11 @@ public class InMemoryWeatherDbContext
 
     public DbSet<DboWeatherLocation> DboWeatherLocation { get; set; } = default!;
 
-    public DbSet<DboUser> DboUser { get; set; } = default!;
-
     public DbSet<FkWeatherSummary> FkWeatherSummary { get; set; } = default!;
 
     public DbSet<FkWeatherLocation> FkWeatherLocation { get; set; } = default!;
+
+    public DbSet<DboIdentity> DboIdentity { get; set; } = default!;
 
     public InMemoryWeatherDbContext(DbContextOptions<InMemoryWeatherDbContext> options) : base(options) { }
 
@@ -29,7 +29,7 @@ public class InMemoryWeatherDbContext
         modelBuilder.Entity<DboWeatherForecast>().ToTable("WeatherForecast");
         modelBuilder.Entity<DboWeatherSummary>().ToTable("WeatherSummary");
         modelBuilder.Entity<DboWeatherLocation>().ToTable("WeatherLocation");
-        modelBuilder.Entity<DboUser>().ToTable("User");
+        modelBuilder.Entity<DboIdentity>().ToTable("Identity");
 
         modelBuilder.Entity<DvoWeatherForecast>()
             .ToInMemoryQuery(()
@@ -38,8 +38,6 @@ public class InMemoryWeatherDbContext
                from fsjoin in fs
                join l in this.DboWeatherLocation! on f.WeatherLocationId equals l.Uid into fl
                from fljoin in fl
-               join u in this.DboUser! on f.OwnerId equals u.Id into fu
-               from fujoin in fu
                select new DvoWeatherForecast
                {
                    Uid = f.Uid,
@@ -49,8 +47,6 @@ public class InMemoryWeatherDbContext
                    Summary = fsjoin.Summary,
                    Location = fljoin.Location,
                    TemperatureC = f.TemperatureC,
-                   OwnerId = f.OwnerId,
-                   Owner = fujoin.Name
                })
             .HasKey(x => x.Uid);
 

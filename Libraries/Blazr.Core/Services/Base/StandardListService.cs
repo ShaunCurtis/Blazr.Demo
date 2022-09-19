@@ -18,7 +18,7 @@ public class StandardListService<TRecord, TEntity>
     { }
 
     public async ValueTask<bool> GetRecordsAsync(ListProviderRequest<TRecord> request)
-        => await this.GetRecordsAsync(new ListQuery<TRecord>(request));
+        => await this.GetRecordsAsync(ListQuery<TRecord>.GetQuery(request));
 
     public async ValueTask<bool> GetRecordsAsync(ListQuery<TRecord> query)
     {

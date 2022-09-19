@@ -1,29 +1,51 @@
 ﻿@namespace Blazr.App.UI
+@inherits BlazrPagedListForm<TRecord, TEntity>
 @typeparam TRecord where TRecord : class, new()
 @typeparam TEntity where TEntity  : class, IEntity
-@inherits BlazrPagedListForm<TRecord, TEntity>
 
-<UIContainer Size=BootstrapSize.Fluid class="@this.ContainerCss">
-    <FormViewTitle>
-        <h2>List of Weather Forecasts</h2>
-    </FormViewTitle>
-    <ListForm ListContext=this.ListContext>
-        <UIContainer Size=BootstrapSize.Fluid>
-            <UIFormRow class="my-2">
-                <UIColumn LargeColumns=8 class="text-start">
-                    <PagingControl/>
-                </UIColumn>
-                <UIColumn LargeColumns=4 class="text-right text-end">
-                    <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsUserPolicy ButtonType=UIButtonType.New ClickEvent="() => this.LoadAddFormAsync()">@this.NewRecordText</UIAuthorizeButton>
-                    <UIButton ButtonType=UIButtonType.Exit Hidden=(this.IsSubForm) ClickEvent="this.Exit">Exit</UIButton>
-                </UIColumn>
-            </UIFormRow>
-        </UIContainer>
-        @this.Childcontent
-    </ListForm>
-</UIContainer>
 
 @code {
+    protected readonly string TableCss = "table table-sm table-striped table-hover border-bottom no-margin";
+    protected string ContainerCss = "bg-light border border-brand p-0 mt-2";
+
+    protected RenderFragment? Childcontent => (builder) => this.BuildRenderTree(builder);
+
+    public BlazrAppPagedListForm()
+    {
+        componentRenderFragment = builder =>
+        {
+            hasPendingQueuedRender = false;
+            hasNeverRendered = false;
+            TemplateContent?.Invoke(builder);
+        };
+    }
+
+    protected virtual AppAuthFields GetAuthFields(TRecord record)
+        => new AppAuthFields { OwnerId = (record as IAuthRecord)?.OwnerId ?? Guid.Empty };
+
+    protected RenderFragment TemplateContent => __builder =>
+    {
+        <UIContainer Size=BootstrapSize.Fluid class="@this.ContainerCss">
+            <FormViewTitle>
+                <h2>List of Weather Forecasts</h2>
+            </FormViewTitle>
+            <ListForm TRecord=TRecord ListContext=this.ListContext>
+                <UIContainer Size=BootstrapSize.Fluid>
+                    <UIFormRow class="my-2">
+                        <UIColumn LargeColumns=8 class="text-start">
+                            <PagingControl TRecord=TRecord />
+                        </UIColumn>
+                        <UIColumn LargeColumns=4 class="text-right text-end">
+                            <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsUserPolicy ButtonType=UIButtonType.New ClickEvent="() => this.LoadAddFormAsync()">@this.NewRecordText</UIAuthorizeButton>
+                            <UIButton ButtonType=UIButtonType.Exit Hidden=(this.IsSubForm) ClickEvent="this.Exit">Exit</UIButton>
+                        </UIColumn>
+                    </UIFormRow>
+                </UIContainer>
+                @this.Childcontent
+            </ListForm>
+        </UIContainer>
+    };
+
     protected RenderFragment RowButtonMarkup(Guid id, bool showDash = false) => __builder =>
     {
         <UIButtonGroup>

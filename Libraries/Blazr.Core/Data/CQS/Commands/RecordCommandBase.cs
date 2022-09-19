@@ -6,16 +6,15 @@
 
 namespace Blazr.Core;
 
-public abstract class RecordCommandBase<TRecord>
+public abstract record RecordCommandBase<TRecord>
      : IRecordCommand<TRecord>
     where TRecord : class, new()
 {
-    public Guid TransactionId { get; } = Guid.NewGuid(); 
-    
-    public TRecord Record { get; protected set; } = default!;
+    public Guid TransactionId { get; init; } = Guid.NewGuid();
 
-    public CancellationToken CancellationToken { get; } = new CancellationToken();
+    public TRecord Record { get; init; } = default!;
 
-    public RecordCommandBase(TRecord record)
-        => this.Record = record;
+    public CancellationToken CancellationToken { get; init; } = default; 
+
+    protected RecordCommandBase() { }
 }

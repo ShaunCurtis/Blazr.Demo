@@ -38,7 +38,7 @@ public class BaseViewService<TRecord, TEntity>
     }
     protected async ValueTask<RecordProviderResult<TRecord>> GetRecordAsync(Guid Id)
     {
-        var result = await this.DataBroker.ExecuteAsync<TRecord>(new RecordQuery<TRecord>(Id));
+        var result = await this.DataBroker.ExecuteAsync<TRecord>(RecordQuery<TRecord>.GetQuery(Id));
         this.Message = result.Message;
 
         return result;
