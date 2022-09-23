@@ -7,7 +7,7 @@
 
 namespace Blazr.UI;
 
-public class CSSBuilder
+public sealed class CSSBuilder
 {
     private Queue<string> _cssQueue = new Queue<string>();
 

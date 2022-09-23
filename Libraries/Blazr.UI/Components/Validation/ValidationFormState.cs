@@ -9,9 +9,8 @@ namespace Blazr.UI;
 /// Component Class that adds Edit State and Validation State to a Blazor EditForm Control
 /// Should be placed within thr EditForm ontrol
 /// </summary>
-public class ValidationFormState : ComponentBase, IDisposable
+public sealed class ValidationFormState : ComponentBase, IDisposable
 {
-
     /// <summary>
     /// EditContext - cascaded from EditForm
     /// </summary>
@@ -35,9 +34,8 @@ public class ValidationFormState : ComponentBase, IDisposable
     public bool IsValid => !EditContext?.GetValidationMessages().Any() ?? true;
 
     private ValidationMessageStore? _validationMessageStore;
-    private ValidationMessageStore validationMessageStore => _validationMessageStore!;
     private bool validating = false;
-    private bool disposedValue;
+    private ValidationMessageStore validationMessageStore => _validationMessageStore!;
 
     protected override Task OnInitializedAsync()
     {
@@ -109,26 +107,12 @@ public class ValidationFormState : ComponentBase, IDisposable
         => this.validationMessageStore.Clear();
 
     // IDisposable Implementation
-    protected virtual void Dispose(bool disposing)
+     public void Dispose()
     {
-        if (!disposedValue)
+        if (this.EditContext != null)
         {
-            if (disposing)
-            {
-                if (this.EditContext != null)
-                {
-                    this.EditContext.OnFieldChanged -= this.FieldChanged;
-                    this.EditContext.OnValidationRequested -= this.ValidationRequested;
-                }
-            }
-            disposedValue = true;
+            this.EditContext.OnFieldChanged -= this.FieldChanged;
+            this.EditContext.OnValidationRequested -= this.ValidationRequested;
         }
-    }
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

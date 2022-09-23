@@ -6,7 +6,7 @@
 
 namespace Blazr.UI;
 
-public class ListContext<TRecord>
+public sealed class ListContext<TRecord>
     where TRecord : class, new()
 {
     public readonly Guid Id = Guid.NewGuid();

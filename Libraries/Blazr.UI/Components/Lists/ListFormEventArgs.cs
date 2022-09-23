@@ -6,7 +6,7 @@
 
 namespace Blazr.UI;
 
-public class ListFormEventArgs : EventArgs
+public sealed class ListFormEventArgs : EventArgs
 {
     public Guid RecordId { get; set; }
 

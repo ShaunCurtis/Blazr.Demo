@@ -5,10 +5,8 @@
 @inherits BlazrEditorForm<TRecord, TEditRecord, TEntity>
 
 @code {
-    protected RenderFragment? Childcontent => (builder) => this.BuildRenderTree(builder);
-
-    protected RenderFragment TemplateContent => __builder =>
-    {
+   protected override RenderFragment? TemplatedContent => __builder =>
+     {
         <PageLocker />
         <CascadingAuthenticationState>
             <UIContainer Size=BootstrapSize.Fluid class="m-2 border-danger">
@@ -18,7 +16,7 @@
                     </FormViewTitle>
                     <EditForm EditContext="this.editContext">
                         <ValidationFormState />
-                        @this.Childcontent
+                        @this.Content
                     </EditForm>
                 </UILoader>
                 <UIContainer class="mb-4" Size=BootstrapSize.Fluid>
@@ -27,13 +25,27 @@
                             <UIAlertMessage AlertColour="@this.alertColour" Message="@this.alertMessage" />
                         </UIColumn>
                         <UIColumn Columns=12 MediumColumns=5 class="text-end text-right">
-                            <UIButton ButtonType=UIButtonType.Warning Hidden="!this.IsDirty && this.IsNew" ClickEvent="this.ResetRecord">Reset Fields</UIButton>
-                            <UIButton ButtonType=UIButtonType.New Hidden=!this.IsNew Disabled="!this.IsDirty" ClickEvent="this.AddRecord">Add</UIButton>
-                            <UIButton ButtonType=UIButtonType.New Hidden=!this.IsNew Disabled="!this.IsDirty" ClickEvent="this.AddRecordAndExit">Add and Exit</UIButton>
-                            <UIButton ButtonType=UIButtonType.Save Hidden=this.IsNew Disabled="!this.IsDirty" ClickEvent="this.SaveRecord">Save</UIButton>
-                            <UIButton ButtonType=UIButtonType.Save Hidden=this.IsNew Disabled="!this.IsDirty" ClickEvent="this.SaveRecordAndExit">Save and Exit</UIButton>
-                            <UIButton ButtonType=UIButtonType.Exit Hidden="this.IsDirty" ClickEvent="this.Exit">Exit</UIButton>
-                            <UIButton ButtonType=UIButtonType.ExitWithoutSave Hidden="!this.IsDirty" ClickEvent="this.ExitWithoutSaving">Exit Without Saving</UIButton>
+                            <UIButton ButtonType=UIButtonType.Warning Hidden="!this.IsDirty && this.IsNew" ClickEvent="this.ResetRecord">
+                                Reset Fields
+                            </UIButton>
+                            <UIButton ButtonType=UIButtonType.New Hidden=!this.IsNew Disabled="!this.IsDirty" ClickEvent="this.AddRecord">
+                                Add
+                            </UIButton>
+                            <UIButton ButtonType=UIButtonType.New Hidden=!this.IsNew Disabled="!this.IsDirty" ClickEvent="this.AddRecordAndExit">
+                                Add and Exit
+                            </UIButton>
+                            <UIButton ButtonType=UIButtonType.Save Hidden=this.IsNew Disabled="!this.IsDirty" ClickEvent="this.SaveRecord">
+                                Save
+                            </UIButton>
+                            <UIButton ButtonType=UIButtonType.Save Hidden=this.IsNew Disabled="!this.IsDirty" ClickEvent="this.SaveRecordAndExit">
+                                Save and Exit
+                            </UIButton>
+                            <UIButton ButtonType=UIButtonType.Exit Hidden="this.IsDirty" ClickEvent="this.Exit">
+                                Exit
+                            </UIButton>
+                            <UIButton ButtonType=UIButtonType.ExitWithoutSave Hidden="!this.IsDirty" ClickEvent="this.ExitWithoutSaving">
+                                Exit Without Saving
+                            </UIButton>
                         </UIColumn>
                     </UIFormRow>
                 </UIContainer>
@@ -44,15 +56,5 @@
     protected string ContainerCss => this.Modal is null
     ? "p-2 bg-light border border-brand mt-2"
     : "p-2 bg-light";
-
-    public BlazrAppEditorForm()
-    {
-        componentRenderFragment = builder =>
-        {
-            hasPendingQueuedRender = false;
-            hasNeverRendered = false;
-            TemplateContent?.Invoke(builder);
-        };
-    }
 
 }

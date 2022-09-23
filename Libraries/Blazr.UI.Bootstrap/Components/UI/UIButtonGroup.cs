@@ -7,7 +7,7 @@
 
 namespace Blazr.UI.Bootstrap;
 
-public class UIButtonGroup : UIBlock
+public class UIButtonGroup : UIBlockBase
 {
     protected override CSSBuilder CssBuilder => base.CssBuilder
         .AddClass("btn-group me-1");

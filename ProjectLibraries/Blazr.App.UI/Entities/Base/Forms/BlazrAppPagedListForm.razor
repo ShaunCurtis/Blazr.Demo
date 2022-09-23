@@ -8,22 +8,10 @@
     protected readonly string TableCss = "table table-sm table-striped table-hover border-bottom no-margin";
     protected string ContainerCss = "bg-light border border-brand p-0 mt-2";
 
-    protected RenderFragment? Childcontent => (builder) => this.BuildRenderTree(builder);
-
-    public BlazrAppPagedListForm()
-    {
-        componentRenderFragment = builder =>
-        {
-            hasPendingQueuedRender = false;
-            hasNeverRendered = false;
-            TemplateContent?.Invoke(builder);
-        };
-    }
-
     protected virtual AppAuthFields GetAuthFields(TRecord record)
         => new AppAuthFields { OwnerId = (record as IAuthRecord)?.OwnerId ?? Guid.Empty };
 
-    protected RenderFragment TemplateContent => __builder =>
+    protected override RenderFragment? TemplatedContent => __builder =>
     {
         <UIContainer Size=BootstrapSize.Fluid class="@this.ContainerCss">
             <FormViewTitle>
@@ -36,12 +24,16 @@
                             <PagingControl TRecord=TRecord />
                         </UIColumn>
                         <UIColumn LargeColumns=4 class="text-right text-end">
-                            <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsUserPolicy ButtonType=UIButtonType.New ClickEvent="() => this.LoadAddFormAsync()">@this.NewRecordText</UIAuthorizeButton>
-                            <UIButton ButtonType=UIButtonType.Exit Hidden=(this.IsSubForm) ClickEvent="this.Exit">Exit</UIButton>
+                            <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsUserPolicy ButtonType=UIButtonType.New ClickEvent="() => this.LoadAddFormAsync()">
+                                @this.NewRecordText
+                            </UIAuthorizeButton>
+                            <UIButton ButtonType=UIButtonType.Exit Hidden=(this.IsSubForm) ClickEvent="this.Exit">
+                                Exit
+                            </UIButton>
                         </UIColumn>
                     </UIFormRow>
                 </UIContainer>
-                @this.Childcontent
+                @this.Content
             </ListForm>
         </UIContainer>
     };
@@ -51,11 +43,17 @@
         <UIButtonGroup>
             @if (showDash)
             {
-                <UIButton type="button" ButtonType=UIButtonType.Dash ClickEvent="() => this.RecordDashboard(id)">Dash</UIButton>
+                <UIButton type="button" ButtonType=UIButtonType.Dash ClickEvent="() => this.RecordDashboard(id)">
+                    Dash
+                </UIButton>
             }
 
-            <UIButton type="button" ButtonType=UIButtonType.View ClickEvent="() => this.LoadViewFormAsync(id)">View</UIButton>
-            <UIButton type="button" ButtonType=UIButtonType.Edit ClickEvent="() => this.LoadEditFormAsync(id)">Edit</UIButton>
+            <UIButton type="button" ButtonType=UIButtonType.View ClickEvent="() => this.LoadViewFormAsync(id)">
+                View
+            </UIButton>
+            <UIButton type="button" ButtonType=UIButtonType.Edit ClickEvent="() => this.LoadEditFormAsync(id)">
+                Edit
+            </UIButton>
         </UIButtonGroup>
     };
 
@@ -64,15 +62,28 @@
         <UIButtonGroup>
             @if (showDash)
             {
-                <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsViewerPolicy AuthFields="this.GetAuthFields(record)" type="button" ButtonType=UIButtonType.Dash
-                             ClickEvent="() => this.RecordDashboard(id)">Dash</UIAuthorizeButton>
+                <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsViewerPolicy
+                       AuthFields="this.GetAuthFields(record)"
+                       type="button"
+                       ButtonType=UIButtonType.Dash
+                       ClickEvent="() => this.RecordDashboard(id)">
+                    Dash
+                </UIAuthorizeButton>
             }
 
-            <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsEditorPolicy AuthFields="this.GetAuthFields(record)" type="button" ButtonType=UIButtonType.Edit
-                             ClickEvent="() => this.LoadEditFormAsync(id)">Edit</UIAuthorizeButton>
+            <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsEditorPolicy
+                       AuthFields="this.GetAuthFields(record)"
+                       type="button" ButtonType=UIButtonType.Edit
+                       ClickEvent="() => this.LoadEditFormAsync(id)">
+                Edit
+            </UIAuthorizeButton>
 
-            <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsViewerPolicy AuthFields="this.GetAuthFields(record)" type="button" ButtonType=UIButtonType.View
-                             ClickEvent="() => this.LoadViewFormAsync(id)">View</UIAuthorizeButton>
+            <UIAuthorizeButton Policy=@AppAuthorizationPolicies.IsViewerPolicy
+                       AuthFields="this.GetAuthFields(record)" type="button"
+                       ButtonType=UIButtonType.View
+                       ClickEvent="() => this.LoadViewFormAsync(id)">
+                View
+            </UIAuthorizeButton>
         </UIButtonGroup>
     };
 }

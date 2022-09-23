@@ -9,7 +9,7 @@ namespace Blazr.UI.Bootstrap;
 
 public enum BootstrapSize { ExtraSmall, Small, Medium, Large, XLarge, XXLarge, Fluid }
 
-public class UIContainer : UIBlock
+public class UIContainer : UIBlockBase
 {
     [Parameter] public BootstrapSize Size { get; set; } = BootstrapSize.Fluid;
 

@@ -13,7 +13,6 @@ public abstract class LeanComponentBase : IComponent
     protected bool initialized;
     private bool _hasNeverRendered = true;
     private bool _hasPendingQueuedRender;
-    private bool _hidden;
 
     [Parameter] public Boolean Hidden { get; set; } = false;
 

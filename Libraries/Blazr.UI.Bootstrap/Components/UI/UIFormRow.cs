@@ -6,7 +6,7 @@
 
 namespace Blazr.UI.Bootstrap;
 
-public class UIFormRow : UIBlock
+public class UIFormRow : UIBlockBase
 {
     protected override CSSBuilder CssBuilder => base.CssBuilder
         .AddClass("row")

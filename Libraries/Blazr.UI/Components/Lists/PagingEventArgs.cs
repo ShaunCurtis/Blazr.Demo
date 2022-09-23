@@ -6,7 +6,7 @@
 
 namespace Blazr.UI;
 
-public class PagingEventArgs : EventArgs
+public sealed class PagingEventArgs : EventArgs
 {
     public PagingRequest Request { get; set; }
 

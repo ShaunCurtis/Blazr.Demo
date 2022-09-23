@@ -4,31 +4,8 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-
 namespace Blazr.UI;
 
-public class UIComponent : UIComponentBase
+public sealed class UIComponent : UIComponentBase
 {
-    [Parameter] public bool Disabled { get; set; } = false;
-
-    [Parameter] public string? Tag { get; set; }
-
-    [Parameter] public EventCallback<MouseEventArgs> ClickEvent { get; set; }
-
-    protected virtual string HtmlTag => this.Tag ?? "div";
-
-    protected virtual CSSBuilder CssBuilder => new CSSBuilder().AddClass(this.Class);
-
-    protected string CssClass => this.CssBuilder.Build();
-
-    protected override void BuildRenderTree(RenderTreeBuilder builder)
-    {
-        builder.OpenElement(0, this.HtmlTag);
-        builder.AddAttributeIfNotEmpty(2, "class", this.CssClass);
-        builder.AddAttributeIfTrue(this.Disabled, 3, "disabled");
-        builder.AddAttributeIfTrue(ClickEvent.HasDelegate, 4, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, ClickEvent));
-        builder.AddContentIfNotNull(5, this.ChildContent);
-        builder.CloseElement();
-    }
 }
-

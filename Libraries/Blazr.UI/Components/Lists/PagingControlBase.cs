@@ -7,7 +7,7 @@
 namespace Blazr.UI;
 
 public abstract class PagingControlBase<TRecord>
-    : UIComponent, IDisposable
+    : UIComponentBase, IDisposable
     where TRecord : class, new()
 {
     [Parameter] public int BlockSize { get; set; } = 10;

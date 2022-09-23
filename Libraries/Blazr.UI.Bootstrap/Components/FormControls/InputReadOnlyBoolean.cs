@@ -9,7 +9,7 @@ namespace Blazr.UI.Bootstrap;
 /// <summary>
 /// A display only Input box for Bools
 /// </summary>
-public class InputReadOnlyBoolean : UIBlock
+public class InputReadOnlyBoolean : UIBlockBase
 {
     [Parameter] public bool Value { get; set; } = false;
 

@@ -9,7 +9,7 @@ namespace Blazr.UI.Bootstrap;
 /// <summary>
 /// A display only Input box for formatted text
 /// </summary>
-public class InputReadOnlyText : UIBlock
+public class InputReadOnlyText : UIBlockBase
 {
     [Parameter] public object Value { get; set; } = default!;
 
@@ -40,7 +40,7 @@ public class InputReadOnlyText : UIBlock
     }
 }
 
-public class InputReadOnlyDisplay : UIBlock
+public class InputReadOnlyDisplay : UIBlockBase
 {
     [Parameter] public object? Value { get; set; }
 
@@ -56,7 +56,7 @@ public class InputReadOnlyDisplay : UIBlock
     }
 }
 
-public class InputReadOnlyDisplay<TValue> : UIBlock
+public class InputReadOnlyDisplay<TValue> : UIBlockBase
 {
     [Parameter] public TValue? Value { get; set; }
 

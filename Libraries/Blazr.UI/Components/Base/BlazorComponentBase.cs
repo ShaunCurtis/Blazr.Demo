@@ -9,8 +9,9 @@
 ///         Adding a Render() method that replicates StateHasChanged
 ///         Changing StateHasChanged so it's always invoked on the UI Context thread
 ///   3. Changes to _renderFragment assignment in New
-///         Adding a new Protected virtual RenderFragment ComponentRenderFrsgment 
+///         Adding a new protected virtual BuildComponent 
 ///         that can overridden to change the rendering behaviour of the Component
+///         Default is it calls BuildRenderTree
 ///
 ///   ==============================================================================
 
@@ -22,7 +23,7 @@
 
 namespace Blazr.UI;
 
-public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfterRender
+public abstract class BlazorComponentBase : IComponent, IHandleEvent, IHandleAfterRender
 {
     protected RenderFragment componentRenderFragment;
     private RenderHandle _renderHandle;
@@ -31,7 +32,9 @@ public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfte
     protected bool hasPendingQueuedRender;
     private bool _hasCalledOnAfterRender;
 
-    public BlazrComponentBase()
+    protected virtual string ComponentName => this.GetType().Name; 
+
+    public BlazorComponentBase()
     {
         componentRenderFragment = builder =>
         {
@@ -41,25 +44,18 @@ public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfte
         };
     }
 
-    protected virtual void BuildComponent(RenderTreeBuilder builder)
-    {
-        if (this.TemplatedContent is not null)
-        {
-            this.TemplatedContent.Invoke(builder);
-            return;
-        }
-
-        BuildRenderTree(builder);
-    }
+    protected virtual void BuildComponent(RenderTreeBuilder builder) 
+        => BuildRenderTree(builder);
 
     protected virtual void BuildRenderTree(RenderTreeBuilder builder) { }
 
-    protected virtual RenderFragment? TemplatedContent { get; }
+    protected virtual void OnInitialized() { }
 
-    protected RenderFragment? Content => (builder) => this.BuildRenderTree(builder);
+    protected virtual Task OnInitializedAsync() => Task.CompletedTask;
 
-    protected virtual ValueTask OnParametersChangedAsync(bool firstRender)
-        => ValueTask.CompletedTask;
+    protected virtual void OnParametersSet() { }
+
+    protected virtual Task OnParametersSetAsync() => Task.CompletedTask;
 
     protected void StateHasChanged()
         => _renderHandle.Dispatcher.InvokeAsync(Render);
@@ -105,14 +101,60 @@ public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfte
         _renderHandle = renderHandle;
     }
 
-    public virtual async Task SetParametersAsync(ParameterView parameters)
+    public virtual Task SetParametersAsync(ParameterView parameters)
     {
         parameters.SetParameterProperties(this);
 
-        await this.OnParametersChangedAsync(!initialized);
+        if (!initialized)
+        {
+            initialized = true;
+
+            return this.RunInitAndSetParametersAsync();
+        }
+        else
+            return this.CallOnParametersSetAsync();
     }
 
-     private async Task CallStateHasChangedOnAsyncCompletion(Task task)
+    private async Task RunInitAndSetParametersAsync()
+    {
+        this.OnInitialized();
+
+        var task = this.OnInitializedAsync();
+
+        if (task.Status != TaskStatus.RanToCompletion && task.Status != TaskStatus.Canceled)
+        {
+            this.Render();
+
+            try
+            {
+                await task;
+            }
+            catch // avoiding exception filters for AOT runtime support
+            {
+                if (!task.IsCanceled)
+                    throw;
+            }
+        }
+
+        await this.CallOnParametersSetAsync();
+    }
+
+    private Task CallOnParametersSetAsync()
+    {
+        this.OnParametersSet();
+
+        var task = this.OnParametersSetAsync();
+        var shouldAwaitTask = task.Status != TaskStatus.RanToCompletion &&
+            task.Status != TaskStatus.Canceled;
+
+        Render();
+
+        return shouldAwaitTask ?
+            this.CallStateHasChangedOnAsyncCompletion(task) :
+            Task.CompletedTask;
+    }
+
+    private async Task CallStateHasChangedOnAsyncCompletion(Task task)
     {
         try
         {

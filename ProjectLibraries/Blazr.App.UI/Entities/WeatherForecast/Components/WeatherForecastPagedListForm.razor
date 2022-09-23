@@ -29,10 +29,12 @@
 @code {
     [Parameter] public Guid WeatherLocationId { get; set; } = Guid.Empty;
 
-    protected override void OnInitialized()
+    protected override ValueTask OnParametersChangedAsync(bool firstRender)
     {
         if (WeatherLocationId != Guid.Empty)
             this.InitialFilterExpression = (item) => item.WeatherLocationId == this.WeatherLocationId;
+    
+            return ValueTask.CompletedTask;
     }
 
     protected override ModalOptions GetAddOptions(ModalOptions? options)

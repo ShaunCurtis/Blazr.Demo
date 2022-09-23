@@ -5,7 +5,7 @@
 /// ============================================================
 namespace Blazr.UI.Bootstrap;
 
-public class UIColumn : UIComponent
+public class UIColumn : UIComponentBase
 {
     [Parameter] public int Columns { get; set; } = 0;
 

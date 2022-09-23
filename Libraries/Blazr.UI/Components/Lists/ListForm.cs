@@ -6,7 +6,7 @@
 
 namespace Blazr.UI;
 
-public class ListForm<TRecord> : ComponentBase
+public sealed class ListForm<TRecord> : ComponentBase
     where TRecord : class, new()
 {
     [Parameter] public RenderFragment? ChildContent { get; set; }

@@ -2,7 +2,7 @@
 
 namespace Blazr.UI;
 
-public class ModalOptions : IEnumerable<KeyValuePair<string, object>>
+public sealed class ModalOptions : IEnumerable<KeyValuePair<string, object>>
 {
     /// <summary>
     /// List of options

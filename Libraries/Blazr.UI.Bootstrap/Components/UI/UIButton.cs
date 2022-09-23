@@ -7,11 +7,13 @@
 
 namespace Blazr.UI.Bootstrap;
 
-public class UIButton : UIComponent
+public class UIButton : UIComponentBase
 {
     [Parameter] public UIButtonType ButtonType { get; set; } = UIButtonType.None;
 
     [Parameter] public string Type { get; set; } = "button";
+
+    [Parameter] public EventCallback<MouseEventArgs> ClickEvent { get; set; }
 
     protected override CSSBuilder CssBuilder => base.CssBuilder
         .AddClass("btn")
