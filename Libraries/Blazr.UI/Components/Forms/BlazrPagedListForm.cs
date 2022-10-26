@@ -1,6 +1,4 @@
-﻿
-using Blazr.Core;
-/// ============================================================
+﻿/// ============================================================
 /// Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
@@ -199,7 +197,7 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
     private void OnListChanged(object? sender, EventArgs e)
     {
         this.ListContext.NotifyListChanged(this);
-        this.InvokeAsync(this.StateHasChanged);
+        this.InvokeStateHasChanged();
     }
 
     public bool TryGetState(Guid stateId, [NotNullWhen(true)] out ListState<TRecord>? state)
@@ -212,11 +210,10 @@ public abstract class BlazrPagedListForm<TRecord, TEntity>
     public void SaveState()
         => UiStateService?.AddStateData(this.RouteId, this.Service.Records.ListState);
 
-
     async Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg)
     {
         await callback.InvokeAsync(arg);
-        Render();
+        this.StateHasChanged();
     }
 
     Task IHandleAfterRender.OnAfterRenderAsync()

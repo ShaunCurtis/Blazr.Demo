@@ -101,7 +101,7 @@ public abstract class BlazrForm<TService, TEntity>
     async Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg)
     {
         await callback.InvokeAsync(arg);
-        Render();
+        this.StateHasChanged();
     }
 
     Task IHandleAfterRender.OnAfterRenderAsync()

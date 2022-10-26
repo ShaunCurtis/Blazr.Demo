@@ -6,7 +6,7 @@
 
 namespace Blazr.UI.Bootstrap;
 
-public class UIListColumnBase<TRecord> : UIComponentBase
+public class UIListColumnBase<TRecord> : UIHtmlComponentBase
     where TRecord : class, new()
 {
     private bool showSortingDropdown = false;
@@ -29,12 +29,12 @@ public class UIListColumnBase<TRecord> : UIComponentBase
 
     protected string showCss => showSortingDropdown ? "show" : String.Empty;
 
-    protected override Task OnParametersChangedAsync(bool firstRender)
+    protected override ValueTask<bool> OnParametersChangedAsync(bool firstRender)
     {
         if (this.ListContext is null)
             throw new NullReferenceException("There's no cascaded ListContext.");
         
-        return Task.CompletedTask;
+        return ValueTask.FromResult(true);
     }
 
     protected bool isMaxRowColumn 
@@ -49,7 +49,7 @@ public class UIListColumnBase<TRecord> : UIComponentBase
     protected void ShowSorting(bool show)
     {
         showSortingDropdown = show;
-        Render();
+        this.StateHasChanged();
     }
 
     protected void SortClick(bool descending)

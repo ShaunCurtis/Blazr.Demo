@@ -72,7 +72,7 @@ public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
     {
         this.blazrNavManager?.SetLockState(this.IsDirty);
         this.isConfirmDelete = false;
-        this.InvokeAsync(StateHasChanged);
+        this.InvokeStateHasChanged();
     }
 
     private void FailedRoutingAttempt(object? sender, EventArgs e)

@@ -6,7 +6,11 @@
 
 namespace Blazr.UI;
 
-public abstract class UIBlockBase : UICoreComponentBase
+/// <summary>
+/// Base minimum footprint component for building simple UI Components
+/// with single PreRender event method
+/// </summary>
+public abstract class UIHtmlComponentBase : UIComponentBase
 {
     [Parameter] public bool Disabled { get; set; } = false;
 

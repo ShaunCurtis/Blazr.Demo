@@ -110,6 +110,8 @@ public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfte
         parameters.SetParameterProperties(this);
 
         await this.OnParametersChangedAsync(!initialized);
+
+        Render();
     }
 
      private async Task CallStateHasChangedOnAsyncCompletion(Task task)

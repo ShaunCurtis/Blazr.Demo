@@ -15,18 +15,20 @@ public class UIAuthorizeButton : UIButton
 
     [Inject] protected IAuthorizationService authorizationService { get; set; } =default!;
 
-    protected async override Task OnParametersChangedAsync(bool firstRender)
+    protected async override ValueTask<bool> OnParametersChangedAsync(bool firstRender)
     {
         if (AuthTask is null)
             throw new Exception($"{this.GetType().FullName} must have access to cascading Paramater {nameof(AuthTask)}");
 
         await this.CheckPolicy();
+        
+        return true;
     }
 
     protected virtual async ValueTask CheckPolicy()
     {
         var state = await AuthTask!;
         var result = await this.authorizationService.AuthorizeAsync(state.User, AuthFields, Policy);
-        this.show = result.Succeeded;
+        this.hide = !result.Succeeded;
     }
 }

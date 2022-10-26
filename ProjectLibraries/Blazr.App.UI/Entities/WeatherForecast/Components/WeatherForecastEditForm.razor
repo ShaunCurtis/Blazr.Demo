@@ -39,10 +39,11 @@
     [Parameter] public Guid WeatherLocationId { get; set; } = Guid.Empty;
 
     // We need to get the two foreign keys the for uses
-    protected override async ValueTask OnParametersChangedAsync(bool firstRender)
+    protected override async  ValueTask<bool> OnParametersChangedAsync(bool firstRender)
     {
         await this.FkSummaryService.GetFkList();
-        return this.FkLocationService.GetFkList();
+        await this.FkLocationService.GetFkList();
+        return true;
     }
 
     // Render fragment for the Summary List from the Foreign Key service

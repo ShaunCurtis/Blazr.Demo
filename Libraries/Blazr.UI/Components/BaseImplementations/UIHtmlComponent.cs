@@ -6,6 +6,6 @@
 
 namespace Blazr.UI;
 
-public sealed class UIComponent : UIComponentBase
+public sealed class UIHtmlComponent : UIHtmlComponentBase
 {
 }

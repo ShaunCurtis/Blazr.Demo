@@ -6,7 +6,7 @@
 
 namespace Blazr.UI.Bootstrap;
 
-public partial class UIListControl<TRecord> : UIComponentBase
+public partial class UIListControl<TRecord> : UIHtmlComponentBase
     where TRecord : class, new()
 {
     [Parameter] public ComponentState LoadState { get; set; }
@@ -19,12 +19,12 @@ public partial class UIListControl<TRecord> : UIComponentBase
 
     [CascadingParameter] private ListContext<TRecord>? listContext { get; set; }
 
-    protected override Task OnParametersChangedAsync(bool firstRender)
+    protected override ValueTask<bool> OnParametersChangedAsync(bool firstRender)
     {
         if (listContext is not null)
             listContext.StateChanged += OnStateChanged;
 
-        return base.OnParametersChangedAsync(firstRender);
+        return ValueTask.FromResult(true);  
     }
 
     private bool HasRecords

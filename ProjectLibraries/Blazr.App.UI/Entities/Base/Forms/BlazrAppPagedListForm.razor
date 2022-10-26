@@ -1,8 +1,19 @@
-﻿@namespace Blazr.App.UI
+﻿@*
+============================================================
+ Author: Shaun Curtis, Cold Elm Coders
+ License: Use And Donate
+ If you use it, donate something to a charity somewhere
+============================================================
+*@
+
+@*
+This code defines a set of template render fragments that are used in implementation classes
+*@
+
+@namespace Blazr.App.UI
 @inherits BlazrPagedListForm<TRecord, TEntity>
 @typeparam TRecord where TRecord : class, new()
 @typeparam TEntity where TEntity  : class, IEntity
-
 
 @code {
     protected readonly string TableCss = "table table-sm table-striped table-hover border-bottom no-margin";
@@ -87,4 +98,3 @@
         </UIButtonGroup>
     };
 }
-

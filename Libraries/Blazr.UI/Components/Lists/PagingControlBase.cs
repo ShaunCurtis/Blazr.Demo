@@ -7,7 +7,7 @@
 namespace Blazr.UI;
 
 public abstract class PagingControlBase<TRecord>
-    : UIComponentBase, IDisposable
+    : UIHtmlComponentBase, IDisposable
     where TRecord : class, new()
 {
     [Parameter] public int BlockSize { get; set; } = 10;
@@ -16,7 +16,7 @@ public abstract class PagingControlBase<TRecord>
 
     [CascadingParameter] private ListContext<TRecord>? ListContext { get; set; }
 
-    protected override Task OnParametersChangedAsync(bool firstRender)
+    protected override ValueTask<bool> OnParametersChangedAsync(bool firstRender)
     {
         if (firstRender)
         {
@@ -29,7 +29,7 @@ public abstract class PagingControlBase<TRecord>
             this.ListContext.StateChanged += this.OnStateChanged;
             this.ListContext.ListChanged += this.OnListChanged;
         }
-        return Task.CompletedTask;
+        return ValueTask.FromResult(true);
     }
 
     protected int Page

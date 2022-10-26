@@ -7,7 +7,7 @@
 
 namespace Blazr.UI.Bootstrap;
 
-public class UIButton : UIComponentBase
+public class UIButton : UIHtmlComponentBase
 {
     [Parameter] public UIButtonType ButtonType { get; set; } = UIButtonType.None;
 

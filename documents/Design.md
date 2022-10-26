@@ -2,28 +2,28 @@
 
 ## Clean Design
 
-Clean Design is a modern software design architecture appropriate for Web based projects.  Implementing it in solutioins is neither heavy duty nor requires a training course to understand and implement.
+Clean Design is a modern software design architecture appropriate for Web based projects.  Implementing it relatively simple: you don't need to go on a training course and get a certificate.
 
 It's core principles are:
 1. Separation of Concerns.
 2. The Dependancy Rule.  
 
-Clean design can be visualized as a set of concentric rings with domains representing the primary coencerns.  Dependencies flow inward: a domain can have no dependencies on a domain in an outer ring or a domain in the same ring.  The diagram below shows the principle rings.
+Clean design can be visualized as a set of concentric rings with domains representing the primary concerns.  Dependencies flow inward: a domain has no dependencies on an outwr or same ring domain.  The diagram below shows the principle rings.
 
 ![Clean Design Domains](./images/clean-design-domains.png)
 
-In smaller projects the domain and application rings are often combined into a single core ring.
+In smaller projects the domain and application rings are often combined into a single core domain.
 
 ### Dependency Injection and Abstraction
 
 The glue that makes Clean Design possible is abstraction and dependency injection.
 
 1. Abstraction is the process of defining connections between domains as interfaces.
-2. Dependency Injection is software framework that manages the lifecycle of object instances within a DI container.   
+2. Dependency Injection is software framework that manages the lifecycle of object instances.   
 
 It's easier to demonstrate the principles in a simple example that try to provide a detailed explanation.
 
-We can refactor some of the Blazor Server Template code for `WeatherForecast` and `FetchData`.
+I'll use the Blazor Server Template code for `WeatherForecast` and `FetchData` to demonstrate.
 
 `FetchData` requires a collection of WeatherForecasts.  We can define a View interface to encapsulate that functionality.
 
@@ -35,7 +35,7 @@ public interface IWeatherForecastView
 }
 ```
 
-And implement a class version of that interface:
+And a class that implements the interface:
 
 ```csharp
 public class WeatherForecastView : IWeatherForecastService
@@ -61,7 +61,7 @@ Note that the registration is as `IWeatherForecastView`.
 `FetchData` can now use it by injection of `IWeatherForecastView`
 
 ```csharp
-@inject IWeatherForecastView
+@inject IWeatherForecastView WeatherForecastView
 
 //show as table IWeatherForecastView.WeatherForecasts
 ```

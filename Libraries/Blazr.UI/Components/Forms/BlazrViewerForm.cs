@@ -43,7 +43,6 @@ public abstract class BlazrViewerForm<TRecord, TEntity>
         }
 
         // Calls the base version.
-        // This does all the usual ComponentBase OnInitialized{Async} and OnParametersSet{Async} stuff
         await base.SetParametersAsync(ParameterView.Empty);
 
         // We aren't new any more
@@ -66,7 +65,7 @@ public abstract class BlazrViewerForm<TRecord, TEntity>
             : this.LoadState = ComponentState.UnAuthorized;
 
         if (render)
-            await this.InvokeAsync(this.StateHasChanged);
+            this.InvokeStateHasChanged();
     }
 
     /// <summary>

@@ -7,30 +7,22 @@
 namespace Blazr.UI;
 
 /// <summary>
-/// Base minimum footprint component for building simple UI Components
+/// Base minimum footprint component for building UI Components
 /// with single PreRender event method
 /// </summary>
-public abstract class UIComponentBase : UIBase
+public abstract class UIComponentBase : UICoreComponentBase
 {
-    [Parameter] public bool Disabled { get; set; } = false;
-
-    [Parameter] public string? Tag { get; set; }
-
-    protected virtual string HtmlTag => this.Tag ?? "div";
-
-    protected virtual CSSBuilder CssBuilder => new CSSBuilder().AddClass(this.Class);
-
-    protected string CssClass => this.CssBuilder.Build();
-
+    protected bool initialized;
 
     /// <summary>
     /// Method that can be overridden by child components
     /// Eqivalent to OnParametersSetAsync
+    /// Return false to prevent a Render.
     /// </summary>
     /// <param name="firstRender"></param>
-    /// <returns></returns>
-    protected virtual Task OnParametersChangedAsync(bool firstRender)
-        => Task.CompletedTask;
+    /// <returns>True to call StateHasChanged</returns>
+    protected virtual ValueTask<bool> OnParametersChangedAsync(bool firstRender)
+        => ValueTask.FromResult(true);
 
     /// <summary>
     ///  IComponent implementation
@@ -41,25 +33,14 @@ public abstract class UIComponentBase : UIBase
     public override async Task SetParametersAsync(ParameterView parameters)
     {
         parameters.SetParameterProperties(this);
-        var shouldRender = this.ShouldRenderOnParameterChange(initialized);
 
-        if (hasNeverRendered || shouldRender)
-        {
-            await this.OnParametersChangedAsync(!initialized);
-            this.Render();
-        }
+        var dorender = await this.OnParametersChangedAsync(!initialized)
+            || hasNeverRendered
+            || !hasPendingQueuedRender;
+
+            if (dorender)
+                this.StateHasChanged();
 
         this.initialized = true;
     }
-
-    protected override void BuildRenderTree(RenderTreeBuilder builder)
-    {
-        builder.OpenElement(0, this.HtmlTag);
-        builder.AddAttributeIfNotEmpty(2, "class", this.CssClass);
-        builder.AddAttributeIfTrue(this.Disabled, 3, "disabled");
-        builder.AddContentIfNotNull(5, this.ChildContent);
-        builder.CloseElement();
-    }
-
 }
-

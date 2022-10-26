@@ -1,8 +1,8 @@
 # Blazr.Demo
 
-This is the new consolidated repository for my latest versions of my Blazor Demo Database application.
+This is the new repository for the latest version of my Blazor Demo Database application.
 
-The documentation is divid into a set of articles that cover various aspects and key technologies used in the solution
+The documentation is divided into a set of articles that cover various aspects and key technologies used in the solution.
 
 Articles:
 

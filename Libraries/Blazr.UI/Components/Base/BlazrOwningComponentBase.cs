@@ -3,16 +3,14 @@
 /// 
 /// Licensed to the .NET Foundation under one or more agreements.
 /// The .NET Foundation licenses this file to you under the MIT license.
-
 /// ============================================================
 /// Mods Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-
 namespace Blazr.UI;
 
-public abstract class BlazrOwningComponentBase : BlazrComponentBase, IDisposable
+public abstract class BlazrOwningComponentBase : UITemplatedComponentBase, IDisposable
 {
     private AsyncServiceScope? _scope;
     protected bool IsDisposed { get; private set; }

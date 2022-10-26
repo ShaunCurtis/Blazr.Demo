@@ -3,52 +3,31 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-
-
 namespace Blazr.UI;
 
 /// <summary>
-/// Base minimum footprint component for building simple UI Components
-/// No events or StateHasChanged
+/// Base minimum footprint component for building simple Components
+/// No events
 /// </summary>
-public abstract class UIBase : IComponent
+public abstract class CoreComponentBase : IComponent
 {
     protected RenderFragment renderFragment;
     protected internal RenderHandle renderHandle;
-    private bool _hasPendingQueuedRender = false;
+    protected bool hasPendingQueuedRender = false;
     protected internal bool hasNeverRendered = true;
-    protected bool initialized;
-    protected bool show = true;
-
-    /// <summary>
-    /// Content to render within the component
-    /// </summary>
-    [Parameter] public RenderFragment? ChildContent { get; set; }
-
-    /// <summary>
-    /// Parameter to control the display of the component
-    /// </summary>
-
-    [Parameter] public bool Hidden { get; set; } = false;
-
-    /// <summary>
-    /// Parameter to capture any Class settings
-    /// </summary>
-    [Parameter] public string Class { get; set; } = String.Empty;
 
     /// <summary>
     /// New method
     /// caches a copy of the Render code
     /// Detects if the component shoud be rendered and if not doesn't render ant content
     /// </summary>
-    public UIBase()
+    public CoreComponentBase()
     {
         this.renderFragment = builder =>
         {
-            _hasPendingQueuedRender = false;
+            hasPendingQueuedRender = false;
             hasNeverRendered = false;
-            if (!this.Hidden && this.show)
-                this.BuildRenderTree(builder);
+            this.BuildRenderTree(builder);
         };
     }
 
@@ -59,24 +38,24 @@ public abstract class UIBase : IComponent
     protected virtual void BuildRenderTree(RenderTreeBuilder builder) { }
 
     /// <summary>
-    /// Internal method to queue the component Render Fragment onto the Renderer's Render Queue
+    /// Method to queue the component Render Fragment onto the Renderer's Render Queue
     /// Only adds it if there are no other copies already queued
     /// </summary>
-    internal protected void Render()
+    protected void StateHasChanged()
     {
-        if (_hasPendingQueuedRender)
+        if (hasPendingQueuedRender)
             return;
 
-        _hasPendingQueuedRender = true;
+        hasPendingQueuedRender = true;
         renderHandle.Render(this.renderFragment);
     }
 
     /// <summary>
-    /// Classic StateHasChangedMethod
+    /// StateHasChanged Method that is invoked on the UI Thread
     /// Do not call through InvokeAsync, it already does it.
     /// </summary>
-    protected void StateHasChanged()
-        => renderHandle.Dispatcher.InvokeAsync(Render);
+    protected void InvokeStateHasChanged()
+        => renderHandle.Dispatcher.InvokeAsync(StateHasChanged);
 
     /// <summary>
     ///  IComponent implementation
@@ -96,23 +75,7 @@ public abstract class UIBase : IComponent
     public virtual Task SetParametersAsync(ParameterView parameters)
     {
         parameters.SetParameterProperties(this);
-        var shouldRender = this.ShouldRenderOnParameterChange(initialized);
-
-        if (hasNeverRendered || shouldRender)
-            this.Render();
-
-        this.initialized = true;
-
+        this.StateHasChanged();
         return Task.CompletedTask;
     }
-
-    /// <summary>
-    /// Method that can be overridden to make the render decision based on manual parameters checks
-    /// </summary>
-    /// <param name="initialized"></param>
-    /// <returns></returns>
-    protected virtual bool ShouldRenderOnParameterChange(bool initialized)
-        => true;
-
 }
-
