@@ -50,7 +50,7 @@ public class DecimalValidator : Validator<decimal>
     }
 }
 
-public static class DecimalValidatorExtensions
+public static class DecimalVMSValidatorExtensions
 {
     public static DecimalValidator Validation(this decimal value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
         => new DecimalValidator(value, fieldName, model, validationMessageStore, validationState, message);

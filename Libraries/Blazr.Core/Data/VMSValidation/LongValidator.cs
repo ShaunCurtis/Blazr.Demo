@@ -30,7 +30,7 @@ public class LongValidator : Validator<long>
     }
 }
 
-public static class LongValidatorExtensions
+public static class LongVMSValidatorExtensions
 {
     public static LongValidator Validation(this long value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
         => new LongValidator(value, fieldName, model, validationMessageStore, validationState, message);

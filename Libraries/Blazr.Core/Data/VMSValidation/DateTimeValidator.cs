@@ -57,7 +57,7 @@ public class DateTimeValidator : Validator<DateTime>
     }
 }
 
-public static class DateTimeValidatorExtensions
+public static class DateTimeVMSValidatorExtensions
 {
     public static DateTimeValidator Validation(this DateTime value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
         => new DateTimeValidator(value, fieldName, model, validationMessageStore, validationState, message);

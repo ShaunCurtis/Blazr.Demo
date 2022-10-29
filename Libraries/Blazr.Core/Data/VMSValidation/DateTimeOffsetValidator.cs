@@ -57,7 +57,7 @@ public class DateTimeOffsetValidator : Validator<DateTimeOffset>
     }
 }
 
-public static class DateTimeOffsetValidatorExtensions
+public static class DateTimeOffsetVMSValidatorExtensions
 {
     public static DateTimeOffsetValidator Validation(this DateTimeOffset value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
         => new DateTimeOffsetValidator(value, fieldName, model, validationMessageStore, validationState, message);

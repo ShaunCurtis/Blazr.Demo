@@ -30,7 +30,7 @@ public class IntValidator : Validator<int>
     }
 }
 
-public static class IntValidatorExtensions
+public static class IntVMSValidatorExtensions
 {
     public static IntValidator Validation(this int value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
         => new IntValidator(value, fieldName, model, validationMessageStore, validationState, message);

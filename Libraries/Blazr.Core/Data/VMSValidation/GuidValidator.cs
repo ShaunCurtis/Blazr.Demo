@@ -21,7 +21,7 @@ public class GuidValidator : Validator<Guid>
     }
 }
 
-public static class GuidValidatorExtensions
+public static class GuidVMSValidatorExtensions
 {
     public static GuidValidator Validation(this Guid value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
         => new GuidValidator(value, fieldName, model, validationMessageStore,validationState, message);
