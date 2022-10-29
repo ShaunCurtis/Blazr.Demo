@@ -1,5 +1,4 @@
-﻿global using System.ComponentModel.DataAnnotations;
-global using System.Security.Claims;
+﻿global using System.Security.Claims;
 
 global using Microsoft.AspNetCore.Components.Web.Virtualization;
 global using Microsoft.AspNetCore.Components.Forms;

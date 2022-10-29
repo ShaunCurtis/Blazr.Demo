@@ -6,7 +6,7 @@
 namespace Blazr.App.Core;
 
 public class DeoWeatherForecast
-    : IEditRecord<DboWeatherForecast>, IValidation, IAuthRecord
+    : IEditRecord<DboWeatherForecast>, IMessageStoreValidation, IAuthRecord
 {
     private DboWeatherForecast _baseRecord = new DboWeatherForecast();
     private Guid _newId = Guid.NewGuid();
@@ -81,22 +81,31 @@ public class DeoWeatherForecast
     {
         model ??= this;
         ValidationState validationState = new ValidationState();
+        var field = "Date";
 
-        this.Date.Validation("Date", model, validationMessageStore, validationState)
-            .GreaterThan(DateTime.Now, true, "The weather forecast must be for a future date")
-            .Validate(fieldname);
+        field = "Date";
+        if (field.Equals(fieldname) | fieldname is null)
+            this.Date.Validation(field, model, validationMessageStore, validationState)
+                .GreaterThan(DateTime.Now, true, "The weather forecast must be for a future date")
+                .Validate(fieldname);
 
-        this.SummaryId.Validation("SummaryId", model, validationMessageStore, validationState)
+        field = "SummaryId";
+        if (field.Equals(fieldname) | fieldname is null)
+            this.SummaryId.Validation(field, model, validationMessageStore, validationState)
             .NotEmpty("You must select a weather summary")
             .Validate(fieldname);
 
-        this.LocationId.Validation("LocationId", model, validationMessageStore, validationState)
+        field = "LocationId";
+        if (field.Equals(fieldname) | fieldname is null)
+            this.LocationId.Validation(field, model, validationMessageStore, validationState)
             .NotEmpty("You must select a location")
             .Validate(fieldname);
 
-        this.TemperatureC.Validation("TemperatureC", model, validationMessageStore, validationState)
+        field = "TemperatureC";
+        if (field.Equals(fieldname) | fieldname is null)
+            this.TemperatureC.Validation(field, model, validationMessageStore, validationState)
             .GreaterThan(-61, "The minimum Temperatore is -60C")
-            .LessThan(81, "The maximum temperature is 80C")
+            .LessThan(61, "The maximum temperature is 60C")
             .Validate(fieldname);
 
         return validationState.IsValid;

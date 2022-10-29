@@ -9,9 +9,9 @@ namespace Blazr.UI;
 /// Base footprint component for building simple UI Components
 /// No events
 /// </summary>
-public abstract class UICoreComponentBase : CoreComponentBase
+public abstract class BlazrCoreUIComponentBase : BlazrComponentBase
 {
-    protected bool hide;
+    protected bool hide = false;
 
     /// <summary>
     /// Content to render within the component
@@ -21,20 +21,20 @@ public abstract class UICoreComponentBase : CoreComponentBase
     /// <summary>
     /// Parameter to control the display of the component
     /// </summary>
-    [Parameter] public bool Hidden { get; set; } = false;
+    [Parameter] public bool Hidden { get; set; }
 
     /// <summary>
     /// New method
     /// caches a copy of the Render code
     /// Detects if the component shoud be rendered and if not doesn't render ant content
     /// </summary>
-    public UICoreComponentBase()
+    public BlazrCoreUIComponentBase()
     {
         this.renderFragment = builder =>
         {
             hasPendingQueuedRender = false;
             hasNeverRendered = false;
-            if (!this.Hidden || !this.hide)
+            if (!(this.hide | this.Hidden))
                 this.BuildRenderTree(builder);
         };
     }

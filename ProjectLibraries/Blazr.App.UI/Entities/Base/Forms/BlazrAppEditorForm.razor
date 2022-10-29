@@ -22,7 +22,7 @@
                 <UIContainer class="mb-4" Size=BootstrapSize.Fluid>
                     <UIFormRow>
                         <UIColumn Columns=12 MediumColumns=7 class="">
-                            <UIAlertMessage AlertColour="@this.alertColour" Message="@this.alertMessage" />
+                            <UIAlertMessage AlertColour="@this.alertColour" Hidden=this.IsDirty Message="@this.alertMessage" />
                         </UIColumn>
                         <UIColumn Columns=12 MediumColumns=5 class="text-end text-right">
                             <UIButton ButtonType=UIButtonType.Warning Hidden="!this.IsDirty && this.IsNew" ClickEvent="this.ResetRecord">

@@ -10,7 +10,7 @@ namespace Blazr.UI;
 /// Base minimum footprint component for building UI Components
 /// with single PreRender event method
 /// </summary>
-public abstract class UIComponentBase : UICoreComponentBase
+public abstract class UIComponentBase : BlazrCoreUIComponentBase
 {
     protected bool initialized;
 

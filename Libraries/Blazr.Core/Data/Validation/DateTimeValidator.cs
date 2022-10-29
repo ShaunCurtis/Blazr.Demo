@@ -9,7 +9,13 @@ namespace Blazr.Core.Validation;
 public class DateTimeValidator : Validator<DateTime>
 {
     public DateTimeValidator(DateTime value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message)
-        : base(value, fieldName, model, validationMessageStore, validationState, message) { }
+    : base(value, fieldName, model, validationMessageStore, validationState, message) { }
+
+    public DateTimeValidator(DateTime value, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message)
+    : base(value, fieldName, validationMessages, validationState, message) { }
+
+    public DateTimeValidator(DateTime value, string? message = null)
+    : base(value, message) { }
 
     public DateTimeValidator LessThan(DateTime test, bool dateOnly = false, string? message = null)
     {
@@ -57,11 +63,14 @@ public class DateTimeValidator : Validator<DateTime>
     }
 }
 
-public static class DateTimeVMSValidatorExtensions
+public static class DateTimeValidatorExtensions
 {
+    public static DateTimeValidator Validation(this DateTime value, string? message = null)
+        => new DateTimeValidator(value, message);
+
+    public static DateTimeValidator Validation(this DateTime value, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message = null)
+        => new DateTimeValidator(value, fieldName, validationMessages, validationState, message);
+
     public static DateTimeValidator Validation(this DateTime value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
         => new DateTimeValidator(value, fieldName, model, validationMessageStore, validationState, message);
-
-    public static DateTimeValidator Validation(this DateTime? value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
-        => new DateTimeValidator(value ?? DateTime.MinValue, fieldName, model, validationMessageStore, validationState, message);
 }

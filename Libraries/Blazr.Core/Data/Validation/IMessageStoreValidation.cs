@@ -4,15 +4,10 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-using System.ComponentModel.DataAnnotations;
+namespace Blazr.Core.Validation;
 
-namespace Blazr.Core;
-
-public record BaseFkListItem 
-    : IFkListItem
+public interface IMessageStoreValidation
 {
-    [Key]
-    public Guid Id { get; init; }
-
-    public string Name { get; init; } = String.Empty;
+    public bool Validate(ValidationMessageStore? validationMessageStore, string? fieldname, object? model = null);
 }
+

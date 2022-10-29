@@ -1,10 +1,12 @@
-﻿@*/// ============================================================
-    /// Author: Shaun Curtis, Cold Elm Coders
-    /// License: Use And Donate
-    /// If you use it, donate something to a charity somewhere
-    /// ============================================================
+﻿@*
+/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================
 *@
 
+@inherits UIComponentBase
 @namespace Blazr.UI.Bootstrap
 @using System.Timers
 
@@ -35,7 +37,7 @@
 
     private bool hidden = true;
 
-    protected override Task OnParametersSetAsync()
+    protected override ValueTask<bool> OnParametersChangedAsync(bool firstRender)
     {
         if (!string.IsNullOrWhiteSpace(this.Message) && !this.currentMessage.Equals(this.Message))
         {
@@ -57,12 +59,12 @@
             this.currentMessage = string.Empty;
         }
 
-        return Task.CompletedTask;
+        return ValueTask.FromResult(true);
     }
 
     private void TimerElapsed(object? sender, ElapsedEventArgs e)
     {
         this.hidden = true;
-        this.InvokeAsync(StateHasChanged);
+        this.InvokeStateHasChanged();
     }
 }

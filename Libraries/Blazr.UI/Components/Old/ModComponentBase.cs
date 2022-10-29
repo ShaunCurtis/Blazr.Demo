@@ -22,7 +22,7 @@
 
 namespace Blazr.UI;
 
-public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfterRender
+public abstract class ModComponentBase : IComponent, IHandleEvent, IHandleAfterRender
 {
     protected RenderFragment componentRenderFragment;
     private RenderHandle _renderHandle;
@@ -31,7 +31,7 @@ public abstract class BlazrComponentBase : IComponent, IHandleEvent, IHandleAfte
     protected bool hasPendingQueuedRender;
     private bool _hasCalledOnAfterRender;
 
-    public BlazrComponentBase()
+    public ModComponentBase()
     {
         componentRenderFragment = builder =>
         {

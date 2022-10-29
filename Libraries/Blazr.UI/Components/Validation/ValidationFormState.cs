@@ -9,7 +9,7 @@ namespace Blazr.UI;
 /// Component Class that adds Edit State and Validation State to a Blazor EditForm Control
 /// Should be placed within thr EditForm ontrol
 /// </summary>
-public sealed class VMSValidationFormState : ComponentBase, IDisposable
+public sealed class ValidationFormState : ComponentBase, IDisposable
 {
     /// <summary>
     /// EditContext - cascaded from EditForm
@@ -78,7 +78,7 @@ public sealed class VMSValidationFormState : ComponentBase, IDisposable
     private void Validate(string? fieldname = null)
     {
         // Checks to see if the Model implements IValidation
-        var validator = this.EditContext!.Model as IValidation;
+        var validator = this.EditContext!.Model as IMessageStoreValidation;
         if (validator != null || !this.validating)
         {
             this.validating = true;

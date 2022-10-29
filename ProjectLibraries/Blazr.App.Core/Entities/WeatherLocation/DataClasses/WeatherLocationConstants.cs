@@ -4,15 +4,11 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-using System.ComponentModel.DataAnnotations;
+namespace Blazr.App.Core;
 
-namespace Blazr.Core;
-
-public record BaseFkListItem 
-    : IFkListItem
+public readonly struct WeatherLocationConstants
 {
-    [Key]
-    public Guid Id { get; init; }
-
-    public string Name { get; init; } = String.Empty;
+    public const string Uid = "Uid";
+    public const string OwnerId = "OwnerId";
+    public const string Location = "Location";
 }

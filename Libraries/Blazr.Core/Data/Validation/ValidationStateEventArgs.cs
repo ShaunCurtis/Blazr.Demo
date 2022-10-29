@@ -6,8 +6,13 @@
 
 namespace Blazr.Core.Validation;
 
-public interface IValidation
+public class ValidationStateEventArgs : EventArgs
 {
-    public bool Validate(ValidationMessageStore? validationMessageStore, string? fieldname, object? model = null);
+    public bool ValidationState { get; set; }
+
+    public string? Field { get; set; }
+
+    public static ValidationStateEventArgs Create(bool state, string? field)
+        => new ValidationStateEventArgs { ValidationState = state, Field = field };
 }
 

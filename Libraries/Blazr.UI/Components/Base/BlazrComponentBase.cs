@@ -9,7 +9,7 @@ namespace Blazr.UI;
 /// Base minimum footprint component for building simple Components
 /// No events
 /// </summary>
-public abstract class CoreComponentBase : IComponent
+public abstract class BlazrComponentBase : IComponent
 {
     protected RenderFragment renderFragment;
     protected internal RenderHandle renderHandle;
@@ -21,7 +21,7 @@ public abstract class CoreComponentBase : IComponent
     /// caches a copy of the Render code
     /// Detects if the component shoud be rendered and if not doesn't render ant content
     /// </summary>
-    public CoreComponentBase()
+    public BlazrComponentBase()
     {
         this.renderFragment = builder =>
         {

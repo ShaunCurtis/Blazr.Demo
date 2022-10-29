@@ -1,5 +1,4 @@
-﻿global using System.ComponentModel.DataAnnotations;
-global using System.Collections;
+﻿global using System.Collections;
 global using System.Text.RegularExpressions;
 global using System.Linq.Expressions;
 

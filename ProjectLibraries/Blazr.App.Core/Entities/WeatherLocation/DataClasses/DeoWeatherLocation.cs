@@ -6,7 +6,7 @@
 namespace Blazr.App.Core;
 
 public class DeoWeatherLocation
-    : IEditRecord<DboWeatherLocation>, IValidation, IAuthRecord
+    : IEditRecord<DboWeatherLocation>, IMessageStoreValidation, IAuthRecord
 {
     private DboWeatherLocation _baseRecord = new DboWeatherLocation();
     private Guid _newId = Guid.NewGuid();

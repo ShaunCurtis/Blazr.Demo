@@ -33,7 +33,7 @@ public abstract class UITemplatedComponentBase : UIComponentBase
         {
             hasPendingQueuedRender = false;
             hasNeverRendered = false;
-            if (!this.Hidden || !this.hide)
+            if (!(this.hide | this.Hidden))
                 this.BuildComponent(builder);
         };
     }
