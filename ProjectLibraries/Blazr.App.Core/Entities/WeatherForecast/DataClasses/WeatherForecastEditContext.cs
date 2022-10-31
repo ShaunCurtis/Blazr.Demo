@@ -13,47 +13,43 @@ public class WeatherForecastEditContext : RecordEditContextBase<DboWeatherForeca
     public Guid Uid
     {
         get => _uid;
-        set => SetIfChanged<Guid>(ref _uid, value, WeatherForecastConstants.Uid);
+        set => SetIfChanged(ref _uid, value, WeatherForecastConstants.Uid);
     }
 
     private Guid _ownerId = Guid.Empty;
     public Guid OwnerId
     {
         get => _ownerId;
-        set => SetIfChanged<Guid>(ref _uid, value, WeatherForecastConstants.OwnerId);
+        set => SetIfChanged(ref _uid, value, WeatherForecastConstants.OwnerId);
     }
 
     private Guid _summaryId = Guid.Empty;
     public Guid SummaryId
     {
         get => _summaryId;
-        set => SetIfChanged<Guid>(ref _uid, value, WeatherForecastConstants.SummaryId);
+        set => SetIfChanged(ref _uid, value, WeatherForecastConstants.SummaryId);
     }
 
     private Guid _locationId = Guid.Empty;
     public Guid LocationId
     {
         get => _locationId;
-        set => SetIfChanged<Guid>(ref _uid, value, WeatherForecastConstants.LocationId);
+        set => SetIfChanged(ref _uid, value, WeatherForecastConstants.LocationId);
     }
 
     private DateTimeOffset _date;
     public DateTimeOffset Date
     {
         get => _date;
-        set => SetIfChanged<DateTimeOffset>(ref _date, value, WeatherForecastConstants.Date);
+        set => SetIfChanged(ref _date, value, WeatherForecastConstants.Date);
     }
 
     private int _temperatureC;
     public int TemperatureC
     {
         get => _temperatureC;
-        set => SetIfChanged<int>(ref _temperatureC, value, WeatherForecastConstants.Date);
+        set => SetIfChanged(ref _temperatureC, value, WeatherForecastConstants.Date);
     }
-
-    public WeatherForecastEditContext(DboWeatherForecast record)
-        : base(record)
-        => this.Load(record);
 
     public override void Load(DboWeatherForecast record)
     {

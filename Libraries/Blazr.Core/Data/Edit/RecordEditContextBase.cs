@@ -12,7 +12,7 @@ namespace Blazr.Core;
 public abstract class RecordEditContextBase<TRecord> : IRecordEditContext
     where TRecord : class, new()
 {
-    protected TRecord BaseRecord;
+    protected TRecord BaseRecord = new();
 
     public bool ValidateOnFieldChanged { get; set; } = false;
 
@@ -32,7 +32,7 @@ public abstract class RecordEditContextBase<TRecord> : IRecordEditContext
     public event EventHandler<ValidationStateEventArgs>? ValidationStateUpdated;
 
     public RecordEditContextBase(TRecord record)
-        => BaseRecord = record;
+        => this.Load(record);
 
     public abstract void Load(TRecord record);
 
