@@ -3,6 +3,7 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
+using System.ComponentModel.DataAnnotations;
 
 namespace Blazr.App.Core;
 

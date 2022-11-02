@@ -17,10 +17,10 @@ public class WeatherForecastValidator
         if (fieldname != null)
             validationMessages?.ClearMessages(fieldname);
 
-        if (WeatherLocationConstants.Location.Equals(fieldname) || fieldname is null)
-            record.Location.Validation(WeatherLocationConstants.Location, messages, validationState)
-                .LongerThan(2, "The location miust be at least 2 characters")
-                .Validate(fieldname);
+        //if (WeatherLocationConstants.Location.Equals(fieldname) || fieldname is null)
+        //    record.Location.Validation(WeatherLocationConstants.Location, messages, validationState)
+        //        .LongerThan(2, "The location miust be at least 2 characters")
+        //        .Validate(fieldname);
 
         return new ValidationResult { ValidationMessages = messages, IsValid = validationState.IsValid };
     }

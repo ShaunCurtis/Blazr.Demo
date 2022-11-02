@@ -4,6 +4,7 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 namespace Blazr.App.Core;
+using System.ComponentModel.DataAnnotations;
 
 public record DboIdentity
 {

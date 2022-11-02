@@ -45,15 +45,18 @@ public class WeatherForecastEditContext : RecordEditContextBase<DboWeatherForeca
     }
 
     private int _temperatureC;
+
     public int TemperatureC
     {
         get => _temperatureC;
         set => SetIfChanged(ref _temperatureC, value, WeatherForecastConstants.Date);
     }
 
+    public WeatherForecastEditContext(DboWeatherForecast record) : base(record) { }
+
     public override void Load(DboWeatherForecast record)
     {
-        this.BaseRecord = record with { };   
+        this.BaseRecord = record with { };
         _uid = record.Uid;
         _ownerId = record.OwnerId;
         _summaryId = record.WeatherSummaryId;
@@ -65,9 +68,9 @@ public class WeatherForecastEditContext : RecordEditContextBase<DboWeatherForeca
         => this.Load(this.BaseRecord with { });
 
     public DboWeatherForecast AsNewRecord
-        => CurrentRecord with { Uid=_newId };
+        => CurrentRecord with { Uid = _newId };
 
-    public override DboWeatherForecast CurrentRecord 
+    public override DboWeatherForecast CurrentRecord
         => new DboWeatherForecast
         {
             Uid = _uid,
