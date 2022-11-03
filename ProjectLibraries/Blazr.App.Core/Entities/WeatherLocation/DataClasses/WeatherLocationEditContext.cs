@@ -29,6 +29,7 @@ public class WeatherLocationEditContext : RecordEditContextBase<DboWeatherLocati
         get => _location;
         set => SetIfChanged<string>(ref _location, value, WeatherLocationConstants.Location);
     }
+    public WeatherLocationEditContext() { }
 
     public WeatherLocationEditContext(DboWeatherLocation record)
         : base(record)

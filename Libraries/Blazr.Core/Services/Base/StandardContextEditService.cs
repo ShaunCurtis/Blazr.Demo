@@ -5,13 +5,14 @@
 /// ============================================================
 namespace Blazr.Core;
 
-public class StandardEditContextService<TRecord, TEditRecord, TEntity>
-    : BaseViewService<TRecord, TEntity>, IEditService<TRecord, TEditRecord, TEntity>
+public class StandardEditContextService<TRecord, TEditContext, TEntity>
+    : BaseViewService<TRecord, TEntity>, 
+        IContextEditService<TEditContext>
     where TRecord : class, new()
-    where TEditRecord : class, IEditRecord<TRecord>, new()
+    where TEditContext : class, IRecordEditContext<TRecord>, new()
     where TEntity : class, IEntity
 {
-    public TEditRecord EditModel { get; private set; } = new TEditRecord();
+    public TEditContext EditModel { get; private set; } = new TEditContext();
 
     public StandardEditContextService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier, AuthenticationStateProvider authenticationState, IAuthorizationService authorizationService)
         : base(dataBroker, notifier, authenticationState, authorizationService)
@@ -21,7 +22,7 @@ public class StandardEditContextService<TRecord, TEditRecord, TEntity>
     {
         if (Id == Guid.Empty)
         {
-            await GetNewEditRecordAsync(null);
+            this.EditModel.Load(new TRecord());
             return true;
         }
 
@@ -42,12 +43,6 @@ public class StandardEditContextService<TRecord, TEditRecord, TEntity>
         this.EditModel.Load(record);
 
         return haveAuthorizedRecord;
-    }
-
-    public ValueTask<bool> GetNewEditRecordAsync(TRecord? record)
-    {
-        this.EditModel.Load(record ?? new TRecord());
-        return ValueTask.FromResult(true);
     }
 
     public async ValueTask<bool> AddRecordAsync()

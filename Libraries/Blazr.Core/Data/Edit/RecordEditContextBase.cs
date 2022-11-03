@@ -9,18 +9,28 @@ using System;
 
 namespace Blazr.Core;
 
-public abstract class RecordEditContextBase<TRecord> : IRecordEditContext
+public abstract class RecordEditContextBase<TRecord> : IRecordEditContext<TRecord>
     where TRecord : class, new()
 {
     protected TRecord BaseRecord = new();
 
+    public virtual Guid Uid { get; set; }
+
     public bool ValidateOnFieldChanged { get; set; } = false;
 
-    public virtual TRecord CurrentRecord => new();
+    public virtual TRecord Record => new();
 
     public readonly ValidationMessageCollection ValidationMessages = new();
 
-    public virtual bool IsDirty => !BaseRecord.Equals(CurrentRecord);
+    public virtual bool IsDirty => !BaseRecord.Equals(this.Record);
+
+    //TODO - need to check this is right with original implkementation
+    public bool IsNew => this.Uid == Guid.Empty;
+
+    public TRecord CleanRecord => this.BaseRecord;
+
+    //TODO - needs fixing
+    public abstract TRecord AsNewRecord();
 
     public bool HasMessages(string? fieldName = null)
         => this.ValidationMessages.HasMessages(fieldName);
@@ -30,6 +40,8 @@ public abstract class RecordEditContextBase<TRecord> : IRecordEditContext
 
     public event EventHandler<string?>? FieldChanged;
     public event EventHandler<ValidationStateEventArgs>? ValidationStateUpdated;
+
+    public RecordEditContextBase() { }
 
     public RecordEditContextBase(TRecord record)
         => this.Load(record);
