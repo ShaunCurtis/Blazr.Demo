@@ -14,14 +14,16 @@ public sealed record CommandResult
 
     public string Message { get; init; } = string.Empty;
 
+    public AlertType MessageType { get; init; } = AlertType.Normal;
+
     public CommandResult() { }
 
     public static CommandResult Failure(string message)
-        => new CommandResult { Message= message };
+        => new CommandResult { Message= message, MessageType = AlertType.Failure };
 
     public static CommandResult Successful(string? message = null)
-        => new CommandResult {Success = true, Message = message ?? "The command completed successfully" };
+        => new CommandResult {Success = true, Message = message ?? "The command completed successfully", MessageType= AlertType.Success };
 
     public static CommandResult Successful(Guid? Uid= null,  string? message =null)
-        => new CommandResult { NewId = Uid ?? Guid.Empty, Message = message ?? "The command completed successfully", Success= true };
+        => new CommandResult { NewId = Uid ?? Guid.Empty, Message = message ?? "The command completed successfully", Success= true, MessageType = AlertType.Success };
 }

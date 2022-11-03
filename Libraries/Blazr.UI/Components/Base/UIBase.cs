@@ -3,10 +3,10 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-namespace Blazr.Edit;
+namespace Blazr.UI;
 
 /// <summary>
-/// Base minimum footprint component for building simple UI Components
+/// Base minimum footprint component for building simple Components
 /// No events
 /// </summary>
 public abstract class UIBase : IComponent

@@ -1,9 +1,10 @@
-﻿/// ============================================================
+﻿
+using Microsoft.AspNetCore.Components;
+/// ============================================================
 /// Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-
 namespace Blazr.Core;
 
 public class BaseViewService<TRecord, TEntity>
@@ -14,6 +15,7 @@ public class BaseViewService<TRecord, TEntity>
     protected INotificationService<TEntity> Notifier;
     protected AuthenticationStateProvider AuthenticationStateProvider;
     protected IAuthorizationService AuthorizationService;
+    protected NavigationManager NavigationManager;
 
     protected readonly string AddPolicy = "IsUserPolicy";
     protected readonly string EditPolicy = "IsEditorPolicy";
@@ -22,12 +24,13 @@ public class BaseViewService<TRecord, TEntity>
 
     public string? Message { get; protected set; }
 
-    public BaseViewService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier, AuthenticationStateProvider authenticationState, IAuthorizationService authorizationService)
+    public BaseViewService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier, AuthenticationStateProvider authenticationState, IAuthorizationService authorizationService, NavigationManager navigationManager)
     {
         this.DataBroker = dataBroker;
         this.Notifier = notifier;
         this.AuthenticationStateProvider = authenticationState;
         this.AuthorizationService = authorizationService;
+        this.NavigationManager = navigationManager;
     }
 
     public void SetServices(IServiceProvider services)

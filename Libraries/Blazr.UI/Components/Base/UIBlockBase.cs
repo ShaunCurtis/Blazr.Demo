@@ -6,7 +6,7 @@
 
 namespace Blazr.UI;
 
-public abstract class UIBlockBase : BlazrCoreUIComponentBase
+public abstract class UIBlockBase : UIBase
 {
     [Parameter] public bool Disabled { get; set; } = false;
 

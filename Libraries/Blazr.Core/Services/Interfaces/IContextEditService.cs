@@ -5,10 +5,11 @@
 /// ============================================================
 namespace Blazr.Core;
 
-public interface IContextEditService<TEditContext>
-    where TEditContext : class, new()
+public interface IContextEditService<TEditContext, TRecord>
+    where TEditContext : class, IRecordEditContext<TRecord>, new()
+    where TRecord : class, new()
 {
-    public TEditContext? EditModel { get; }
+    public IRecordEditContext<TRecord> EditModel { get; }
 
     public string? Message { get; }
 
@@ -16,9 +17,9 @@ public interface IContextEditService<TEditContext>
 
     public ValueTask<bool> LoadRecordAsync(Guid Id);
 
-    public ValueTask<bool> AddRecordAsync();
+    public ValueTask<CommandResult> AddRecordAsync();
 
-    public ValueTask<bool> UpdateRecordAsync();
+    public ValueTask<CommandResult> UpdateRecordAsync();
 
     public ValueTask<bool> DeleteRecordAsync();
 }

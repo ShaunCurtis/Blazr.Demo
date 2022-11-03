@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\Base\New\" />
     <Folder Include="Data\" />
   </ItemGroup>
 

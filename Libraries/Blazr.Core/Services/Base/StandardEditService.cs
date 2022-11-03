@@ -1,4 +1,5 @@
-﻿/// ============================================================
+﻿using Microsoft.AspNetCore.Components;
+/// ============================================================
 /// Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
@@ -13,8 +14,8 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
 {
     public TEditRecord EditModel { get; private set; } = new TEditRecord();
 
-    public StandardEditService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier, AuthenticationStateProvider authenticationState, IAuthorizationService authorizationService)
-        : base(dataBroker, notifier, authenticationState, authorizationService)
+    public StandardEditService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier, AuthenticationStateProvider authenticationState, IAuthorizationService authorizationService, NavigationManager navigationManager)
+        : base(dataBroker, notifier, authenticationState, authorizationService, navigationManager)
     { }
 
     public async ValueTask<bool> LoadRecordAsync(Guid Id)

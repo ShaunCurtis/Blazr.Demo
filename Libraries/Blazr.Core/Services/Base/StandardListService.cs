@@ -1,4 +1,6 @@
-﻿/// ============================================================
+﻿
+using Microsoft.AspNetCore.Components;
+/// ============================================================
 /// Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
@@ -13,8 +15,8 @@ public class StandardListService<TRecord, TEntity>
 {
     public RecordList<TRecord> Records { get; private set; } = new RecordList<TRecord>();
 
-    public StandardListService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier, AuthenticationStateProvider authenticationState, IAuthorizationService authorizationService)
-        : base(dataBroker, notifier, authenticationState, authorizationService)
+    public StandardListService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier, AuthenticationStateProvider authenticationState, IAuthorizationService authorizationService, NavigationManager navigationManager)
+        : base(dataBroker, notifier, authenticationState, authorizationService, navigationManager)
     { }
 
     public async ValueTask<bool> GetRecordsAsync(ListProviderRequest<TRecord> request)

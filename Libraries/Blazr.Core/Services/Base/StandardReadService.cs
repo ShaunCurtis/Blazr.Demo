@@ -4,6 +4,8 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
+using Microsoft.AspNetCore.Components;
+
 namespace Blazr.Core;
 
 public class StandardReadService<TRecord, TEntity>
@@ -13,8 +15,8 @@ public class StandardReadService<TRecord, TEntity>
 {
     public TRecord? Record { get; private set; }
 
-    public StandardReadService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier, AuthenticationStateProvider authenticationState, IAuthorizationService authorizationService)
-        : base(dataBroker, notifier, authenticationState, authorizationService)
+    public StandardReadService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier, AuthenticationStateProvider authenticationState, IAuthorizationService authorizationService, NavigationManager navigationManager)
+        : base(dataBroker, notifier, authenticationState, authorizationService, navigationManager)
     { }
 
     public async ValueTask<bool> LoadRecordAsync(Guid Id)

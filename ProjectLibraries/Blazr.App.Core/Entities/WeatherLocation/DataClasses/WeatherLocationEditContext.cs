@@ -10,7 +10,7 @@ public class WeatherLocationEditContext : RecordEditContextBase<DboWeatherLocati
     private Guid _newId = Guid.NewGuid();
 
     private Guid _uid = Guid.Empty;
-    public Guid Uid
+    public override Guid Uid
     {
         get => _uid;
         set => SetIfChanged<Guid>(ref _uid, value, WeatherLocationConstants.Uid);
@@ -45,10 +45,10 @@ public class WeatherLocationEditContext : RecordEditContextBase<DboWeatherLocati
     public override void Reset()
         => this.Load(this.BaseRecord with { });
 
-    public DboWeatherLocation AsNewRecord
-        => CurrentRecord with { Uid=_newId };
+    public override DboWeatherLocation AsNewRecord()
+        => this.Record with { Uid=_newId };
 
-    public override DboWeatherLocation CurrentRecord 
+    public override DboWeatherLocation Record 
         => new DboWeatherLocation
         {
             Uid = _uid,
@@ -58,7 +58,7 @@ public class WeatherLocationEditContext : RecordEditContextBase<DboWeatherLocati
 
     public override ValidationResult Validate(string? fieldname = null)
     {
-        var result = WeatherLocationValidator.Validate(this.CurrentRecord, ValidationMessages, fieldname);
+        var result = WeatherLocationValidator.Validate(this.Record, ValidationMessages, fieldname);
         this.NotifyValidationStateUpdated(result.IsValid, fieldname);
         return result;
     }

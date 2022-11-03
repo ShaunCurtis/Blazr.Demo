@@ -6,7 +6,7 @@
 
 namespace Blazr.UI.Bootstrap;
 
-public partial class UICard : BlazrComponentBase
+public partial class UICard : UIBase
 {
     [Parameter] public RenderFragment? Header { get; set; }
 
