@@ -1,0 +1,58 @@
+﻿@*
+/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================
+*@
+
+@namespace Blazr.UI
+@inherits UIComponentBase
+@implements IDisposable
+
+@if (this.hasMessages)
+{
+    <div class="invalid-feedback">
+        @foreach (var message in this.messages)
+        {
+            @message <br />
+        }
+    </div>
+}
+else if (this.Hint is not null)
+{
+    <div class="valid-feedback">
+        @this.Hint
+    </div>
+}
+
+@code {
+    [CascadingParameter] public IRecordEditContext RecordEditContext { get; set; } = default!;
+
+    [Parameter, EditorRequired] public string? FieldName { get; set; }
+    [Parameter] public string? Hint { get; set; }
+
+    private bool hasMessages => RecordEditContext.HasMessages(this.FieldName);
+    private IEnumerable<string> messages => this.RecordEditContext.GetMessages(this.FieldName);
+
+    protected override ValueTask<bool> OnParametersChangedAsync(bool firstRender)
+    {
+        if (firstRender) {
+            if (RecordEditContext is null)
+                throw new NullReferenceException($"{this.GetType().Name} requires a cascaded IRencordEditContext");
+
+            RecordEditContext.ValidationStateUpdated += this.OnValidationStateUpdated;
+        }
+
+        return ValueTask.FromResult(true);
+    }
+
+    private void OnValidationStateUpdated(object? sender, ValidationStateEventArgs e)
+    {
+        if (e.Field is null || e.Field.Equals(FieldName))
+            this.StateHasChanged();
+    }
+
+    public void Dispose()
+        => RecordEditContext.ValidationStateUpdated -= this.OnValidationStateUpdated;
+}
