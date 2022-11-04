@@ -21,7 +21,7 @@
 }
 
 @code {
-    [CascadingParameter] public IRecordEditContext RecordEditContext { get; set; } = default!;
+    [CascadingParameter] public IEditContext RecordEditContext { get; set; } = default!;
 
     private bool hasMessages => RecordEditContext.HasMessages();
     private IEnumerable<string> messages => this.RecordEditContext.GetMessages();
@@ -31,7 +31,7 @@
         if (firstRender)
         {
             if (RecordEditContext is null)
-                throw new NullReferenceException($"{this.GetType().Name} requires a cascaded IRencordEditContext");
+                throw new NullReferenceException($"{this.GetType().Name} requires a cascaded IEditContext");
 
             RecordEditContext.ValidationStateUpdated += this.OnValidationStateUpdated;
         }

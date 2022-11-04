@@ -1,17 +1,18 @@
-﻿using Blazr.Routing;
-using Microsoft.AspNetCore.Components;
-/// ============================================================
+﻿/// ============================================================
 /// Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
+using Blazr.Routing;
+using Microsoft.AspNetCore.Components;
+
 namespace Blazr.Core;
 
 public class StandardEditContextService<TEditContext, TRecord, TEntity>
     : BaseViewService<TRecord, TEntity>,
         IContextEditService<TEditContext, TRecord>
     where TRecord : class, new()
-    where TEditContext : class, IRecordEditContext<TRecord>, new()
+    where TEditContext : class, IRecordEditContext<TRecord>, IEditContext, new()
     where TEntity : class, IEntity
 {
     public IRecordEditContext<TRecord> EditModel { get; private set; } = new TEditContext();
@@ -21,7 +22,19 @@ public class StandardEditContextService<TEditContext, TRecord, TEntity>
         : base(dataBroker, notifier, authenticationState, authorizationService, navigationManager)
     { }
 
-    public async ValueTask<bool> LoadRecordAsync(Guid Id)
+    public ValueTask<bool> LoadRecordAsync(Guid Id)
+        => loadRecordAsync(Id);
+
+    public ValueTask<CommandResult> AddRecordAsync()
+        => addRecordAsync();
+
+    public ValueTask<CommandResult> UpdateRecordAsync()
+       => updateRecordAsync();
+
+    public ValueTask<CommandResult> DeleteRecordAsync()
+       => deleteRecordAsync();
+
+    private async ValueTask<bool> loadRecordAsync(Guid Id)
     {
         if (Id == Guid.Empty)
         {
@@ -48,7 +61,7 @@ public class StandardEditContextService<TEditContext, TRecord, TEntity>
         return haveAuthorizedRecord;
     }
 
-    public async ValueTask<CommandResult> AddRecordAsync()
+    private async ValueTask<CommandResult> addRecordAsync()
     {
 
         if (!this.EditModel.Validate().IsValid)
@@ -75,7 +88,7 @@ public class StandardEditContextService<TEditContext, TRecord, TEntity>
         return CommandResult.Successful("Record Added");
     }
 
-    public async ValueTask<CommandResult> UpdateRecordAsync()
+    private async ValueTask<CommandResult> updateRecordAsync()
     {
         if (!this.EditModel.Validate().IsValid)
             return CommandResult.Failure("There are validation problems");
@@ -88,7 +101,7 @@ public class StandardEditContextService<TEditContext, TRecord, TEntity>
         var command = UpdateRecordCommand<TRecord>.GetCommand(this.EditModel.Record);
         var result = await this.DataBroker.ExecuteAsync<TRecord>(command);
 
-        if (result.Success)
+        if (!result.Success)
             return result;
 
         this.EditModel.Load(record);
@@ -97,34 +110,27 @@ public class StandardEditContextService<TEditContext, TRecord, TEntity>
         return CommandResult.Successful("Record Saved");
     }
 
-    public async ValueTask<bool> DeleteRecordAsync()
+    private async ValueTask<CommandResult> deleteRecordAsync()
     {
         var record = EditModel.CleanRecord;
         var id = EditModel.Uid;
 
         if (id == Guid.Empty)
-        {
-            this.Message = "No record to delete";
-            return false;
-        }
+            return CommandResult.Failure("No record to delete");
 
         if (!await this.CheckRecordAuthorization(record, this.DeletePolicy))
-            return false;
+            return CommandResult.Failure("You don't have permission to delete the Record");
 
         var command = DeleteRecordCommand<TRecord>.GetCommand(record);
         var result = await this.DataBroker.ExecuteAsync<TRecord>(command);
 
-        if (result.Success)
-        {
-            this.EditModel.Load(new TRecord());
-            this.NotifyChange(id);
-        }
+        if (!result.Success)
+            return result;
 
-        this.Message = result.Success
-            ? string.Empty
-            : result.Message;
-
-        return result.Success;
+        this.EditModel.Load(new TRecord());
+        this.BlazrNavManager?.SetLockState(false);
+        this.NotifyChange(id);
+        return CommandResult.Successful("Record deleted");
     }
 
     private void NotifyChange(Guid? Uid = null)

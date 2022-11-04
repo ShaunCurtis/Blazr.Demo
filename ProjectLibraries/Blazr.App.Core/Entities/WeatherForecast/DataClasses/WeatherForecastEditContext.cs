@@ -10,7 +10,7 @@ public class WeatherForecastEditContext : RecordEditContextBase<DboWeatherForeca
     private Guid _newId = Guid.NewGuid();
 
     private Guid _uid = Guid.Empty;
-    public Guid Uid
+    public override Guid Uid
     {
         get => _uid;
         set => SetIfChanged(ref _uid, value, WeatherForecastConstants.Uid);
@@ -67,10 +67,10 @@ public class WeatherForecastEditContext : RecordEditContextBase<DboWeatherForeca
     public override void Reset()
         => this.Load(this.BaseRecord with { });
 
-    public DboWeatherForecast AsNewRecord
-        => CurrentRecord with { Uid = _newId };
+    public override DboWeatherForecast AsNewRecord()
+        => Record with { Uid = _newId };
 
-    public override DboWeatherForecast CurrentRecord
+    public override DboWeatherForecast Record
         => new DboWeatherForecast
         {
             Uid = _uid,
@@ -83,7 +83,7 @@ public class WeatherForecastEditContext : RecordEditContextBase<DboWeatherForeca
 
     public override ValidationResult Validate(string? fieldname = null)
     {
-        var result = WeatherForecastValidator.Validate(this.CurrentRecord, ValidationMessages, fieldname);
+        var result = WeatherForecastValidator.Validate(this.Record, ValidationMessages, fieldname);
         this.NotifyValidationStateUpdated(result.IsValid, fieldname);
         return result;
     }

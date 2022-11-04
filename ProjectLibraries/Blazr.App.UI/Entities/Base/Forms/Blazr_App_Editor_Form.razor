@@ -1,0 +1,72 @@
+﻿@*
+/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================
+*@
+
+@namespace Blazr.App.UI
+@typeparam TRecord where TRecord : class, new()
+@typeparam TEditRecord where TEditRecord : class, IEditRecord<TRecord>, new()
+@typeparam TEntity where TEntity  : class, IEntity
+@inherits Blazr_Editor_Form<TRecord, TEditRecord, TEntity>
+
+@*
+// The template for all the edit froms is defined in the TemplateContent render fragment
+// and this.Content is the placeholder for the actual specific record content
+*@
+
+@code {
+    protected override RenderFragment? TemplatedContent => __builder =>
+      {
+          <PageLocker />
+          <CascadingAuthenticationState>
+              <UIContainer Size=BootstrapSize.Fluid class="m-2 border-danger">
+                  <UILoader State="this.LoadState">
+                      <FormViewTitle>
+                          @this.FormTitle
+                      </FormViewTitle>
+                      <BlazrEditForm EditContext=this.Service.EditModel State="ComponentState.Loaded">
+                          @this.Content
+                      </BlazrEditForm>
+                  </UILoader>
+                  <UIContainer class="mb-4" Size=BootstrapSize.Fluid>
+                      <UIFormRow>
+                          <UIColumn Columns=12 MediumColumns=7 class="">
+                              <UIAlertMessage AlertColour="@this.alertColour" Hidden=this.IsDirty Message="@this.alertMessage" />
+                          </UIColumn>
+                          <UIColumn Columns=12 MediumColumns=5 class="text-end text-right">
+                              <UIButton ButtonType=UIButtonType.Warning Hidden="!this.IsDirty && this.IsNew" ClickEvent="this.ResetRecord">
+                                  Reset Fields
+                              </UIButton>
+                              <UIButton ButtonType=UIButtonType.New Hidden=!this.IsNew Disabled="!this.IsDirty" ClickEvent="this.AddRecord">
+                                  Add
+                              </UIButton>
+                              <UIButton ButtonType=UIButtonType.New Hidden=!this.IsNew Disabled="!this.IsDirty" ClickEvent="this.AddRecordAndExit">
+                                  Add and Exit
+                              </UIButton>
+                              <UIButton ButtonType=UIButtonType.Save Hidden=this.IsNew Disabled="!this.IsDirty" ClickEvent="this.SaveRecord">
+                                  Save
+                              </UIButton>
+                              <UIButton ButtonType=UIButtonType.Save Hidden=this.IsNew Disabled="!this.IsDirty" ClickEvent="this.SaveRecordAndExit">
+                                  Save and Exit
+                              </UIButton>
+                              <UIButton ButtonType=UIButtonType.Exit Hidden="this.IsDirty" ClickEvent="this.Exit">
+                                  Exit
+                              </UIButton>
+                              <UIButton ButtonType=UIButtonType.ExitWithoutSave Hidden="!this.IsDirty" ClickEvent="this.ExitWithoutSaving">
+                                  Exit Without Saving
+                              </UIButton>
+                          </UIColumn>
+                      </UIFormRow>
+                  </UIContainer>
+              </UIContainer>
+          </CascadingAuthenticationState>
+      };
+
+    protected string ContainerCss => this.Modal is null
+    ? "p-2 bg-light border border-brand mt-2"
+    : "p-2 bg-light";
+
+}

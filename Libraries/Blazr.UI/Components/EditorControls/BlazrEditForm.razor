@@ -1,5 +1,7 @@
 ﻿@namespace Blazr.UI
 @inherits UIBase
+@typeparam TRecord where TRecord : class, new()
+
 <form>
     @if (this.State is ComponentState.Loaded)
     {
@@ -10,20 +12,31 @@
 </form>
 
 @code {
-    [Parameter, EditorRequired] public IRecordEditContext? EditContext { get; set; }
+    [Parameter, EditorRequired] public IEditContext? EditContext { get; set; }
     [Parameter, EditorRequired] public ComponentState State { get; set; } = ComponentState.Loading;
 
     [Parameter]
-    public RenderFragment LoadingMessage { get; set; } = (builder)
-        =>
+    public RenderFragment LoadingMessage { get; set; } = (builder) =>
     {
         builder.AddMarkupContent(0, $"<div class=`alert alert-info`>Loading.../div>");
     };
-    [Parameter]
 
-    public RenderFragment ErrorMessage { get; set; } = (builder)
-        =>
+    [Parameter]
+    public RenderFragment ErrorMessage { get; set; } = (builder) =>
     {
         builder.AddMarkupContent(0, $"<div class=`alert alert-danger`>Error Loading Page/div>");
     };
+
+    private void Content(RenderTreeBuilder __builder)
+    {
+        <form>
+            @if (this.State is ComponentState.Loaded)
+            {
+                <CascadingValue Value=this.EditContext IsFixed=true>
+                    @this.ChildContent
+                </CascadingValue>
+            }
+        </form>
+    };
+
 }

@@ -7,39 +7,20 @@
 namespace Blazr.UI;
 
 public abstract partial class Blazr_Editor_Form<TEditContext, TRecord, TEntity>
-    : UITemplatedComponentBase
+    : Blazr_Form<TEntity>
     where TEditContext : class, IRecordEditContext<TRecord>, new()
         where TEntity : class, IEntity
         where TRecord : class, new()
 {
-    /// <summary>
-    /// Id for the record
-    /// </summary>
-    [Parameter] public Guid Id { get; set; }
-
-    /// <summary>
-    /// Specify a specific exit mechanism
-    /// </summary>
-    [Parameter] public EventCallback ExitAction { get; set; }
-
-    /// <summary>
-    /// Pick up a Cascaded IModalDialog if we're hosted within a Modal Dialog context
-    /// </summary>
-    [CascadingParameter] public IModalDialog? Modal { get; set; }
-
-    [Inject] protected IEntityUIService<TEntity> EntityUIService { get; set; } = default!;
-    [Inject] private IServiceProvider serviceProvider { get; set; } = default!;
-    [Inject] protected NavigationManager NavManager { get; set; } = default!;
-    [Inject] protected ModalService ModalService { get; set; } = default!;
 
     protected readonly BlazrFormMessage FormMessage = new();
     protected bool isConfirmDelete = false;
-    protected string FormTitle = "Record Editor";
     protected IContextEditService<TEditContext, TRecord> Service = default!;
     protected BlazrNavigationManager? blazrNavManager => NavManager is BlazrNavigationManager ? NavManager as BlazrNavigationManager : null;
+
+    // Exposing underlying properties from the EditContext
     protected bool IsDirty => this.Service.EditModel.IsDirty;
     protected bool IsNew => this.Service.EditModel.IsNew;
-
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
@@ -66,11 +47,12 @@ public abstract partial class Blazr_Editor_Form<TEditContext, TRecord, TEntity>
             this.blazrNavManager.NavigationEventBlocked += OnFailedRoutingAttempt;
         }
 
+        this.LoadState = ComponentState.Loaded;
         await base.SetParametersAsync(ParameterView.Empty);
     }
 
-    protected virtual Task<TRecord> GetNewRecord()
-        => Task.FromResult(new TRecord());
+    //protected virtual Task<TRecord> GetNewRecord()
+    //    => Task.FromResult(new TRecord());
 
     private void OnFieldChanged(object? sender, string? fieldName)
     {
@@ -132,45 +114,9 @@ public abstract partial class Blazr_Editor_Form<TEditContext, TRecord, TEntity>
         await DoExit();
     }
 
-    /// <summary>
-    /// Default Exit for buttons
-    /// </summary>
-    protected virtual async void Exit()
-        => await DoExit();
-
-    /// <summary>
-    /// Exit method that figures out the correct exit method i.e. exit from a modal dialog or exit from a form
-    /// </summary>
-    /// <returns></returns>
-    protected async Task DoExit()
-    {
-        // If we're in a modal context, call Close on the cascaded Modal object
-        if (this.Modal is not null)
-        {
-            this.Modal.Close(ModalResult.OK());
-            return;
-        }
-
-        // If there's a delegate registered on the ExitAction, execute it. 
-        if (ExitAction.HasDelegate)
-        {
-            await ExitAction.InvokeAsync();
-            return;
-        }
-
-        // fallback action is to navigate to root
-        this.BaseExit();
-    }
-
-    /// <summary>
-    /// Exit to the Entity defined Url
-    /// </summary>
-    protected void BaseExit()
-        => this.NavManager?.NavigateTo($"/{this.EntityUIService.Url}");
-
     public virtual void Dispose()
     {
-            this.Service.EditModel.FieldChanged -= OnFieldChanged;
+        this.Service.EditModel.FieldChanged -= OnFieldChanged;
 
         if (this.blazrNavManager is not null)
         {

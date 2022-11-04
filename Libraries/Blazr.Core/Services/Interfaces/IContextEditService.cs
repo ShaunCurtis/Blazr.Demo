@@ -6,7 +6,7 @@
 namespace Blazr.Core;
 
 public interface IContextEditService<TEditContext, TRecord>
-    where TEditContext : class, IRecordEditContext<TRecord>, new()
+    where TEditContext : class, IRecordEditContext<TRecord>, IEditContext, new()
     where TRecord : class, new()
 {
     public IRecordEditContext<TRecord> EditModel { get; }
@@ -21,5 +21,5 @@ public interface IContextEditService<TEditContext, TRecord>
 
     public ValueTask<CommandResult> UpdateRecordAsync();
 
-    public ValueTask<bool> DeleteRecordAsync();
+    public ValueTask<CommandResult> DeleteRecordAsync();
 }

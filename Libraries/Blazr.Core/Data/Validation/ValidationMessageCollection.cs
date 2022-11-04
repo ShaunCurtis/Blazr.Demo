@@ -8,6 +8,8 @@ namespace Blazr.Core.Validation;
 
 public record ValidationMessage(string Field, string Message) { }
 
+public record FieldId(Guid InstanceUid, string Field) { }
+
 public class ValidationMessageCollection : IEnumerable<ValidationMessage>
 {
     private readonly List<ValidationMessage> _messages = new List<ValidationMessage>();

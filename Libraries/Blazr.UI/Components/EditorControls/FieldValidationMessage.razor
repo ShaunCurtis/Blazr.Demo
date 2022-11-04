@@ -27,7 +27,7 @@ else if (this.Hint is not null)
 }
 
 @code {
-    [CascadingParameter] public IRecordEditContext RecordEditContext { get; set; } = default!;
+    [CascadingParameter] public IEditContext RecordEditContext { get; set; } = default!;
 
     [Parameter, EditorRequired] public string? FieldName { get; set; }
     [Parameter] public string? Hint { get; set; }
@@ -39,7 +39,7 @@ else if (this.Hint is not null)
     {
         if (firstRender) {
             if (RecordEditContext is null)
-                throw new NullReferenceException($"{this.GetType().Name} requires a cascaded IRencordEditContext");
+                throw new NullReferenceException($"{this.GetType().Name} requires a cascaded IEditContext");
 
             RecordEditContext.ValidationStateUpdated += this.OnValidationStateUpdated;
         }

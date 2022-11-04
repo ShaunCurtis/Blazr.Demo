@@ -6,9 +6,8 @@
 
 namespace Blazr.UI;
 
-public abstract class Blazr_Form<TService, TEntity>
-    :    UITemplatedComponentBase, IHandleEvent, IHandleAfterRender
-    where TService : class
+public abstract class Blazr_Form<TEntity>
+    :    UITemplatedComponentBase
     where TEntity : class, IEntity
 {
     protected bool isNew = true;
@@ -30,37 +29,15 @@ public abstract class Blazr_Form<TService, TEntity>
     [Parameter] public EventCallback ExitAction { get; set; }
 
     // Get all the DI Services we need
-    [Inject] protected NavigationManager NavManager { get; set; } = default!;
-
-    [Inject] protected ModalService ModalService { get; set; } = default!;
-
-    [Inject] protected INotificationService<TEntity> NotificationService { get; set; } = default!;
-
-    [Inject] protected IEntityService<TEntity> EntityService { get; set; } = default!;
-
     [Inject] protected IEntityUIService<TEntity> EntityUIService { get; set; } = default!;
-
-    [Inject] protected IServiceProvider SPAServiceProvider { get; set; } = default!;
+    [Inject] protected IServiceProvider serviceProvider { get; set; } = default!;
+    [Inject] protected NavigationManager NavManager { get; set; } = default!;
+    [Inject] protected ModalService ModalService { get; set; } = default!;
 
     /// <summary>
     /// The component state
     /// </summary>
     public ComponentState LoadState { get; protected set; } = ComponentState.New;
-
-    /// <summary>
-    /// Method in the component event chain prior to loading the record 
-    /// </summary>
-    /// <returns></returns>
-    protected virtual Task PreLoadRecordAsync()
-        => Task.CompletedTask;
-
-    /// <summary>
-    /// Method to load the Record
-    /// </summary>
-    /// <param name="render"></param>
-    /// <returns></returns>
-    private Task LoadRecordAsync(bool render = false)
-        => Task.CompletedTask;
 
     /// <summary>
     /// Default Exit for buttons
@@ -97,13 +74,4 @@ public abstract class Blazr_Form<TService, TEntity>
     /// </summary>
     protected void BaseExit()
         => this.NavManager?.NavigateTo($"/{this.EntityUIService.Url}");
-
-    async Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg)
-    {
-        await callback.InvokeAsync(arg);
-        this.StateHasChanged();
-    }
-
-    Task IHandleAfterRender.OnAfterRenderAsync()
-        => Task.CompletedTask;
 }

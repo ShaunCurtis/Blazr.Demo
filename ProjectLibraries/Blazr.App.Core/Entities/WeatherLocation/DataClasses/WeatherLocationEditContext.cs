@@ -37,7 +37,7 @@ public class WeatherLocationEditContext : RecordEditContextBase<DboWeatherLocati
 
     public override void Load(DboWeatherLocation record)
     {
-        this.BaseRecord = record with { };   
+        this.BaseRecord = record with { };
         _uid = record.Uid;
         _ownerId = record.OwnerId;
         _location = record.Location;
@@ -46,9 +46,9 @@ public class WeatherLocationEditContext : RecordEditContextBase<DboWeatherLocati
         => this.Load(this.BaseRecord with { });
 
     public override DboWeatherLocation AsNewRecord()
-        => this.Record with { Uid=_newId };
+        => this.Record with { Uid = _newId };
 
-    public override DboWeatherLocation Record 
+    public override DboWeatherLocation Record
         => new DboWeatherLocation
         {
             Uid = _uid,

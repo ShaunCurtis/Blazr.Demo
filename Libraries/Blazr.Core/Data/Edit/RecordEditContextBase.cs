@@ -4,15 +4,18 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
+using Blazr.Core.Data.Validation;
 using Blazr.Core.Validation;
 using System;
 
 namespace Blazr.Core;
 
-public abstract class RecordEditContextBase<TRecord> : IRecordEditContext<TRecord>
+public abstract class RecordEditContextBase<TRecord> : IRecordEditContext<TRecord>, IEditContext, IValidation
     where TRecord : class, new()
 {
     protected TRecord BaseRecord = new();
+
+    public Guid InstanceId { get; } = Guid.NewGuid();
 
     public virtual Guid Uid { get; set; }
 
