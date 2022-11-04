@@ -1,6 +1,5 @@
 ﻿@namespace Blazr.UI
 @inherits UIBase
-@typeparam TRecord where TRecord : class, new()
 
 <form>
     @if (this.State is ComponentState.Loaded)
@@ -12,6 +11,7 @@
 </form>
 
 @code {
+    //TODO - Need to update to latest methodology
     [Parameter, EditorRequired] public IEditContext? EditContext { get; set; }
     [Parameter, EditorRequired] public ComponentState State { get; set; } = ComponentState.Loading;
 
@@ -37,6 +37,11 @@
                 </CascadingValue>
             }
         </form>
-    };
+    }
+
+    private void Loading(RenderTreeBuilder __builder)
+    {
+        <div class="alert alert-info">Loading...</div>
+    }
 
 }

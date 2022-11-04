@@ -4,7 +4,7 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.Edit;
+namespace Blazr.UI;
 
 public class BlazrSelect<TValue> : BlazrInputBase<TValue>
 {
@@ -27,8 +27,8 @@ public class BlazrSelect<TValue> : BlazrInputBase<TValue>
     {
         builder.OpenElement(0, "select");
         builder.AddMultipleAttributes(1, this.AdditionalAttributes);
-        builder.AddAttributeIfNotNullOrEmpty(2, "class", this.CssClass);
-        builder.AddAttributeIfTrue(3, _isMultipleSelect, "multiple", _isMultipleSelect);
+        builder.AddAttributeIfNotEmpty(2, "class", this.CssClass);
+        builder.AddAttributeIfTrue(3, _isMultipleSelect,  "multiple", _isMultipleSelect);
         builder.AddAttribute(4, "value", this.ValueAsString);
         builder.AddAttribute(5, "onchange", this.OnChanged);
         builder.AddElementReferenceCapture(6, __inputReference => this.Element = __inputReference);

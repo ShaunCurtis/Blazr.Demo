@@ -28,7 +28,7 @@ public abstract class UIHtmlComponentBase : UIComponentBase
     {
         builder.OpenElement(0, this.HtmlTag);
         builder.AddAttributeIfNotEmpty(2, "class", this.CssClass);
-        builder.AddAttributeIfTrue(this.Disabled, 3, "disabled");
+        builder.AddAttributeIfTrue(3, this.Disabled, "disabled");
         builder.AddContentIfNotNull(5, this.ChildContent);
         builder.CloseElement();
     }

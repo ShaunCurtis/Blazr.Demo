@@ -8,7 +8,7 @@ namespace Blazr.UI;
 
 public abstract partial class Blazr_Editor_Form<TEditContext, TRecord, TEntity>
     : Blazr_Form<TEntity>
-    where TEditContext : class, IRecordEditContext<TRecord>, new()
+    where TEditContext : class, IRecordEditContext<TRecord>, IEditContext, new()
         where TEntity : class, IEntity
         where TRecord : class, new()
 {
@@ -33,7 +33,6 @@ public abstract partial class Blazr_Editor_Form<TEditContext, TRecord, TEntity>
         }
 
         // is not initialized from here
-
         this.Service = ActivatorUtilities.GetServiceOrCreateInstance<IContextEditService<TEditContext, TRecord>>(serviceProvider);
         await this.Service.LoadRecordAsync(Id);
         this.Service.EditModel.FieldChanged -= OnFieldChanged;
@@ -116,12 +115,14 @@ public abstract partial class Blazr_Editor_Form<TEditContext, TRecord, TEntity>
 
     public virtual void Dispose()
     {
-        this.Service.EditModel.FieldChanged -= OnFieldChanged;
+        if (this.Service is not null)
+            this.Service.EditModel.FieldChanged -= OnFieldChanged;
 
         if (this.blazrNavManager is not null)
         {
             this.blazrNavManager.BrowserExitAttempted -= OnFailedExitAttempt;
             this.blazrNavManager.NavigationEventBlocked -= OnFailedRoutingAttempt;
         }
+
     }
 }

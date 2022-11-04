@@ -8,9 +8,9 @@
 
 @namespace Blazr.App.UI
 @typeparam TRecord where TRecord : class, new()
-@typeparam TEditRecord where TEditRecord : class, IEditRecord<TRecord>, new()
+@typeparam TEditContext where TEditContext : class, IEditContext, IRecordEditContext<TRecord>, new()
 @typeparam TEntity where TEntity  : class, IEntity
-@inherits Blazr_Editor_Form<TRecord, TEditRecord, TEntity>
+@inherits Blazr_Editor_Form<TRecord, TEditContext, TEntity>
 
 @*
 // The template for all the edit froms is defined in the TemplateContent render fragment
@@ -18,6 +18,9 @@
 *@
 
 @code {
+    //TODO - why can't I put this in BlazrEditForm?
+    protected TEditContext RecordContext => (TEditContext)this.Service.EditModel;
+
     protected override RenderFragment? TemplatedContent => __builder =>
       {
           <PageLocker />

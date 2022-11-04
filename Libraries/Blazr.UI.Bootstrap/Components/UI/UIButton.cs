@@ -26,9 +26,9 @@ public class UIButton : UIHtmlComponentBase
     {
         builder.OpenElement(0, this.HtmlTag);
         builder.AddAttribute(1, "class", this.CssClass);
-        builder.AddAttribute(3, "type", this.Type);
-        builder.AddAttributeIfTrue(this.Disabled, 3, "disabled");
-        builder.AddAttributeIfTrue(ClickEvent.HasDelegate, 4, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, ClickEvent));
+        builder.AddAttribute(2, "type", this.Type);
+        builder.AddAttributeIfTrue(3, this.Disabled, "disabled");
+        builder.AddAttributeIfTrue(4, ClickEvent.HasDelegate, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, ClickEvent));
         builder.AddContent(6, ChildContent);
         builder.CloseElement();
     }

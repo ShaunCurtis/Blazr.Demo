@@ -20,7 +20,7 @@ public static class RenderTreeBuilderExtensions
             builder.AddAttribute(sequenceNo, attribute, value);
     }
 
-    public static void AddAttributeIfTrue(this RenderTreeBuilder builder, bool check, int sequenceNo, string attribute, object? value = null)
+    public static void AddAttributeIfTrue(this RenderTreeBuilder builder, int sequenceNo, bool check, string attribute, object? value = null)
     {
         if (check && value is null)
             builder.AddAttribute(sequenceNo, attribute);
@@ -29,18 +29,18 @@ public static class RenderTreeBuilderExtensions
             builder.AddAttribute(sequenceNo, attribute, value);
     }
 
-    public static void AddContentIfTrue(this RenderTreeBuilder builder, bool check, int sequenceNo, RenderFragment? value)
+    public static void AddContentIfTrue(this RenderTreeBuilder builder, int sequenceNo, bool check, RenderFragment? value)
     {
         if (check && value is not null)
             builder.AddContent(sequenceNo, value);
     }
 
-    public static void AddContentIfTrue(this RenderTreeBuilder builder, bool check, int sequenceNo, MarkupString? value)
+    public static void AddContentIfTrue(this RenderTreeBuilder builder, int sequenceNo, bool check, MarkupString? value)
     {
         if (check && value is not null)
             builder.AddContent(sequenceNo, value);
     }
-    public static void AddContentIfTrue(this RenderTreeBuilder builder, bool check, int sequenceNo, string? value)
+    public static void AddContentIfTrue(this RenderTreeBuilder builder, int sequenceNo, bool check, string? value)
     {
         if (check && value is not null)
             builder.AddContent(sequenceNo, value);

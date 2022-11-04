@@ -1,0 +1,50 @@
+﻿@namespace Blazr.Edit
+@inherits UIComponentBase
+@implements IDisposable
+
+<div class="mb-3 text-end">
+    <button disabled="@(!RecordEditContext.IsDirty)" class="btn btn-primary" @onclick=Save>Save</button>
+    <button class="btn @this.ExitButtonColour" @onclick=Exit>@this.ExitButtonText</button>
+</div>
+
+@code {
+    [CascadingParameter] public IRecordEditContext RecordEditContext { get; set; } = default!;
+    [Parameter] public EventCallback Save { get; set; }
+    [Parameter] public EventCallback Exit { get; set; }
+
+    private string ExitButtonColour
+        => this.RecordEditContext.IsDirty
+        ? "btn-danger"
+        : "btn-dark";
+
+    private string ExitButtonText
+        => this.RecordEditContext.IsDirty
+            ? "Exit without Save"
+            : "Exit";
+
+    protected override ValueTask<bool> OnParametersChangedAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (RecordEditContext is null)
+                throw new NullReferenceException($"{this.GetType().Name} requires a cascaded IRencordEditContext");
+
+            this.RecordEditContext.ValidationStateUpdated += this.OnValidationStateUpdated;
+            this.RecordEditContext.FieldChanged += this.OnFieldChanged;
+        }
+
+        return ValueTask.FromResult(true);
+    }
+
+    private void OnValidationStateUpdated(object? sender, ValidationStateEventArgs e)
+        => this.StateHasChanged();
+
+    private void OnFieldChanged(object? sender, string? field)
+       => this.StateHasChanged();
+
+    public void Dispose()
+    {
+        this.RecordEditContext.ValidationStateUpdated -= this.OnValidationStateUpdated;
+        this.RecordEditContext.FieldChanged -= this.OnFieldChanged;
+    }
+}
