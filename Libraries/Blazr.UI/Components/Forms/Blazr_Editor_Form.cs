@@ -98,6 +98,9 @@ public abstract partial class Blazr_Editor_Form<TEditContext, TRecord, TEntity>
             await DoExit();
     }
 
+    protected virtual Task<TRecord> GetNewRecord()
+        => Task.FromResult(new TRecord());
+
     protected void ClearConfirmDelete()
         => this.isConfirmDelete = false;
 

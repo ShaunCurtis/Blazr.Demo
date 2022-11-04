@@ -1,31 +1,30 @@
 ﻿@namespace Blazr.UI
-@inherits UIBase
+@inherits UIComponentBase
 
-<form>
-    @if (this.State is ComponentState.Loaded)
-    {
-        <CascadingValue Value=this.EditContext IsFixed=true>
-            @this.ChildContent
-        </CascadingValue>
-    }
-</form>
+@this.RenderedContent
 
 @code {
     //TODO - Need to update to latest methodology
     [Parameter, EditorRequired] public IEditContext? EditContext { get; set; }
     [Parameter, EditorRequired] public ComponentState State { get; set; } = ComponentState.Loading;
 
-    [Parameter]
-    public RenderFragment LoadingMessage { get; set; } = (builder) =>
-    {
-        builder.AddMarkupContent(0, $"<div class=`alert alert-info`>Loading.../div>");
-    };
+    [Parameter] public RenderFragment? LoadingMessage { get; set; }
 
-    [Parameter]
-    public RenderFragment ErrorMessage { get; set; } = (builder) =>
+    [Parameter] public RenderFragment? ErrorMessage { get; set; }
+
+    private RenderFragment? RenderedContent;  
+
+    protected override ValueTask<bool> OnParametersChangedAsync(bool firstRender)
     {
-        builder.AddMarkupContent(0, $"<div class=`alert alert-danger`>Error Loading Page/div>");
-    };
+        this.RenderedContent = this.State switch
+        {
+            ComponentState.Loaded => this.Content,
+            ComponentState.InError => this.ErrorMessage ?? this.Error,
+            _ => this.LoadingMessage ?? this.Loading
+        };
+
+        return ValueTask.FromResult(true);
+    }
 
     private void Content(RenderTreeBuilder __builder)
     {
@@ -42,6 +41,11 @@
     private void Loading(RenderTreeBuilder __builder)
     {
         <div class="alert alert-info">Loading...</div>
+    }
+
+    private void Error(RenderTreeBuilder __builder)
+    {
+        <div class="alert alert-danger">Error Loading Page</div>
     }
 
 }
