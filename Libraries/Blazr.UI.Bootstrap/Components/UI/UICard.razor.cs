@@ -6,7 +6,7 @@
 
 namespace Blazr.UI.Bootstrap;
 
-public partial class UICard : UIBase
+public sealed partial class UICard : UIBase
 {
     [Parameter] public RenderFragment? Header { get; set; }
 
@@ -28,32 +28,32 @@ public partial class UICard : UIBase
 
     [Parameter] public bool IsCollapsible { get; set; } = false;
 
-    protected bool Collapsed { get; set; } = false;
+    private bool Collapsed { get; set; } = false;
 
-    protected string CollapseText { get => this.Collapsed ? "Show" : "Hide"; }
+    private string CollapseText { get => this.Collapsed ? "Show" : "Hide"; }
 
-    protected string CardCss => new CSSBuilder()
+    private string CardCss => new CSSBuilder()
         .AddClass(Dirty, "card border-danger", "card border-dark")
         .AddClass(this.CardClass)
         .Build();
 
-    protected string CardHeaderCss => new CSSBuilder()
+    private string CardHeaderCss => new CSSBuilder()
         .AddClass(Dirty, "card-header text-white bg-danger", "card-header text-brand bg-dark")
         .AddClass(this.HeaderClass)
         .Build();
 
-    protected string CardHeaderButtonCss => new CSSBuilder()
+    private string CardHeaderButtonCss => new CSSBuilder()
         .AddClass("btn")
         .AddClass(this.CardButtonCSS)
         .AddClass("float-right p-1")
         .Build();
 
-    protected string CardBodyCss => new CSSBuilder()
+    private string CardBodyCss => new CSSBuilder()
         .AddClass("card-body card-body-light p-0")
         .AddClass(this.Collapsed, "collapse", "collapse show")
         .AddClass(this.BodyClass)
         .Build();
 
-    protected void Toggle()
+    private void Toggle()
         => this.Collapsed = !this.Collapsed;
 }

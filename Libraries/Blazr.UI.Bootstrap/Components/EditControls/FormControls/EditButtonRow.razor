@@ -8,7 +8,7 @@
 </div>
 
 @code {
-    [CascadingParameter] public IRecordEditContext RecordEditContext { get; set; } = default!;
+    [CascadingParameter] public IEditContext RecordEditContext { get; set; } = default!;
     [Parameter] public EventCallback Save { get; set; }
     [Parameter] public EventCallback Exit { get; set; }
 

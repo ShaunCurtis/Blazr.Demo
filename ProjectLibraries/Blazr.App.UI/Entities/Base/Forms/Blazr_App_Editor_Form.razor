@@ -7,10 +7,10 @@
 *@
 
 @namespace Blazr.App.UI
-@typeparam TRecord where TRecord : class, new()
 @typeparam TEditContext where TEditContext : class, IEditContext, IRecordEditContext<TRecord>, new()
+@typeparam TRecord where TRecord : class, new()
 @typeparam TEntity where TEntity  : class, IEntity
-@inherits Blazr_Editor_Form<TRecord, TEditContext, TEntity>
+@inherits Blazr_Editor_Form<TEditContext, TRecord, TEntity>
 
 @*
 // The template for all the edit froms is defined in the TemplateContent render fragment
@@ -30,14 +30,14 @@
                       <FormViewTitle>
                           @this.FormTitle
                       </FormViewTitle>
-                      <BlazrEditForm EditContext=this.Service.EditModel State="ComponentState.Loaded">
+                      <BlazrEditForm EditContext=RecordContext State="ComponentState.Loaded">
                           @this.Content
                       </BlazrEditForm>
                   </UILoader>
                   <UIContainer class="mb-4" Size=BootstrapSize.Fluid>
                       <UIFormRow>
                           <UIColumn Columns=12 MediumColumns=7 class="">
-                              <UIAlertMessage AlertColour="@this.alertColour" Hidden=this.IsDirty Message="@this.alertMessage" />
+                              <UIAlertMessage AlertColour="@this.FormMessage.alertColour" Hidden=this.IsDirty Message="@this.FormMessage.alertMessage" />
                           </UIColumn>
                           <UIColumn Columns=12 MediumColumns=5 class="text-end text-right">
                               <UIButton ButtonType=UIButtonType.Warning Hidden="!this.IsDirty && this.IsNew" ClickEvent="this.ResetRecord">

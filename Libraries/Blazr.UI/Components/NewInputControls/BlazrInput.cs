@@ -25,12 +25,16 @@ public class BlazrInput<TValue> : BlazrInputBase<TValue>
             ? "textarea"
             : "input";
 
+        var eventName = this.UpdateOnInput
+            ? "oninput"
+            : "onchange";
+
         builder.OpenElement(0, tag);
         builder.AddMultipleAttributes(1, this.AdditionalAttributes);
         builder.AddAttributeIfTrue(2, !isTextArea, "type", this.Type);
-        builder.AddAttributeIfNotNullOrEmpty(3, "class", this.CssClass);
+        builder.AddAttributeIfNotEmpty(3, "class", this.CssClass);
         builder.AddAttribute(4, "value", this.ValueAsString);
-        builder.AddAttribute(5, "onchange", this.OnChanged);
+        builder.AddAttribute(5, eventName, this.OnChanged);
         builder.AddElementReferenceCapture(6, __inputReference => this.Element = __inputReference);
         builder.CloseElement();
     }

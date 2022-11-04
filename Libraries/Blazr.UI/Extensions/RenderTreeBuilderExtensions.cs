@@ -29,6 +29,12 @@ public static class RenderTreeBuilderExtensions
             builder.AddAttribute(sequenceNo, attribute, value);
     }
 
+    public static void AddAttributeIfTrue(this RenderTreeBuilder builder, int sequenceNo, bool check, string attribute, MulticastDelegate value)
+    {
+        if (check)
+            builder.AddAttribute(sequenceNo, attribute, value);
+    }
+
     public static void AddContentIfTrue(this RenderTreeBuilder builder, int sequenceNo, bool check, RenderFragment? value)
     {
         if (check && value is not null)

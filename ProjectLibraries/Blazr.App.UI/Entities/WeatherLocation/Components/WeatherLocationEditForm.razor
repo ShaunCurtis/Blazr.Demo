@@ -6,16 +6,13 @@
 *@
 
 @namespace Blazr.App.UI
-@inherits BlazrAppEditorForm<DboWeatherLocation, DeoWeatherLocation, WeatherLocationEntity>
+@inherits Blazr_App_Editor_Form<WeatherLocationEditContext, DboWeatherLocation, WeatherLocationEntity>
 @implements IDisposable
 
 <UIContainer Size=BootstrapSize.Fluid>
     <UIFormRow>
         <UIColumn Columns=12 MediumColumns=6>
-            <FormFocusEditControl Label="Location" IsFirstFocus=true ShowLabel="true" @bind-Value="this.Service.EditModel.Location" TValue=string TEditControl=BlazrInputText IsRequired="true" ShowValidation="true" />
+            <BlazrInputControl Type="text" class="form-control" UpdateOnInput=true DisplayName="Location" FieldName="Location" @bind-Value="this.RecordContext.Location" Hint="Enter a weather forecast Location" />
         </UIColumn>
     </UIFormRow>
 </UIContainer>
-
-@code {
-}

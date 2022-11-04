@@ -6,16 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Components\InputControls\InputDataList.razor.cs" />
-    <Compile Remove="Components\InputControls\InputSelectDataList.razor.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="Components\InputControls\InputDataList.razor" />
-    <Content Remove="Components\InputControls\InputSelectDataList.razor" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
@@ -29,11 +19,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Blazr.Core\Blazr.Core.csproj" />
     <ProjectReference Include="..\Blazr.Routing\Blazr.Routing.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Components\Base\New\" />
-    <Folder Include="Data\" />
   </ItemGroup>
 
 </Project>

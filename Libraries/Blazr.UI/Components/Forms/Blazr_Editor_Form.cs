@@ -35,7 +35,7 @@ public abstract partial class Blazr_Editor_Form<TEditContext, TRecord, TEntity>
         // is not initialized from here
         this.Service = ActivatorUtilities.GetServiceOrCreateInstance<IContextEditService<TEditContext, TRecord>>(serviceProvider);
         await this.Service.LoadRecordAsync(Id);
-        this.Service.EditModel.FieldChanged -= OnFieldChanged;
+        this.Service.EditModel.FieldChanged += OnFieldChanged;
 
         if (!string.IsNullOrWhiteSpace(this.EntityUIService.SingleTitle))
             this.FormTitle = $"{this.EntityUIService.SingleTitle} Editor";

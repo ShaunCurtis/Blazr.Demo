@@ -14,6 +14,7 @@ public class BlazrInputBase<TValue> : UIComponentBase
     [Parameter] public string? Type { get; set; }
     [Parameter] public TValue? Value { get; set; }
     [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
+    [Parameter] public bool UpdateOnInput { get; set; }
     [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; } = new Dictionary<string, object>();
 
     protected bool NoValidation;

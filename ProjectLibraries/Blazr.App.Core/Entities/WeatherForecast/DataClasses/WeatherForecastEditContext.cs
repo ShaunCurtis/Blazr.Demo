@@ -52,6 +52,8 @@ public class WeatherForecastEditContext : RecordEditContextBase<DboWeatherForeca
         set => SetIfChanged(ref _temperatureC, value, WeatherForecastConstants.Date);
     }
 
+    public WeatherForecastEditContext() { }
+
     public WeatherForecastEditContext(DboWeatherForecast record) : base(record) { }
 
     public override void Load(DboWeatherForecast record)

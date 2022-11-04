@@ -13,7 +13,7 @@
 </div>
 
 @code {
-    [CascadingParameter] public IRecordEditContext RecordEditContext { get; set; } = default!;
+    [CascadingParameter] public IEditContext RecordEditContext { get; set; } = default!;
     [Parameter, EditorRequired] public string? DisplayName { get; set; }
     [Parameter, EditorRequired] public string? FieldName { get; set; }
     [Parameter] public string? Hint { get; set; }
