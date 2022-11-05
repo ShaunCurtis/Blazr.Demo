@@ -6,30 +6,30 @@
 *@
 
 @namespace Blazr.App.UI
-@inherits BlazrAppEditorForm<DboWeatherForecast, DeoWeatherForecast, WeatherForecastEntity>
+@inherits Blazr_App_Editor_Form<WeatherForecastEditContext,DboWeatherForecast, WeatherForecastEntity>
 @inject IForeignKeyService<FkWeatherSummary, WeatherSummaryEntity> FkSummaryService
 @inject IForeignKeyService<FkWeatherLocation, WeatherLocationEntity> FkLocationService
 
 <UIContainer Size=BootstrapSize.Fluid>
     <UIFormRow>
         <UIColumn Columns=12 MediumColumns=6>
-            <FormFocusEditControl Label="Date" ShowLabel="true" IsFirstFocus=true @bind-Value="this.Service.EditModel.Date" TValue=DateTimeOffset TEditControl="BlazrInputDate<DateTimeOffset>" IsRequired="true" ShowValidation="true" />
+            <BlazrInputControl Type="date" class="form-control" UpdateOnInput=true DisplayName="Date" FieldName="Date" @bind-Value=this.RecordContext.Date Hint="Enter a weather forecast date" />
         </UIColumn>
         <UIColumn Columns=12 MediumColumns=6>
-            <FormEditControl Label="Temperature &deg;C" ShowLabel="true" @bind-Value="this.Service.EditModel.TemperatureC" ControlType="typeof(BlazrInputNumber<int>)" IsRequired="true" ShowValidation="true" HelperText="Enter a temperature" />
+            <BlazrInputControl Type="number" class="form-control" UpdateOnInput=true DisplayName="Temperature &deg;C" FieldName="TemperatureC" @bind-Value=this.RecordContext.TemperatureC Hint="Enter a weather forecast temperature" />
         </UIColumn>
     </UIFormRow>
     <UIFormRow>
         <UIColumn Columns=12 MediumColumns=6>
-            <FormEditControl Label="Summary" ShowLabel="true" @bind-Value="this.Service.EditModel.SummaryId" ControlType="typeof(InputSelect<Guid>)" IsRequired="true" ShowValidation="true" HelperText="Select a summary from the list">
+@*            <FormEditControl Label="Summary" ShowLabel="true" @bind-Value="this.Service.EditModel.SummaryId" ControlType="typeof(InputSelect<Guid>)" IsRequired="true" ShowValidation="true" HelperText="Select a summary from the list">
                 @this.SummaryList
             </FormEditControl>
-        </UIColumn>
+*@        </UIColumn>
         <UIColumn Columns=12 MediumColumns=6>
-            <FormEditControl Label="Location" ShowLabel="true" @bind-Value="this.Service.EditModel.LocationId" ControlType="typeof(InputSelect<Guid>)" IsRequired="true" ShowValidation="true" HelperText="Select a location from the list">
+@*            <FormEditControl Label="Location" ShowLabel="true" @bind-Value="this.Service.EditModel.LocationId" ControlType="typeof(InputSelect<Guid>)" IsRequired="true" ShowValidation="true" HelperText="Select a location from the list">
                 @this.LocationList
             </FormEditControl>
-        </UIColumn>
+*@        </UIColumn>
     </UIFormRow>
 </UIContainer>
 

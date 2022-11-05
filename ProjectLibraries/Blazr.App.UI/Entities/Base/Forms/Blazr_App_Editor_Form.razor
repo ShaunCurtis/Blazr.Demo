@@ -21,6 +21,7 @@
     //TODO - why can't I put this in BlazrEditForm?
     protected TEditContext RecordContext => (TEditContext)this.Service.EditModel;
 
+    // The template content
     protected override RenderFragment? TemplatedContent => __builder =>
       {
           <PageLocker />
