@@ -12,11 +12,12 @@ public abstract partial class Blazr_Editor_Form<TEditContext, TRecord, TEntity>
         where TEntity : class, IEntity
         where TRecord : class, new()
 {
+    [Inject] private IBlazrNavigationManager _blazrNavManager { get; set; } = default!;
 
+    protected BlazrNavigationManager? blazrNavManager => _blazrNavManager as BlazrNavigationManager;
     protected readonly BlazrFormMessage FormMessage = new();
     protected bool isConfirmDelete = false;
     protected IContextEditService<TEditContext, TRecord> Service = default!;
-    protected BlazrNavigationManager? blazrNavManager => NavManager is BlazrNavigationManager ? NavManager as BlazrNavigationManager : null;
 
     // Exposing underlying properties from the EditContext
     protected bool IsDirty => this.Service.EditModel.IsDirty;

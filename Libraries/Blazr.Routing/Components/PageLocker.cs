@@ -12,7 +12,7 @@ public class PageLocker : ComponentBase, IDisposable
 
     [Inject] private IBlazrNavigationManager? _navManager { get; set; }
 
-    private BlazrNavigationManager? NavManager => (_navManager is BlazrNavigationManager) ? _navManager as BlazrNavigationManager : null;
+    private BlazrNavigationManager? NavManager => _navManager as BlazrNavigationManager;
 
     protected override void OnInitialized()
     {
@@ -26,7 +26,7 @@ public class PageLocker : ComponentBase, IDisposable
     private void SetPageExitCheck(bool state)
     {
         // Pass the Js code a reference to this instance so it can call AgentExitAttempted
-        // if the user tries to exit whilst thw page is locked
+        // if the user tries to exit whilst the page is locked
         var objref = DotNetObjectReference.Create(this);
         _js!.InvokeAsync<bool>("blazr_setEditorExitCheck", objref , state);
     }
