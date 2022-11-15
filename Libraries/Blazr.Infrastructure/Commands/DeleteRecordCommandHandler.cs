@@ -4,24 +4,24 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.Data;
+namespace Blazr.Infrastructure;
 
-public sealed class UpdateRecordCommandHandler<TRecord, TDbContext>
-    : IHandlerAsync<UpdateRecordCommand<TRecord>, ValueTask<CommandResult>>
+public sealed class DeleteRecordCommandHandler<TRecord, TDbContext>
+    : IHandlerAsync<DeleteRecordCommand<TRecord>, ValueTask<CommandResult>>
     where TDbContext : DbContext
     where TRecord : class, new()
 {
     private readonly IDbContextFactory<TDbContext> factory;
 
-    public UpdateRecordCommandHandler(IDbContextFactory<TDbContext> factory)
+    public DeleteRecordCommandHandler(IDbContextFactory<TDbContext> factory)
         => this.factory = factory;
 
-    public async ValueTask<CommandResult> ExecuteAsync(UpdateRecordCommand<TRecord> command)
+    public async ValueTask<CommandResult> ExecuteAsync(DeleteRecordCommand<TRecord> command)
     {
         using var dbContext = factory.CreateDbContext();
-        dbContext.Update<TRecord>(command.Record);
+        dbContext.Remove<TRecord>(command.Record);
         return await dbContext.SaveChangesAsync(command.CancellationToken) == 1
-            ? CommandResult.Successful("Record Updated")
-            : CommandResult.Failure("Error updating Record");
+            ? CommandResult.Successful("Record Deleted")
+            : CommandResult.Failure("Error deleting Record");
     }
 }

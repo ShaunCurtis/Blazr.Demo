@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\Blazr.Data\Blazr.Data.csproj" />
+    <ProjectReference Include="..\..\Libraries\Blazr.Infrastructure\Blazr.Infrastructure.csproj" />
     <ProjectReference Include="..\Blazr.App.Core\Blazr.App.Core.csproj" />
   </ItemGroup>
 

@@ -9,7 +9,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\ProjectLibraries\Blazr.App.Controllers\Blazr.App.Controllers.csproj" />
 		<ProjectReference Include="..\..\ProjectLibraries\Blazr.App.Core\Blazr.App.Core.csproj" />
-		<ProjectReference Include="..\..\ProjectLibraries\Blazr.App.Data\Blazr.App.Data.csproj" />
+		<ProjectReference Include="..\..\ProjectLibraries\Blazr.App.Infrastructure\Blazr.App.Infrastructure.csproj" />
 		<ProjectReference Include="..\Blazr.Demo.WASM\Blazr.Demo.WASM.csproj" />
 	</ItemGroup>
 

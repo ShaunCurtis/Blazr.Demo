@@ -5,7 +5,7 @@
 /// ============================================================
 using System.Net.Http.Json;
 
-namespace Blazr.Data;
+namespace Blazr.Infrastructure;
 
 public sealed class CQSAPIDataBroker
     : ICQSDataBroker

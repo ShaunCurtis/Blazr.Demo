@@ -23,9 +23,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Libraries\Blazr.Core\Blazr.Core.csproj" />
-    <ProjectReference Include="..\Libraries\Blazr.Data\Blazr.Data.csproj" />
+    <ProjectReference Include="..\Libraries\Blazr.Infrastructure\Blazr.Infrastructure.csproj" />
     <ProjectReference Include="..\ProjectLibraries\Blazr.App.Core\Blazr.App.Core.csproj" />
-    <ProjectReference Include="..\ProjectLibraries\Blazr.App.Data\Blazr.App.Data.csproj" />
+    <ProjectReference Include="..\ProjectLibraries\Blazr.App.Infrastructure\Blazr.App.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

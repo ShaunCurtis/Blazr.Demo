@@ -17,13 +17,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Application
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.Server.Web", "Applications\Blazr.Demo.Server.Web\Blazr.Demo.Server.Web.csproj", "{0E68BD8A-F33A-43BA-8B60-FD03307D829D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Data", "Libraries\Blazr.Data\Blazr.Data.csproj", "{77A02EC2-4B07-48AD-AF4C-E3E15938DF83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Infrastructure", "Libraries\Blazr.Infrastructure\Blazr.Infrastructure.csproj", "{77A02EC2-4B07-48AD-AF4C-E3E15938DF83}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectLibraries", "ProjectLibraries", "{20AC6B52-B88C-4C60-B271-BC4EA226C4EC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Core", "ProjectLibraries\Blazr.App.Core\Blazr.App.Core.csproj", "{4A115E55-89D4-4AD5-ACB7-7DFE4FAB3070}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Data", "ProjectLibraries\Blazr.App.Data\Blazr.App.Data.csproj", "{1F00E8DE-84C0-455C-A238-195250277B7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Infrastructure", "ProjectLibraries\Blazr.App.Infrastructure\Blazr.App.Infrastructure.csproj", "{1F00E8DE-84C0-455C-A238-195250277B7A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.UI", "ProjectLibraries\Blazr.App.UI\Blazr.App.UI.csproj", "{95AA491E-82CA-4AD5-99FD-E0724A5233F8}"
 EndProject
@@ -57,7 +57,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WIP", "WIP", "{EF828804-D17
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3E77B16E-3B41-4F07-BE27-DF20625EA9B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.Demo.BasicTests", "Blazr.Demo.BasicTests\Blazr.Demo.BasicTests.csproj", "{BCE0A2FB-EB7A-4116-AFFF-14AD04F18CA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Demo.BasicTests", "Blazr.Demo.BasicTests\Blazr.Demo.BasicTests.csproj", "{BCE0A2FB-EB7A-4116-AFFF-14AD04F18CA0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

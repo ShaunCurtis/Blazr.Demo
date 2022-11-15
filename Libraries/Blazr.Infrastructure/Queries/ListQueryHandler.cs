@@ -4,7 +4,7 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.Data;
+namespace Blazr.Infrastructure;
 
 public sealed class ListQueryHandler<TRecord, TDbContext>
     : IListQueryHandler<TRecord>

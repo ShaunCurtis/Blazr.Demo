@@ -1,4 +1,4 @@
-using Blazr.App.Data;
+using Blazr.App.Infrastructure;
 using Blazr.App.UI;
 using Blazr.Routing;
 using Blazr.UI;

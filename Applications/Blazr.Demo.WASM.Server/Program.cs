@@ -1,5 +1,5 @@
 using Blazr.App.Core;
-using Blazr.App.Data;
+using Blazr.App.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.EntityFrameworkCore;
 

@@ -4,7 +4,7 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.App.Data;
+namespace Blazr.App.Infrastructure;
 
 public static class WeatherAppDataServices
 {

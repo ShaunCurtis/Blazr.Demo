@@ -3,7 +3,7 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-namespace Blazr.Data;
+namespace Blazr.Infrastructure;
 
 public sealed class RecordQueryHandler<TRecord, TDbContext>
     : IHandlerAsync<RecordQuery<TRecord>, ValueTask<RecordProviderResult<TRecord>>>
