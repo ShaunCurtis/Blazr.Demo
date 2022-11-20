@@ -67,7 +67,7 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
             return false;
         }
 
-        var record = EditModel.AsNewRecord;
+        var record = EditModel.AsNewRecord();
         var command = AddRecordCommand<TRecord>.GetCommand(record);
         var result = await this.DataBroker.ExecuteAsync<TRecord>(command);
 

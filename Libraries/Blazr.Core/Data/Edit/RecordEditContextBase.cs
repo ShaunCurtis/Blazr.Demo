@@ -6,11 +6,10 @@
 
 using Blazr.Core.Data.Validation;
 using Blazr.Core.Validation;
-using System;
 
-namespace Blazr.Core;
+namespace Blazr.Core.Edit;
 
-public abstract class RecordEditContextBase<TRecord> : IRecordEditContext<TRecord>, IEditContext, IValidation
+public abstract class RecordEditContextBase<TRecord> : IEditRecord<TRecord>, IRecordEditContext<TRecord>, IEditContext, IValidation
     where TRecord : class, new()
 {
     protected TRecord BaseRecord = new();
@@ -24,15 +23,14 @@ public abstract class RecordEditContextBase<TRecord> : IRecordEditContext<TRecor
     public virtual TRecord Record => new();
 
     public readonly ValidationMessageCollection ValidationMessages = new();
+    public readonly PropertyStateCollection PropertyStates = new();
 
     public virtual bool IsDirty => !BaseRecord.Equals(this.Record);
 
-    //TODO - need to check this is right with original implkementation
     public bool IsNew => this.Uid == Guid.Empty;
 
     public TRecord CleanRecord => this.BaseRecord;
 
-    //TODO - needs fixing
     public abstract TRecord AsNewRecord();
 
     public bool HasMessages(string? fieldName = null)
@@ -43,31 +41,40 @@ public abstract class RecordEditContextBase<TRecord> : IRecordEditContext<TRecor
 
     public event EventHandler<string?>? FieldChanged;
     public event EventHandler<ValidationStateEventArgs>? ValidationStateUpdated;
+    public event EventHandler<bool>? EditStateUpdated;
 
     public RecordEditContextBase() { }
 
     public RecordEditContextBase(TRecord record)
         => this.Load(record);
 
-    public abstract void Load(TRecord record);
+    public abstract void Load(TRecord record, bool notify = true);
 
-    public abstract void Reset();
+    public void Reset()
+        => this.Load(this.BaseRecord);
 
-    protected void SetIfChanged<TType>(ref TType currentValue, TType value, string fieldName)
+    protected bool UpdateifChangedAndNotify<TType>(ref TType currentValue, TType value, TType originalValue, string fieldName)
     {
-        if (value is null || currentValue is null || !value.Equals(currentValue))
+        var hasChanged = !value?.Equals(currentValue) ?? currentValue is not null;
+        var hasChangedFromOriginal = !value?.Equals(originalValue) ?? originalValue is not null;
+        if (hasChanged)
         {
             currentValue = value;
             NotifyFieldChanged(fieldName);
         }
+
+        var field = FieldReference.Create(this.InstanceId, fieldName);
+        this.PropertyStates.ClearState(field);
+        if (hasChangedFromOriginal)
+            this.PropertyStates.Add(field);
+
+        return hasChanged;
     }
 
-    public void NotifyFieldChanged(string fieldName)
+    public void NotifyFieldChanged(string? fieldName)
     {
-        if (this.ValidateOnFieldChanged)
-            this.Validate(fieldName);
-
         FieldChanged?.Invoke(null, fieldName);
+        EditStateUpdated?.Invoke(null, IsDirty);
     }
 
     public void NotifyValidationStateUpdated(bool state, string? field)

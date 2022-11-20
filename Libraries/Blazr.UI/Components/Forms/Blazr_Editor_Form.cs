@@ -3,7 +3,6 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-
 namespace Blazr.UI;
 
 public abstract partial class Blazr_Editor_Form<TEditContext, TRecord, TEntity>

@@ -6,11 +6,12 @@
 
 using Blazr.Core.Validation;
 
-namespace Blazr.Core;
+namespace Blazr.Core.Edit;
 
 public interface IEditContext
 {
     public event EventHandler<ValidationStateEventArgs>? ValidationStateUpdated;
+    public event EventHandler<bool>? EditStateUpdated;
     public event EventHandler<string?>? FieldChanged;
     public Guid Uid { get; set; }
 

@@ -22,3 +22,4 @@ global using System.Diagnostics.CodeAnalysis;
 global using Blazr.Routing;
 global using Blazr.Core;
 global using Blazr.Core.Validation;
+global using Blazr.Core.Edit;

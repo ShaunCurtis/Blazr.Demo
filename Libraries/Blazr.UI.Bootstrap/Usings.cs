@@ -20,4 +20,5 @@ global using System.Diagnostics;
 global using System.Text.RegularExpressions;
 
 global using Blazr.Core;
+global using Blazr.Core.Edit;
 

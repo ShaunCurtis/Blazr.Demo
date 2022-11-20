@@ -5,6 +5,7 @@ global using Microsoft.AspNetCore.Components.Web;
 global using Microsoft.Extensions.DependencyInjection;
 
 global using Blazr.Core;
+global using Blazr.Core.Edit;
 global using Blazr.App.Core;
 global using Blazr.Routing;
 global using Blazr.UI;

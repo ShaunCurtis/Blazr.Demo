@@ -59,7 +59,7 @@ public class BlazrInputBase<TValue> : UIComponentBase
             this.RecordEditContext.ValidationStateUpdated -= this.OnValidationStateUpdated;
     }
 
-    private static string? GetValueAsString(TValue? initialValue, string type) =>
+    private static string? GetValueAsString(TValue? initialValue, string? type) =>
         initialValue switch
         {
             string @value => value,
@@ -76,8 +76,8 @@ public class BlazrInputBase<TValue> : UIComponentBase
             _ => initialValue?.ToString() ?? throw new InvalidOperationException($"Unsupported type {initialValue?.GetType()}")
         };
 
-    private static string GetDateString(DateTime value, string type)
-        => type.ToLower() switch
+    private static string GetDateString(DateTime value, string? type)
+        => type?.ToLower() switch
         {
             "date" => BindConverter.FormatValue(value, format: "yyyy-MM-dd"),
             "time" => BindConverter.FormatValue(value, format: "HH:mm:ss"),

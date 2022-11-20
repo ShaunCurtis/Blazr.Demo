@@ -1,11 +1,12 @@
-﻿/// ============================================================
+/// ============================================================
 /// Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 namespace Blazr.App.Core;
 
-public class WeatherLocationEditContext : RecordEditContextBase<DboWeatherLocation>
+public class WeatherLocationEditContext
+    : RecordEditContextBase<DboWeatherLocation>, IEditRecord<DboWeatherLocation>, IMessageStoreValidation, IAuthRecord
 {
     private Guid _newId = Guid.NewGuid();
 
@@ -13,47 +14,59 @@ public class WeatherLocationEditContext : RecordEditContextBase<DboWeatherLocati
     public override Guid Uid
     {
         get => _uid;
-        set => SetIfChanged<Guid>(ref _uid, value, WeatherLocationConstants.Uid);
+        set => UpdateifChangedAndNotify(ref _uid, value, this.BaseRecord.Uid, WeatherLocationConstants.Uid);
     }
 
     private Guid _ownerId = Guid.Empty;
     public Guid OwnerId
     {
         get => _ownerId;
-        set => SetIfChanged<Guid>(ref _uid, value, WeatherLocationConstants.OwnerId);
+        set => UpdateifChangedAndNotify(ref _ownerId, value, this.BaseRecord.OwnerId, WeatherLocationConstants.OwnerId);
     }
 
-    private string _location = String.Empty;
+    private string _location = string.Empty;
     public string Location
     {
         get => _location;
-        set => SetIfChanged<string>(ref _location, value, WeatherLocationConstants.Location);
+        set => UpdateifChangedAndNotify(ref _location, value, this.BaseRecord.Location, WeatherLocationConstants.Location);
     }
-    public WeatherLocationEditContext() { }
 
-    public WeatherLocationEditContext(DboWeatherLocation record)
-        : base(record)
-        => this.Load(record);
+    public WeatherLocationEditContext()
+    {
+        var rec = new DboWeatherLocation();
+        this.Load(rec);
+    }
 
-    public override void Load(DboWeatherLocation record)
+    public WeatherLocationEditContext(DboWeatherLocation item)
+        => this.Load(item);
+
+    public override void Load(DboWeatherLocation record, bool notify = true)
     {
         this.BaseRecord = record with { };
-        _uid = record.Uid;
-        _ownerId = record.OwnerId;
-        _location = record.Location;
+
+        this.Uid = record.Uid;
+        this.OwnerId = record.OwnerId;
+        this.Location = record.Location;
+
+        if (notify)
+            this.NotifyFieldChanged(null);
     }
-    public override void Reset()
-        => this.Load(this.BaseRecord with { });
+
+
+    public override DboWeatherLocation Record =>
+        new DboWeatherLocation()
+        {
+            Uid = this.Uid,
+            OwnerId = this.OwnerId,
+            Location = this.Location
+        };
 
     public override DboWeatherLocation AsNewRecord()
-        => this.Record with { Uid = _newId };
-
-    public override DboWeatherLocation Record
-        => new DboWeatherLocation
+        => new DboWeatherLocation()
         {
-            Uid = _uid,
-            OwnerId = _ownerId,
-            Location = _location,
+            Uid = _newId,
+            OwnerId = this.OwnerId,
+            Location = this.Location
         };
 
     public override ValidationResult Validate(string? fieldname = null)
@@ -61,5 +74,17 @@ public class WeatherLocationEditContext : RecordEditContextBase<DboWeatherLocati
         var result = WeatherLocationValidator.Validate(this.Record, ValidationMessages, fieldname);
         this.NotifyValidationStateUpdated(result.IsValid, fieldname);
         return result;
+    }
+
+    public bool Validate(ValidationMessageStore? validationMessageStore, string? fieldname, object? model = null)
+    {
+        model ??= this;
+        ValidationState validationState = new ValidationState();
+
+        this.Location.Validation("Location", model, validationMessageStore, validationState)
+            .LongerThan(2, "The location miust be at least 2 characters")
+            .Validate(fieldname);
+
+        return validationState.IsValid;
     }
 }

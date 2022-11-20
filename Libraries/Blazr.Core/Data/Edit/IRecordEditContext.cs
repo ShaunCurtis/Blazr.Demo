@@ -6,22 +6,22 @@
 
 using Blazr.Core.Validation;
 
-namespace Blazr.Core;
+namespace Blazr.Core.Edit;
 
-public interface IRecordEditContext<TRecord>
+public interface IRecordEditContext<TRecord> : IEditContext
     where TRecord : class, new()
 {
-    public event EventHandler<ValidationStateEventArgs>? ValidationStateUpdated;
-    public event EventHandler<string?>? FieldChanged;
-    public Guid Uid { get; set; }
+    //public event EventHandler<ValidationStateEventArgs>? ValidationStateUpdated;
+    //public event EventHandler<string?>? FieldChanged;
+    //public Guid Uid { get; set; }
 
     public TRecord Record { get; }
 
-    public bool IsDirty { get; }
+    //public bool IsDirty { get; }
 
-    public bool IsNew { get; }
+    //public bool IsNew { get; }
 
-    public void Load(TRecord record);
+    public void Load(TRecord record, bool notify = true);
 
     public TRecord CleanRecord { get; }
 
@@ -29,9 +29,9 @@ public interface IRecordEditContext<TRecord>
 
     public void Reset();
 
-    public bool HasMessages(string? fieldName = null);
+    //public bool HasMessages(string? fieldName = null);
 
-    public IEnumerable<string> GetMessages(string? fieldName = null);
+    //public IEnumerable<string> GetMessages(string? fieldName = null);
 
-    public ValidationResult Validate(string? fieldName = null);
+    //public ValidationResult Validate(string? fieldName = null);
 }

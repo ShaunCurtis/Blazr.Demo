@@ -9,3 +9,4 @@ global using Microsoft.AspNetCore.Components.Authorization;
 
 global using Serialize.Linq.Serializers;
 
+global using Blazr.Core.Edit;
