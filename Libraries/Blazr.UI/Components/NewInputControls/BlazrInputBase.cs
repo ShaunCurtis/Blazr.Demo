@@ -84,8 +84,8 @@ public class BlazrInputBase<TValue> : UIComponentBase
             _ => BindConverter.FormatValue(value, format: "yyyy-MM-ddTHH:mm:ss")
         };
 
-    private static string GetDateString(DateTimeOffset value, string type)
-        => type.ToLower() switch
+    private static string GetDateString(DateTimeOffset value, string? type)
+        => type?.ToLower() switch
         {
             "date" => BindConverter.FormatValue(value, format: "yyyy-MM-dd"),
             "time" => BindConverter.FormatValue(value, format: "HH:mm:ss"),
