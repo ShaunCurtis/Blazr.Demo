@@ -19,6 +19,9 @@ public interface IEditContext
 
     public bool IsNew { get; }
 
+    public bool HasMessages(FieldReference field);
+    public bool IsChanged(FieldReference field);
+
     public bool HasMessages(string? fieldName = null);
 
     public IEnumerable<string> GetMessages(string? fieldName = null);

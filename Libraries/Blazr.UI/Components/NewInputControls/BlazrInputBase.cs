@@ -10,7 +10,8 @@ public class BlazrInputBase<TValue> : UIComponentBase
 {
     [CascadingParameter] public IEditContext RecordEditContext { get; set; } = default!;
 
-    [Parameter, EditorRequired] public string? FieldName { get; set; }
+    [Parameter, EditorRequired] public string FieldName { get; set; } = string.Empty;
+    [Parameter, EditorRequired] public Guid FieldObjectUid { get; set; } = Guid.Empty;
     [Parameter] public string? Type { get; set; }
     [Parameter] public TValue? Value { get; set; }
     [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
