@@ -121,7 +121,7 @@ public class WeatherTestDataProvider
                     Uid = new Guid($"00000000-0000-0000-9999-{uniqueIndex.ToString("D12")}"),
                     WeatherSummaryId = summaryArray[Random.Shared.Next(summaryArray.Length)].Uid,
                     WeatherLocationId = location.Uid,
-                    Date = DateTime.Now.AddDays(index),
+                    Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
                     TemperatureC = Random.Shared.Next(-20, 55),
                 };
                 forecasts.Add(rec);
@@ -139,7 +139,7 @@ public class WeatherTestDataProvider
         {
             Uid = Guid.NewGuid(),
             WeatherSummaryId = summaryArray[Random.Shared.Next(summaryArray.Length)].Uid,
-            Date = DateTime.Now.AddDays(-1),
+            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(-1)),
             TemperatureC = Random.Shared.Next(-20, 55),
         };
     }

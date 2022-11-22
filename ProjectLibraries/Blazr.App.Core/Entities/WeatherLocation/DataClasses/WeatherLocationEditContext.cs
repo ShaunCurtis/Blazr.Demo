@@ -6,7 +6,7 @@
 namespace Blazr.App.Core;
 
 public class WeatherLocationEditContext
-    : RecordEditContextBase<DboWeatherLocation>, IEditRecord<DboWeatherLocation>, IMessageStoreValidation, IAuthRecord
+    : RecordEditContextBase<DboWeatherLocation>, IMessageCollectionValidation, IAuthRecord
 {
     private Guid _newId = Guid.NewGuid();
 
@@ -69,22 +69,10 @@ public class WeatherLocationEditContext
             Location = this.Location
         };
 
-    public override ValidationResult Validate(string? fieldname = null)
+    public override ValidationResult Validate(FieldReference? field = null)
     {
-        var result = WeatherLocationValidator.Validate(this.Record, ValidationMessages, fieldname);
-        this.NotifyValidationStateUpdated(result.IsValid, fieldname);
+        var result = WeatherLocationValidator.Validate(this.Record, ValidationMessages, field);
+        this.NotifyValidationStateUpdated(result.IsValid, field);
         return result;
-    }
-
-    public bool Validate(ValidationMessageStore? validationMessageStore, string? fieldname, object? model = null)
-    {
-        model ??= this;
-        ValidationState validationState = new ValidationState();
-
-        this.Location.Validation("Location", model, validationMessageStore, validationState)
-            .LongerThan(2, "The location miust be at least 2 characters")
-            .Validate(fieldname);
-
-        return validationState.IsValid;
     }
 }

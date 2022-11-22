@@ -11,8 +11,8 @@ public class DateTimeValidator : ValidatorBase<DateTime>
     public DateTimeValidator(DateTime value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message)
     : base(value, fieldName, model, validationMessageStore, validationState, message) { }
 
-    public DateTimeValidator(DateTime value, Guid objectUid, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message)
-    : base(value, objectUid, fieldName, validationMessages, validationState, message) { }
+    public DateTimeValidator(DateTime value, FieldReference field, ValidationMessageCollection validationMessages, ValidationState validationState, string? message) 
+        : base(value, field, validationMessages, validationState, message) { }
 
     public DateTimeValidator(DateTime value, string? message = null)
     : base(value, message) { }
@@ -68,8 +68,8 @@ public static class DateTimeValidatorExtensions
     public static DateTimeValidator Validation(this DateTime value, string? message = null)
         => new DateTimeValidator(value, message);
 
-    public static DateTimeValidator Validation(this DateTime value, Guid objectUid, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message = null)
-        => new DateTimeValidator(value, objectUid, fieldName, validationMessages, validationState, message);
+    public static DateTimeValidator Validation(this DateTime value, FieldReference field, ValidationMessageCollection validationMessages, ValidationState validationState, string? message = null) 
+        => new DateTimeValidator(value, field, validationMessages, validationState, message);
 
     public static DateTimeValidator Validation(this DateTime value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
         => new DateTimeValidator(value, fieldName, model, validationMessageStore, validationState, message);

@@ -5,10 +5,8 @@
 /// ============================================================
 namespace Blazr.UI;
 
-public class BlazrInput<TValue> : BlazrInputBase<TValue>
+public class BlazrInput<TValue> : BlazrInputBase<TValue>, IHandleAfterRender
 {
-    [DisallowNull] public ElementReference? Element { get; protected set; }
-
     protected RenderFragment BaseInputControl;
 
     public BlazrInput()

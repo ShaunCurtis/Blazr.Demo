@@ -7,7 +7,7 @@ namespace Blazr.Core;
 
 public interface IEditService<TRecord, TEditRecord, TEntity>
     where TRecord : class, new()
-    where TEditRecord : class, IEditRecord<TRecord>, new()
+    where TEditRecord : class, IRecordEditContext<TRecord>, new()
     where TEntity : class, IEntity
 {
     public TEditRecord EditModel { get; }

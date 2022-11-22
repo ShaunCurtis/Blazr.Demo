@@ -9,7 +9,7 @@ namespace Blazr.Core;
 public class StandardEditService<TRecord, TEditRecord, TEntity>
     : BaseViewService<TRecord, TEntity>, IEditService<TRecord, TEditRecord, TEntity>
     where TRecord : class, new()
-    where TEditRecord : class, IEditRecord<TRecord>, new()
+    where TEditRecord : class, IRecordEditContext<TRecord>, new()
     where TEntity : class, IEntity
 {
     public TEditRecord EditModel { get; private set; } = new TEditRecord();

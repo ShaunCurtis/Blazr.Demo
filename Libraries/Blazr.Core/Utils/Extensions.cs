@@ -15,5 +15,15 @@ public static class GuidExtensions
 
     public static bool IsNotNull(this Guid guid)
         => guid != GuidExtensions.Null;
+
+    public static bool SetTrue(this ref bool value)
+    {
+        if (value)
+        {
+            value = true;
+            return true;
+        }
+        return false;
+    }
 }
 

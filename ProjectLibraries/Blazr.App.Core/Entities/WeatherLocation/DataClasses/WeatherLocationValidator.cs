@@ -3,26 +3,27 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-
 namespace Blazr.App.Core;
 
 public class WeatherLocationValidator
 {
-    public static ValidationResult Validate(DboWeatherLocation record, ValidationMessageCollection? validationMessages, string? fieldname = null)
+    public static ValidationResult Validate(DboWeatherLocation record, ValidationMessageCollection? validationMessages, FieldReference? field = null)
     {
         ValidationState validationState = new ValidationState();
 
         ValidationMessageCollection messages = validationMessages ?? new ValidationMessageCollection();
 
-        //TODO - all this needs fixing
+        FieldReference propertyField;
 
-        //if (fieldname != null)
-        //    validationMessages?.ClearMessages(fieldname);
+        if (field != null)
+            validationMessages?.ClearMessages(field);
 
-        //if (WeatherLocationConstants.Location.Equals(fieldname) || fieldname is null)
-        //    record.Location.Validation(WeatherLocationConstants.Location, messages, validationState)
-        //        .LongerThan(2, "The location miust be at least 2 characters")
-        //        .Validate(fieldname);
+        propertyField = field ?? FieldReference.Create(WeatherLocationConstants.Location);
+
+        if (field is null || WeatherLocationConstants.Location.Equals(field.FieldName))
+            record.Location.Validation(propertyField, messages, validationState)
+            .LongerThan(2, "The location miust be at least 2 characters")
+            .Validate(field);
 
         return new ValidationResult { ValidationMessages = messages, IsValid = validationState.IsValid };
     }

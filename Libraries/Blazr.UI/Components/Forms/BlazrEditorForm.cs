@@ -9,7 +9,7 @@ namespace Blazr.UI;
 public abstract partial class BlazrEditorForm<TRecord, TEditRecord, TEntity>
     : BlazrForm<IEditService<TRecord, TEditRecord, TEntity>, TEntity>, IDisposable, IHandleEvent, IHandleAfterRender
     where TRecord : class, new()
-    where TEditRecord : class, IEditRecord<TRecord>, new()
+    where TEditRecord : class, IRecordEditContext<TRecord>, new()
     where TEntity : class, IEntity
 {
     protected EditContext editContext = default!;

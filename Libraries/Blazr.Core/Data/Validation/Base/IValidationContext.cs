@@ -10,5 +10,5 @@ public interface IValidationContext
     public event EventHandler<ValidationStateEventArgs>? ValidationStateUpdated;
     public bool HasMessages(FieldReference field);
     public IEnumerable<string> GetMessages(FieldReference field);
-    public ValidationResult Validate(FieldReference field);
+    public ValidationResult Validate(FieldReference? field);
 }

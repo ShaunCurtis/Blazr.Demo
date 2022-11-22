@@ -11,8 +11,8 @@ public class LongValidator : ValidatorBase<long>
     public LongValidator(long value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message)
         : base(value, fieldName, model, validationMessageStore, validationState, message) { }
 
-    public LongValidator(long value, Guid objectUid, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message)
-    : base(value, objectUid, fieldName, validationMessages, validationState, message) { }
+    public LongValidator(long value, FieldReference field, ValidationMessageCollection validationMessages, ValidationState validationState, string? message)
+    : base(value, field, validationMessages, validationState, message) { }
 
     public LongValidator(long value, string? message = null)
     : base(value, message) { }
@@ -41,8 +41,8 @@ public static class LongValidatorExtensions
     public static LongValidator Validation(this long value, string? message = null)
         => new LongValidator(value, message);
 
-    public static LongValidator Validation(this long value, Guid objectUid, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message = null)
-        => new LongValidator(value, objectUid, fieldName, validationMessages, validationState, message);
+    public static LongValidator Validation(this long value, FieldReference field, ValidationMessageCollection validationMessages, ValidationState validationState, string? message = null) 
+        => new LongValidator(value, field, validationMessages, validationState, message);
 
     public static LongValidator Validation(this long value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
         => new LongValidator(value, fieldName, model, validationMessageStore, validationState, message);

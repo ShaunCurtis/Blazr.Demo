@@ -17,6 +17,7 @@ public abstract class ValidatorBase<T>
     protected readonly object? model;
     protected readonly Guid objectUid = Guid.Empty;
     protected readonly List<string> messages = new List<string>();
+    protected FieldReference Field => FieldReference.Create(objectUid, fieldName);
 
     public IEnumerable<string> Messages => this.messages;
 
@@ -32,10 +33,10 @@ public abstract class ValidatorBase<T>
         this.model = null;
     }
 
-    public ValidatorBase(T value, Guid objectUid, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message)
+    public ValidatorBase(T value, FieldReference field, ValidationMessageCollection validationMessages, ValidationState validationState, string? message)
     {
-        this.objectUid= objectUid;
-        this.fieldName = fieldName;
+        this.objectUid= field.ObjectUid;
+        this.fieldName = field.FieldName;
         this.value = value;
         this.validationMessages = validationMessages;
         this.validationState = validationState;
@@ -75,7 +76,28 @@ public abstract class ValidatorBase<T>
             if (validationMessageStore is not null && model is not null)
                 this.validationMessageStore?.Add(new FieldIdentifier(this.model, this.fieldName), this.Messages);
 
-            this.validationMessages.Add(FieldReference.Create(objectUid, fieldName), this.Messages);
+            this.validationMessages.Add(this.Field, this.Messages);
+        }
+
+        return new ValidationResult { IsValid = validationState.IsValid, ValidationMessages = this.validationMessages, ValidationNotRun = !needToLogMessages };
+    }
+
+    public virtual ValidationResult Validate(FieldReference? field, string? message = null)
+    {
+        var needToLogMessages = field is null || this.fieldName.Equals(field.FieldName);
+
+        if (needToLogMessages && validationState.IsInvalid)
+        {
+            message ??= this.defaultMessage;
+
+            // Check if we've logged specific messages.  If not add the default message
+            if (this.messages.Count == 0) this.messages.Add(message);
+
+            //If we have a ValidationMessageStore add the messages
+            if (validationMessageStore is not null && model is not null)
+                this.validationMessageStore?.Add(new FieldIdentifier(this.model, this.fieldName), this.Messages);
+
+            this.validationMessages.Add(this.Field, this.Messages);
         }
 
         return new ValidationResult { IsValid = validationState.IsValid, ValidationMessages = this.validationMessages, ValidationNotRun = !needToLogMessages };

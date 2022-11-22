@@ -13,7 +13,7 @@
 <UIContainer Size=BootstrapSize.Fluid>
     <UIFormRow>
         <UIColumn Columns=12 MediumColumns=6>
-            <FormFocusEditControl Label="Date" ShowLabel="true" IsFirstFocus=true @bind-Value="this.Service.EditModel.Date" TValue=DateTimeOffset TEditControl="BlazrInputDate<DateTimeOffset>" IsRequired="true" ShowValidation="true" />
+            <FormFocusEditControl Label="Date" ShowLabel="true" IsFirstFocus=true @bind-Value="this.Service.EditModel.Date" TValue=DateOnly TEditControl="BlazrInputDate<DateOnly>" IsRequired="true" ShowValidation="true" />
         </UIColumn>
         <UIColumn Columns=12 MediumColumns=6>
             <FormEditControl Label="Temperature &deg;C" ShowLabel="true" @bind-Value="this.Service.EditModel.TemperatureC" ControlType="typeof(BlazrInputNumber<int>)" IsRequired="true" ShowValidation="true" HelperText="Enter a temperature" />
@@ -68,7 +68,7 @@
     // Note we use the WeatherLocationId if we have one
     protected override Task<DboWeatherForecast> GetNewRecord()
     {
-        DboWeatherForecast record = new() { Date = DateTimeOffset.Now.AddDays(1) };
+        DboWeatherForecast record = new() { Date = DateOnly.FromDateTime(DateTime.Now.AddDays(1)) };
         if (this.WeatherLocationId != Guid.Empty)
             record = record with { WeatherLocationId = this.WeatherLocationId };
 

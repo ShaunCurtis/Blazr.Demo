@@ -1,6 +1,6 @@
 ﻿@namespace Blazr.App.UI
 @typeparam TRecord where TRecord : class, new()
-@typeparam TEditRecord where TEditRecord : class, IEditRecord<TRecord>, new()
+@typeparam TEditRecord where TEditRecord : class, IRecordEditContext<TRecord>, new()
 @typeparam TEntity where TEntity  : class, IEntity
 @inherits BlazrEditorForm<TRecord, TEditRecord, TEntity>
 

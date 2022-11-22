@@ -18,7 +18,7 @@ public record DboWeatherForecast
 
     public Guid OwnerId { get; init; }
 
-    public DateTimeOffset Date { get; init; }
+    public DateOnly Date { get; init; }
 
     public int TemperatureC { get; init; } = 0;
 }

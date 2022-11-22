@@ -11,8 +11,8 @@ public class DecimalValidator : ValidatorBase<decimal>
     public DecimalValidator(decimal value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message)
         : base(value, fieldName, model, validationMessageStore, validationState, message) { }
 
-    public DecimalValidator(decimal value, Guid objectUid, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message)
-    : base(value, objectUid, fieldName, validationMessages, validationState, message) { }
+    public DecimalValidator(decimal value, FieldReference field, ValidationMessageCollection validationMessages, ValidationState validationState, string? message)
+    : base(value, field, validationMessages, validationState, message) { }
 
     public DecimalValidator(decimal value, string? message = null)
     : base(value, message) { }
@@ -60,8 +60,8 @@ public static class DecimalValidatorExtensions
     public static DecimalValidator Validation(this decimal value, string? message = null)
         => new DecimalValidator(value, message);
 
-    public static DecimalValidator Validation(this decimal value, Guid objectUid, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message = null)
-        => new DecimalValidator(value, objectUid, fieldName, validationMessages, validationState, message);
+    public static DecimalValidator Validation(this decimal value, FieldReference field, ValidationMessageCollection validationMessages, ValidationState validationState, string? message = null)
+        => new DecimalValidator(value, field, validationMessages, validationState, message);
 
     public static DecimalValidator Validation(this decimal value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
         => new DecimalValidator(value, fieldName, model, validationMessageStore, validationState, message);

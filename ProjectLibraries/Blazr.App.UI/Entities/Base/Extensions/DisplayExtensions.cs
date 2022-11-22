@@ -14,6 +14,9 @@ public static class DisplayExtensions
     public static string AsGlobalDate(this DateTimeOffset value)
         => value.ToString("dd-MMM-yyyy");
 
+    public static string AsGlobalDate(this DateOnly value)
+        => value.ToString("dd-MMM-yyyy");
+
     public static string AsShortGuid(this Guid value)
         => value.ToString().Substring(27);
 

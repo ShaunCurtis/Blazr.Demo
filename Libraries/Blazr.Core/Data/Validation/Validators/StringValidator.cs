@@ -13,8 +13,8 @@ public class StringValidator : ValidatorBase<string>
     public StringValidator(string value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message)
         : base(value, fieldName, model, validationMessageStore, validationState, message) { }
 
-    public StringValidator(string value, Guid objectUid, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message)
-    : base(value, objectUid, fieldName, validationMessages, validationState, message) { }
+    public StringValidator(string value, FieldReference field, ValidationMessageCollection validationMessages, ValidationState validationState, string? message)
+    : base(value, field, validationMessages, validationState, message) { }
 
     public StringValidator(string value, string? message = null)
     : base(value, message) { }
@@ -59,8 +59,8 @@ public static class StringValidatorExtensions
     public static StringValidator Validation(this string value, string? message = null)
         => new StringValidator(value, message);
 
-    public static StringValidator Validation(this string value, Guid objectUid, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message = null)
-        => new StringValidator(value, objectUid, fieldName, validationMessages, validationState, message);
+    public static StringValidator Validation(this string value, FieldReference field, ValidationMessageCollection validationMessages, ValidationState validationState, string? message = null)
+        => new StringValidator(value, field, validationMessages, validationState, message);
 
     public static StringValidator Validation(this string value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
         => new StringValidator(value, fieldName, model, validationMessageStore, validationState, message);

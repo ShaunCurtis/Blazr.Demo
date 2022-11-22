@@ -8,27 +8,21 @@ using Blazr.Core.Validation;
 
 namespace Blazr.Core.Edit;
 
-public abstract class RecordEditContextBase<TRecord> : IEditRecord<TRecord>, IRecordEditContext<TRecord>, IEditContext, IValidationContext
+public abstract class RecordEditContextBase<TRecord> : IRecordEditContext<TRecord>, IEditContext, IValidationContext
     where TRecord : class, new()
 {
     protected TRecord BaseRecord = new();
 
     public Guid InstanceId { get; } = Guid.NewGuid();
-
     public virtual Guid Uid { get; set; }
-
     public bool ValidateOnFieldChanged { get; set; } = false;
-
     public virtual TRecord Record => new();
+    public virtual bool IsDirty => !BaseRecord.Equals(this.Record);
+    public bool IsNew => this.Uid == Guid.Empty;
+    public TRecord CleanRecord => this.BaseRecord;
 
     public readonly ValidationMessageCollection ValidationMessages = new();
     public readonly PropertyStateCollection PropertyStates = new();
-
-    public virtual bool IsDirty => !BaseRecord.Equals(this.Record);
-
-    public bool IsNew => this.Uid == Guid.Empty;
-
-    public TRecord CleanRecord => this.BaseRecord;
 
     public abstract TRecord AsNewRecord();
 
@@ -61,16 +55,13 @@ public abstract class RecordEditContextBase<TRecord> : IEditRecord<TRecord>, IRe
         EditStateUpdated?.Invoke(null, IsDirty);
     }
 
-    public void NotifyValidationStateUpdated(bool state, string? fieldName)
-    {
-        var field = fieldName is null ? null : FieldReference.Create(fieldName); 
-        ValidationStateUpdated?.Invoke(null, ValidationStateEventArgs.Create(state, field));
-    }
+    public void NotifyValidationStateUpdated(bool state, FieldReference? field)
+        => ValidationStateUpdated?.Invoke(null, ValidationStateEventArgs.Create(state, field));
 
     public virtual ValidationResult Validate(string? fieldname = null)
         => new ValidationResult { IsValid = ValidationMessages.HasMessages(), ValidationMessages = ValidationMessages, ValidationNotRun = false };
 
-    public ValidationResult Validate(FieldReference field)
+    public virtual ValidationResult Validate(FieldReference? field)
         => new ValidationResult { IsValid = ValidationMessages.HasMessages(), ValidationMessages = ValidationMessages, ValidationNotRun = false };
 
     protected bool UpdateifChangedAndNotify<TType>(ref TType currentValue, TType value, TType originalValue, string fieldName)
@@ -84,6 +75,7 @@ public abstract class RecordEditContextBase<TRecord> : IEditRecord<TRecord>, IRe
         }
 
         var field = FieldReference.Create(this.InstanceId, fieldName);
+        this.Validate(field);
         this.PropertyStates.ClearState(field);
         if (hasChangedFromOriginal)
             this.PropertyStates.Add(field);

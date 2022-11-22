@@ -11,8 +11,8 @@ public class DateTimeOffsetValidator : ValidatorBase<DateTimeOffset>
     public DateTimeOffsetValidator(DateTimeOffset value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message)
     : base(value, fieldName, model, validationMessageStore, validationState, message) { }
 
-    public DateTimeOffsetValidator(DateTimeOffset value, Guid objectUid, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message)
-    : base(value, objectUid, fieldName, validationMessages, validationState, message) { }
+    public DateTimeOffsetValidator(DateTimeOffset value, FieldReference field, ValidationMessageCollection validationMessages, ValidationState validationState, string? message)
+    : base(value, field, validationMessages, validationState, message) { }
 
     public DateTimeOffsetValidator(DateTimeOffset value, string? message = null)
     : base(value, message) { }
@@ -68,8 +68,8 @@ public static class DateTimeOffsetValidatorExtensions
     public static DateTimeOffsetValidator Validation(this DateTimeOffset value, string? message = null)
         => new DateTimeOffsetValidator(value, message);
 
-    public static DateTimeOffsetValidator Validation(this DateTimeOffset value, Guid objectUid, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message = null) 
-        => new DateTimeOffsetValidator(value, objectUid, fieldName, validationMessages, validationState, message);
+    public static DateTimeOffsetValidator Validation(this DateTimeOffset value, FieldReference field, ValidationMessageCollection validationMessages, ValidationState validationState, string? message = null) 
+        => new DateTimeOffsetValidator(value, field, validationMessages, validationState, message);
 
     public static DateTimeOffsetValidator Validation(this DateTimeOffset value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
         => new DateTimeOffsetValidator(value, fieldName, model, validationMessageStore, validationState, message);

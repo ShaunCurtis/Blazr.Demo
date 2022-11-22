@@ -1,8 +1,9 @@
-﻿@*/// ============================================================
-    /// Author: Shaun Curtis, Cold Elm Coders
-    /// License: Use And Donate
-    /// If you use it, donate something to a charity somewhere
-    /// ============================================================
+﻿@*
+/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================
 *@
 
 @namespace Blazr.App.UI
@@ -13,23 +14,23 @@
 <UIContainer Size=BootstrapSize.Fluid>
     <UIFormRow>
         <UIColumn Columns=12 MediumColumns=6>
-            <BlazrInputControl FieldObjectUid=this.RecordContext.InstanceId Type="date" class="form-control" UpdateOnInput=true DisplayName="Date" FieldName="Date" @bind-Value=this.RecordContext.Date Hint="Enter a weather forecast date" />
+            <BlazrInputControl FieldObjectUid=this.RecordContext.InstanceId Type="date" class="form-control" UpdateOnInput=true DisplayName="Date" FieldName="@WeatherForecastConstants.Date" @bind-Value=this.RecordContext.Date Hint="Enter a weather forecast date" />
         </UIColumn>
         <UIColumn Columns=12 MediumColumns=6>
-            <BlazrInputControl FieldObjectUid=this.RecordContext.InstanceId Type="number" class="form-control" UpdateOnInput=true DisplayName="Temperature &deg;C" FieldName="TemperatureC" @bind-Value=this.RecordContext.TemperatureC Hint="Enter a weather forecast temperature" />
+            <BlazrInputControl FieldObjectUid=this.RecordContext.InstanceId Type="number" class="form-control" UpdateOnInput=true DisplayName="Temperature &deg;C" FieldName="@WeatherForecastConstants.TemperatureC" @bind-Value=this.RecordContext.TemperatureC Hint="Enter a weather forecast temperature" />
         </UIColumn>
     </UIFormRow>
     <UIFormRow>
         <UIColumn Columns=12 MediumColumns=6>
-@*            <FormEditControl Label="Summary" ShowLabel="true" @bind-Value="this.Service.EditModel.SummaryId" ControlType="typeof(InputSelect<Guid>)" IsRequired="true" ShowValidation="true" HelperText="Select a summary from the list">
+            <BlazrSelectControl FieldObjectUid=this.RecordContext.InstanceId class="form-control" DisplayName="Summary" FieldName="@WeatherForecastConstants.SummaryId" @bind-Value=this.RecordContext.SummaryId Hint="Select a summary from the list">
                 @this.SummaryList
-            </FormEditControl>
-*@        </UIColumn>
+            </BlazrSelectControl>
+        </UIColumn>
         <UIColumn Columns=12 MediumColumns=6>
-@*            <FormEditControl Label="Location" ShowLabel="true" @bind-Value="this.Service.EditModel.LocationId" ControlType="typeof(InputSelect<Guid>)" IsRequired="true" ShowValidation="true" HelperText="Select a location from the list">
-                @this.LocationList
-            </FormEditControl>
-*@        </UIColumn>
+            <BlazrSelectControl FieldObjectUid=this.RecordContext.InstanceId class="form-control" DisplayName="Location" FieldName="@WeatherForecastConstants.LocationId" @bind-Value=this.RecordContext.LocationId Hint="Select a location from the list">
+                @this.SummaryList
+            </BlazrSelectControl>
+        </UIColumn>
     </UIFormRow>
 </UIContainer>
 
@@ -39,7 +40,7 @@
     [Parameter] public Guid WeatherLocationId { get; set; } = Guid.Empty;
 
     // We need to get the two foreign keys the for uses
-    protected override async  ValueTask<bool> OnParametersChangedAsync(bool firstRender)
+    protected override async ValueTask<bool> OnParametersChangedAsync(bool firstRender)
     {
         await this.FkSummaryService.GetFkList();
         await this.FkLocationService.GetFkList();
@@ -68,7 +69,7 @@
     // Note we use the WeatherLocationId if we have one
     protected override Task<DboWeatherForecast> GetNewRecord()
     {
-        DboWeatherForecast record = new() { Date = DateTimeOffset.Now.AddDays(1) };
+        DboWeatherForecast record = new() { Date = DateOnly.FromDateTime(DateTime.Now.AddDays(1)) };
         if (this.WeatherLocationId != Guid.Empty)
             record = record with { WeatherLocationId = this.WeatherLocationId };
 

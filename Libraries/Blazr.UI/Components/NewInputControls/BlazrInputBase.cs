@@ -6,9 +6,9 @@
 
 namespace Blazr.UI;
 
-public class BlazrInputBase<TValue> : UIComponentBase
+public abstract class BlazrInputBase<TValue> : UIComponentBase, IHandleAfterRender
 {
-    [CascadingParameter] public IEditContext RecordEditContext { get; set; } = default!;
+    [CascadingParameter] protected IEditContext editContext { get; set; } = default!;
 
     [Parameter, EditorRequired] public string FieldName { get; set; } = string.Empty;
     [Parameter, EditorRequired] public Guid FieldObjectUid { get; set; } = Guid.Empty;
@@ -16,30 +16,48 @@ public class BlazrInputBase<TValue> : UIComponentBase
     [Parameter] public TValue? Value { get; set; }
     [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
     [Parameter] public bool UpdateOnInput { get; set; }
+    [Parameter] public bool IsFirstFocus { get; set; }
     [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; } = new Dictionary<string, object>();
+
+    [DisallowNull] public ElementReference? Element { get; protected set; }
+
+    private bool _hasRendered;
 
     protected bool NoValidation;
 
-    protected FieldReference Field => FieldReference.Create(FieldObjectUid, FieldName); 
+    protected FieldReference Field => FieldReference.Create(FieldObjectUid, FieldName);
 
     protected string CssClass
         => new CSSBuilder()
         .AddClassFromAttributes(AdditionalAttributes)
-        .AddClass(this.RecordEditContext is not null && !this.NoValidation, ValidationCss)
+        .AddClass(this.editContext is not null && !this.NoValidation, ValidationCss)
         .Build();
 
     protected string ValidationCss
-        => this.RecordEditContext?.HasMessages(this.Field) ?? false
-        ? "is-invalid"
-        : "is-valid";
+    {
+        get
+        {
+            var field = FieldReference.Create(this.FieldObjectUid, this.FieldName);
+            var isInvalid = this.editContext?.HasMessages(field) ?? false;
+            var isChanged = this.editContext?.IsChanged(field) ?? false;
+
+            if (isChanged && isInvalid)
+                return "is-invalid";
+
+            if (isChanged && !isInvalid)
+                return "is-valid";
+
+            return string.Empty;
+        }
+    }
 
     protected string? ValueAsString
-        => GetValueAsString(this.Value, this.Type);
+        => BlazrInputConverters.GetValueAsString(this.Value, this.Type);
 
     protected override ValueTask<bool> OnParametersChangedAsync(bool firstRender)
     {
-        if (firstRender && RecordEditContext is not null)
-            this.RecordEditContext.ValidationStateUpdated += this.OnValidationStateUpdated;
+        if (firstRender && editContext is not null)
+            this.editContext.ValidationStateUpdated += this.OnValidationStateUpdated;
 
         return ValueTask.FromResult(true);
     }
@@ -56,42 +74,17 @@ public class BlazrInputBase<TValue> : UIComponentBase
     protected void OnFieldChanged(object? sender, string? field)
        => this.StateHasChanged();
 
-    public void Dispose()
+    public Task OnAfterRenderAsync()
     {
-        if (RecordEditContext is not null)
-            this.RecordEditContext.ValidationStateUpdated -= this.OnValidationStateUpdated;
+        if (_hasRendered.SetTrue() && this.IsFirstFocus && this.Element.HasValue)
+            this.Element.Value.FocusAsync();
+
+        return Task.CompletedTask;
     }
 
-    private static string? GetValueAsString(TValue? initialValue, string? type) =>
-        initialValue switch
-        {
-            string @value => value,
-            int @value => BindConverter.FormatValue(value),
-            long @value => BindConverter.FormatValue(value),
-            short @value => BindConverter.FormatValue(value),
-            float @value => BindConverter.FormatValue(value),
-            double @value => BindConverter.FormatValue(value),
-            decimal @value => BindConverter.FormatValue(value),
-            TimeOnly @value => BindConverter.FormatValue(value, format: "HH:mm:ss"),
-            DateOnly @value => BindConverter.FormatValue(value, format: "yyyy-MM-dd"),
-            DateTime @value => GetDateString(value, type),
-            DateTimeOffset @value => GetDateString(value, type),
-            _ => initialValue?.ToString() ?? throw new InvalidOperationException($"Unsupported type {initialValue?.GetType()}")
-        };
-
-    private static string GetDateString(DateTime value, string? type)
-        => type?.ToLower() switch
-        {
-            "date" => BindConverter.FormatValue(value, format: "yyyy-MM-dd"),
-            "time" => BindConverter.FormatValue(value, format: "HH:mm:ss"),
-            _ => BindConverter.FormatValue(value, format: "yyyy-MM-ddTHH:mm:ss")
-        };
-
-    private static string GetDateString(DateTimeOffset value, string? type)
-        => type?.ToLower() switch
-        {
-            "date" => BindConverter.FormatValue(value, format: "yyyy-MM-dd"),
-            "time" => BindConverter.FormatValue(value, format: "HH:mm:ss"),
-            _ => BindConverter.FormatValue(value, format: "yyyy-MM-ddTHH:mm:ss")
-        };
+    public void Dispose()
+    {
+        if (editContext is not null)
+            this.editContext.ValidationStateUpdated -= this.OnValidationStateUpdated;
+    }
 }

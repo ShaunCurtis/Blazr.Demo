@@ -6,7 +6,7 @@
 namespace Blazr.App.Core;
 
 public class WeatherForecastEditContext
-    : RecordEditContextBase<DboWeatherForecast>, IEditRecord<DboWeatherForecast>, IMessageStoreValidation, IAuthRecord
+    : RecordEditContextBase<DboWeatherForecast>, IMessageCollectionValidation, IAuthRecord
 {
     private Guid _newId = Guid.NewGuid();
 
@@ -31,8 +31,8 @@ public class WeatherForecastEditContext
         set => UpdateifChangedAndNotify(ref _locationId, value, this.BaseRecord.WeatherLocationId, WeatherForecastConstants.LocationId);
     }
 
-    private DateTimeOffset _date;
-    public DateTimeOffset Date
+    private DateOnly _date;
+    public DateOnly Date
     {
         get => _date;
         set => UpdateifChangedAndNotify(ref _date, value, this.BaseRecord.Date, WeatherForecastConstants.Date);
@@ -98,45 +98,10 @@ public class WeatherForecastEditContext
             TemperatureC = this.TemperatureC
         };
 
-    public override ValidationResult Validate(string? fieldname = null)
+    public override ValidationResult Validate(FieldReference? field = null)
     {
-        var result = WeatherForecastValidator.Validate(this.Record, ValidationMessages, fieldname);
-        this.NotifyValidationStateUpdated(result.IsValid, fieldname);
+        var result = WeatherForecastValidator.Validate(this.Record, ValidationMessages, field);
+        this.NotifyValidationStateUpdated(result.IsValid, field);
         return result;
-    }
-
-
-    public bool Validate(ValidationMessageStore? validationMessageStore, string? fieldname, object? model = null)
-    {
-        model ??= this;
-        ValidationState validationState = new ValidationState();
-        var field = "Date";
-
-        field = "Date";
-        if (field.Equals(fieldname) | fieldname is null)
-            this.Date.Validation(field, model, validationMessageStore, validationState)
-                .GreaterThan(DateTime.Now, true, "The weather forecast must be for a future date")
-                .Validate(fieldname);
-
-        field = "SummaryId";
-        if (field.Equals(fieldname) | fieldname is null)
-            this.SummaryId.Validation(field, model, validationMessageStore, validationState)
-            .NotEmpty("You must select a weather summary")
-            .Validate(fieldname);
-
-        field = "LocationId";
-        if (field.Equals(fieldname) | fieldname is null)
-            this.LocationId.Validation(field, model, validationMessageStore, validationState)
-            .NotEmpty("You must select a location")
-            .Validate(fieldname);
-
-        field = "TemperatureC";
-        if (field.Equals(fieldname) | fieldname is null)
-            this.TemperatureC.Validation(field, model, validationMessageStore, validationState)
-            .GreaterThan(-61, "The minimum Temperatore is -60C")
-            .LessThan(61, "The maximum temperature is 60C")
-            .Validate(fieldname);
-
-        return validationState.IsValid;
     }
 }

@@ -4,9 +4,10 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.Core;
+namespace Blazr.Core.Validation;
 
-public interface IEditRecord<TRecord> : IRecordEditContext<TRecord> 
-    where TRecord : class, new()
+public interface IMessageCollectionValidation
 {
+    public ValidationResult Validate(FieldReference? field = null);
 }
+
