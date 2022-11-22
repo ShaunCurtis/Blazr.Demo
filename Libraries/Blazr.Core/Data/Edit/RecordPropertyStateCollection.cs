@@ -14,7 +14,7 @@ public class PropertyStateCollection : IEnumerable<FieldReference>
         => _states.Add(state);
 
     public void Add(Guid objectUid, string field)
-        => _states.Add(new FieldReference(objectUid, field));
+        => _states.Add(FieldReference.Create(objectUid, field));
 
     public void ClearState(FieldReference field)
     {

@@ -5,14 +5,10 @@
 /// ============================================================
 
 namespace Blazr.Core.Validation;
-
-public class ValidationStateEventArgs : EventArgs
+public interface IValidationContext
 {
-    public bool ValidationState { get; set; }
-
-    public string? Field { get; set; }
-
-    public static ValidationStateEventArgs Create(bool state, string? field)
-        => new ValidationStateEventArgs { ValidationState = state, Field = field };
+    public event EventHandler<ValidationStateEventArgs>? ValidationStateUpdated;
+    public bool HasMessages(FieldReference field);
+    public IEnumerable<string> GetMessages(FieldReference field);
+    public ValidationResult Validate(FieldReference field);
 }
-

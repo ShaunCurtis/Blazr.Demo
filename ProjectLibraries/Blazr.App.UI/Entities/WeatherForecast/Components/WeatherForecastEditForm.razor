@@ -13,10 +13,10 @@
 <UIContainer Size=BootstrapSize.Fluid>
     <UIFormRow>
         <UIColumn Columns=12 MediumColumns=6>
-            <BlazrInputControl Type="date" class="form-control" UpdateOnInput=true DisplayName="Date" FieldName="Date" @bind-Value=this.RecordContext.Date Hint="Enter a weather forecast date" />
+            <BlazrInputControl FieldObjectUid=this.RecordContext.InstanceId Type="date" class="form-control" UpdateOnInput=true DisplayName="Date" FieldName="Date" @bind-Value=this.RecordContext.Date Hint="Enter a weather forecast date" />
         </UIColumn>
         <UIColumn Columns=12 MediumColumns=6>
-            <BlazrInputControl Type="number" class="form-control" UpdateOnInput=true DisplayName="Temperature &deg;C" FieldName="TemperatureC" @bind-Value=this.RecordContext.TemperatureC Hint="Enter a weather forecast temperature" />
+            <BlazrInputControl FieldObjectUid=this.RecordContext.InstanceId Type="number" class="form-control" UpdateOnInput=true DisplayName="Temperature &deg;C" FieldName="TemperatureC" @bind-Value=this.RecordContext.TemperatureC Hint="Enter a weather forecast temperature" />
         </UIColumn>
     </UIFormRow>
     <UIFormRow>

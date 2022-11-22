@@ -4,12 +4,11 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-using Blazr.Core.Data.Validation;
 using Blazr.Core.Validation;
 
 namespace Blazr.Core.Edit;
 
-public abstract class RecordEditContextBase<TRecord> : IEditRecord<TRecord>, IRecordEditContext<TRecord>, IEditContext, IValidation
+public abstract class RecordEditContextBase<TRecord> : IEditRecord<TRecord>, IRecordEditContext<TRecord>, IEditContext, IValidationContext
     where TRecord : class, new()
 {
     protected TRecord BaseRecord = new();
@@ -33,12 +32,6 @@ public abstract class RecordEditContextBase<TRecord> : IEditRecord<TRecord>, IRe
 
     public abstract TRecord AsNewRecord();
 
-    public bool HasMessages(string? fieldName = null)
-        => this.ValidationMessages.HasMessages(fieldName);
-
-    public IEnumerable<string> GetMessages(string? field = null)
-        => this.ValidationMessages.GetMessages(field);
-
     public event EventHandler<string?>? FieldChanged;
     public event EventHandler<ValidationStateEventArgs>? ValidationStateUpdated;
     public event EventHandler<bool>? EditStateUpdated;
@@ -52,6 +45,33 @@ public abstract class RecordEditContextBase<TRecord> : IEditRecord<TRecord>, IRe
 
     public void Reset()
         => this.Load(this.BaseRecord);
+
+    public IEnumerable<string> GetMessages(FieldReference? field = null)
+    => this.ValidationMessages.GetMessages(field);
+
+    public bool HasMessages(FieldReference? field)
+        => this.ValidationMessages.HasMessages(field);
+
+    public bool IsChanged(FieldReference field)
+        => this.PropertyStates.GetState(field);
+
+    public void NotifyFieldChanged(string? fieldName)
+    {
+        FieldChanged?.Invoke(null, fieldName);
+        EditStateUpdated?.Invoke(null, IsDirty);
+    }
+
+    public void NotifyValidationStateUpdated(bool state, string? fieldName)
+    {
+        var field = fieldName is null ? null : FieldReference.Create(fieldName); 
+        ValidationStateUpdated?.Invoke(null, ValidationStateEventArgs.Create(state, field));
+    }
+
+    public virtual ValidationResult Validate(string? fieldname = null)
+        => new ValidationResult { IsValid = ValidationMessages.HasMessages(), ValidationMessages = ValidationMessages, ValidationNotRun = false };
+
+    public ValidationResult Validate(FieldReference field)
+        => new ValidationResult { IsValid = ValidationMessages.HasMessages(), ValidationMessages = ValidationMessages, ValidationNotRun = false };
 
     protected bool UpdateifChangedAndNotify<TType>(ref TType currentValue, TType value, TType originalValue, string fieldName)
     {
@@ -70,16 +90,4 @@ public abstract class RecordEditContextBase<TRecord> : IEditRecord<TRecord>, IRe
 
         return hasChanged;
     }
-
-    public void NotifyFieldChanged(string? fieldName)
-    {
-        FieldChanged?.Invoke(null, fieldName);
-        EditStateUpdated?.Invoke(null, IsDirty);
-    }
-
-    public void NotifyValidationStateUpdated(bool state, string? field)
-        => ValidationStateUpdated?.Invoke(null, ValidationStateEventArgs.Create(state, field));
-
-    public virtual ValidationResult Validate(string? fieldname = null)
-        => new ValidationResult { IsValid = ValidationMessages.HasMessages(), ValidationMessages = ValidationMessages, ValidationNotRun = false };
 }

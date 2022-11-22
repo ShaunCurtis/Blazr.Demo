@@ -19,12 +19,10 @@ public interface IEditContext
 
     public bool IsNew { get; }
 
-    public bool HasMessages(FieldReference field);
+    public bool HasMessages(FieldReference? field = null);
     public bool IsChanged(FieldReference field);
 
-    public bool HasMessages(string? fieldName = null);
-
-    public IEnumerable<string> GetMessages(string? fieldName = null);
+    public IEnumerable<string> GetMessages(FieldReference? field = null);
 
     public ValidationResult Validate(string? fieldName = null);
 }

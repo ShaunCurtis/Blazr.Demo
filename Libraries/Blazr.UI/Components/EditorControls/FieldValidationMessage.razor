@@ -30,10 +30,15 @@ else if (this.Hint is not null)
     [CascadingParameter] public IEditContext RecordEditContext { get; set; } = default!;
 
     [Parameter, EditorRequired] public string? FieldName { get; set; }
+    [Parameter] public Guid? ObjectId { get; set; }
     [Parameter] public string? Hint { get; set; }
 
-    private bool hasMessages => RecordEditContext.HasMessages(this.FieldName);
-    private IEnumerable<string> messages => this.RecordEditContext.GetMessages(this.FieldName);
+    private FieldReference? Field => FieldName is null 
+        ? null 
+        : FieldReference.Create(ObjectId ?? Guid.NewGuid(), FieldName);
+
+    private bool hasMessages => RecordEditContext.HasMessages(Field);
+    private IEnumerable<string> messages => this.RecordEditContext.GetMessages(Field);
 
     protected override ValueTask<bool> OnParametersChangedAsync(bool firstRender)
     {

@@ -6,7 +6,7 @@
 
 namespace Blazr.Core.Validation;
 
-public abstract class Validator<T>
+public abstract class ValidatorBase<T>
 {
     protected readonly string fieldName = "Value";
     protected readonly T value;
@@ -15,11 +15,12 @@ public abstract class Validator<T>
     protected readonly ValidationMessageCollection validationMessages = new();
     protected readonly ValidationMessageStore? validationMessageStore;
     protected readonly object? model;
+    protected readonly Guid objectUid = Guid.Empty;
     protected readonly List<string> messages = new List<string>();
 
     public IEnumerable<string> Messages => this.messages;
 
-    public Validator(T value, string? message = null)
+    public ValidatorBase(T value, string? message = null)
     {
         this.value = value;
         this.validationState = new();
@@ -31,8 +32,9 @@ public abstract class Validator<T>
         this.model = null;
     }
 
-    public Validator(T value, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message)
+    public ValidatorBase(T value, Guid objectUid, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message)
     {
+        this.objectUid= objectUid;
         this.fieldName = fieldName;
         this.value = value;
         this.validationMessages = validationMessages;
@@ -45,7 +47,7 @@ public abstract class Validator<T>
         this.model = null;
     }
 
-    public Validator(T value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
+    public ValidatorBase(T value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
     {
         this.fieldName = fieldName;
         this.value = value;
@@ -73,7 +75,7 @@ public abstract class Validator<T>
             if (validationMessageStore is not null && model is not null)
                 this.validationMessageStore?.Add(new FieldIdentifier(this.model, this.fieldName), this.Messages);
 
-            this.validationMessages.Add(fieldName, this.Messages);
+            this.validationMessages.Add(FieldReference.Create(objectUid, fieldName), this.Messages);
         }
 
         return new ValidationResult { IsValid = validationState.IsValid, ValidationMessages = this.validationMessages, ValidationNotRun = !needToLogMessages };

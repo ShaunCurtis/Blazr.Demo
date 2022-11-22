@@ -12,7 +12,7 @@
 <UIContainer Size=BootstrapSize.Fluid>
     <UIFormRow>
         <UIColumn Columns=12 MediumColumns=6>
-            <BlazrInputControl Type="text" class="form-control" UpdateOnInput=true DisplayName="Location" FieldName="Location" @bind-Value="this.RecordContext.Location" Hint="Enter a weather forecast Location" />
+            <BlazrInputControl FieldObjectUid=this.RecordContext.InstanceId Type="text" class="form-control" UpdateOnInput=true DisplayName="Location" FieldName="Location" @bind-Value="this.RecordContext.Location" Hint="Enter a weather forecast Location" />
         </UIColumn>
     </UIFormRow>
 </UIContainer>

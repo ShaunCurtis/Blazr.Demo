@@ -20,6 +20,8 @@ public class BlazrInputBase<TValue> : UIComponentBase
 
     protected bool NoValidation;
 
+    protected FieldReference Field => FieldReference.Create(FieldObjectUid, FieldName); 
+
     protected string CssClass
         => new CSSBuilder()
         .AddClassFromAttributes(AdditionalAttributes)
@@ -27,7 +29,7 @@ public class BlazrInputBase<TValue> : UIComponentBase
         .Build();
 
     protected string ValidationCss
-        => this.RecordEditContext?.HasMessages(this.FieldName) ?? false
+        => this.RecordEditContext?.HasMessages(this.Field) ?? false
         ? "is-invalid"
         : "is-valid";
 

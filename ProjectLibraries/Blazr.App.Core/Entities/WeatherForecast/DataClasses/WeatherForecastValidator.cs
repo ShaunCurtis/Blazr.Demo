@@ -14,8 +14,10 @@ public class WeatherForecastValidator
 
         ValidationMessageCollection messages = validationMessages ?? new ValidationMessageCollection();
 
-        if (fieldname != null)
-            validationMessages?.ClearMessages(fieldname);
+        //TODO - all this needs fixing
+
+        //if (fieldname != null)
+        //    validationMessages?.ClearMessages(fieldname);
 
         //if (WeatherLocationConstants.Location.Equals(fieldname) || fieldname is null)
         //    record.Location.Validation(WeatherLocationConstants.Location, messages, validationState)

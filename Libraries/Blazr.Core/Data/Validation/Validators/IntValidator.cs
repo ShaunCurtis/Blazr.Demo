@@ -6,13 +6,13 @@
 
 namespace Blazr.Core.Validation;
 
-public class IntValidator : Validator<int>
+public class IntValidator : ValidatorBase<int>
 {
     public IntValidator(int value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message)
         : base(value, fieldName, model, validationMessageStore, validationState, message) { }
 
-    public IntValidator(int value, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message)
-    : base(value, fieldName, validationMessages, validationState, message) { }
+    public IntValidator(int value, Guid objectUid, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message)
+    : base(value, objectUid, fieldName, validationMessages, validationState, message) { }
 
     public IntValidator(int value, string? message = null)
     : base(value, message) { }
@@ -41,8 +41,8 @@ public static class IntValidatorExtensions
     public static IntValidator Validation(this int value, string? message = null)
         => new IntValidator(value, message);
 
-    public static IntValidator Validation(this int value, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message = null)
-        => new IntValidator(value, fieldName, validationMessages, validationState, message);
+    public static IntValidator Validation(this int value, Guid objectUid, string fieldName, ValidationMessageCollection validationMessages, ValidationState validationState, string? message = null)
+        => new IntValidator(value, objectUid, fieldName, validationMessages, validationState, message);
 
     public static IntValidator Validation(this int value, string fieldName, object model, ValidationMessageStore? validationMessageStore, ValidationState validationState, string? message = null)
         => new IntValidator(value, fieldName, model, validationMessageStore, validationState, message);

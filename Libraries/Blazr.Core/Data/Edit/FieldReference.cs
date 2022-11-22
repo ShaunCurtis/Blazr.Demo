@@ -8,15 +8,12 @@ namespace Blazr.Core.Edit;
 
 public record FieldReference
 {
-    public Guid ObjectUid { get; init; }
-    public string FieldName { get; init; }
-
-    public FieldReference(Guid objectUid, string fieldName)
-    {
-        this.ObjectUid = objectUid;
-        this.FieldName = fieldName;
-    }
+    public Guid ObjectUid { get; init; } = Guid.Empty;
+    public required string FieldName { get; init; }
 
     public static FieldReference Create(Guid objectUid, string fieldName)
-        => new(objectUid, fieldName);
+        =>  new FieldReference { ObjectUid = objectUid, FieldName= fieldName };
+
+    public static FieldReference Create(string fieldName)
+        => new FieldReference { ObjectUid = Guid.Empty, FieldName = fieldName };
 }
