@@ -3,11 +3,15 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-
 using Blazr.Core.Validation;
 
 namespace Blazr.Core.Edit;
 
+/// <summary>
+/// Base abstact class for Record edit context implementations that implement
+/// most of the boilerplate code
+/// </summary>
+/// <typeparam name="TRecord"></typeparam>
 public abstract class RecordEditContextBase<TRecord> : IRecordEditContext<TRecord>, IEditContext, IValidationContext
     where TRecord : class, new()
 {
@@ -57,9 +61,6 @@ public abstract class RecordEditContextBase<TRecord> : IRecordEditContext<TRecor
 
     public void NotifyValidationStateUpdated(bool state, FieldReference? field)
         => ValidationStateUpdated?.Invoke(null, ValidationStateEventArgs.Create(state, field));
-
-    public virtual ValidationResult Validate(string? fieldname = null)
-        => new ValidationResult { IsValid = ValidationMessages.HasMessages(), ValidationMessages = ValidationMessages, ValidationNotRun = false };
 
     public virtual ValidationResult Validate(FieldReference? field)
         => new ValidationResult { IsValid = ValidationMessages.HasMessages(), ValidationMessages = ValidationMessages, ValidationNotRun = false };

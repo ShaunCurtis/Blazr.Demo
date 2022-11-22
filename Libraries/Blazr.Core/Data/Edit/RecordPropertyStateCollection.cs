@@ -6,6 +6,10 @@
 
 namespace Blazr.Core.Edit;
 
+/// <summary>
+/// The PropertyStateCollection is a IEnumerable custom collection used to manage
+/// state information.  Any field (represented by a `FieldReference` object) in the collection, is dirty.
+/// </summary>
 public class PropertyStateCollection : IEnumerable<FieldReference>
 {
     private readonly List<FieldReference> _states = new List<FieldReference>();

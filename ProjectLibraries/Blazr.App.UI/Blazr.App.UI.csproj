@@ -25,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\Blazr.Routing\Blazr.Routing.csproj" />
     <ProjectReference Include="..\..\Libraries\Blazr.UI.Bootstrap\Blazr.UI.Bootstrap.csproj" />
     <ProjectReference Include="..\..\Libraries\Blazr.UI\Blazr.UI.csproj" />
     <ProjectReference Include="..\Blazr.App.Core\Blazr.App.Core.csproj" />

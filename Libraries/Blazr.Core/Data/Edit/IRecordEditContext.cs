@@ -3,23 +3,17 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-
-using Blazr.Core.Validation;
-
 namespace Blazr.Core.Edit;
 
+/// <summary>
+/// The purpose of IRecordEditContext is to define the Record specific properties and methods
+/// that Record edit contexts must implement for genric edit form base classes to interact with them. 
+/// </summary>
+/// <typeparam name="TRecord">Base data record for the context</typeparam>
 public interface IRecordEditContext<TRecord> : IEditContext
     where TRecord : class, new()
 {
-    //public event EventHandler<ValidationStateEventArgs>? ValidationStateUpdated;
-    //public event EventHandler<string?>? FieldChanged;
-    //public Guid Uid { get; set; }
-
     public TRecord Record { get; }
-
-    //public bool IsDirty { get; }
-
-    //public bool IsNew { get; }
 
     public void Load(TRecord record, bool notify = true);
 
@@ -28,10 +22,4 @@ public interface IRecordEditContext<TRecord> : IEditContext
     public TRecord AsNewRecord();
 
     public void Reset();
-
-    //public bool HasMessages(string? fieldName = null);
-
-    //public IEnumerable<string> GetMessages(string? fieldName = null);
-
-    //public ValidationResult Validate(string? fieldName = null);
 }

@@ -6,6 +6,10 @@
 
 namespace Blazr.Core.Edit;
 
+/// <summary>
+/// An object to define a specific property in an instance of a Record edit context
+/// It uses a guid instead of an instance of the record to abstract the context object.
+/// </summary>
 public record FieldReference
 {
     public Guid ObjectUid { get; init; } = Guid.Empty;

@@ -30,12 +30,12 @@ else if (this.Hint is not null)
     [CascadingParameter] public IEditContext RecordEditContext { get; set; } = default!;
 
     [Parameter, EditorRequired] public string? FieldName { get; set; }
-    [Parameter] public Guid? ObjectId { get; set; }
+    [Parameter] public Guid? FieldObjectUid { get; set; }
     [Parameter] public string? Hint { get; set; }
 
     private FieldReference? Field => FieldName is null 
         ? null 
-        : FieldReference.Create(ObjectId ?? Guid.NewGuid(), FieldName);
+        : FieldReference.Create(FieldObjectUid ?? Guid.NewGuid(), FieldName);
 
     private bool hasMessages => RecordEditContext.HasMessages(Field);
     private IEnumerable<string> messages => this.RecordEditContext.GetMessages(Field);
@@ -54,7 +54,7 @@ else if (this.Hint is not null)
 
     private void OnValidationStateUpdated(object? sender, ValidationStateEventArgs e)
     {
-        if (e.Field is null || e.Field.Equals(FieldName))
+        if (e.Field is null || e.Field.FieldName.Equals(FieldName))
             this.StateHasChanged();
     }
 
