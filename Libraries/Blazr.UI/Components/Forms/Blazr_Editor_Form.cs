@@ -11,9 +11,6 @@ public abstract partial class Blazr_Editor_Form<TEditContext, TRecord, TEntity>
         where TEntity : class, IEntity
         where TRecord : class, new()
 {
-    [Inject] private IBlazrNavigationManager _blazrNavManager { get; set; } = default!;
-
-    protected BlazrNavigationManager? blazrNavManager => _blazrNavManager as BlazrNavigationManager;
     protected readonly BlazrFormMessage FormMessage = new();
     protected bool isConfirmDelete = false;
     protected IContextEditService<TEditContext, TRecord> Service = default!;
@@ -40,11 +37,6 @@ public abstract partial class Blazr_Editor_Form<TEditContext, TRecord, TEntity>
         if (!string.IsNullOrWhiteSpace(this.EntityUIService.SingleTitle))
             this.FormTitle = $"{this.EntityUIService.SingleTitle} Editor";
 
-        if (this.blazrNavManager is not null)
-        {
-            this.blazrNavManager.BrowserExitAttempted += OnFailedExitAttempt;
-            this.blazrNavManager.NavigationEventBlocked += OnFailedRoutingAttempt;
-        }
 
         this.LoadState = ComponentState.Loaded;
         await base.SetParametersAsync(ParameterView.Empty);
@@ -120,12 +112,5 @@ public abstract partial class Blazr_Editor_Form<TEditContext, TRecord, TEntity>
     {
         if (this.Service is not null)
             this.Service.EditModel.FieldChanged -= OnFieldChanged;
-
-        if (this.blazrNavManager is not null)
-        {
-            this.blazrNavManager.BrowserExitAttempted -= OnFailedExitAttempt;
-            this.blazrNavManager.NavigationEventBlocked -= OnFailedRoutingAttempt;
-        }
-
     }
 }

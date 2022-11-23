@@ -55,8 +55,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WIP", "WIP", "{EF828804-D17
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3E77B16E-3B41-4F07-BE27-DF20625EA9B3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Tests", "..\Blazr.Demo.EditForm\Tests\Blazr.App.Tests\Blazr.App.Tests.csproj", "{AC45E8B0-89CA-44EE-8CB5-EFA91A1191D3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Routing", "Libraries\Blazr.Routing\Blazr.Routing.csproj", "{538B9240-B4B6-4726-8A8C-1E25271B0C50}"
 EndProject
 Global
