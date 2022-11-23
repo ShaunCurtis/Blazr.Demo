@@ -13,8 +13,7 @@ public static class WeatherLocationServiceCollection
         services.AddScoped<INotificationService<WeatherLocationEntity>, StandardNotificationService<WeatherLocationEntity>>();
         services.AddScoped<IListService<DboWeatherLocation, WeatherLocationEntity>, StandardListService<DboWeatherLocation, WeatherLocationEntity>>();
         services.AddScoped<IReadService<DboWeatherLocation, WeatherLocationEntity>, StandardReadService<DboWeatherLocation, WeatherLocationEntity>>();
-        services.AddScoped<IEditService<DboWeatherLocation, WeatherLocationEditContext, WeatherLocationEntity>, StandardEditService<DboWeatherLocation, WeatherLocationEditContext, WeatherLocationEntity>>();
-        //services.AddScoped<IContextEditService<WeatherLocationEditContext, DboWeatherLocation>, StandardEditContextService<WeatherLocationEditContext, DboWeatherLocation, WeatherLocationEntity>>();
+        services.AddScoped<IEditService<WeatherLocationEditContext, DboWeatherLocation>, StandardEditService<WeatherLocationEditContext, DboWeatherLocation, WeatherLocationEntity>>();
         services.AddScoped<IForeignKeyService<FkWeatherLocation, WeatherLocationEntity>, StandardForeignKeyService<FkWeatherLocation, WeatherLocationEntity>>();
         services.AddScoped<IEntityService<WeatherLocationEntity>, WeatherLocationService>();
     }

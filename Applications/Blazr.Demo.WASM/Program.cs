@@ -1,7 +1,6 @@
 using Blazr.App.Core;
 using Blazr.App.Infrastructure;
 using Blazr.App.UI;
-using Blazr.Routing;
 using Blazr.UI;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -14,7 +13,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 var Services = builder.Services;
 {
-    Services.AddBlazrNavigationManager();
     Services.AddAppAuthServices();
     //TODO - fix
     //Services.AddWeatherAppWASMDataServices();

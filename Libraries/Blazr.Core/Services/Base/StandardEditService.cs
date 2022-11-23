@@ -7,23 +7,36 @@ using Microsoft.AspNetCore.Components;
 
 namespace Blazr.Core;
 
-public class StandardEditService<TRecord, TEditRecord, TEntity>
-    : BaseViewService<TRecord, TEntity>, IEditService<TRecord, TEditRecord, TEntity>
+public class StandardEditService<TEditContext, TRecord, TEntity>
+    : BaseViewService<TRecord, TEntity>,
+        IEditService<TEditContext, TRecord>
     where TRecord : class, new()
-    where TEditRecord : class, IRecordEditContext<TRecord>, new()
+    where TEditContext : class, IRecordEditContext<TRecord>, IEditContext, new()
     where TEntity : class, IEntity
 {
-    public TEditRecord EditModel { get; private set; } = new TEditRecord();
+    public IRecordEditContext<TRecord> EditModel { get; private set; } = new TEditContext();
 
     public StandardEditService(ICQSDataBroker dataBroker, INotificationService<TEntity> notifier, AuthenticationStateProvider authenticationState, IAuthorizationService authorizationService, NavigationManager navigationManager)
         : base(dataBroker, notifier, authenticationState, authorizationService, navigationManager)
     { }
 
-    public async ValueTask<bool> LoadRecordAsync(Guid Id)
+    public ValueTask<bool> LoadRecordAsync(Guid Id)
+        => loadRecordAsync(Id);
+
+    public ValueTask<CommandResult> AddRecordAsync()
+        => addRecordAsync();
+
+    public ValueTask<CommandResult> UpdateRecordAsync()
+       => updateRecordAsync();
+
+    public ValueTask<CommandResult> DeleteRecordAsync()
+       => deleteRecordAsync();
+
+    private async ValueTask<bool> loadRecordAsync(Guid Id)
     {
         if (Id == Guid.Empty)
         {
-            await GetNewEditRecordAsync(null);
+            this.EditModel.Load(new TRecord());
             return true;
         }
 
@@ -46,96 +59,74 @@ public class StandardEditService<TRecord, TEditRecord, TEntity>
         return haveAuthorizedRecord;
     }
 
-    public ValueTask<bool> GetNewEditRecordAsync(TRecord? record)
+    private async ValueTask<CommandResult> addRecordAsync()
     {
-        this.EditModel.Load(record ?? new TRecord());
-        return ValueTask.FromResult(true);
-    }
 
-    public async ValueTask<bool> AddRecordAsync()
-    {
+        if (!this.EditModel.Validate().IsValid)
+            return CommandResult.Failure("There are validation problems");
+
         this.Message = string.Empty;
 
         if (!await this.CheckAuthorization(this.AddPolicy))
-        {
-            this.Message = "You are not authorized to add a record";
-            return false;
-        }
+            return CommandResult.Failure("You don't have permission to update the Record");
 
         if (!EditModel.IsNew)
-        {
-            this.Message = "You can't add an existing record";
-            return false;
-        }
+            return CommandResult.Failure("You can't add an existing record");
 
         var record = EditModel.AsNewRecord();
         var command = AddRecordCommand<TRecord>.GetCommand(record);
         var result = await this.DataBroker.ExecuteAsync<TRecord>(command);
 
-        if (result.Success)
-        {
-            this.EditModel.Load(record);
-            this.NotifyChange(EditModel.Uid);
-        }
+        if (!result.Success)
+            return result;
 
-        this.Message = result.Success
-            ? String.Empty
-            : "Failed to add the record";
-
-        return result.Success;
+        this.EditModel.Load(record);
+        this.NotifyChange(EditModel.Uid);
+        return CommandResult.Successful("Record Added");
     }
 
-    public async ValueTask<bool> UpdateRecordAsync()
+
+    private async ValueTask<CommandResult> updateRecordAsync()
     {
-        var record = EditModel.Record;
+        if (!this.EditModel.Validate().IsValid)
+            return CommandResult.Failure("There are validation problems");
 
         if (!await this.CheckRecordAuthorization(this.EditModel.CleanRecord, this.EditPolicy))
-            return false;
+            return CommandResult.Failure("You don't have permission to update the Record");
 
-        var command = UpdateRecordCommand<TRecord>.GetCommand(record);
+        var record = EditModel.Record;
+
+        var command = UpdateRecordCommand<TRecord>.GetCommand(this.EditModel.Record);
         var result = await this.DataBroker.ExecuteAsync<TRecord>(command);
 
-        if (result.Success)
-        {
-            this.EditModel.Load(record);
-            this.NotifyChange(EditModel.Uid);
-        }
+        if (!result.Success)
+            return result;
 
-        this.Message = result.Success
-            ? String.Empty
-            : "Failed to update the record";
-
-        return result.Success;
+        this.EditModel.Load(record);
+        this.NotifyChange(EditModel.Uid);
+        return CommandResult.Successful("Record Saved");
     }
 
-    public async ValueTask<bool> DeleteRecordAsync()
+    private async ValueTask<CommandResult> deleteRecordAsync()
     {
         var record = EditModel.CleanRecord;
         var id = EditModel.Uid;
 
         if (id == Guid.Empty)
-        {
-            this.Message = "No record to delete";
-            return false;
-        }
+            return CommandResult.Failure("No record to delete");
 
         if (!await this.CheckRecordAuthorization(record, this.DeletePolicy))
-            return false;
+            return CommandResult.Failure("You don't have permission to delete the Record");
 
         var command = DeleteRecordCommand<TRecord>.GetCommand(record);
         var result = await this.DataBroker.ExecuteAsync<TRecord>(command);
 
-        if (result.Success)
-        {
-            this.EditModel.Load(new TRecord());
-            this.NotifyChange(id);
-        }
+        if (!result.Success)
+            return result;
 
-        this.Message = result.Success
-            ? string.Empty
-            : result.Message;
-
-        return result.Success;
+        this.EditModel.Load(new TRecord());
+        this.NotifyChange(id);
+        return CommandResult.Successful("Record deleted");
     }
 
     private void NotifyChange(Guid? Uid = null)

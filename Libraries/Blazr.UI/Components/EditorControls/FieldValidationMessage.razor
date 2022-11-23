@@ -19,34 +19,43 @@
         }
     </div>
 }
-else if (this.Hint is not null)
+else if (this.isChanged)
 {
     <div class="valid-feedback">
+        @this.ValidMessage
+    </div>
+}
+else
+{
+    <div class="hint-feedback">
         @this.Hint
     </div>
 }
 
+
 @code {
-    [CascadingParameter] public IEditContext RecordEditContext { get; set; } = default!;
+    [CascadingParameter] public IEditContext editContext { get; set; } = default!;
 
     [Parameter, EditorRequired] public string? FieldName { get; set; }
     [Parameter] public Guid? FieldObjectUid { get; set; }
-    [Parameter] public string? Hint { get; set; }
+    [Parameter] public string Hint { get; set; } = "Enter a value.";
+    [Parameter] public string ValidMessage { get; set; } = $"The value is valid";
 
     private FieldReference? Field => FieldName is null 
         ? null 
         : FieldReference.Create(FieldObjectUid ?? Guid.NewGuid(), FieldName);
 
-    private bool hasMessages => RecordEditContext.HasMessages(Field);
-    private IEnumerable<string> messages => this.RecordEditContext.GetMessages(Field);
+    private bool isChanged => this.Field is not null && this.editContext.IsChanged(this.Field);
+    private bool hasMessages => editContext.HasMessages(Field);
+    private IEnumerable<string> messages => this.editContext.GetMessages(Field);
 
     protected override ValueTask<bool> OnParametersChangedAsync(bool firstRender)
     {
         if (firstRender) {
-            if (RecordEditContext is null)
+            if (editContext is null)
                 throw new NullReferenceException($"{this.GetType().Name} requires a cascaded IEditContext");
 
-            RecordEditContext.ValidationStateUpdated += this.OnValidationStateUpdated;
+            editContext.ValidationStateUpdated += this.OnValidationStateUpdated;
         }
 
         return ValueTask.FromResult(true);
@@ -59,5 +68,5 @@ else if (this.Hint is not null)
     }
 
     public void Dispose()
-        => RecordEditContext.ValidationStateUpdated -= this.OnValidationStateUpdated;
+        => editContext.ValidationStateUpdated -= this.OnValidationStateUpdated;
 }

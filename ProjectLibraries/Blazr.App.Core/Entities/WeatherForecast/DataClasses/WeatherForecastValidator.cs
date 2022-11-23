@@ -23,7 +23,7 @@ public class WeatherForecastValidator
 
         if (field is null || WeatherForecastConstants.Date.Equals(field.FieldName))
             record.Date.Validation(propertyField, messages, validationState)
-            .GreaterThan(DateOnly.FromDateTime(DateTime.Now), true, "The weather forecast must be for a future date")
+                .GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.Now), true, "The weather forecast must be for a future date")
             .Validate(field);
 
         propertyField = field ?? FieldReference.Create(WeatherForecastConstants.SummaryId);

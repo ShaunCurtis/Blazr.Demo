@@ -1,7 +1,6 @@
 using Blazr.App.Core;
 using Blazr.App.Infrastructure;
 using Blazr.App.UI;
-using Blazr.Routing;
 using Blazr.UI;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -15,8 +14,6 @@ var builder = WebApplication.CreateBuilder(args);
         Services.AddRazorPages();
         Services.AddServerSideBlazor();
         Services.AddControllersWithViews();
-
-        Services.AddBlazrNavigationManager();
 
         Services.AddAuthentication();
         Services.AddAuthorization();

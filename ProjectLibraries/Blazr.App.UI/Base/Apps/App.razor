@@ -2,7 +2,7 @@
 @inject ModalService ModalService
 @using Blazr.UI.Bootstap
 
-<BlazrRouter AppAssembly="@typeof(App).Assembly">
+<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
@@ -13,6 +13,6 @@
             <p role="alert">Sorry, there's nothing at this address.</p>
         </LayoutView>
     </NotFound>
-</BlazrRouter>
+</Router>
 
 <BsModalDialog @ref="this.ModalService.ModalDialog"></BsModalDialog>

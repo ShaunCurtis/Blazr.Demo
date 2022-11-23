@@ -10,7 +10,7 @@
 @typeparam TEditContext where TEditContext : class, IEditContext, IRecordEditContext<TRecord>, new()
 @typeparam TRecord where TRecord : class, new()
 @typeparam TEntity where TEntity  : class, IEntity
-@inherits Blazr_Editor_Form<TEditContext, TRecord, TEntity>
+@inherits BlazrEditorForm<TEditContext, TRecord, TEntity>
 
 @*
 // The template for all the edit froms is defined in the TemplateContent render fragment
@@ -24,6 +24,7 @@
     // The template content
     protected override RenderFragment? TemplatedContent => __builder =>
       {
+          <NavigationLock ConfirmExternalNavigation=this.IsDirty />
           <CascadingAuthenticationState>
               <UIContainer Size=BootstrapSize.Fluid class="m-2 border-danger">
                   <UILoader State="this.LoadState">
@@ -36,10 +37,10 @@
                   </UILoader>
                   <UIContainer class="mb-4" Size=BootstrapSize.Fluid>
                       <UIFormRow>
-                          <UIColumn Columns=12 MediumColumns=7 class="">
+                          <UIColumn Columns=12 LargeColumns=4 class="">
                               <UIAlertMessage AlertColour="@this.FormMessage.alertColour" Hidden=this.IsDirty Message="@this.FormMessage.alertMessage" />
                           </UIColumn>
-                          <UIColumn Columns=12 MediumColumns=5 class="text-end text-right">
+                          <UIColumn Columns=12 LargeColumns=8 class="text-end text-right">
                               <UIButton ButtonType=UIButtonType.Warning Hidden="!this.IsDirty && this.IsNew" ClickEvent="this.ResetRecord">
                                   Reset Fields
                               </UIButton>
