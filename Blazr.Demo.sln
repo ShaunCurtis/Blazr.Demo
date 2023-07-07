@@ -63,6 +63,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lists", "Lists", "{3416A04A
 		Notes\Lists\Lists-in-the-UI.md = Notes\Lists\Lists-in-the-UI.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{A2A1F4A1-6A70-4C47-BC18-C10977BB7E6D}"
+	ProjectSection(SolutionItems) = preProject
+		Notes\Components\Base-Components.md = Notes\Components\Base-Components.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -137,6 +142,7 @@ Global
 		{E828B3D5-D907-4466-9847-38B3A4257128} = {7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}
 		{6A95252C-4B3E-473A-953F-16929B064A64} = {7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}
 		{3416A04A-864D-46C1-AC05-E304501FA288} = {7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}
+		{A2A1F4A1-6A70-4C47-BC18-C10977BB7E6D} = {7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {990115E5-5129-41F0-AACF-598505F1FD10}
