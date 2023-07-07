@@ -1,0 +1,50 @@
+﻿@namespace Blazr.App.UI
+@inject IForeignKeyPresenter<ProductFkItem, ProductEntityService> ProductFKPresenter
+@inherits EditorFormBase<InvoiceItem, InvoiceItemEditContext, InvoiceEntityService, InvoiceItemValidator>
+
+<div class="row">
+
+    <BlazrSelectControl class="form-select"
+                        Label="Product"
+                        ColumnCss="col-12 col-lg-6 mb-2"
+                        @bind-Value:get=context.ProductUid
+                        @bind-Value:set=this.SetProductData
+                        DisplayOptionsItems=this.ProductFKPresenter.Items
+                        OptionValueDelegate="(item) => item.Uid.ToString()"
+                        OptionTextDelegate="(item) => item.Name"
+                        PlaceholderText="Select a Product" />
+
+    <BlazrNumberControl class="form-control"
+                        ColumnCss="col-12 col-lg-6 mb-2"
+                        Label="Quantity"
+                        @bind-Value=context.ItemQuantity />
+
+</div>
+
+@code {
+    private InvoiceItemEditContext context => this.Presenter.RecordContext;
+
+    public InvoiceItemEditForm()
+    {
+        this.editFormButtonsOptions = new();
+        this.LockNavigation = false;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        await this.ProductFKPresenter.LoadTask;
+    }
+
+    private void SetProductData(Guid? value)
+    {
+        this.Presenter.RecordContext.ProductUid = value;
+        var product = ProductFKPresenter.Items.FirstOrDefault(item => item.Uid == value);
+        if (product is not null && product is ProductFkItem fkItem)
+        {
+            context.ProductName = fkItem.Name;
+            context.ProductCode = fkItem.ProductCode;
+            context.ItemUnitPrice = fkItem.ItemUnitPrice;
+        }
+    }
+}

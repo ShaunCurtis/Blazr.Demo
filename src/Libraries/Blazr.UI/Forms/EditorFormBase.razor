@@ -1,0 +1,60 @@
+﻿@namespace Blazr.UI
+@using FluentValidation
+
+@typeparam TRecord where TRecord : class, IStateEntity, IGuidIdentity, new()
+@typeparam TEditContext where TEditContext : class, IBlazrRecordEditContext<TRecord>, new()
+@typeparam TEntityService where TEntityService : class, IEntityService
+@typeparam TRecordValidator where TRecordValidator : class, IValidator<TEditContext>, new()
+@inherits BlazrControlBase
+
+@code {
+    protected string FormTitle => $"{this.UIEntityService.SingleDisplayName} Editor";
+
+    protected override RenderFragment Frame => (__builder) =>
+    {
+        <PageTitle>@this.FormTitle</PageTitle>
+
+        @this.HeaderContent
+
+        <EditForm EditContext=this.Presenter.EditContext OnValidSubmit=this.OnSave>
+
+            @this.FormControlContent
+
+            @this.Body
+
+            @this.ActionsContent
+
+        </EditForm>
+    };
+
+    protected virtual RenderFragment? HeaderButtonContent { get; }
+
+    protected virtual RenderFragment HeaderContent => (__builder) =>
+    {
+        <div class="d-flex flex-row mb-4 pt-1 pb-2 border-bottom">
+            <div class="flex-fill justify-content-start">
+                <span class="h3">@this.FormTitle</span>
+            </div>
+            <div class="justify-content-end">
+                @this.HeaderButtonContent
+            </div>
+        </div>
+    };
+
+    protected virtual RenderFragment ActionsContent => (__builder) =>
+    {
+        <EditFormButtons SaveOnSubmit
+                 ColumnCss="col-12 mb-3 text-end"
+                 Options=this.editFormButtonsOptions
+                 DirtyExit=this.OnExit
+                 Exit=this.OnExit
+                 IsNewRecord=this.IsNewRecord
+                 Reset=this.OnReset />
+    };
+
+    protected virtual RenderFragment FormControlContent => (__builder) =>
+    {
+        <BlazrValidator TRecord=TEditContext TValidator=TRecordValidator />
+        <BlazrEditStateTracker LockNavigation=this.LockNavigation />
+    };
+}

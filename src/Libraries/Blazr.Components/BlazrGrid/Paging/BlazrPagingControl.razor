@@ -1,0 +1,46 @@
+﻿@*
+    /// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================
+*@
+
+@typeparam TRecord where TRecord : class, new()
+@namespace Blazr.Components
+@inherits BlazrPagingControlBase<TRecord>
+
+@if (this.hasPages)
+{
+    <div class="row">
+        <div class="col-auto">
+
+            @if (this.AreBlocks)
+            {
+                <div class="btn-group me-1" role="group" aria-label="Move Back Buttons">
+                    <button type="button" class="btn btn-sm btn-dark" @onclick="() => this.MoveBlockAsync(int.MinValue)">|&lt;</button>
+                    <button type="button" class="btn btn-sm btn-dark" @onclick="() => this.MoveBlockAsync(-1)">&lt;&lt;</button>
+                </div>
+            }
+            <div class="btn-group" role="group" aria-label="Page Buttons">
+                @for (int page = this.BlockStartPage; page <= this.BlockEndPage; page++)
+                {
+                    var pageno = page;
+                    var viewpageno = page + 1;
+                    <button type="button" class="btn btn-sm @GetCss(pageno)" @onclick="() => this.GotToPageAsync(pageno)">@viewpageno</button>
+                }
+            </div>
+            @if (this.AreBlocks)
+            {
+                <div class="btn-group ms-1" role="group" aria-label="Move Forward Buttons">
+                    <button type="button" class="btn btn-sm btn-dark" @onclick="() => this.MoveBlockAsync(1)">&gt;&gt;</button>
+                    <button type="button" class="btn btn-sm btn-dark" @onclick="() => this.MoveBlockAsync(int.MaxValue)">&gt;|</button>
+                </div>
+            }
+        </div>
+        @if (this.ShowPageOf)
+        {
+            <div class="mx-2 col-auto">Page @this.DisplayPage of @this.LastDisplayPage</div>
+        }
+    </div>
+}

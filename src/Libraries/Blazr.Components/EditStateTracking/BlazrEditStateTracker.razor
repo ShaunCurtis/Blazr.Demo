@@ -1,0 +1,57 @@
+﻿@namespace Blazr.Components
+@inherits BlazrControlBase
+@inject NavigationManager NavManager
+@implements IDisposable
+
+@if (this.LockNavigation)
+{
+    <NavigationLock OnBeforeInternalNavigation=this.OnLocationChanged ConfirmExternalNavigation=_isDirty />
+}
+
+@code {
+    [CascadingParameter] private EditContext _editContext { get; set; } = default!;
+    [Parameter] public bool LockNavigation { get; set; }
+    [Parameter] public EventCallback<bool> EditStateChanged { get; set; }
+
+    private BlazrEditStateStore _store = default!;
+    private bool _currentIsDirty = false;
+    private bool _isDirty => _store.IsDirty();
+
+    protected override Task OnParametersSetAsync()
+    {
+        if(this.NotInitialized)
+        {
+            ArgumentNullException.ThrowIfNull(_editContext);
+
+            _store = new(_editContext);
+            ArgumentNullException.ThrowIfNull(_store);
+
+            _editContext.Properties[BlazrEditContextExtensions.EditStateStoreName] = _store;
+            _editContext.OnFieldChanged += OnFieldChanged;
+
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private void OnFieldChanged(object? sender, FieldChangedEventArgs e)
+    {
+        _store.Update(e);
+
+        if (_isDirty != _currentIsDirty)
+        {
+            _currentIsDirty = _isDirty;
+            this.EditStateChanged.InvokeAsync(_isDirty);
+        }
+        this.StateHasChanged();
+    }
+
+    private void OnLocationChanged(LocationChangingContext context)
+    {
+        if (_isDirty)
+            context.PreventNavigation();
+    }
+
+    public void Dispose()
+        => _editContext.OnFieldChanged -= OnFieldChanged;
+}

@@ -1,0 +1,33 @@
+﻿@*
+/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================
+*@
+
+@namespace Blazr.Components.Editor
+@inherits InputText
+
+@if (UpdateOnInput)
+{
+    <input class="@this.CssClass"
+           type="text"
+           value="@this.CurrentValueAsString"
+       @oninput="(value) => CurrentValueAsString = value?.Value?.ToString() ?? null"
+       @attributes=this.AdditionalAttributes
+       @ref=this.Element />
+}
+else
+{
+    <input class="@this.CssClass"
+           type="text"
+           value="@this.CurrentValueAsString"
+       @onchange="(value) => CurrentValueAsString = value?.Value?.ToString() ?? null"
+       @attributes=this.AdditionalAttributes
+       @ref=this.Element />
+}
+
+@code {
+    [Parameter] public bool UpdateOnInput { get; set; }
+}

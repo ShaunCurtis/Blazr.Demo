@@ -1,0 +1,40 @@
+﻿@namespace Blazr.UI
+@typeparam TRecord where TRecord : class, new()
+@typeparam TEntityService where TEntityService : class, IEntityService
+@inherits BlazrControlBase
+
+@code {
+    protected string FormTitle => $"{this.UIEntityService.SingleDisplayName} Viewer";
+
+    protected override RenderFragment Frame => (__builder) =>
+    {
+        <PageTitle>@this.FormTitle</PageTitle>
+        @this.HeaderContent
+        @this.Body
+        @this.ActionBarContent
+    };
+
+
+    protected virtual RenderFragment HeaderContent => (__builder) =>
+    {
+        <div class="d-flex flex-row mb-4 pt-1 pb-2 border-bottom">
+            <div class="flex-fill justify-content-start">
+                <span class="h3">@this.FormTitle</span>
+            </div>
+            <div class="justify-content-end">
+                @this.HeaderButtonContent
+            </div>
+        </div>
+    };
+
+    protected virtual RenderFragment? HeaderButtonContent { get; }
+
+    protected virtual RenderFragment ActionBarContent => (__builder) =>
+    {
+        <div class="row">
+            <div class="col-12 text-end">
+                <UIButton ButtonColourType=UIButtonColourType.Exit ClickEvent=this.OnExit>Exit</UIButton>
+            </div>
+        </div>
+    };
+}

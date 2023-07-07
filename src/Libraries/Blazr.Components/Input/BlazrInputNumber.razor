@@ -1,0 +1,34 @@
+﻿@*
+/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================
+*@
+
+@typeparam TValue
+@namespace Blazr.Components.Editor
+@inherits InputNumber<TValue>
+
+@if (UpdateOnInput)
+{
+    <input class="@this.CssClass"
+           type="number"
+           value="@this.CurrentValueAsString"
+       @oninput="(value) => CurrentValueAsString = value?.Value?.ToString() ?? null"
+       @attributes=this.AdditionalAttributes
+       @ref=this.Element />
+}
+else
+{
+    <input class="@this.CssClass"
+           type="number"
+           value="@this.CurrentValueAsString"
+       @onchange="(value) => CurrentValueAsString = value?.Value?.ToString() ?? null"
+       @attributes=this.AdditionalAttributes
+       @ref=this.Element />
+}
+
+@code {
+    [Parameter] public bool UpdateOnInput { get; set; }
+}

@@ -1,0 +1,32 @@
+﻿@*
+============================================================
+   Author: Shaun Curtis, Cold Elm Coders
+   License: Use And Donate
+   If you use it, donate something to a charity somewhere
+============================================================
+*@
+
+@namespace Blazr.Components
+
+<div class="@MessageCss">
+    @this.Message
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-success" @onclick=this.OnCancel>Cancel</button>
+    <button type="button" class="btn btn-sm btn-danger" @onclick=this.OnConfirm>Confirm</button>
+</div>
+
+@code {
+    [CascadingParameter] private IModalDialog _modalDialog { get; set; } = default!;
+    [Parameter] public string Message { get; set; } = "Are You Sure?";
+    [Parameter] public string MessageCss { get; set; } = "p-2 m-2 fw-bold";
+
+    protected override void OnInitialized()
+        => ArgumentNullException.ThrowIfNull(_modalDialog);
+
+    private void OnCancel()
+        => _modalDialog.Close(ModalResult.Cancel());
+
+    private void OnConfirm()
+        => _modalDialog.Close(ModalResult.OK());
+}

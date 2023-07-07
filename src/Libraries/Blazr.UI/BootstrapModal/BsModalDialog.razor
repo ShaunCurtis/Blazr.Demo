@@ -1,0 +1,30 @@
+﻿@*
+    /// ============================================================
+    /// Author: Shaun Curtis, Cold Elm Coders
+    /// License: Use And Donate
+    /// If you use it, donate something to a charity somewhere
+    /// ============================================================
+*@
+
+@namespace Blazr.UI
+@inherits ModalDialogBase
+@implements IModalDialog
+
+@if (this.Display)
+{
+    <CascadingValue Value="(IModalDialog)this">
+        <div class="modal fade show" style="display:block; background-color: rgb(0,0,0,0.6)" tabindex="-1">
+            <div class="@modalSize">
+                <div class="modal-content">
+                    <div class="modal-body p-3">
+                        <DynamicComponent Type=this.ModalContentType Parameters=this.Options.ControlParameters />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </CascadingValue>
+}
+
+@code {
+    protected string modalSize => (this.Options as BSModalOptions ?? new()).ModalSize;
+}

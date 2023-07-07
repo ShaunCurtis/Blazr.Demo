@@ -1,0 +1,43 @@
+﻿@namespace Blazr.App.UI
+@inject IForeignKeyPresenter<CustomerFkItem, CustomerEntityService> CustomerFKPresenter
+@inherits EditorFormBase<Invoice, InvoiceEditContext, InvoiceEntityService, InvoiceValidator>
+
+<div class="row">
+
+    <BlazrDateControl class="form-control"
+                      ColumnCss="col-12 col-lg-6 mb-2"
+                      Label="Date"
+                      @bind-Value=this.Presenter.RecordContext.InvoiceDate />
+
+    <BlazrSelectControl class="form-select"
+                        Label="Customer"
+                        ColumnCss="col-12 col-lg-6 mb-2"
+                        @bind-Value:get=this.Presenter.RecordContext.CustomerUid
+                        @bind-Value:set=this.SetCustomerUid
+                        DisplayOptionsItems=this.CustomerFKPresenter.Items
+                        OptionValueDelegate="(item) => item.Uid.ToString()"
+                        OptionTextDelegate="(item) => item.Name"
+                        PlaceholderText="Select a Customer" />
+
+</div>
+
+@code {
+    public InvoiceEditForm()
+    {
+        this.editFormButtonsOptions = new();
+        this.LockNavigation = false;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        await this.CustomerFKPresenter.LoadTask;
+    }
+
+    private void SetCustomerUid(Guid value)
+    {
+        this.Presenter.RecordContext.CustomerUid = value;
+        var customer = CustomerFKPresenter.Items.FirstOrDefault(item => item.Uid == value);
+        this.Presenter.RecordContext.CustomerName = customer?.Name ?? "Not Set";
+    }
+}

@@ -1,0 +1,14 @@
+﻿@namespace Blazr.UI
+@inherits BlazrUIBase
+
+<div class="border rounded-2 p-1">
+    <label class="small text-muted">@_label</label>
+    <InputReadOnlyText Value="@Value" />
+</div>
+
+@code {
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public object? Value { get; set; }
+
+    private MarkupString _label => FieldUtilities.GetAsMarkup(this.Label);
+}

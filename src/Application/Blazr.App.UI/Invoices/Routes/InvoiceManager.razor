@@ -1,0 +1,40 @@
+﻿@page "/InvoiceManager/{Uid:guid}"
+@page "/Invoice/Dash/{Uid:guid}"
+@namespace Blazr.App.UI
+@inherits BlazrControlBase
+@implements IDisposable
+
+<InvoiceDashboardForm Uid=this.Uid />
+
+<InvoiceItemPagedList InvoiceUid=this.Uid FormTitle="Invoice Items" />
+
+<NavigationLock OnBeforeInternalNavigation=this.OnNavigation ConfirmExternalNavigation=true />
+
+@code {
+    [Parameter] public Guid Uid { get; set; }
+    [Inject] protected IServiceProvider ServiceProvider { get; set; } = default!;
+    [Inject] private INotificationService<InvoiceEntityService> _notificationService { get; set; } = default!;
+    [Inject] private InvoiceAggregateManager Manager { get; set; } = default!;
+
+    protected async override Task OnParametersSetAsync()
+    {
+        if (NotInitialized)
+            _notificationService.RecordChanged += this.OnChange;
+
+        await this.Manager.LoadAsync(Uid);
+    }
+
+    private void OnNavigation(LocationChangingContext context)
+    {
+        if (this.Manager.Record.IsDirty)
+            context.PreventNavigation();
+    }
+
+    private void OnChange(object? sender, EventArgs e)
+        => this.InvokeAsync(StateHasChanged);
+
+    public void Dispose()
+    {
+        _notificationService.RecordChanged -= this.OnChange;
+    }
+}

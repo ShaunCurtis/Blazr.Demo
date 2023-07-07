@@ -1,9 +1,0 @@
-﻿global using Blazr.Core;
-global using Blazr.Demo.Core;
-global using Blazr.Demo.Data;
-global using Microsoft.EntityFrameworkCore;
-global using Microsoft.Extensions.DependencyInjection;
-global using System;
-global using System.Linq;
-global using System.Threading;
-global using Xunit;

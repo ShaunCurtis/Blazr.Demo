@@ -1,0 +1,43 @@
+﻿@*
+/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================
+*@
+
+@namespace Blazr.UI.Editor
+@inherits BlazrButtonGroupSelect<TValue, TListItem>
+@typeparam TValue
+@typeparam TListItem
+
+@if (_noColumn)
+{
+    @_mainContent
+}
+else
+{
+    <div class="@this.ColumnCss">
+        @_mainContent
+    </div>
+}
+
+@code {
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? ColumnCss { get; set; }
+
+    private bool _noColumn => this.ColumnCss is null;
+    private string _label => this.Label ?? EditControlHelper.GetLabel(this.ValueExpression);
+
+    // get property to get the render fragment built by the base class
+    private RenderFragment _baseContent => builder => base.BuildRenderTree(builder);
+
+    private RenderFragment _mainContent => __builder =>
+    {
+        <label class="form-label-sm small">@_label</label>
+
+        @_baseContent
+
+        <ValidationMessage For=@this.ValueExpression />
+    };
+}

@@ -1,0 +1,36 @@
+﻿@namespace Blazr.App.UI
+@using Microsoft.Extensions.Logging
+
+@inherits PagedListFormBase<InvoiceItem, InvoiceEntityService>
+@implements IDisposable
+
+<BlazrSortedGridColumn TGridItem="InvoiceItem" SortField="@ApplicationConstants.Product.ProductCode" IsNoWrap=true Title="Product Code">
+    @context.ProductCode
+</BlazrSortedGridColumn>
+
+<BlazrSortedGridColumn TGridItem="InvoiceItem" SortField="@ApplicationConstants.Product.ProductName" IsNoWrap=true Title="Product">
+    @context.ProductName
+</BlazrSortedGridColumn>
+
+<BlazrSortedGridColumn TGridItem="InvoiceItem" SortField="@ApplicationConstants.InvoiceItem.ItemQuantity" IsNoWrap=true Title="Qty">
+    @context.ItemQuantity
+</BlazrSortedGridColumn>
+
+<BlazrSortedGridColumn TGridItem="InvoiceItem" SortField="@ApplicationConstants.InvoiceItem.ItemUnitPrice" IsNoWrap=true Title="Unit Cost">
+    @context.ItemUnitPrice.AsSterling()
+</BlazrSortedGridColumn>
+
+<BlazrGridColumn TGridItem="InvoiceItem" Title="Actions" IsNoWrap=true Class="text-end">
+    <UIButtonGroup>
+        <UIButton ButtonColourType=UIButtonColourType.Delete ClickEvent="() => this.OnDeleteAsync(context)">Delete</UIButton>
+        <UIButton ButtonColourType=UIButtonColourType.Edit ClickEvent="() => this.OnEditAsync(context)">Edit</UIButton>
+    </UIButtonGroup>
+</BlazrGridColumn>
+
+@code {
+    protected override RenderFragment HeaderButtonContent => (__builder) =>
+    {
+        <UIButton ButtonColourType=UIButtonColourType.Reset ClickEvent=this.OnResetAsync>Reset Items</UIButton>
+        <UIButton ButtonColourType=UIButtonColourType.New ClickEvent=this.OnNewAsync>Add New Item</UIButton>
+    };
+}

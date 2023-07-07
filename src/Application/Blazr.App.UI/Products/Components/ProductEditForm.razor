@@ -1,0 +1,24 @@
+﻿@namespace Blazr.App.UI
+@inherits EditorFormBase<Product, ProductEditContext, ProductEntityService, ProductValidator>
+
+<div class="row">
+
+    <BlazrTextControl class="form-control mb-2"
+                      ColumnCss="col-12 mb-2"
+                      Label="Product Name"
+                                UpdateOnInput
+                      @bind-Value=this.Presenter.RecordContext.ProductName />
+
+    <BlazrTextControl class="form-control mb-2"
+                      ColumnCss="col-12 col-lg-6 mb-2"
+                      Label="Product Code"
+                                UpdateOnInput
+                      @bind-Value=this.Presenter.RecordContext.ProductCode />
+
+    <BlazrNumberControl class="form-control mb-2"
+                        ColumnCss="col-12 col-lg-6 mb-2"
+                        Label="Unit Price £"
+                                    UpdateOnInput
+                        @bind-Value=this.Presenter.RecordContext.ProductUnitPrice />
+
+</div>

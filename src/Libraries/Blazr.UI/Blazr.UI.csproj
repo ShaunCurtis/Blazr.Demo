@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.7" />
+		<PackageReference Include="FluentValidation" Version="11.2.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Blazr.Components\Blazr.Components.csproj" />
+		<ProjectReference Include="..\Blazr.Core\Blazr.Core.csproj" />
+		<ProjectReference Include="..\Blazr.Presentation\Blazr.Presentation.csproj" />
+	</ItemGroup>
+
+</Project>

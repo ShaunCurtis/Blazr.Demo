@@ -1,0 +1,9 @@
+﻿@page "/Invoice"
+@page "/Invoices"
+@namespace Blazr.App.UI
+@inherits BlazrControlBase
+
+<InvoicePagedList StateId=RouteId />
+@code {
+    private static Guid RouteId = Guid.NewGuid();
+}

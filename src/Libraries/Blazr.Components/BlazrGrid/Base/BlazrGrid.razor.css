@@ -1,0 +1,30 @@
+﻿::deep .max-column {
+    width: 100%;
+    max-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+::deep div.max-column {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+::deep .row-column {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+::deep .header-column {
+    white-space: nowrap;
+}
+
+::deep .nowrap-column {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+

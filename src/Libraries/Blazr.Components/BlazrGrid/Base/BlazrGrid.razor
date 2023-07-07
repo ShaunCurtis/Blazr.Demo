@@ -1,0 +1,83 @@
+﻿@*
+============================================================
+   Author: Shaun Curtis, Cold Elm Coders
+   License: Use And Donate
+   If you use it, donate something to a charity somewhere
+============================================================
+*@
+
+@*
+    This Razor file contains all the Razor markup defined Render Fragments
+    The C# code in the the code-behind file
+*@
+
+@namespace Blazr.Components.BlazrGrid
+@inherits BlazrBaseComponent
+@typeparam TGridItem where TGridItem : class, new()
+@implements IComponent
+@implements IHandleEvent
+@implements IDisposable
+
+<CascadingValue Value="this.RegisterColumn">
+    @ChildContent
+</CascadingValue>
+
+@this.GridRenderFragment
+
+@code {
+    /// <summary>
+    /// Render fragment to build out the grid
+    /// </summary>
+    protected virtual RenderFragment GridRenderFragment => (__builder) =>
+    {
+        @if (Initialized)
+        {
+            int rowIndex = 0;
+
+            <table class="@BlazrGridCss.TableCss">
+                <thead class="@BlazrGridCss.TableHeaderCss">
+                    @{
+                        this.renderHeaderRow(__builder);
+                    }
+                </thead>
+                <tbody>
+                    @foreach (var item in _items)
+                    {
+                        this.renderRow(__builder, rowIndex, item);
+                        rowIndex++;
+                    }
+                </tbody>
+        </table>
+        }
+    };
+
+    /// <summary>
+    /// Render Fragment to render the header row
+    /// </summary>
+    /// <param name="__builder"></param>
+    protected virtual void renderHeaderRow(RenderTreeBuilder __builder)
+    {
+        <tr>
+            @foreach (var col in this.GridColumns)
+            {
+                @col.ItemHeaderContent;
+            }
+        </tr>
+    }
+
+    /// <summary>
+    /// Render fragmnet to render a row in the table
+    /// </summary>
+    /// <param name="__builder"></param>
+    /// <param name="rowIndex"></param>
+    /// <param name="item"></param>
+    protected virtual void renderRow(RenderTreeBuilder __builder, int rowIndex, TGridItem item)
+    {
+        <tr aria-rowindex="@rowIndex" class="@BlazrGridCss.TableRowCss">
+            @foreach (var col in this.GridColumns)
+            {
+                @col.ItemRowContent(item);
+            }
+        </tr>
+    }
+}

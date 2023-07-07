@@ -1,0 +1,31 @@
+﻿@inherits BlazrControlBase
+@using Blazr.Components.ComponentScopedServices;
+@inject IComponentServiceProvider _componentServiceProvider
+
+<CascadingValue Value="this.ServiceHandle" IsFixed>
+    @this.ChildContent
+</CascadingValue>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    public Guid ServiceKey => this.ComponentUid;
+
+    public ComponentServiceHandle? ServiceHandle { get; private set; } = default!;
+
+    protected override Task OnParametersSetAsync()
+    {
+        if (this.NotInitialized)
+        {
+            this.ServiceHandle = new(_componentServiceProvider, this.ServiceKey);
+            ArgumentNullException.ThrowIfNull(this.ServiceHandle);
+        }
+
+        return base.OnParametersSetAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _componentServiceProvider.ClearComponentServicesAsync(this.ServiceKey);
+    }
+}
