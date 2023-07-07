@@ -16,12 +16,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Infrastructure", "src\Application\Blazr.App.Infrastructure\Blazr.App.Infrastructure.csproj", "{CD882058-FCF4-4950-9A51-10410386B1DA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notes", "Notes", "{7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}"
-	ProjectSection(SolutionItems) = preProject
-		Notes\Commands.md = Notes\Commands.md
-		Notes\Item-Requests.md = Notes\Item-Requests.md
-		Notes\List-Requests.md = Notes\List-Requests.md
-		Notes\Objects.md = Notes\Objects.md
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F4A9813B-DACD-4868-B440-A64CA9DFE6D3}"
 	ProjectSection(SolutionItems) = preProject
@@ -36,17 +30,29 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Components", "src\Lib
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Presentation", "src\Libraries\Blazr.Presentation\Blazr.Presentation.csproj", "{0B0B2A87-ABFC-4637-A1BD-E80D2B253838}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.Presentation", "src\Application\Blazr.App.Presentation\Blazr.App.Presentation.csproj", "{2D00C670-6ED1-4498-ACA3-B5802DEBC0B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Presentation", "src\Application\Blazr.App.Presentation\Blazr.App.Presentation.csproj", "{2D00C670-6ED1-4498-ACA3-B5802DEBC0B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.Components", "src\Application\Blazr.App.Components\Blazr.App.Components.csproj", "{57DD55E2-6193-45AA-BA1E-F132B3A0BA50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Components", "src\Application\Blazr.App.Components\Blazr.App.Components.csproj", "{57DD55E2-6193-45AA-BA1E-F132B3A0BA50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.UI", "src\Application\Blazr.App.UI\Blazr.App.UI.csproj", "{C1E40A61-E1D1-4997-9B80-150A90798BB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.UI", "src\Application\Blazr.App.UI\Blazr.App.UI.csproj", "{C1E40A61-E1D1-4997-9B80-150A90798BB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.UI", "src\Libraries\Blazr.UI\Blazr.UI.csproj", "{9188168D-D0E6-48B5-B989-99FE50CB6C88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.UI", "src\Libraries\Blazr.UI\Blazr.UI.csproj", "{9188168D-D0E6-48B5-B989-99FE50CB6C88}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployments", "Deployments", "{A41A7D64-4604-4F01-B4EA-DAF75ED4A900}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Server.Web", "src\Deployments\Blazr.Server.Web\Blazr.Server.Web.csproj", "{AF254561-09CB-40BA-B71D-3871F64A95B8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data Pipeline", "Data Pipeline", "{E828B3D5-D907-4466-9847-38B3A4257128}"
+	ProjectSection(SolutionItems) = preProject
+		Notes\Data Pipeline\Commands.md = Notes\Data Pipeline\Commands.md
+		Notes\Data Pipeline\Item-Requests.md = Notes\Data Pipeline\Item-Requests.md
+		Notes\Data Pipeline\List-Requests.md = Notes\Data Pipeline\List-Requests.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data Objects", "Data Objects", "{6A95252C-4B3E-473A-953F-16929B064A64}"
+	ProjectSection(SolutionItems) = preProject
+		Notes\Data Objects\Entity-Objects.md = Notes\Data Objects\Entity-Objects.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -119,6 +125,8 @@ Global
 		{C1E40A61-E1D1-4997-9B80-150A90798BB2} = {B510AAB1-D896-44C1-AD47-06FE8B2B2B3F}
 		{9188168D-D0E6-48B5-B989-99FE50CB6C88} = {46A08B54-D8D0-4359-89C4-AE928FE4CF22}
 		{AF254561-09CB-40BA-B71D-3871F64A95B8} = {A41A7D64-4604-4F01-B4EA-DAF75ED4A900}
+		{E828B3D5-D907-4466-9847-38B3A4257128} = {7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}
+		{6A95252C-4B3E-473A-953F-16929B064A64} = {7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {990115E5-5129-41F0-AACF-598505F1FD10}

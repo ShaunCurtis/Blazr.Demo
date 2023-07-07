@@ -6,54 +6,30 @@ Generically we can define a command like this:
 CommandResult CommandAsync(Command command);
 ```
 
-To build a generic command handler we need to implement state tracking into our data pipeline.  We need to know the state of a record.  There are four base states: 
+A generic command handler needs state tracking: we need the state of a record to know how to deal with it.
 
-1. An existing record
-2. An exiting mutated record i.e. it has the same identity as the record in the record store, but some or all of the data has changed.
-3. It's a deleted record i.e. it still exists in the data store, but is marked in-memory for deletion.
-4. It's a new record that currently only exists in-memory and has not yet bwen saved to the data store.
- 
-The need to track state seems over-complicated for simple objects.  When I want to delete a weathwr forwcast, I just call delete on Entity Framework.  True, but more complex objects require tracking.  When the user deletes an item from the shopping basket do you immediately delete the item from the database.  How does the shopping cart know it's been deleted: it needs to keep the total price updated.  What happens if the buyer changes his mind and wants to add it back in?
-
-## The State Interface
-
-The `IStateEntity` is defined with an `int` to track the state.
-
-```
+```csharp
 public interface IStateEntity 
 { 
     public int StateCode { get; }
 }
 ```
 
-And a `StateCodes` class defining some constants for the base codes.
+You can read more about State in the *Entity Objects* section.
 
-```
-public class StateCodes
-{
-    public const int Record = 1;
-    public const int New = 0;
-    public const int Delete = int.MinValue;
-    public static bool IsModified(int value) => value < 0 && value is not int.MinValue;
-    public static bool IsDirty(int value) => value <= 0;
-}
-```
+The Command only needs to know three states:
 
-Any state above zero is an existing record.  If that record is edited, it's state is the negative equivalent.  The base excisitng record state is `1` and if the object is mutated with respect to the stored data, it's `-1`.  When you actually presist it to the data store you presist the absolute value.  Why not juat have an integer to represent dirty?  I use `StateCode` in a broader context in process tracking, so for instance a ToDo item has these states:  
+1. Update - it will save a submitted record, replacing the existing data store record.  It doesn't care if it's mutated, that's the decision of the core domain code.
+2. Delete - delete the record from the data store.
+3. Add - Add the record to the data store.
+ 
+Tracking state seems over-complicated for simple objects.  When I want to delete a weather forwcast, I just call delete on Entity Framework.
 
-```csharp
-public class ToDoStateCodes : StateCodes
-{
-    public const int Unassigned = 1;
-    public const int Assigned = 2;
-    public const int Closed = 3;
-    public const int Completed = 4;
-}
-```
+True, but complex objects require tracking.  If a user deletes an item from the shopping basket do you immediately delete the item from the database.  How does the shopping cart know it's been deleted: it needs to keep the total price updated.  What happens if the buyer changes his mind and wants to revert to his saved basket?
 
 ## The CommandEntity Interface
 
-`ICommandEntity` is an empty interface.  It's purpose is to label those entities that allow independant Create/Update/Delete operations.  Some entities will be part of aggregates, and will only allow Create/Update/Delete as part of the aggregate Create/Update/Delete operations. operations.   
+`ICommandEntity` is an empty interface.  It's purpose is to label those entities that allow independant Create/Update/Delete operations.  Some entities will be part of aggregates: they can only be Created/Updated/Deleted as part of the aggregate Create/Update/Delete operations. operations.   
 
 ## The Request
 
