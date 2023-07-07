@@ -13,6 +13,8 @@
     [Parameter] public bool LockNavigation { get; set; }
     [Parameter] public EventCallback<bool> EditStateChanged { get; set; }
 
+    public const string EditStateStoreName = "EditStateStore";
+
     private BlazrEditStateStore _store = default!;
     private bool _currentIsDirty = false;
     private bool _isDirty => _store.IsDirty();
@@ -26,7 +28,7 @@
             _store = new(_editContext);
             ArgumentNullException.ThrowIfNull(_store);
 
-            _editContext.Properties[BlazrEditContextExtensions.EditStateStoreName] = _store;
+            _editContext.Properties[EditStateStoreName] = _store;
             _editContext.OnFieldChanged += OnFieldChanged;
 
         }

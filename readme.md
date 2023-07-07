@@ -14,4 +14,4 @@ Take and use what you wish.
 
 > If you're using it in a commercial setting, get your organisation to make a specifc donation to a charity for it's usage.
 
-It doesn't matter how much, or where.  It will make a difference, and I will have made a [very small] contribution to making the world a better place.
+> It doesn't matter how much, or where.  It will make a difference, and I will have made a [very small] contribution to making the world a better place.

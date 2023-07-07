@@ -45,13 +45,22 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data Pipeline", "Data Pipeline", "{E828B3D5-D907-4466-9847-38B3A4257128}"
 	ProjectSection(SolutionItems) = preProject
 		Notes\Data Pipeline\Commands.md = Notes\Data Pipeline\Commands.md
+		Notes\Data Pipeline\Data-Pipeline.md = Notes\Data Pipeline\Data-Pipeline.md
 		Notes\Data Pipeline\Item-Requests.md = Notes\Data Pipeline\Item-Requests.md
 		Notes\Data Pipeline\List-Requests.md = Notes\Data Pipeline\List-Requests.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data Objects", "Data Objects", "{6A95252C-4B3E-473A-953F-16929B064A64}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Entities", "Entities", "{6A95252C-4B3E-473A-953F-16929B064A64}"
 	ProjectSection(SolutionItems) = preProject
-		Notes\Data Objects\Entity-Objects.md = Notes\Data Objects\Entity-Objects.md
+		Notes\Entities\Aggregates.md = Notes\Entities\Aggregates.md
+		Notes\Entities\Entity-Objects.md = Notes\Entities\Entity-Objects.md
+		Notes\Entities\Group-Entities.md = Notes\Entities\Group-Entities.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lists", "Lists", "{3416A04A-864D-46C1-AC05-E304501FA288}"
+	ProjectSection(SolutionItems) = preProject
+		Notes\Lists\List-Controller.md = Notes\Lists\List-Controller.md
+		Notes\Lists\Lists-in-the-UI.md = Notes\Lists\Lists-in-the-UI.md
 	EndProjectSection
 EndProject
 Global
@@ -127,6 +136,7 @@ Global
 		{AF254561-09CB-40BA-B71D-3871F64A95B8} = {A41A7D64-4604-4F01-B4EA-DAF75ED4A900}
 		{E828B3D5-D907-4466-9847-38B3A4257128} = {7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}
 		{6A95252C-4B3E-473A-953F-16929B064A64} = {7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}
+		{3416A04A-864D-46C1-AC05-E304501FA288} = {7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {990115E5-5129-41F0-AACF-598505F1FD10}

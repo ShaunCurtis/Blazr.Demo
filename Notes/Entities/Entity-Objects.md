@@ -38,7 +38,7 @@ There are four base states for an entity object:
 The common states are defined as constants in `StateCodes`. 
 
 ```
-public static class StateCodes
+public class StateCodes
 {
     public const int Record = 1;
     public const int New = 0;
