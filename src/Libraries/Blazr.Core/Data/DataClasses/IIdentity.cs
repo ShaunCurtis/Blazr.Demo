@@ -6,7 +6,7 @@
 
 namespace Blazr.Core;
 
-public interface IStateEntity 
+public interface IIdentity 
 { 
-    public EntityState EntityState { get; }
+    public EntityUid Uid { get; }
 }

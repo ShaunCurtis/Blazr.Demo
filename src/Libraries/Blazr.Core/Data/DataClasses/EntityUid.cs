@@ -3,15 +3,17 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
+
 namespace Blazr.Core;
 
-public static class RecordUtilities
+/// <summary>
+/// Value object for the State Uid
+/// which is a Guid
+/// </summary>
+/// <param name="Value"></param>
+public readonly record struct EntityUid(Guid Value)
 {
-    public static object GetIdentity(object value)
-    {
-        if (value is IIdentity guidIdentity)
-            return guidIdentity.Uid;
+    public bool IsEmpty => this.Value == Guid.Empty;
 
-        return new();
-    }
+    public static EntityUid Empty => new EntityUid(Guid.Empty);
 }

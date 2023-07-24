@@ -3,15 +3,24 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
+
 namespace Blazr.Core;
 
 public class StateCodes
 {
-    public const int Record = 1;
-    public const int New = 0;
-    public const int Delete = int.MinValue;
+    public static StateCode Deleted = new(int.MinValue, "Deleted");
+    public static StateCode New = new(0, "New");
+    public static StateCode Existing = new(1, "Existing");
+    public static StateCode Null = new(int.MaxValue, "Null");
 
-    public static bool IsUpdate(int value) => value > 0;
-    public static bool IsNew(int value) => value == 0;
-    public static bool IsDeleted(int value) => value == Delete;
+    public static List<StateCode> StateCodeList = new()
+    {
+        Deleted,
+        Existing,
+        New,
+        Null
+    };
+
+    public static StateCode GetStateCode(int code)
+        => StateCodeList.FirstOrDefault(item => item.Value == code);
 }

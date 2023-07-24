@@ -8,7 +8,7 @@ namespace Blazr.Presentation;
 
 public class BlazrEditPresenter<TRecord, TEntityService, TEditContext>
     : IBlazrEditPresenter<TRecord, TEditContext>
-    where TRecord : class, IStateEntity, IGuidIdentity, new()
+    where TRecord : class, IStateEntity, IIdentity, new()
     where TEditContext : class, IBlazrRecordEditContext<TRecord>, new()
     where TEntityService : class, IEntityService
 {

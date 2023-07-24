@@ -45,7 +45,7 @@ public sealed class CommandServerHandler<TDbContext>
 
         var stateRecord = request.Item;
 
-        if (StateCodes.IsUpdate(stateRecord.StateCode))
+        if (AppStateCodes.IsUpdate(stateRecord.StateCode))
         {
             dbContext.Update<TRecord>(request.Item);
             return await dbContext.SaveChangesAsync(request.Cancellation) == 1
@@ -53,7 +53,7 @@ public sealed class CommandServerHandler<TDbContext>
                 : CommandResult.Failure("Error saving Record");
         }
 
-        if (stateRecord.StateCode == StateCodes.New)
+        if (stateRecord.StateCode == AppStateCodes.New)
         {
             dbContext.Add<TRecord>(request.Item);
             return await dbContext.SaveChangesAsync(request.Cancellation) == 1
@@ -61,7 +61,7 @@ public sealed class CommandServerHandler<TDbContext>
                 : CommandResult.Failure("Error adding Record");
         }
 
-        if (stateRecord.StateCode == StateCodes.Delete)
+        if (stateRecord.StateCode == AppStateCodes.Delete)
         {
             dbContext.Remove<TRecord>(request.Item);
             return await dbContext.SaveChangesAsync(request.Cancellation) == 1

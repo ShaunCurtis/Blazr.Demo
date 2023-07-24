@@ -7,7 +7,7 @@
 namespace Blazr.Core;
 
 public sealed class AggregateItemList<TItem>
-    where TItem : class, IGuidIdentity, IStateEntity, IAggregateItem, new()
+    where TItem : class, IIdentity, IStateEntity, IAggregateItem, new()
 {
     private Guid Uid = Guid.NewGuid();
     private readonly List<AggregateItem<TItem>> _items = new();
@@ -16,7 +16,7 @@ public sealed class AggregateItemList<TItem>
 
     public IEnumerable<TItem> LiveItems
         => _items
-            .Where(item => item.Item.StateCode != StateCodes.Delete)
+            .Where(item => item.Item.StateCode != AppStateCodes.Delete)
             .Select(item => item.Item)
             .AsEnumerable();
 

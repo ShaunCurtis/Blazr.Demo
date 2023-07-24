@@ -7,14 +7,14 @@
 namespace Blazr.Core;
 
 public class AggregateItem<TItem>
-    where TItem : class, IGuidIdentity, IStateEntity, IAggregateItem, new()
+    where TItem : class, IIdentity, IStateEntity, IAggregateItem, new()
 {
     private CommandResult FailOnUidCheck = CommandResult.Failure("Can't update - the Uid of a submitted Item doesn't match the UI of the stored item.");
 
     public TItem? BaseItem { get; internal set; }
     public TItem Item { get; internal set; } = new();
-    public int BaseStateCode => this.BaseItem?.StateCode ?? StateCodes.New; 
-    public Guid Uid => this.Item.Uid;
+    public int BaseStateCode => this.BaseItem?.StateCode ?? AppStateCodes.New; 
+    public EntityUid Uid => this.Item.Uid;
     public bool IsDirty => this.Item != this.BaseItem;
 
     internal AggregateItem() { }

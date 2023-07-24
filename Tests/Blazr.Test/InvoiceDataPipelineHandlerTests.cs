@@ -53,7 +53,7 @@ public class InvoiceDataPipelineHandlerTests
 
         Assert.True(itemResult.Successful);
 
-        var deleteInvoice = itemResult.Item! with { StateCode = StateCodes.Delete };
+        var deleteInvoice = itemResult.Item! with { StateCode = AppStateCodes.Delete };
 
         var command = new CommandRequest<Invoice>(deleteInvoice, cancelToken);
         var commandResult = await broker!.ExecuteCommandAsync<Invoice>(command);

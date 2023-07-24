@@ -8,7 +8,7 @@ using FluentValidation;
 namespace Blazr.UI;
 
 public abstract partial class EditorFormBase<TRecord, TEditContext, TEntityService, TRecordValidator> : BlazrControlBase, IDisposable
-    where TRecord : class, IStateEntity, IGuidIdentity, new()
+    where TRecord : class, IStateEntity, IIdentity, new()
     where TEditContext : class, IBlazrRecordEditContext<TRecord>, new()
     where TEntityService : class, IEntityService
     where TRecordValidator : class, IValidator<TEditContext>, new()
@@ -26,7 +26,7 @@ public abstract partial class EditorFormBase<TRecord, TEditContext, TEntityServi
     protected EditFormButtonsOptions editFormButtonsOptions = new();
     protected bool ExitOnSave = true;
 
-    protected bool IsNewRecord => this.Presenter.RecordContext.StateCode == StateCodes.New;
+    protected bool IsNewRecord => this.Presenter.RecordContext.StateCode == AppStateCodes.New;
 
     protected async override Task OnParametersSetAsync()
     {

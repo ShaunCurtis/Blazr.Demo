@@ -9,11 +9,11 @@ namespace Blazr.Core;
 public interface IItemRequestHandler
 {
     public ValueTask<ItemQueryResult<TRecord>> ExecuteAsync<TRecord>(ItemQueryRequest request)
-        where TRecord : class, IGuidIdentity, new();
+        where TRecord : class, IIdentity, new();
 }
 
 public interface IItemRequestHandler<TRecord>
-        where TRecord : class, IGuidIdentity, new()
+        where TRecord : class, IIdentity, new()
 {
     public ValueTask<ItemQueryResult<TRecord>> ExecuteAsync(ItemQueryRequest request);
 }

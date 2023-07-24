@@ -6,7 +6,7 @@
 
 namespace Blazr.App.Core;
 
-public class InvoiceStateCodes : StateCodes
+public class InvoiceStateCodes : AppStateCodes
 {
     public const int Provisional = 1;
     public const int Submitted = 2;

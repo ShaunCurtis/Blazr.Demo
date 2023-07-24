@@ -4,17 +4,12 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
+
 namespace Blazr.App.Core;
 
-public readonly record struct CustomerUid(Guid Value);
-
-public sealed record Customer : IIdentity, IStateEntity, ICommandEntity
+public sealed record DboCustomer 
 {
-    public CustomerUid CustomerUid { get; init; }
-
-    public EntityState EntityState { get; init; }
+    [Key] public Guid Uid { get; init; } = Guid.Empty;
 
     public string CustomerName { get; init; } = "Not Set";
-
-    public EntityUid Uid => new(CustomerUid.Value);
 }

@@ -6,7 +6,4 @@
 
 namespace Blazr.Core;
 
-public interface IGuidIdentity 
-{ 
-    public Guid Uid { get; }
-}
+public readonly record struct StateCode(int Value, string Title );

@@ -17,7 +17,7 @@ public sealed class ItemRequestAPIHandler
         _serviceProvider = serviceProvider;
     }
     public async ValueTask<ItemQueryResult<TRecord>> ExecuteAsync<TRecord>(ItemQueryRequest request)
-    where TRecord : class, IGuidIdentity, new()
+    where TRecord : class, IIdentity, new()
     {
         // Try and get a registered custom handler
         var _customHandler = _serviceProvider.GetService<IItemRequestHandler<TRecord>>();
@@ -31,7 +31,7 @@ public sealed class ItemRequestAPIHandler
     }
 
     private async ValueTask<ItemQueryResult<TRecord>> GetItemAsync<TRecord>(ItemQueryRequest request)
-        where TRecord : class, IGuidIdentity, new()
+        where TRecord : class, IIdentity, new()
     {
         var entityname = (new TRecord()).GetType().Name;
 

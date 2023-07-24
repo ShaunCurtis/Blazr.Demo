@@ -6,7 +6,7 @@
 namespace Blazr.Core;
 
 public abstract class BlazrEditContext<TRecord> : IBlazrRecordEditContext<TRecord>, IBlazrEditContext
-    where TRecord : class, IStateEntity, IGuidIdentity, new()
+    where TRecord : class, IStateEntity, IIdentity, new()
 {
     public Guid Uid { get; protected set; } = Guid.NewGuid();
 
@@ -16,7 +16,7 @@ public abstract class BlazrEditContext<TRecord> : IBlazrRecordEditContext<TRecor
 
     public bool IsDirty => this.BaseRecord != this.MapToRecord();
 
-    protected int internalStateCode = StateCodes.Record;
+    protected int internalStateCode = AppStateCodes.Record;
 
     public virtual TRecord AsRecord
         => this.MapToRecord();
@@ -38,13 +38,13 @@ public abstract class BlazrEditContext<TRecord> : IBlazrRecordEditContext<TRecor
 
     public void SetAsDeleted()
     {
-        internalStateCode = StateCodes.Delete;
+        internalStateCode = AppStateCodes.Delete;
     }
 
     void IBlazrEditContext.SetAsSaved()
     {
         this.BaseRecord = this.AsRecord;
-        internalStateCode = StateCodes.Record;
+        internalStateCode = AppStateCodes.Record;
     }
 
     protected abstract void MapToContext(TRecord record);

@@ -5,16 +5,17 @@
 /// ============================================================
 
 namespace Blazr.App.Core;
+public readonly record struct InvoiceItemUid(Guid Value);
 
-public sealed record InvoiceItem : IGuidIdentity, IStateEntity, IAggregateItem
+public sealed record InvoiceItem : IIdentity, IStateEntity, IAggregateItem
 {
-    [Key] public Guid Uid { get; init; } = Guid.Empty;
+    public InvoiceItemUid InvoiceItemUid { get; init; }
 
-    [NotMapped] public int StateCode { get; init; } = 1;
+    public EntityState EntityState { get; init; }
 
-    public Guid InvoiceUid { get; init; } = Guid.Empty;
+    public InvoiceUid InvoiceUid { get; init; }
 
-    public Guid ProductUid { get; init; } = Guid.Empty;
+    public ProductUid ProductUid { get; init; }
 
     public string InvoiceNumber { get; init; } = "Not Set";
 
@@ -25,5 +26,7 @@ public sealed record InvoiceItem : IGuidIdentity, IStateEntity, IAggregateItem
     public int ItemQuantity { get; init; }
 
     public decimal ItemUnitPrice { get; init; }
+
+    public EntityUid Uid => new(InvoiceItemUid.Value);
 }
 

@@ -6,9 +6,9 @@
 namespace Blazr.Core;
 
 public interface IBlazrRecordEditContext<TRecord>
-    where TRecord : class, IStateEntity, IGuidIdentity, new()
+    where TRecord : class, IStateEntity, IIdentity, new()
 {
-    public Guid Uid { get; }
+    public EntityUid Uid { get; }
     public int StateCode { get;}
     public TRecord BaseRecord { get; }
     public bool IsDirty { get; }

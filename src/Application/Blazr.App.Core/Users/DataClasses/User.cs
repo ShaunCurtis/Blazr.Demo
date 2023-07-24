@@ -4,15 +4,18 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-using System.ComponentModel.DataAnnotations;
-
 namespace Blazr.App.Core;
+public readonly record struct UserUid(Guid Value);
 
-public sealed record User : IGuidIdentity
+public sealed record User : IIdentity
 {
-    [Key] public Guid Uid { get; init; } = Guid.Empty;
+    public UserUid UserUid { get; init; }
+
+    public EntityState EntityState { get; init; }
 
     public string UserName { get; init; } = "Not Set";
 
     public string Roles { get; init; } = "Not Set";
+
+    public EntityUid Uid => new(UserUid.Value);
 }

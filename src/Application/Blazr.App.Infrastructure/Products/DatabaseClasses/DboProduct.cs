@@ -4,21 +4,16 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
+
 namespace Blazr.App.Core;
 
-public readonly record struct ProductUid(Guid Value);
-
-public sealed record Product : IIdentity, IStateEntity, ICommandEntity
+public sealed record DboProduct 
 {
-    public ProductUid ProductUid { get; init; }
-
-    public EntityState EntityState { get; init; }
+    [Key] public Guid Uid { get; init; } = Guid.Empty;
 
     public string ProductCode { get; init; } = "Not Set";
 
     public string ProductName { get; init; } = "Not Set";
 
     public decimal ProductUnitPrice { get; init; } = 0;
-
-    public EntityUid Uid => new(ProductUid.Value);
 }

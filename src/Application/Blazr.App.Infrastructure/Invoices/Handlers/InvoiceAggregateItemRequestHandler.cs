@@ -21,7 +21,7 @@ public sealed class InvoiceAggregateItemRequestHandler<TDbContext>
 
         Invoice? root = new();
 
-        root = await dbContext.Set<Invoice>().SingleOrDefaultAsync(item => ((IGuidIdentity)item).Uid == request.Uid, request.Cancellation);
+        root = await dbContext.Set<Invoice>().SingleOrDefaultAsync(item => ((IIdentity)item).Uid == request.Uid, request.Cancellation);
 
         if (root is null)
             return ItemQueryResult<InvoiceAggregate>.Failure("No record retrieved");

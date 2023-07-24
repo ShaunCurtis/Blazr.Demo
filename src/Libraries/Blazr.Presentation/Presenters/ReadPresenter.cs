@@ -6,7 +6,7 @@
 namespace Blazr.Presentation;
 
 public sealed class ReadPresenter<TRecord> : IReadPresenter<TRecord>
-    where TRecord : class, IGuidIdentity, new()
+    where TRecord : class, IIdentity, new()
 {
     private IDataBroker _dataBroker;
     public TRecord Item { get; private set; } = new TRecord();

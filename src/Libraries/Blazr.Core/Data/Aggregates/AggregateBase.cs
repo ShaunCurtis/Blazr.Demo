@@ -1,4 +1,3 @@
-using System.Reflection.Metadata.Ecma335;
 /// ============================================================
 /// Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
@@ -7,19 +6,19 @@ using System.Reflection.Metadata.Ecma335;
 namespace Blazr.Core;
 
 // This is a base aggregate object representing a root item and a collection of associated items
-public abstract class AggregateBase<TRootItem, TCollectionItem> : IGuidIdentity, IStateEntity
-    where TRootItem : class, IGuidIdentity, IStateEntity, IAggregateItem, new()
-    where TCollectionItem : class, IGuidIdentity, IStateEntity, IAggregateItem, new()
+public abstract class AggregateBase<TRootItem, TCollectionItem> : IIdentity, IStateEntity
+    where TRootItem : class, IIdentity, IStateEntity, IAggregateItem, new()
+    where TCollectionItem : class, IIdentity, IStateEntity, IAggregateItem, new()
 {
     // both these items are set to readonly and private.  We don't expose their functionality to the outside world
     private readonly AggregateItemList<TCollectionItem> _items = new(Enumerable.Empty<TCollectionItem>());
     private readonly AggregateItem<TRootItem> _root;
 
     // Guid of the root entity
-    public Guid Uid => _root.Uid;
+    public EntityUid Uid => _root.Uid;
 
-    // The StateCode as derived from the object state and the root State code
-    public int StateCode => this.IsDirty ? -StateCodes.Record : _root.BaseStateCode;
+    // The Entity State from the root
+    public EntityState EntityState => this.Root.EntityState with { IsMutated = this.IsDirty };
 
     // We're dirty if either the root or the collection is dirty
     public bool IsDirty => _root.IsDirty | _items.IsDirty;
@@ -55,7 +54,7 @@ public abstract class AggregateBase<TRootItem, TCollectionItem> : IGuidIdentity,
     // Method to Delete the aggregate root item
     // Note this just marks the invoice for deletion, it doesn't remove it
     public CommandResult DeleteRoot(TRootItem root)
-            => _root.Update(this.MutateRootItemState(root, StateCodes.Delete));
+            => _root.Update(this.MutateRootItemState(root, AppStateCodes.Delete));
 
     // Method to produce a new Collection Item
     // Override this method is you need to populate it with any root data
@@ -76,7 +75,7 @@ public abstract class AggregateBase<TRootItem, TCollectionItem> : IGuidIdentity,
     // Note that it sets the state to deleted, it doesn't actually remove the item from the collection
     public CommandResult RemoveCollectionItem(TCollectionItem item)
     {
-        var result = this._items.SaveItem(this.MutateCollectionItemState(item, StateCodes.Delete));
+        var result = this._items.SaveItem(this.MutateCollectionItemState(item, AppStateCodes.Delete));
 
         if (result != null && result.Successful)
             this.NotifyUpdated();
@@ -129,7 +128,7 @@ public abstract class AggregateBase<TRootItem, TCollectionItem> : IGuidIdentity,
     // Method to set the root as new and clear the collection items.
     public void SetAggregateToNew()
     {
-        _root.SetAsNew(this.MutateRootItemState(_root.Item, StateCodes.New));
+        _root.SetAsNew(this.MutateRootItemState(_root.Item, AppStateCodes.New));
         _items.Clear();
         this.NotifyUpdated();
     }

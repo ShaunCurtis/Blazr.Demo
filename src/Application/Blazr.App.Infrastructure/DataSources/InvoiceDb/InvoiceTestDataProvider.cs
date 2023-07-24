@@ -179,7 +179,7 @@ public sealed class InvoiceTestDataProvider
         var product = _products![Random.Shared.Next(_products.Count())];
         return new()
         {
-            StateCode = StateCodes.New,
+            StateCode = AppStateCodes.New,
             InvoiceUid = invoiceUid,
             InvoiceNumber = invoice.InvoiceNumber,
             ProductUid = product.Uid,
@@ -194,7 +194,7 @@ public sealed class InvoiceTestDataProvider
     {
         return new()
         {
-            StateCode = StateCodes.New,
+            StateCode = AppStateCodes.New,
             Uid = Guid.NewGuid(),
             CustomerUid = _customers![Random.Shared.Next(Customers.Count())].Uid,
             InvoiceDate = DateOnly.FromDateTime(DateTime.Now),

@@ -83,7 +83,7 @@ public class BasicDataPipelineHandlerTests
         var testProduct = _testDataProvider.TestProduct;
         var testUid = testProduct.Uid;
 
-        var deleteProduct = testProduct with { StateCode = StateCodes.Delete };
+        var deleteProduct = testProduct with { StateCode = AppStateCodes.Delete };
 
         var command = new CommandRequest<Product>(deleteProduct, cancelToken);
         var commandResult = await broker!.ExecuteCommandAsync<Product>(command);

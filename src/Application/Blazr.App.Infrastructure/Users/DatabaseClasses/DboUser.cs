@@ -4,18 +4,14 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.App.Infrastructure;
 
-internal sealed record DboInvoiceItem 
+namespace Blazr.App.Core;
+
+public sealed record DboUser
 {
     [Key] public Guid Uid { get; init; } = Guid.Empty;
 
-    public Guid InvoiceUid { get; init; } = Guid.Empty;
+    public string UserName { get; init; } = "Not Set";
 
-    public Guid ProductUid { get; init; } = Guid.Empty;
-
-    public int ItemQuantity { get; init; }
-
-    public decimal ItemUnitPrice { get; init; }
+    public string Roles { get; init; } = "Not Set";
 }
-

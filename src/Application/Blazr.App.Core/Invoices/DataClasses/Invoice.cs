@@ -6,13 +6,15 @@
 
 namespace Blazr.App.Core;
 
-public sealed record Invoice : IGuidIdentity, IStateEntity, IAggregateItem
+public readonly record struct InvoiceUid(Guid Value);
+
+public sealed record Invoice : IIdentity, IStateEntity, IAggregateItem
 {
-    [Key] public Guid Uid { get; init; } = Guid.Empty;
+    public InvoiceUid InvoiceUid { get; init; }
 
-    public int StateCode { get; init; } = 1;
+    public EntityState EntityState { get; init; }
 
-    public Guid CustomerUid { get; init; } = Guid.Empty;
+    public CustomerUid CustomerUid { get; init; }
 
     public string CustomerName { get; init; } = "Not Set";
 
@@ -21,4 +23,6 @@ public sealed record Invoice : IGuidIdentity, IStateEntity, IAggregateItem
     public string InvoiceNumber { get; init; } = "Not Set";
 
     public decimal InvoicePrice { get; init; }
+
+    public EntityUid Uid => new(InvoiceUid.Value);
 }
