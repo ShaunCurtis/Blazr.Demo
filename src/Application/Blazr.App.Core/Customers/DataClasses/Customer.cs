@@ -8,7 +8,7 @@ namespace Blazr.App.Core;
 
 public readonly record struct CustomerUid(Guid Value);
 
-public sealed record Customer : IIdentity, IStateEntity, ICommandEntity
+public sealed record Customer : IEntity, IStateEntity, ICommandEntity
 {
     public CustomerUid CustomerUid { get; init; }
 

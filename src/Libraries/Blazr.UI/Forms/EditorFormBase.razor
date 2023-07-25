@@ -1,7 +1,7 @@
 ﻿@namespace Blazr.UI
 @using FluentValidation
 
-@typeparam TRecord where TRecord : class, IStateEntity, IIdentity, new()
+@typeparam TRecord where TRecord : class, IStateEntity, IEntity, new()
 @typeparam TEditContext where TEditContext : class, IBlazrRecordEditContext<TRecord>, new()
 @typeparam TEntityService where TEntityService : class, IEntityService
 @typeparam TRecordValidator where TRecordValidator : class, IValidator<TEditContext>, new()

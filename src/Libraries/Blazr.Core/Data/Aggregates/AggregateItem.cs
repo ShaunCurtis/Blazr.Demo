@@ -7,7 +7,7 @@
 namespace Blazr.Core;
 
 public class AggregateItem<TItem>
-    where TItem : class, IIdentity, IStateEntity, IAggregateItem, new()
+    where TItem : class, IEntity, IStateEntity, IAggregateItem, new()
 {
     private CommandResult FailOnUidCheck = CommandResult.Failure("Can't update - the Uid of a submitted Item doesn't match the UI of the stored item.");
 

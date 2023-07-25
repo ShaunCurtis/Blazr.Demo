@@ -5,7 +5,7 @@
 /// ============================================================
 
 
-namespace Blazr.App.Core;
+namespace Blazr.App.Infrastructure;
 
 public sealed record DboCustomer 
 {

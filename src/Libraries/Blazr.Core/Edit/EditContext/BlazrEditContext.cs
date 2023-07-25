@@ -6,7 +6,7 @@
 namespace Blazr.Core;
 
 public abstract class BlazrEditContext<TRecord> : IBlazrRecordEditContext<TRecord>, IBlazrEditContext
-    where TRecord : class, IStateEntity, IIdentity, new()
+    where TRecord : class, IStateEntity, IEntity, new()
 {
     public Guid Uid { get; protected set; } = Guid.NewGuid();
 

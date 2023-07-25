@@ -8,7 +8,7 @@ namespace Blazr.App.Core;
 
 public readonly record struct InvoiceUid(Guid Value);
 
-public sealed record Invoice : IIdentity, IStateEntity, IAggregateItem
+public sealed record Invoice : IEntity, IStateEntity, IAggregateItem
 {
     public InvoiceUid InvoiceUid { get; init; }
 

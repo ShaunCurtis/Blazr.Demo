@@ -7,7 +7,7 @@
 namespace Blazr.App.Core;
 public readonly record struct UserUid(Guid Value);
 
-public sealed record User : IIdentity
+public sealed record User : IEntity
 {
     public UserUid UserUid { get; init; }
 

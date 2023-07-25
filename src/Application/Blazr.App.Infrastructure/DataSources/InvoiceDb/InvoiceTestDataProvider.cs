@@ -10,17 +10,17 @@ namespace Blazr.App.Infrastructure;
 /// </summary>
 public sealed class InvoiceTestDataProvider
 {
-    public IEnumerable<User> Users => _users ?? Enumerable.Empty<User>();
-    public IEnumerable<Product> Products => _products ?? Enumerable.Empty<Product>();
-    public IEnumerable<Customer> Customers => _customers ?? Enumerable.Empty<Customer>();
+    public IEnumerable<DboUser> Users => _users ?? Enumerable.Empty<DboUser>();
+    public IEnumerable<DboProduct> Products => _products ?? Enumerable.Empty<DboProduct>();
+    public IEnumerable<DboCustomer> Customers => _customers ?? Enumerable.Empty<DboCustomer>();
     internal IEnumerable<DboInvoice> Invoices => _invoices ?? Enumerable.Empty<DboInvoice>();
     internal IEnumerable<DboInvoiceItem> InvoiceItems => _invoiceItems ?? Enumerable.Empty<DboInvoiceItem>();
 
-    private List<Product>? _products;
-    private List<Customer>? _customers;
+    private List<DboProduct>? _products;
+    private List<DboCustomer>? _customers;
     private List<DboInvoice>? _invoices;
     private List<DboInvoiceItem>? _invoiceItems;
-    private List<User>? _users;
+    private List<DboUser>? _users;
 
     private InvoiceTestDataProvider()
         => this.Load();
@@ -91,7 +91,7 @@ public sealed class InvoiceTestDataProvider
 
     private void LoadUsers()
     {
-        var users = new List<User>()
+        var users = new List<DboUser>()
         {
             new() { Uid=Guid.Parse("10000000-0000-0000-0000-000000000001"), UserName="Visitor-1", Roles="VisitorRole"},
             new() { Uid=Guid.Parse("20000000-0000-0000-0000-000000000001"), UserName="User-1", Roles="UserRole"},
@@ -103,7 +103,7 @@ public sealed class InvoiceTestDataProvider
 
     private void LoadProducts()
     {
-        var products = new List<Product>()
+        var products = new List<DboProduct>()
         {
             new() { Uid=Guid.Parse("11111111-0000-0000-0000-000000000001"), ProductCode="SKU100", ProductName="Boeing 707", ProductUnitPrice=12.50m },
             new() { Uid=Guid.Parse("11111111-0000-0000-0000-000000000002"), ProductCode="SKU101", ProductName="Boeing 727", ProductUnitPrice=13.50m },
@@ -135,7 +135,7 @@ public sealed class InvoiceTestDataProvider
 
     private void LoadCustomers()
     {
-        var customers = new List<Customer>()
+        var customers = new List<DboCustomer>()
         {
             new() { Uid=Guid.Parse("11111111-1111-0000-0000-000000000001"), CustomerName="EasyJet"},
             new() { Uid=Guid.Parse("11111111-1111-0000-0000-000000000002"), CustomerName="RyanAir"},

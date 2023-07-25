@@ -6,9 +6,9 @@
 namespace Blazr.Core;
 
 // This is a base aggregate object representing a root item and a collection of associated items
-public abstract class AggregateBase<TRootItem, TCollectionItem> : IIdentity, IStateEntity
-    where TRootItem : class, IIdentity, IStateEntity, IAggregateItem, new()
-    where TCollectionItem : class, IIdentity, IStateEntity, IAggregateItem, new()
+public abstract class AggregateBase<TRootItem, TCollectionItem> : IEntity, IStateEntity
+    where TRootItem : class, IEntity, IStateEntity, IAggregateItem, new()
+    where TCollectionItem : class, IEntity, IStateEntity, IAggregateItem, new()
 {
     // both these items are set to readonly and private.  We don't expose their functionality to the outside world
     private readonly AggregateItemList<TCollectionItem> _items = new(Enumerable.Empty<TCollectionItem>());

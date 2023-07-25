@@ -6,7 +6,7 @@
 namespace Blazr.Core;
 
 public interface IBlazrRecordEditContext<TRecord>
-    where TRecord : class, IStateEntity, IIdentity, new()
+    where TRecord : class, IStateEntity, IEntity, new()
 {
     public EntityUid Uid { get; }
     public int StateCode { get;}

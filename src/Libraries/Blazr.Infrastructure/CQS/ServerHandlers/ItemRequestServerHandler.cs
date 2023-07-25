@@ -19,7 +19,7 @@ public sealed class ItemRequestServerHandler<TDbContext>
     }
 
     public async ValueTask<ItemQueryResult<TRecord>> ExecuteAsync<TRecord>(ItemQueryRequest request)
-        where TRecord : class, IIdentity, new()
+        where TRecord : class, IEntity, new()
     {
         // Try and get a registered custom handler
         var _customHandler = _serviceProvider.GetService<IItemRequestHandler<TRecord>>();
@@ -33,7 +33,7 @@ public sealed class ItemRequestServerHandler<TDbContext>
     }
 
     private async ValueTask<ItemQueryResult<TRecord>> GetItemAsync<TRecord>(ItemQueryRequest request)
-    where TRecord : class, IIdentity, new()
+    where TRecord : class, IEntity, new()
     {
         using var dbContext = _factory.CreateDbContext();
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;

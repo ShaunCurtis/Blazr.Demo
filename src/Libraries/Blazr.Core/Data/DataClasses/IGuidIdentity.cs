@@ -3,6 +3,10 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
+
 namespace Blazr.Core;
 
-public readonly record struct ItemQueryRequest( EntityUid Uid, CancellationToken Cancellation = new ());
+public interface IGuidIdentity 
+{ 
+    public Guid Uid { get; }
+}

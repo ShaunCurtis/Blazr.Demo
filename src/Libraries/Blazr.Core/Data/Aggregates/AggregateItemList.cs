@@ -7,7 +7,7 @@
 namespace Blazr.Core;
 
 public sealed class AggregateItemList<TItem>
-    where TItem : class, IIdentity, IStateEntity, IAggregateItem, new()
+    where TItem : class, IEntity, IStateEntity, IAggregateItem, new()
 {
     private Guid Uid = Guid.NewGuid();
     private readonly List<AggregateItem<TItem>> _items = new();

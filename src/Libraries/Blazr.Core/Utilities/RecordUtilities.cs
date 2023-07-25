@@ -9,7 +9,7 @@ public static class RecordUtilities
 {
     public static object GetIdentity(object value)
     {
-        if (value is IIdentity guidIdentity)
+        if (value is IEntity guidIdentity)
             return guidIdentity.Uid;
 
         return new();

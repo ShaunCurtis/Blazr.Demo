@@ -8,7 +8,7 @@ using FluentValidation;
 namespace Blazr.UI;
 
 public abstract partial class EditorFormBase<TRecord, TEditContext, TEntityService, TRecordValidator> : BlazrControlBase, IDisposable
-    where TRecord : class, IStateEntity, IIdentity, new()
+    where TRecord : class, IStateEntity, IEntity, new()
     where TEditContext : class, IBlazrRecordEditContext<TRecord>, new()
     where TEntityService : class, IEntityService
     where TRecordValidator : class, IValidator<TEditContext>, new()

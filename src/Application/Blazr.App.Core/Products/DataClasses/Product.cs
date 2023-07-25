@@ -8,7 +8,7 @@ namespace Blazr.App.Core;
 
 public readonly record struct ProductUid(Guid Value);
 
-public sealed record Product : IIdentity, IStateEntity, ICommandEntity
+public sealed record Product : IEntity, IStateEntity, ICommandEntity
 {
     public ProductUid ProductUid { get; init; }
 
