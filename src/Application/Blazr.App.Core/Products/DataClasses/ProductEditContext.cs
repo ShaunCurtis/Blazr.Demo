@@ -18,8 +18,8 @@ public sealed class ProductEditContext : BlazrEditContext<Product>
     protected override Product MapToRecord()
         => new()
         {
-            Uid = this.Uid,
-            StateCode = this.StateCode,
+            ProductUid = new(this.Uid.Value),
+            EntityState = this.EntityState,
             ProductName = this.ProductName,
             ProductUnitPrice = this.ProductUnitPrice,
             ProductCode = this.ProductCode
@@ -28,7 +28,6 @@ public sealed class ProductEditContext : BlazrEditContext<Product>
     protected override void MapToContext(Product record)
     {
         this.Uid = record.Uid;
-        internalStateCode = record.StateCode;
         this.ProductName = record.ProductName;
         this.ProductCode = record.ProductCode;
         this.ProductUnitPrice = record.ProductUnitPrice;

@@ -83,7 +83,7 @@ public class BasicDataPipelineHandlerTests
         var testProduct = _testDataProvider.TestProduct;
         var testUid = testProduct.Uid;
 
-        var deleteProduct = testProduct with { StateCode = AppStateCodes.Delete };
+        var deleteProduct = testProduct with { EntityState = testProduct.EntityState with { MarkedForDeletion=true } };
 
         var command = new CommandRequest<Product>(deleteProduct, cancelToken);
         var commandResult = await broker!.ExecuteCommandAsync<Product>(command);
@@ -106,8 +106,8 @@ public class BasicDataPipelineHandlerTests
 
         var originalCount = _testDataProvider.Products.Count();
         var expectedCount = originalCount + 1;
-        var newProduct = new Product() { ProductCode = "SKU999", ProductName = "Test-Product", ProductUnitPrice = 20000, StateCode = 0, Uid = Guid.NewGuid() };
-        var savedProduct = newProduct with { StateCode = 1 };
+        var newProduct = new Product() { ProductCode = "SKU999", ProductName = "Test-Product", ProductUnitPrice = 20000, EntityState = new(StateCodes.New), ProductUid = new(Guid.NewGuid()) };
+        var savedProduct = newProduct with { EntityState = new(StateCodes.New) };
         var productUid = newProduct.Uid;
 
         var command = new CommandRequest<Product>(newProduct, cancelToken);
@@ -204,11 +204,7 @@ public class BasicDataPipelineHandlerTests
 
         var cancelToken = new CancellationToken();
         var manufacturer = "Fokker";
-        var firstItem = _testDataProvider.Products
-            .Where(item => item.ProductName
-            .Contains(manufacturer))
-            .OrderBy(item => item.ProductName)
-            .FirstOrDefault();
+        var firstItem = _testDataProvider.FirstManufacturersProduct(manufacturer);
 
         var sorter = new SortDefinition(ApplicationConstants.Product.ProductName, false);
         var sorters = new List<SortDefinition>() { sorter };
@@ -232,7 +228,7 @@ public class BasicDataPipelineHandlerTests
         var broker = provider.GetService<IDataBroker>()!;
 
         var cancelToken = new CancellationToken();
-        var firstItem = _testDataProvider.Products.OrderBy(item => item.ProductName).FirstOrDefault();
+        var firstItem = _testDataProvider.FirstProduct;
 
         var sorter = new SortDefinition(ApplicationConstants.Product.ProductName, false);
         var sorters = new List<SortDefinition>() { sorter };

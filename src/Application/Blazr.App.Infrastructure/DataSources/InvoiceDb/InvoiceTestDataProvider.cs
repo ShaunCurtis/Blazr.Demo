@@ -179,10 +179,10 @@ public sealed class InvoiceTestDataProvider
         var product = _products![Random.Shared.Next(_products.Count())];
         return new()
         {
-            StateCode = AppStateCodes.New,
-            InvoiceUid = invoiceUid,
+            EntityState = new(StateCodes.New),
+            InvoiceUid = new(invoiceUid),
             InvoiceNumber = invoice.InvoiceNumber,
-            ProductUid = product.Uid,
+            ProductUid = new(product.Uid),
             ProductName = product.ProductName,
             ProductCode = product.ProductCode,
             ItemQuantity = Random.Shared.Next(4),
@@ -194,26 +194,39 @@ public sealed class InvoiceTestDataProvider
     {
         return new()
         {
-            StateCode = AppStateCodes.New,
-            Uid = Guid.NewGuid(),
-            CustomerUid = _customers![Random.Shared.Next(Customers.Count())].Uid,
+            EntityState = new(StateCodes.New),
+            InvoiceUid = new( Guid.NewGuid()),
+            CustomerUid = new( _customers![Random.Shared.Next(Customers.Count())].Uid),
             InvoiceDate = DateOnly.FromDateTime(DateTime.Now),
             InvoiceNumber = "1006",
             InvoicePrice = 1000m
         };
     }
 
-    public Guid TestInvoiceUid
-        => _invoices?.First().Uid ?? Guid.Empty;
+    public InvoiceUid TestInvoiceUid
+        => new(_invoices?.First().Uid ?? Guid.Empty);
 
     public Product TestProduct
-        => _products?.First() ?? new();
+        => _products?.First().FromDbo() ?? new();
 
     public Guid TestProductUid
         => _products?.First().Uid ?? Guid.Empty;
 
+    public Product FirstManufacturersProduct(string manufacturer) 
+        => _products!
+         .Where(item => item.ProductName
+         .Contains(manufacturer))
+         .OrderBy(item => item.ProductName)
+         .FirstOrDefault()!.FromDbo();
+
+    public Product FirstProduct 
+        => _products!.OrderBy(item => item.ProductName).FirstOrDefault()!.FromDbo();
+
+    public Product RandomProduct 
+        => _products!.Skip(Random.Shared.Next(0, _products!.Count() - 1)).First().FromDbo();
+
     public Customer TestCustomer
-        => _customers?.First() ?? new();
+        => _customers?.First().FromDbo() ?? new();
 
     public Guid TestCustomerUid
         => _invoices?.First().CustomerUid ?? Guid.Empty;

@@ -14,15 +14,14 @@ public sealed class CustomerEditContext : BlazrEditContext<Customer>
     protected override void MapToContext(Customer record)
     {
         this.Uid = record.Uid;
-        internalStateCode = record.StateCode;
         this.CustomerName = record.CustomerName;
     }
 
     protected override Customer MapToRecord()
         => new()
         {
-            Uid = this.Uid,
-            StateCode = this.StateCode,
+            CustomerUid = new(this.Uid.Value),
+            EntityState = this.EntityState,
             CustomerName = this.CustomerName,
         };
 }

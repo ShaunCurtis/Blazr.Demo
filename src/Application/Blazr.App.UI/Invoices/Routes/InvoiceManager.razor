@@ -21,7 +21,7 @@
         if (NotInitialized)
             _notificationService.RecordChanged += this.OnChange;
 
-        await this.Manager.LoadAsync(Uid);
+        await this.Manager.LoadAsync(new(Uid));
     }
 
     private void OnNavigation(LocationChangingContext context)

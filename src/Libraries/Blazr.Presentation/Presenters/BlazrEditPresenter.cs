@@ -29,7 +29,7 @@ public class BlazrEditPresenter<TRecord, TEntityService, TEditContext>
         _logger = logger;
     }
 
-    public async ValueTask LoadAsync(Guid id)
+    public async ValueTask LoadAsync(EntityUid id)
         => await GetItemAsync(new ItemQueryRequest { Uid = id });
 
     public ValueTask ResetItemAsync()

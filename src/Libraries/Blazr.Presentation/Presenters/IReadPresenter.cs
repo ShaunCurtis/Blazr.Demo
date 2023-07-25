@@ -10,5 +10,5 @@ public interface IReadPresenter<TRecord>
 {
     public TRecord Item { get;}
 
-    public ValueTask LoadAsync(Guid id);
+    public ValueTask LoadAsync(EntityUid id);
 }

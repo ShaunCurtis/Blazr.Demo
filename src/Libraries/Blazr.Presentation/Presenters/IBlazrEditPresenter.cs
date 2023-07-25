@@ -16,7 +16,7 @@ public interface IBlazrEditPresenter<TRecord, TEditContext>
 
     public EditContext EditContext { get; }
 
-    public ValueTask LoadAsync(Guid id);
+    public ValueTask LoadAsync(EntityUid id);
 
     public ValueTask ResetItemAsync();
 

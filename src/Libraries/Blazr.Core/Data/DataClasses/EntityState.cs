@@ -18,6 +18,9 @@ public readonly record struct EntityState
         StateCode = stateCode;
     }
 
+    public EntityState AsNew()
+        => this with { StateCode= StateCodes.New };
+
     public EntityState Mutate()
         => this with { IsMutated = true };
 
@@ -26,4 +29,7 @@ public readonly record struct EntityState
 
     public EntityState MarkForDeletion()
         => this with { MarkedForDeletion = true };
+
+    public static EntityState New()
+        => new(StateCodes.New);
 }

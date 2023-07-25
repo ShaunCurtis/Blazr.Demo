@@ -45,15 +45,9 @@ public sealed class CommandServerHandler<TDbContext>
 
         var stateRecord = request.Item;
 
-        if (AppStateCodes.IsUpdate(stateRecord.StateCode))
-        {
-            dbContext.Update<TRecord>(request.Item);
-            return await dbContext.SaveChangesAsync(request.Cancellation) == 1
-                ? CommandResult.Success("Record Updated")
-                : CommandResult.Failure("Error saving Record");
-        }
-
-        if (stateRecord.StateCode == AppStateCodes.New)
+        // Order here is important
+        // First check if it's new.
+        if (stateRecord.EntityState.IsNew)
         {
             dbContext.Add<TRecord>(request.Item);
             return await dbContext.SaveChangesAsync(request.Cancellation) == 1
@@ -61,12 +55,22 @@ public sealed class CommandServerHandler<TDbContext>
                 : CommandResult.Failure("Error adding Record");
         }
 
-        if (stateRecord.StateCode == AppStateCodes.Delete)
+        // Check if wee should delete it
+        if (stateRecord.EntityState.MarkedForDeletion)
         {
             dbContext.Remove<TRecord>(request.Item);
             return await dbContext.SaveChangesAsync(request.Cancellation) == 1
                 ? CommandResult.Success("Record Deleted")
                 : CommandResult.Failure("Error deleting Record");
+        }
+
+        // Finally it's not new or deleted, so has it changed
+        if (stateRecord.EntityState.IsMutated)
+        {
+            dbContext.Update<TRecord>(request.Item);
+            return await dbContext.SaveChangesAsync(request.Cancellation) == 1
+                ? CommandResult.Success("Record Updated")
+                : CommandResult.Failure("Error saving Record");
         }
 
         return CommandResult.Failure("Nothing executed.  Unrecognised StateCode.");

@@ -16,5 +16,5 @@ public class InvoiceItemsByInvoiceUidSpecification : PredicateSpecification<Invo
         => Guid.TryParse(filter.FilterData, out _invoiceUid);
 
     public override Expression<Func<InvoiceItem, bool>> Expression
-        => item => item.InvoiceUid == _invoiceUid;
+        => item => item.InvoiceUid == new InvoiceUid( _invoiceUid);
 }

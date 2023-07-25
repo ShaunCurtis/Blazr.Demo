@@ -22,7 +22,7 @@ public class InvoiceAggregateManager
 
     public IDataResult LastResult { get; private set; } = CommandResult.Success();
 
-    public async ValueTask LoadAsync(Guid uid)
+    public async ValueTask LoadAsync(EntityUid uid)
     {
         var result = await _dataBroker.GetItemAsync<InvoiceAggregate>(new ItemQueryRequest(uid));
 

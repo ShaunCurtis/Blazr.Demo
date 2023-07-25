@@ -16,7 +16,7 @@ public sealed class AggregateItemList<TItem>
 
     public IEnumerable<TItem> LiveItems
         => _items
-            .Where(item => item.Item.StateCode != AppStateCodes.Delete)
+            .Where(item => !item.Item.EntityState.MarkedForDeletion)
             .Select(item => item.Item)
             .AsEnumerable();
 
@@ -31,10 +31,10 @@ public sealed class AggregateItemList<TItem>
             _items.Add(AggregateItemFactory.AsExisting(item));
     }
     
-    public TItem? GetItem(Guid uid)
+    public TItem? GetItem(EntityUid uid)
         => _items.FirstOrDefault(item => item.Uid == uid)?.Item ?? null;
 
-    public bool ItemExists(Guid uid)
+    public bool ItemExists(EntityUid uid)
         => _items.Any(item => item.Uid == uid);
 
     public bool ItemIsDirty(TItem collectionItem)
@@ -48,6 +48,18 @@ public sealed class AggregateItemList<TItem>
 
         else
             _items.Add(AggregateItemFactory.AsNew(updateItem));
+
+        return CommandResult.Success();
+    }
+
+    public CommandResult DeleteItem(TItem item)
+    {
+        var selectedItem = _items.FirstOrDefault(item => item.Uid == item.Uid);
+        if (selectedItem != null)
+            selectedItem.Delete(item);
+
+        else
+            _items.Add(AggregateItemFactory.AsNew(item));
 
         return CommandResult.Success();
     }

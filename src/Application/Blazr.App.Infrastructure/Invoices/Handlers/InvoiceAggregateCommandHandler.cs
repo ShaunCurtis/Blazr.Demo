@@ -28,15 +28,15 @@ public sealed class InvoiceAggregateCommandHandler<TDbContext>
         var dboRoot = root.ToDbo();
 
         // Create the aggregate if it's marked as new
-        if (root.StateCode == AppStateCodes.New)
+        if (root.EntityState.IsNew)
             dbContext.Add<DboInvoice>(dboRoot);
 
         // Delete the aggregate if it is maarked as deleted)
-        if (root.StateCode == AppStateCodes.Delete)
+        else if (root.EntityState.MarkedForDeletion)
             dbContext.Remove<DboInvoice>(dboRoot);
 
         // Update the aggregate if it is marked as modified)
-        if (aggregate.IsRootDirty)
+        else if (aggregate.IsRootDirty)
             dbContext.Update<DboInvoice>(dboRoot);
 
         // Update all the existing items based on their state
@@ -44,14 +44,14 @@ public sealed class InvoiceAggregateCommandHandler<TDbContext>
         {
             var dboItem = item.ToDbo();
 
-            if (item.StateCode == AppStateCodes.New)
+            if (item.EntityState.IsNew)
                 dbContext.Add<DboInvoiceItem>(dboItem);
 
-            if (AppStateCodes.IsUpdate(item.StateCode) && aggregate.IsCollectionItemDirty(item))
-                dbContext.Update<DboInvoiceItem>(dboItem);
-
-            if (item.StateCode == AppStateCodes.Delete)
+            else if (item.EntityState.MarkedForDeletion)
                 dbContext.Remove<DboInvoiceItem>(dboItem);
+
+            else if (item.EntityState.IsMutated)
+                dbContext.Update<DboInvoiceItem>(dboItem);
         }
 
         try

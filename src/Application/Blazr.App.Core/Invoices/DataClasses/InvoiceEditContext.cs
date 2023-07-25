@@ -22,8 +22,7 @@ public sealed class InvoiceEditContext : BlazrEditContext<Invoice>
     protected override void MapToContext(Invoice record)
     {
         this.Uid = record.Uid;
-        internalStateCode = record.StateCode;
-        this.CustomerUid = record.CustomerUid;
+        this.CustomerUid = record.CustomerUid.Value;
         this.CustomerName = record.CustomerName;
         this.InvoiceNumber = record.InvoiceNumber;
         this.InvoiceDate = record.InvoiceDate;
@@ -33,9 +32,9 @@ public sealed class InvoiceEditContext : BlazrEditContext<Invoice>
     protected override Invoice MapToRecord()
         => new()
         {
-            Uid = this.Uid,
-            StateCode = this.StateCode,
-            CustomerUid = this.CustomerUid,
+            InvoiceUid = new(this.Uid.Value),
+            EntityState = this.EntityState,
+            CustomerUid = new(this.CustomerUid),
             CustomerName = this.CustomerName,
             InvoiceNumber = this.InvoiceNumber,
             InvoiceDate = this.InvoiceDate ?? DateOnly.MinValue,

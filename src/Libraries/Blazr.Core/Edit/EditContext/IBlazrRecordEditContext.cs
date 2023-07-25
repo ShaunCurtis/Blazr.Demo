@@ -9,7 +9,7 @@ public interface IBlazrRecordEditContext<TRecord>
     where TRecord : class, IStateEntity, IEntity, new()
 {
     public EntityUid Uid { get; }
-    public int StateCode { get;}
+    public EntityState EntityState { get;}
     public TRecord BaseRecord { get; }
     public bool IsDirty { get; }
     public TRecord AsRecord { get; }

@@ -48,12 +48,12 @@ public class InvoiceDataPipelineHandlerTests
         var startInvoiceCount = _testDataProvider.InvoiceCount;
         var testInvoiceUid = _testDataProvider.TestInvoiceUid;
 
-        var itemRequest = new ItemQueryRequest(testInvoiceUid, cancelToken);
+        var itemRequest = new ItemQueryRequest(new(testInvoiceUid.Value), cancelToken);
         var itemResult = await broker!.GetItemAsync<Invoice>(itemRequest);
 
         Assert.True(itemResult.Successful);
 
-        var deleteInvoice = itemResult.Item! with { StateCode = AppStateCodes.Delete };
+        var deleteInvoice = itemResult.Item! with { EntityState = itemResult.Item!.EntityState.MarkForDeletion() };
 
         var command = new CommandRequest<Invoice>(deleteInvoice, cancelToken);
         var commandResult = await broker!.ExecuteCommandAsync<Invoice>(command);
@@ -75,14 +75,15 @@ public class InvoiceDataPipelineHandlerTests
 
         //Get a known root Uid
         var invoiceUid = _testDataProvider.TestInvoiceUid;
+        var entityUid = new EntityUid(invoiceUid.Value);
 
         var cancelToken = new CancellationToken();
-        var itemRequest = new ItemQueryRequest { Uid = invoiceUid, Cancellation = cancelToken };
+        var itemRequest = new ItemQueryRequest { Uid = entityUid, Cancellation = cancelToken };
 
         var result = await broker!.GetItemAsync<InvoiceAggregate>(itemRequest);
 
         Assert.True(result.Successful);
-        Assert.Equal(result.Item!.Uid, invoiceUid);
+        Assert.Equal(result.Item!.Uid, entityUid);
     }
 
     [Fact]
@@ -93,9 +94,10 @@ public class InvoiceDataPipelineHandlerTests
 
         //Get a known root Uid
         var invoiceUid = _testDataProvider.TestInvoiceUid;
+        var entityUid = new EntityUid(invoiceUid.Value);
 
         var cancelToken = new CancellationToken();
-        var itemRequest = new ItemQueryRequest { Uid = invoiceUid, Cancellation = cancelToken };
+        var itemRequest = new ItemQueryRequest { Uid = entityUid, Cancellation = cancelToken };
 
         var result = await broker!.GetItemAsync<InvoiceAggregate>(itemRequest);
 
@@ -125,14 +127,14 @@ public class InvoiceDataPipelineHandlerTests
 
         var cancelToken = new CancellationToken();
 
-        var customer = _testDataProvider.Customers.First();
-        var product = _testDataProvider.Products.Skip(Random.Shared.Next(0, _testDataProvider.Products.Count() - 1)).First();
+        var customer = _testDataProvider.TestCustomer;
+        var product = _testDataProvider.RandomProduct;
 
         // Create a fully populated new room item 
         var newRoot = InvoiceFactory.New(customer);
 
         // When we do a comparison with the saved root it's state will be 1
-        var savedNewRoot = newRoot with { StateCode = 1 };
+        var savedNewRoot = newRoot with { EntityState = newRoot.EntityState.AsNew() };
 
         // Create a new aggregate with the the new root and an empty collection
         var aggregate = new InvoiceAggregate(newRoot, Enumerable.Empty<InvoiceItem>());
@@ -146,7 +148,7 @@ public class InvoiceDataPipelineHandlerTests
         var newCollectionItem = InvoiceFactory.New(newRoot, product, 2);
 
         // When we do a comparison with the saved root it's state will be 1
-        var savedCollectionItem = newCollectionItem with { StateCode = 1 };
+        var savedCollectionItem = newCollectionItem with { EntityState = newCollectionItem.EntityState.AsNew()};
 
         var collectionItemSaveResult = aggregate.SaveCollectionItem(newCollectionItem);
 
@@ -177,10 +179,10 @@ public class InvoiceDataPipelineHandlerTests
 
         //Get a known root Uid
         var invoiceUid = _testDataProvider.TestInvoiceUid;
-        var product = _testDataProvider.Products.Skip(Random.Shared.Next(0, _testDataProvider.Products.Count() - 1)).First();
+        var product = _testDataProvider.RandomProduct;
 
         var cancelToken = new CancellationToken();
-        var itemRequest = new ItemQueryRequest { Uid = invoiceUid, Cancellation = cancelToken };
+        var itemRequest = new ItemQueryRequest { Uid = new(invoiceUid.Value), Cancellation = cancelToken };
 
         var result = await broker!.GetItemAsync<InvoiceAggregate>(itemRequest);
 
@@ -191,7 +193,7 @@ public class InvoiceDataPipelineHandlerTests
         var newCollectionItem = InvoiceFactory.New(root, product, 2);
 
         // When we do a comparison with the saved root it's state will be 1
-        var savedCollectionItem = newCollectionItem with { StateCode = 1 };
+        var savedCollectionItem = newCollectionItem with { EntityState = newCollectionItem.EntityState.AsNew() };
 
         // Save the item to the aggregate
         var collectionItemSaveResult = aggregate.SaveCollectionItem(newCollectionItem);
@@ -224,7 +226,7 @@ public class InvoiceDataPipelineHandlerTests
         var product = _testDataProvider.Products.Skip(Random.Shared.Next(0, _testDataProvider.Products.Count() - 1)).First();
 
         var cancelToken = new CancellationToken();
-        var itemRequest = new ItemQueryRequest { Uid = invoiceUid, Cancellation = cancelToken };
+        var itemRequest = new ItemQueryRequest { Uid = new(invoiceUid.Value), Cancellation = cancelToken };
 
         var result = await broker!.GetItemAsync<InvoiceAggregate>(itemRequest);
 
@@ -267,7 +269,7 @@ public class InvoiceDataPipelineHandlerTests
         var product = _testDataProvider.Products.Skip(Random.Shared.Next(0, _testDataProvider.Products.Count() - 1)).First();
 
         var cancelToken = new CancellationToken();
-        var itemRequest = new ItemQueryRequest { Uid = invoiceUid, Cancellation = cancelToken };
+        var itemRequest = new ItemQueryRequest { Uid = new(invoiceUid.Value), Cancellation = cancelToken };
 
         var result = await broker!.GetItemAsync<InvoiceAggregate>(itemRequest);
 
@@ -278,7 +280,7 @@ public class InvoiceDataPipelineHandlerTests
         var expectedCollectionCount = aggregate.LiveItems.Count() - 1;
 
         // Update the item
-        var updatedCollectionItem = collectionItem with { StateCode = InvoiceStateCodes.Delete };
+        var updatedCollectionItem = collectionItem with { EntityState = collectionItem.EntityState.MarkForDeletion() };
 
         // Save the item to the aggregate
         var collectionItemSaveResult = aggregate.SaveCollectionItem(updatedCollectionItem);

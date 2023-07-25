@@ -26,13 +26,13 @@ public abstract partial class EditorFormBase<TRecord, TEditContext, TEntityServi
     protected EditFormButtonsOptions editFormButtonsOptions = new();
     protected bool ExitOnSave = true;
 
-    protected bool IsNewRecord => this.Presenter.RecordContext.StateCode == AppStateCodes.New;
+    protected bool IsNewRecord => this.Presenter.RecordContext.EntityState.IsNew;
 
     protected async override Task OnParametersSetAsync()
     {
         if (this.NotInitialized)
         {
-            await this.Presenter.LoadAsync(Uid);
+            await this.Presenter.LoadAsync(new(Uid));
 
             this.Presenter.EditContext.OnFieldChanged += OnEditStateMayHaveChanged;
         }

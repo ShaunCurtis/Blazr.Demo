@@ -21,7 +21,7 @@ public sealed class InvoiceItemEditPresenter : BlazrEditPresenter<InvoiceItem, I
     protected override ValueTask GetItemAsync(ItemQueryRequest request)
     {
         // Creates a new invoice item
-        if (request.Uid == Guid.Empty)
+        if (request.Uid.IsEmpty)
         {
             var newRecord = InvoiceFactory.New(_aggregateManager.Record.Root);
             RecordContext.Load(newRecord);

@@ -49,12 +49,12 @@ public abstract class AggregateBase<TRootItem, TCollectionItem> : IEntity, IStat
 
     // Method to update the aggregate root item
     public CommandResult UpdateRoot(TRootItem root)
-       => _root.Update(this.MutateRootItemState(root, _root.BaseStateCode));
+       => _root.Update(root);
 
     // Method to Delete the aggregate root item
     // Note this just marks the invoice for deletion, it doesn't remove it
     public CommandResult DeleteRoot(TRootItem root)
-            => _root.Update(this.MutateRootItemState(root, AppStateCodes.Delete));
+            => _root.Delete(root);
 
     // Method to produce a new Collection Item
     // Override this method is you need to populate it with any root data
@@ -75,7 +75,7 @@ public abstract class AggregateBase<TRootItem, TCollectionItem> : IEntity, IStat
     // Note that it sets the state to deleted, it doesn't actually remove the item from the collection
     public CommandResult RemoveCollectionItem(TCollectionItem item)
     {
-        var result = this._items.SaveItem(this.MutateCollectionItemState(item, AppStateCodes.Delete));
+        var result = this._items.DeleteItem(item);
 
         if (result != null && result.Successful)
             this.NotifyUpdated();
@@ -125,25 +125,11 @@ public abstract class AggregateBase<TRootItem, TCollectionItem> : IEntity, IStat
         this.NotifyUpdated();
     }
 
-    // Method to set the root as new and clear the collection items.
-    public void SetAggregateToNew()
-    {
-        _root.SetAsNew(this.MutateRootItemState(_root.Item, AppStateCodes.New));
-        _items.Clear();
-        this.NotifyUpdated();
-    }
-
     // Method called when items change
     // Should be used to update any data within the aggregate that may change when an item within the aggregate changes
     protected virtual void NotifyUpdated() { }
 
-    // Sets the state on a Root Item and returns a new copy of the item
-    protected abstract TRootItem MutateRootItemState(TRootItem item, int state);
-
-    // Sets the state on a Collection Item and returns a new copy of the item
-    protected abstract TCollectionItem MutateCollectionItemState(TCollectionItem item, int state);
-
     // Method to check if an invoice item exists
-    private bool LogItemExists(Guid uid)
+    private bool LogItemExists(EntityUid uid)
         => _items.ItemExists(uid);
 }

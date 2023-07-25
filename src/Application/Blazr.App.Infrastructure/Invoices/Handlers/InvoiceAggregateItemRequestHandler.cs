@@ -27,7 +27,7 @@ public sealed class InvoiceAggregateItemRequestHandler<TDbContext>
             return ItemQueryResult<InvoiceAggregate>.Failure("No record retrieved");
 
         List<InvoiceItem>? items = await dbContext.Set<InvoiceItem>()
-            .Where(item => item.InvoiceUid == request.Uid)
+            .Where(item => item.Uid == request.Uid)
             .ToListAsync();
 
         InvoiceAggregate aggregate = new(root, items);

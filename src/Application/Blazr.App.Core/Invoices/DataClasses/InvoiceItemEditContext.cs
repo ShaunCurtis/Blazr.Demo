@@ -27,11 +27,10 @@ public sealed class InvoiceItemEditContext : BlazrEditContext<InvoiceItem>
     protected override void MapToContext(InvoiceItem record)
     {
         this.Uid = record.Uid;
-        internalStateCode = record.StateCode;
-        this.ProductUid = record.ProductUid.ToNullableGuid();
+        this.ProductUid = record.ProductUid.Value.ToNullableGuid();
         this.ProductCode = record.ProductCode;
         this.ProductName = record.ProductName;
-        this.InvoiceUid = record.InvoiceUid.ToNullableGuid();
+        this.InvoiceUid = record.InvoiceUid.Value.ToNullableGuid();
         this.InvoiceNumber = record.InvoiceNumber;
         this.ItemQuantity = record.ItemQuantity;
         this.ItemUnitPrice = record.ItemUnitPrice;
@@ -40,12 +39,12 @@ public sealed class InvoiceItemEditContext : BlazrEditContext<InvoiceItem>
     protected override InvoiceItem MapToRecord()
         => new()
         {
-            Uid = this.Uid,
-            StateCode = this.StateCode,
-            ProductUid = this.ProductUid.FromNullableGuid(),
+            InvoiceItemUid = new(this.Uid.Value),
+            EntityState = this.EntityState,
+            ProductUid = new(this.ProductUid.FromNullableGuid()),
             ProductName = this.ProductName,
             ProductCode = this.ProductCode,
-            InvoiceUid = this.InvoiceUid.FromNullableGuid(),
+            InvoiceUid = new(this.InvoiceUid.FromNullableGuid()),
             InvoiceNumber = this.InvoiceNumber,
             ItemQuantity = this.ItemQuantity,
             ItemUnitPrice = this.ItemUnitPrice,

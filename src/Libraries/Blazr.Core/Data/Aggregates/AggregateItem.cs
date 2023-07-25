@@ -10,11 +10,20 @@ public class AggregateItem<TItem>
     where TItem : class, IEntity, IStateEntity, IAggregateItem, new()
 {
     private CommandResult FailOnUidCheck = CommandResult.Failure("Can't update - the Uid of a submitted Item doesn't match the UI of the stored item.");
-
+    private bool _isMarkedForDeletion;
+    
     public TItem? BaseItem { get; internal set; }
+    
     public TItem Item { get; internal set; } = new();
-    public int BaseStateCode => this.BaseItem?.StateCode ?? AppStateCodes.New; 
+    
+    public EntityState EntityState => (this.BaseItem?.EntityState ?? new(StateCodes.New)) with
+    {
+        IsMutated = this.IsDirty,
+        MarkedForDeletion = _isMarkedForDeletion
+    };
+
     public EntityUid Uid => this.Item.Uid;
+    
     public bool IsDirty => this.Item != this.BaseItem;
 
     internal AggregateItem() { }
@@ -23,8 +32,16 @@ public class AggregateItem<TItem>
     {
         if (item.Uid != this.Item.Uid)
             return this.FailOnUidCheck;
-    
+
         this.Item = item;
+        return CommandResult.Success();
+    }
+    public CommandResult Delete(TItem item)
+    {
+        if (item.Uid != this.Item.Uid)
+            return this.FailOnUidCheck;
+
+        _isMarkedForDeletion = true;
         return CommandResult.Success();
     }
 

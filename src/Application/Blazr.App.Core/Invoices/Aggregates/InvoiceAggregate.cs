@@ -1,5 +1,3 @@
-
-using System.Diagnostics;
 /// ============================================================
 /// Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
@@ -11,18 +9,12 @@ public sealed class InvoiceAggregate : AggregateBase<Invoice, InvoiceItem>
 {
     public InvoiceAggregate() : base() { }
 
-    public InvoiceAggregate(Invoice root, IEnumerable<InvoiceItem>? items = null):  base(root, items) { }
-
-    protected override InvoiceItem MutateCollectionItemState(InvoiceItem item, int state)
-        => InvoiceFactory.MutateState(item, state);
-
-    protected override Invoice MutateRootItemState(Invoice item, int state)
-        => InvoiceFactory.MutateState(item, state);
+    public InvoiceAggregate(Invoice root, IEnumerable<InvoiceItem>? items = null) : base(root, items) { }
 
     protected override void NotifyUpdated()
     {
         decimal totalcost = 0;
-        foreach( var item in this.LiveItems)
+        foreach (var item in this.LiveItems)
         {
             totalcost = totalcost + (item.ItemUnitPrice * item.ItemQuantity);
         }

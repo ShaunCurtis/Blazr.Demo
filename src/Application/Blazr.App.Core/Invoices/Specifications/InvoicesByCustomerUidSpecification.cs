@@ -11,10 +11,10 @@ public class InvoicesByCustomerUidSpecification : PredicateSpecification<Invoice
 
     public InvoicesByCustomerUidSpecification(Guid customerUid)
         => _customerUid = customerUid;
-    
+
     public InvoicesByCustomerUidSpecification(FilterDefinition filter)
         => Guid.TryParse(filter.FilterData, out _customerUid);
 
     public override Expression<Func<Invoice, bool>> Expression
-        => invoice => invoice.CustomerUid == _customerUid;
+        => invoice => invoice.CustomerUid == new CustomerUid(_customerUid);
 }

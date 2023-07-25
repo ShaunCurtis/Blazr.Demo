@@ -16,7 +16,7 @@ public sealed class ReadPresenter<TRecord> : IReadPresenter<TRecord>
     public ReadPresenter(IDataBroker dataBroker)
         => _dataBroker = dataBroker;
 
-    public async ValueTask LoadAsync(Guid id)
+    public async ValueTask LoadAsync(EntityUid id)
         => await GetItemAsync(new ItemQueryRequest { Uid = id });
 
     private async ValueTask GetItemAsync(ItemQueryRequest request)

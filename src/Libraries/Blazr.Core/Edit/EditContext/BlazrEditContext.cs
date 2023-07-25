@@ -8,15 +8,17 @@ namespace Blazr.Core;
 public abstract class BlazrEditContext<TRecord> : IBlazrRecordEditContext<TRecord>, IBlazrEditContext
     where TRecord : class, IStateEntity, IEntity, new()
 {
-    public Guid Uid { get; protected set; } = Guid.NewGuid();
+    private bool _isMarkedForDeletion;
+    public EntityUid Uid { get; protected set; }
 
-    public int StateCode => internalStateCode;
+    public EntityState EntityState => this.BaseRecord.EntityState with { 
+        IsMutated = this.IsDirty,
+        MarkedForDeletion = _isMarkedForDeletion
+    }; 
 
     public TRecord BaseRecord { get; protected set; } = default!;
 
     public bool IsDirty => this.BaseRecord != this.MapToRecord();
-
-    protected int internalStateCode = AppStateCodes.Record;
 
     public virtual TRecord AsRecord
         => this.MapToRecord();
@@ -37,14 +39,11 @@ public abstract class BlazrEditContext<TRecord> : IBlazrRecordEditContext<TRecor
         => this.MapToContext(this.BaseRecord);
 
     public void SetAsDeleted()
-    {
-        internalStateCode = AppStateCodes.Delete;
-    }
+        => _isMarkedForDeletion = true;
 
     void IBlazrEditContext.SetAsSaved()
     {
         this.BaseRecord = this.AsRecord;
-        internalStateCode = AppStateCodes.Record;
     }
 
     protected abstract void MapToContext(TRecord record);

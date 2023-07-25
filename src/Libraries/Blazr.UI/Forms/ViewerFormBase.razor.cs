@@ -21,7 +21,7 @@ public abstract partial class ViewerFormBase<TRecord, TEntityService> : BlazrCon
     protected async override Task OnParametersSetAsync()
     {
         if (this.NotInitialized)
-            await this.Presenter.LoadAsync(Uid);
+            await this.Presenter.LoadAsync(new(Uid));
     }
 
     protected Task OnExit()

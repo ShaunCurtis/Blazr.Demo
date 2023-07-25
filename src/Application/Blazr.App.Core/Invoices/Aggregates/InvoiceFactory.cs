@@ -11,40 +11,40 @@ public static class InvoiceFactory
     public static Invoice New(Customer customer)
         => new()
         {
-            Uid = Guid.NewGuid(),
+            InvoiceUid = new(Guid.NewGuid()),
+            CustomerUid = customer.CustomerUid,
             CustomerName = customer.CustomerName,
-            CustomerUid = customer.Uid,
             InvoiceDate = DateOnly.FromDateTime(DateTime.Now),
             InvoiceNumber = "--NEW--",
-            StateCode = 0
+            EntityState = new(StateCodes.New),
         };
 
     public static InvoiceItem New(Invoice invoice)
         => new()
         {
-            Uid = Guid.NewGuid(),
+            InvoiceItemUid = new(Guid.NewGuid()),
             InvoiceNumber = invoice.InvoiceNumber,
-            InvoiceUid = invoice.Uid,
-            StateCode = 0
+            InvoiceUid = invoice.InvoiceUid,
+            EntityState = new(StateCodes.New),
         };
 
     public static InvoiceItem New(Invoice invoice, Product product, int quantity)
         => new()
         {
-            Uid = Guid.NewGuid(),
+            InvoiceItemUid = new(Guid.NewGuid()),
             InvoiceNumber = invoice.InvoiceNumber,
-            InvoiceUid = invoice.Uid,
-            ProductUid = product.Uid,
+            InvoiceUid = invoice.InvoiceUid,
+            ProductUid = product.ProductUid,
             ProductName = product.ProductName,
             ProductCode = product.ProductCode,
             ItemUnitPrice = product.ProductUnitPrice,
             ItemQuantity = quantity,
-            StateCode = 0
+            EntityState = new(StateCodes.New),
         };
 
-    public static Invoice MutateState(Invoice item, int state)
-    => item with { StateCode = state };
+    public static Invoice MutateState(Invoice item, StateCode state)
+        => item with { EntityState = item.EntityState.Mutate(state) };
 
-    public static InvoiceItem MutateState(InvoiceItem item, int state)
-    => item with { StateCode = state };
+    public static InvoiceItem MutateState(InvoiceItem item, StateCode state)
+        => item with { EntityState = item.EntityState.Mutate(state) };
 }
