@@ -40,7 +40,7 @@ public sealed class InMemoryInvoiceDbContext
                    UserUid = new(u.Uid),
                    UserName = u.UserName,
                    Roles = u.Roles,
-               });
+               }).HasNoKey();
 
         modelBuilder.Entity<Customer>()
             .ToInMemoryQuery(()
@@ -49,7 +49,7 @@ public sealed class InMemoryInvoiceDbContext
                {
                    CustomerUid = new(c.Uid),
                    CustomerName = c.CustomerName,
-               });
+               }).HasNoKey();  
 
         modelBuilder.Entity<Product>()
             .ToInMemoryQuery(()
@@ -60,7 +60,7 @@ public sealed class InMemoryInvoiceDbContext
                    ProductName = p.ProductName,
                    ProductCode = p.ProductCode,
                    ProductUnitPrice = p.ProductUnitPrice,
-               });
+               }).HasNoKey();
 
         modelBuilder.Entity<Invoice>()
             .ToInMemoryQuery(()
@@ -74,7 +74,7 @@ public sealed class InMemoryInvoiceDbContext
                        InvoiceDate = i.InvoiceDate,
                        InvoiceNumber = i.InvoiceNumber,
                        InvoicePrice = i.InvoicePrice,
-                   }).HasKey(x => x.Uid);
+                   }).HasNoKey();
 
         modelBuilder.Entity<InvoiceItem>()
             .ToInMemoryQuery(()
@@ -91,7 +91,7 @@ public sealed class InMemoryInvoiceDbContext
                        ProductCode = p.ProductCode,
                        ItemQuantity = i.ItemQuantity,
                        ItemUnitPrice = i.ItemUnitPrice,
-                   }).HasKey(x => x.Uid);
+                   }).HasNoKey();
 
         modelBuilder.Entity<CustomerFkItem>()
             .ToInMemoryQuery(()
@@ -100,7 +100,7 @@ public sealed class InMemoryInvoiceDbContext
                    {
                        Uid = c.Uid,
                        Name = c.CustomerName,
-                   }).HasKey(x => x.Uid);
+                   }).HasNoKey();
 
         modelBuilder.Entity<ProductFkItem>()
             .ToInMemoryQuery(()
@@ -111,6 +111,6 @@ public sealed class InMemoryInvoiceDbContext
                        Name = p.ProductName,
                        ProductCode = p.ProductCode,
                        ItemUnitPrice = p.ProductUnitPrice
-                   }).HasKey(x => x.Uid);
+                   }).HasNoKey();
     }
 }

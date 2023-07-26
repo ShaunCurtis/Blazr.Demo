@@ -13,7 +13,7 @@ public abstract partial class ViewerFormBase<TRecord, TEntityService> : BlazrCon
     [Inject] protected NavigationManager NavManager { get; set; } = default!;
     [Inject] protected IUIEntityService<TEntityService> UIEntityService { get; set; } = default!;
 
-    [Parameter] public Guid Uid { get; set; }
+    [Parameter] public EntityUid Uid { get; set; }
     [CascadingParameter] private IModalDialog? ModalDialog { get; set; }
 
     protected string ExitUrl { get; set; } = "/";
@@ -21,7 +21,7 @@ public abstract partial class ViewerFormBase<TRecord, TEntityService> : BlazrCon
     protected async override Task OnParametersSetAsync()
     {
         if (this.NotInitialized)
-            await this.Presenter.LoadAsync(new(Uid));
+            await this.Presenter.LoadAsync(Uid);
     }
 
     protected Task OnExit()

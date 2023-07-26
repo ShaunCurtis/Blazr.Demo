@@ -29,7 +29,7 @@ public sealed class InvoiceTestDataProvider
     {
         using var dbContext = factory.CreateDbContext();
 
-        var products = dbContext.Set<Product>();
+        var products = dbContext.Set<DboProduct>();
 
         // Check if we already have a full data set
         // If not clear down any existing data and start again
@@ -39,7 +39,7 @@ public sealed class InvoiceTestDataProvider
             dbContext.SaveChanges();
         }
 
-        var customers = dbContext.Set<Customer>();
+        var customers = dbContext.Set<DboCustomer>();
 
         // Check if we already have a full data set
         // If not clear down any existing data and start again
@@ -69,7 +69,7 @@ public sealed class InvoiceTestDataProvider
             dbContext.SaveChanges();
         }
 
-        var users = dbContext.Set<User>();
+        var users = dbContext.Set<DboUser>();
 
         // Check if we already have a full data set
         // If not clear down any existing data and start again

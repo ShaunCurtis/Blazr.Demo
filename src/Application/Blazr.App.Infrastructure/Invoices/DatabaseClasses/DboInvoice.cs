@@ -8,7 +8,7 @@ namespace Blazr.App.Infrastructure;
 
 internal sealed record DboInvoice
 {
-    public Guid Uid { get; init; } = Guid.Empty;
+    [Key] public Guid Uid { get; init; } = Guid.Empty;
 
     public int StateCode { get; init; } = 1;
 

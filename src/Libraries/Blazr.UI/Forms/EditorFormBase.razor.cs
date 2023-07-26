@@ -18,7 +18,7 @@ public abstract partial class EditorFormBase<TRecord, TEditContext, TEntityServi
     [Inject] protected IUIEntityService<TEntityService> UIEntityService { get; set; } = default!;
 
     [CascadingParameter] private IModalDialog? ModalDialog { get; set; }
-    [Parameter] public Guid Uid { get; set; }
+    [Parameter] public EntityUid Uid { get; set; }
     [Parameter] public bool LockNavigation { get; set; } = true;
 
     protected string exitUrl = "/";
@@ -32,7 +32,7 @@ public abstract partial class EditorFormBase<TRecord, TEditContext, TEntityServi
     {
         if (this.NotInitialized)
         {
-            await this.Presenter.LoadAsync(new(Uid));
+            await this.Presenter.LoadAsync(Uid);
 
             this.Presenter.EditContext.OnFieldChanged += OnEditStateMayHaveChanged;
         }
