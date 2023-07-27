@@ -7,9 +7,11 @@
 
 namespace Blazr.App.Infrastructure;
 
-public sealed record DboCustomer 
+public sealed record DboCustomer : IStateEntity, ICommandEntity
 {
     [Key] public Guid Uid { get; init; } = Guid.Empty;
+
+    [NotMapped] public Blazr.Core.EntityState EntityState { get; init; }
 
     public string CustomerName { get; init; } = "Not Set";
 }

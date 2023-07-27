@@ -6,16 +6,9 @@
 
 namespace Blazr.App.Infrastructure;
 
-internal static class CustiomerExtensions
+public class DboCustomerMap : IDboEntityMap<DboCustomer, Customer>
 {
-    internal static DboCustomer ToDbo(this Customer item)
-        => new()
-        {
-            Uid = item.Uid.Value,
-            CustomerName = item.CustomerName,
-        };
-
-    internal static Customer FromDbo(this DboCustomer item)
+    public Customer Map(DboCustomer item)
         => new()
         {
             CustomerUid = new(item.Uid),
@@ -23,4 +16,11 @@ internal static class CustiomerExtensions
             EntityState = new(StateCodes.Existing),
         };
 
+    public DboCustomer Map(Customer item)
+        => new()
+        {
+            Uid = item.Uid.Value,
+            EntityState = item.EntityState,
+            CustomerName = item.CustomerName,
+        };
 }

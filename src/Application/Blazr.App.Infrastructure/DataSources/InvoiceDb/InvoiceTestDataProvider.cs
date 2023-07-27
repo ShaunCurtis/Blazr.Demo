@@ -226,7 +226,7 @@ public sealed class InvoiceTestDataProvider
         => _products!.Skip(Random.Shared.Next(0, _products!.Count() - 1)).First().FromDbo();
 
     public Customer TestCustomer
-        => _customers?.First().FromDbo() ?? new();
+        => new DboCustomerMap().Map(_customers!.First());
 
     public Guid TestCustomerUid
         => _invoices?.First().CustomerUid ?? Guid.Empty;

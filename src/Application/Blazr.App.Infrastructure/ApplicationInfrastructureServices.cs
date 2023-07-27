@@ -46,6 +46,8 @@ public static class ApplicationInfrastructureServices
         //services.AddScoped<IItemRequestHandler<Customer>, CustomerRequestServerHandler<InMemoryInvoiceDbContext>>();
 
         services.AddInvoiceServerInfrastructureServices();
+        services.AddProductServerInfrastructureServices();
+        services.AddCustomerServerInfrastructureServices();
     }
 
     //private static void AddAppWASMInfraStructureServices(this IServiceCollection services)

@@ -107,7 +107,7 @@ public class BasicDataPipelineHandlerTests
         var originalCount = _testDataProvider.Products.Count();
         var expectedCount = originalCount + 1;
         var newProduct = new Product() { ProductCode = "SKU999", ProductName = "Test-Product", ProductUnitPrice = 20000, EntityState = new(StateCodes.New), ProductUid = new(Guid.NewGuid()) };
-        var savedProduct = newProduct with { EntityState = new(StateCodes.New) };
+        var savedProduct = newProduct with { EntityState = new(StateCodes.Existing) };
         var productUid = newProduct.Uid;
 
         var command = new CommandRequest<Product>(newProduct, cancelToken);

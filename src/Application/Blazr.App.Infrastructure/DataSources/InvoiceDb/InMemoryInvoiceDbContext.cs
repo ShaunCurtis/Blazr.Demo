@@ -37,6 +37,7 @@ public sealed class InMemoryInvoiceDbContext
             => from u in this.DboUser
                select new User
                {
+                   EntityState = new(StateCodes.Existing),
                    UserUid = new(u.Uid),
                    UserName = u.UserName,
                    Roles = u.Roles,
@@ -47,15 +48,17 @@ public sealed class InMemoryInvoiceDbContext
             => from c in this.DboCustomer
                select new Customer
                {
+                   EntityState = new(StateCodes.Existing),
                    CustomerUid = new(c.Uid),
                    CustomerName = c.CustomerName,
-               }).HasNoKey();  
+               }).HasNoKey();
 
         modelBuilder.Entity<Product>()
             .ToInMemoryQuery(()
             => from p in this.DboProduct
                select new Product
                {
+                   EntityState = new(StateCodes.Existing),
                    ProductUid = new(p.Uid),
                    ProductName = p.ProductName,
                    ProductCode = p.ProductCode,
