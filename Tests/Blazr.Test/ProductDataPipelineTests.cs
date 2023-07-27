@@ -126,7 +126,7 @@ public class ProductDataPipelineTests
     }
 
     [Fact]
-    public async void TestRepositoryDataBrokerUpdateProductItem()
+    public async void UpdateProductItem()
     {
         var provider = GetServiceProvider();
         var broker = provider.GetService<IDataBroker>()!;
@@ -137,7 +137,8 @@ public class ProductDataPipelineTests
         var expectedCount = originalCount;
         var testItem = _testDataProvider.TestProduct;
 
-        var updatedItem = testItem with { ProductUnitPrice = 99999, EntityState =  testItem.EntityState.Mutate()};
+        var expectedItem = testItem with { ProductUnitPrice = 99999};
+        var updatedItem = expectedItem with { EntityState = testItem.EntityState.Mutate() };
         var productUid = updatedItem.Uid;
 
         var command = new CommandRequest<Product>(updatedItem, cancelToken);
@@ -153,7 +154,7 @@ public class ProductDataPipelineTests
         Assert.True(listResult.Successful);
         Assert.Equal(expectedCount, listResult.TotalCount);
         Assert.True(itemResult.Successful);
-        Assert.Equal(updatedItem, itemResult.Item);
+        Assert.Equal(expectedItem, itemResult.Item);
     }
 
     //[Theory]
