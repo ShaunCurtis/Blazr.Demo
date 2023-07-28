@@ -6,9 +6,11 @@
 
 namespace Blazr.App.Infrastructure;
 
-internal sealed record DboInvoiceItem 
+public sealed record DboInvoiceItem 
 {
     [Key] public Guid Uid { get; init; } = Guid.Empty;
+
+    [NotMapped] public Blazr.Core.EntityState EntityState { get; init; }
 
     public Guid InvoiceUid { get; init; } = Guid.Empty;
 

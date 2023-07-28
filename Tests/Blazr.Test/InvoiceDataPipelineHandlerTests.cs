@@ -6,6 +6,7 @@
 
 using Blazr.App.Core;
 using Blazr.App.Infrastructure;
+using Blazr.App.Presentation;
 using Blazr.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +25,7 @@ public class InvoiceDataPipelineHandlerTests
     {
         var services = new ServiceCollection();
         services.AddAppTestInfrastructureServices();
+        services.AddAppPresentationServices();
         services.AddLogging(builder => builder.AddDebug());
 
         var provider = services.BuildServiceProvider();
@@ -133,10 +135,7 @@ public class InvoiceDataPipelineHandlerTests
         // Create a fully populated new room item 
         var newRoot = InvoiceFactory.New(customer);
 
-        // When we do a comparison with the saved root it's state will be 1
-        var savedNewRoot = newRoot with { EntityState = newRoot.EntityState.AsNew() };
-
-        // Create a new aggregate with the the new root and an empty collection
+         // Create a new aggregate with the the new root and an empty collection
         var aggregate = new InvoiceAggregate(newRoot, Enumerable.Empty<InvoiceItem>());
 
         // Get the added root
@@ -148,9 +147,13 @@ public class InvoiceDataPipelineHandlerTests
         var newCollectionItem = InvoiceFactory.New(newRoot, product, 2);
 
         // When we do a comparison with the saved root it's state will be 1
-        var savedCollectionItem = newCollectionItem with { EntityState = newCollectionItem.EntityState.AsNew()};
+        var savedCollectionItem = newCollectionItem with { EntityState = new(StateCodes.Existing)};
 
         var collectionItemSaveResult = aggregate.SaveCollectionItem(newCollectionItem);
+
+        // When we do a comparison with the saved root
+        // it will have a calcualted price and it's state will be provisional
+        var savedNewRoot = aggregate.Root with { EntityState = new(StateCodes.Existing) };
 
         var command = new CommandRequest<InvoiceAggregate>() { Cancellation = cancelToken, Item = aggregate };
         var commandBrokerResult = await broker.ExecuteCommandAsync<InvoiceAggregate>(command);
@@ -193,7 +196,7 @@ public class InvoiceDataPipelineHandlerTests
         var newCollectionItem = InvoiceFactory.New(root, product, 2);
 
         // When we do a comparison with the saved root it's state will be 1
-        var savedCollectionItem = newCollectionItem with { EntityState = newCollectionItem.EntityState.AsNew() };
+        var savedCollectionItem = newCollectionItem with { EntityState = Blazr.Core.EntityState.Existing };
 
         // Save the item to the aggregate
         var collectionItemSaveResult = aggregate.SaveCollectionItem(newCollectionItem);
@@ -238,8 +241,11 @@ public class InvoiceDataPipelineHandlerTests
         // Update the item
         var updatedCollectionItem = collectionItem with { ItemQuantity = collectionItem.ItemQuantity + 2 };
 
+        // Mutate the item to save it
+        var mutatedCollectionItem = collectionItem with {EntityState = collectionItem.EntityState.Mutate() };
+
         // Save the item to the aggregate
-        var collectionItemSaveResult = aggregate.SaveCollectionItem(updatedCollectionItem);
+        var collectionItemSaveResult = aggregate.SaveCollectionItem(mutatedCollectionItem);
 
         // Persist the Aggregate to the data store
         var command = new CommandRequest<InvoiceAggregate>() { Cancellation = cancelToken, Item = aggregate };

@@ -13,5 +13,9 @@ public static class InvoiceInfrastructureServices
         services.AddScoped<ICommandHandler<InvoiceAggregate>, InvoiceAggregateCommandHandler<InMemoryInvoiceDbContext>>();
         services.AddScoped<ICommandHandler<Invoice>, InvoiceCommandHandler<InMemoryInvoiceDbContext>>();
         services.AddScoped<ICommandHandler<InvoiceItem>, InvoiceItemCommandHandler<InMemoryInvoiceDbContext>>();
+
+        services.AddScoped<IDboEntityMap<DboInvoice, Invoice>, DboInvoiceMap>();
+        services.AddScoped<IDboEntityMap<DboInvoiceItem, InvoiceItem>, DboInvoiceItemMap>();
+
     }
 }

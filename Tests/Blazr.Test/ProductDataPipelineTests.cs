@@ -37,7 +37,7 @@ public class ProductDataPipelineTests
     }
 
     [Fact]
-    public async void TestGetItem()
+    public async void GetItem()
     {
         var provider = GetServiceProvider();
         var broker = provider.GetService<IDataBroker>()!;
@@ -54,7 +54,7 @@ public class ProductDataPipelineTests
     }
 
     [Fact]
-    public async void TestGetItems()
+    public async void GetItems()
     {
         var provider = GetServiceProvider();
         var broker = provider.GetService<IDataBroker>()!;
@@ -70,7 +70,7 @@ public class ProductDataPipelineTests
     }
 
     [Fact]
-    public async void TestDeleteItem()
+    public async void DeleteItem()
     {
         var provider = GetServiceProvider();
         var broker = provider.GetService<IDataBroker>()!;
@@ -96,7 +96,7 @@ public class ProductDataPipelineTests
     }
 
     [Fact]
-    public async void TestAddProductItem()
+    public async void AddItem()
     {
         var provider = GetServiceProvider();
         var broker = provider.GetService<IDataBroker>()!;
@@ -126,7 +126,7 @@ public class ProductDataPipelineTests
     }
 
     [Fact]
-    public async void UpdateProductItem()
+    public async void UpdateItem()
     {
         var provider = GetServiceProvider();
         var broker = provider.GetService<IDataBroker>()!;
@@ -156,88 +156,4 @@ public class ProductDataPipelineTests
         Assert.True(itemResult.Successful);
         Assert.Equal(expectedItem, itemResult.Item);
     }
-
-    //[Theory]
-    //[InlineData(10, 0, 10)]
-    //[InlineData(10, 20, 4)]
-    //[InlineData(100, 0, 24)]
-    //public async void TestRepositoryDataBrokerGetPagedProductItems(int pageSize, int startIndex, int expected)
-    //{
-    //    var provider = GetServiceProvider();
-    //    var broker = provider.GetService<IDataBroker>()!;
-
-    //    var cancelToken = new CancellationToken();
-
-    //    var actualCount = _testDataProvider.Products.Count();
-    //    var listRequest = new ListQueryRequest() { StartIndex = startIndex, PageSize = pageSize, Cancellation = cancelToken };
-    //    var result = await broker!.GetItemsAsync<Product>(listRequest);
-
-    //    Assert.True(result.Successful);
-    //    Assert.Equal(expected, result.Items.Count());
-    //    Assert.Equal(actualCount, result.TotalCount);
-    //}
-
-    //[Fact]
-    //public async void TestRepositoryDataBrokerGetFilteredPagedInvoiceItems()
-    //{
-    //    var provider = GetServiceProvider();
-    //    var broker = provider.GetService<IDataBroker>()!;
-
-    //    var cancelToken = new CancellationToken();
-    //    var testCustomerUid = _testDataProvider.TestCustomerUid;
-    //    var actualCount = _testDataProvider.CustomerInvoiceCount(testCustomerUid);
-    //    var filter = new FilterDefinition(ApplicationConstants.Invoice.FilterByCustomerUid, testCustomerUid.ToString());
-    //    var filters = new List<FilterDefinition>() { filter };
-    //    var listRequest = new ListQueryRequest() { StartIndex = 0, PageSize = 1000, Cancellation = cancelToken, Filters = filters };
-    //    var result = await broker!.GetItemsAsync<Invoice>(listRequest);
-
-    //    Assert.True(result.Successful);
-    //    Assert.Equal(actualCount, result.Items.Count());
-    //    Assert.Equal(actualCount, result.TotalCount);
-    //}
-
-    //[Fact]
-    //public async void TestRepositoryDataBrokerGetSortedPagedProductItems()
-    //{
-    //    var provider = GetServiceProvider();
-    //    var broker = provider.GetService<IDataBroker>()!;
-
-    //    var cancelToken = new CancellationToken();
-    //    var manufacturer = "Fokker";
-    //    var firstItem = _testDataProvider.FirstManufacturersProduct(manufacturer);
-
-    //    var sorter = new SortDefinition(ApplicationConstants.Product.ProductName, false);
-    //    var sorters = new List<SortDefinition>() { sorter };
-
-    //    var filter = new FilterDefinition(ApplicationConstants.Product.FilterByManufacturerName, manufacturer);
-    //    var filters = new List<FilterDefinition>() { filter };
-
-    //    var listRequest = new ListQueryRequest() { StartIndex = 0, PageSize = 1000, Cancellation = cancelToken, Sorters = sorters, Filters = filters };
-    //    var result = await broker!.GetItemsAsync<Product>(listRequest);
-
-    //    var firstReturnedItem = result.Items?.FirstOrDefault();
-    //    Assert.True(result.Successful);
-    //    Assert.Equal(firstItem, firstReturnedItem);
-    //}
-
-
-    //[Fact]
-    //public async void TestRepositoryDataBrokerGetSortedAndFilteredPagedProductItems()
-    //{
-    //    var provider = GetServiceProvider();
-    //    var broker = provider.GetService<IDataBroker>()!;
-
-    //    var cancelToken = new CancellationToken();
-    //    var firstItem = _testDataProvider.FirstProduct;
-
-    //    var sorter = new SortDefinition(ApplicationConstants.Product.ProductName, false);
-    //    var sorters = new List<SortDefinition>() { sorter };
-
-    //    var listRequest = new ListQueryRequest() { StartIndex = 0, PageSize = 1000, Cancellation = cancelToken, Sorters = sorters };
-    //    var result = await broker!.GetItemsAsync<Product>(listRequest);
-
-    //    var firstReturnedItem = result.Items?.FirstOrDefault();
-    //    Assert.True(result.Successful);
-    //    Assert.Equal(firstItem, firstReturnedItem);
-    //}
 }

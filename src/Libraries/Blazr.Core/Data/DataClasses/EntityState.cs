@@ -14,9 +14,7 @@ public readonly record struct EntityState
     public bool IsNew => StateCode.Value == 0;
 
     public EntityState(StateCode stateCode)
-    {
-        StateCode = stateCode;
-    }
+        => StateCode = stateCode;
 
     public EntityState AsNew()
         => this with { StateCode= StateCodes.New };
@@ -30,6 +28,9 @@ public readonly record struct EntityState
     public EntityState MarkForDeletion()
         => this with { MarkedForDeletion = true };
 
-    public static EntityState New()
+    public static EntityState Existing
+        => new(StateCodes.Existing);
+
+    public static EntityState New
         => new(StateCodes.New);
 }

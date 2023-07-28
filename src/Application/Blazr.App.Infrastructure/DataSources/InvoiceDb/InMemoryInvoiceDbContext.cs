@@ -37,7 +37,7 @@ public sealed class InMemoryInvoiceDbContext
             => from u in this.DboUser
                select new User
                {
-                   EntityState = new(StateCodes.Existing),
+                   EntityState = Blazr.Core.EntityState.Existing,
                    UserUid = new(u.Uid),
                    UserName = u.UserName,
                    Roles = u.Roles,
@@ -48,7 +48,7 @@ public sealed class InMemoryInvoiceDbContext
             => from c in this.DboCustomer
                select new Customer
                {
-                   EntityState = new(StateCodes.Existing),
+                   EntityState = Blazr.Core.EntityState.Existing,
                    CustomerUid = new(c.Uid),
                    CustomerName = c.CustomerName,
                }).HasNoKey();
@@ -58,7 +58,7 @@ public sealed class InMemoryInvoiceDbContext
             => from p in this.DboProduct
                select new Product
                {
-                   EntityState = new(StateCodes.Existing),
+                   EntityState = Blazr.Core.EntityState.Existing,
                    ProductUid = new(p.Uid),
                    ProductName = p.ProductName,
                    ProductCode = p.ProductCode,
@@ -72,6 +72,7 @@ public sealed class InMemoryInvoiceDbContext
                    select new Invoice
                    {
                        InvoiceUid = new( i.Uid),
+                       EntityState = new(InvoiceStateCodes.GetInvoiceStateCode(i.StateCode)),
                        CustomerUid = new(i.CustomerUid),
                        CustomerName = c.CustomerName,
                        InvoiceDate = i.InvoiceDate,
@@ -87,6 +88,7 @@ public sealed class InMemoryInvoiceDbContext
                    select new InvoiceItem
                    {
                        InvoiceItemUid = new(i.Uid),
+                       EntityState = Blazr.Core.EntityState.Existing,
                        InvoiceUid = new( i.InvoiceUid),
                        InvoiceNumber = iv.InvoiceNumber,
                        ProductUid = new(i.ProductUid),

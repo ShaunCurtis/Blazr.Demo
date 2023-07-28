@@ -6,10 +6,24 @@
 
 namespace Blazr.App.Core;
 
-public class InvoiceStateCodes : AppStateCodes
+public class InvoiceStateCodes : StateCodes
 {
-    public const int Provisional = 1;
-    public const int Submitted = 2;
-    public const int Paid = 3;
+    public static StateCode Provisional = new(1, "Provisional");
+    public static StateCode Submitted = new(2, "Submitted");
+    public static StateCode Paid = new(1, "Paid");
+
+    public static List<StateCode> InvoiceStateCodeList = new()
+    {
+        Deleted,
+        Existing,
+        New,
+        Null,
+        Provisional,
+        Submitted,
+        Paid
+    };
+
+    public static StateCode GetInvoiceStateCode(int code)
+        => InvoiceStateCodeList.FirstOrDefault(item => item.Value == code);
 
 }

@@ -11,12 +11,16 @@ public sealed class InvoiceAggregateCommandHandler<TDbContext>
     where TDbContext : DbContext
 {
     private readonly IDbContextFactory<TDbContext> _factory;
-    private ILogger<InvoiceAggregateCommandHandler<TDbContext>> _logger;
+    private readonly ILogger<InvoiceAggregateCommandHandler<TDbContext>> _logger;
+    private readonly IDboEntityMap<DboInvoice, Invoice> _invoiceMap;
+    private readonly IDboEntityMap<DboInvoiceItem, InvoiceItem> _invoiceItemMap;
 
-    public InvoiceAggregateCommandHandler(IDbContextFactory<TDbContext> factory, ILogger<InvoiceAggregateCommandHandler<TDbContext>> logger)
+    public InvoiceAggregateCommandHandler(IDbContextFactory<TDbContext> factory, ILogger<InvoiceAggregateCommandHandler<TDbContext>> logger, IDboEntityMap<DboInvoice, Invoice> invoiceMap, IDboEntityMap<DboInvoiceItem, InvoiceItem> invoiceItemMap)
     {
         _factory = factory;
         _logger = logger;
+        _invoiceMap = invoiceMap;
+        _invoiceItemMap = invoiceItemMap;
     }
 
     public async ValueTask<CommandResult> ExecuteAsync(CommandRequest<InvoiceAggregate> request)
@@ -25,7 +29,7 @@ public sealed class InvoiceAggregateCommandHandler<TDbContext>
 
         var aggregate = request.Item;
         var root = aggregate.Root;
-        var dboRoot = root.ToDbo();
+        var dboRoot = _invoiceMap.Map(root);
 
         // Create the aggregate if it's marked as new
         if (root.EntityState.IsNew)
@@ -42,7 +46,7 @@ public sealed class InvoiceAggregateCommandHandler<TDbContext>
         // Update all the existing items based on their state
         foreach (var item in aggregate.AllItems)
         {
-            var dboItem = item.ToDbo();
+            var dboItem = _invoiceItemMap.Map(item);
 
             if (item.EntityState.IsNew)
                 dbContext.Add<DboInvoiceItem>(dboItem);
