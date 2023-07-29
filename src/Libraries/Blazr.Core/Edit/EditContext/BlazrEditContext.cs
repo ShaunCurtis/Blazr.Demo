@@ -11,17 +11,16 @@ public abstract class BlazrEditContext<TRecord> : IBlazrRecordEditContext<TRecor
     private bool _isMarkedForDeletion;
     public EntityUid Uid { get; protected set; }
 
-    public EntityState EntityState => this.BaseRecord.EntityState with { 
+    public EntityState EntityState => this.BaseRecord.EntityState with {
         IsMutated = this.IsDirty,
         MarkedForDeletion = _isMarkedForDeletion
-    }; 
+    };
 
     public TRecord BaseRecord { get; protected set; } = default!;
 
-    public bool IsDirty => this.BaseRecord != this.MapToRecord();
+    public bool IsDirty => this.BaseRecord != this.MapEditFieldsToRecord();
 
-    public virtual TRecord AsRecord
-        => this.MapToRecord();
+    public virtual TRecord AsRecord => this.MapEditFieldsAndStateToRecord();
 
     public BlazrEditContext()
     {
@@ -48,5 +47,7 @@ public abstract class BlazrEditContext<TRecord> : IBlazrRecordEditContext<TRecor
 
     protected abstract void MapToContext(TRecord record);
 
-    protected abstract TRecord MapToRecord();
+    protected abstract TRecord MapEditFieldsToRecord();
+
+    protected abstract TRecord MapEditFieldsAndStateToRecord();
 }

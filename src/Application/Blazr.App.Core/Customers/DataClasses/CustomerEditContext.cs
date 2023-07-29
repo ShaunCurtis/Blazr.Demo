@@ -17,11 +17,12 @@ public sealed class CustomerEditContext : BlazrEditContext<Customer>
         this.CustomerName = record.CustomerName;
     }
 
-    protected override Customer MapToRecord()
-        => new()
+    protected override Customer MapEditFieldsToRecord()
+        => this.BaseRecord with
         {
-            CustomerUid = new(this.Uid.Value),
-            EntityState = this.EntityState,
             CustomerName = this.CustomerName,
         };
+
+    protected override Customer MapEditFieldsAndStateToRecord()
+        => MapEditFieldsToRecord() with { EntityState = this.EntityState };
 }

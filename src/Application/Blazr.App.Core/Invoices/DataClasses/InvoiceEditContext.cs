@@ -29,15 +29,16 @@ public sealed class InvoiceEditContext : BlazrEditContext<Invoice>
         this.InvoicePrice = record.InvoicePrice;
     }
 
-    protected override Invoice MapToRecord()
-        => new()
+    protected override Invoice MapEditFieldsToRecord()
+        => this.BaseRecord with 
         {
-            InvoiceUid = new(this.Uid.Value),
-            EntityState = this.EntityState,
             CustomerUid = new(this.CustomerUid),
             CustomerName = this.CustomerName,
             InvoiceNumber = this.InvoiceNumber,
             InvoiceDate = this.InvoiceDate ?? DateOnly.MinValue,
             InvoicePrice = this.InvoicePrice,
         };
+
+    protected override Invoice MapEditFieldsAndStateToRecord()
+        => MapEditFieldsToRecord() with { EntityState = this.EntityState };
 }

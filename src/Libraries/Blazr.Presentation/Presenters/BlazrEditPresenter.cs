@@ -65,12 +65,20 @@ public class BlazrEditPresenter<TRecord, TEntityService, TEditContext>
         if (!this.RecordContext.IsDirty)
             return;
 
-        var request = new CommandRequest<TRecord> { Item = this.RecordContext.AsRecord };
+        var record = this.RecordContext.AsRecord;
+
+        if (record.Uid.IsEmpty)
+        {
+            LastResult = CommandResult.Failure("No commands can be run on  an empty Uid.");
+            return;
+        }
+
+        var request = new CommandRequest<TRecord> { Item = record };
 
         LastResult = await _dataBroker.ExecuteCommandAsync<TRecord>(request);
 
         if (LastResult.Successful)
-            EditContext.SetEditStateAsSaved();
+            EditContext?.SetEditStateAsSaved();
 
         this.LogResult();
 

@@ -58,11 +58,95 @@ public class CustomerPresenterTests
         var provider = GetServiceProvider();
         var presenter = provider.GetService<IListPresenter<Customer, CustomerEntityService>>()!;
 
-        var request = new ListQueryRequest() { PageSize=1 };
-        var testCount = _testDataProvider.Customers.Count();
+        var request = new ListQueryRequest() { PageSize = 2 };
+        var totalCount = _testDataProvider.Customers.Count();
         await presenter.GetItemsAsync(request);
 
-        Assert.Equal(testCount, presenter.Item);
+        Assert.Equal(totalCount, presenter.ListController.ListState.ListTotalCount);
+        Assert.Equal(2, presenter.ListController.Count());
     }
 
+    [Fact]
+    public async void AddItem()
+    {
+        var provider = GetServiceProvider();
+        var presenter = provider.GetService<IBlazrEditPresenter<Customer, CustomerEditContext>>()!;
+        var broker = provider.GetService<IDataBroker>()!;
+
+        var expectedCount = _testDataProvider.Customers.Count();
+        var testItem = new Customer { CustomerUid = new(Guid.NewGuid()), CustomerName = "Dan Air", EntityState= Blazr.Core.EntityState.New};
+        var testUid = testItem.Uid;
+
+        var expectedItem = testItem with { EntityState = Blazr.Core.EntityState.Existing };
+
+        await presenter.LoadAsync(testUid);
+        presenter.RecordContext.CustomerName = newCustomerName;
+
+        await presenter.SaveItemAsync();
+
+        var listRequest = new ListQueryRequest();
+        var listResult = await broker!.GetItemsAsync<Customer>(listRequest);
+
+        var itemRequest = new ItemQueryRequest(testUid);
+        var itemResult = await broker!.GetItemAsync<Customer>(itemRequest);
+
+        Assert.Equal(expectedCount, listResult.TotalCount);
+        Assert.Equal(expectedItem, itemResult.Item);
+    }
+
+    [Fact]
+    public async void UpdateItem()
+    {
+        var provider = GetServiceProvider();
+        var presenter = provider.GetService<IBlazrEditPresenter<Customer, CustomerEditContext>>()!;
+        var broker = provider.GetService<IDataBroker>()!;
+
+        var expectedCount = _testDataProvider.Customers.Count();
+        var testItem = _testDataProvider.TestCustomer;
+        var testUid = testItem.Uid;
+
+        var newCustomerName = testItem.CustomerName + " - Testing";
+        var expectedItem = testItem with { CustomerName = newCustomerName };
+
+        await presenter.LoadAsync(testUid);
+        presenter.RecordContext.CustomerName = newCustomerName;
+
+        await presenter.SaveItemAsync();
+
+        var listRequest = new ListQueryRequest();
+        var listResult = await broker!.GetItemsAsync<Customer>(listRequest);
+
+        var itemRequest = new ItemQueryRequest(testUid);
+        var itemResult = await broker!.GetItemAsync<Customer>(itemRequest);
+
+        Assert.Equal(expectedCount, listResult.TotalCount);
+        Assert.Equal(expectedItem, itemResult.Item);
+    }
+
+    [Fact]
+    public async void DeleteItem()
+    {
+        var provider = GetServiceProvider();
+        var presenter = provider.GetService<IBlazrEditPresenter<Customer, CustomerEditContext>>()!;
+        var broker = provider.GetService<IDataBroker>()!;
+
+        var expectedCount = _testDataProvider.Customers.Count() - 1;
+        var testItem = _testDataProvider.TestCustomer;
+        var testUid = testItem.Uid;
+
+        await presenter.LoadAsync(testUid);
+
+        presenter.RecordContext.SetAsDeleted();
+
+        await presenter.SaveItemAsync();
+
+        var listRequest = new ListQueryRequest();
+        var listResult = await broker!.GetItemsAsync<Customer>(listRequest);
+
+        var itemRequest = new ItemQueryRequest(testUid);
+        var itemResult = await broker!.GetItemAsync<Customer>(itemRequest);
+
+        Assert.Equal(expectedCount, listResult.TotalCount);
+        Assert.False(itemResult.Successful);
+    }
 }

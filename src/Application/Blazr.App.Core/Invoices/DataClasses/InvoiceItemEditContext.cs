@@ -36,11 +36,9 @@ public sealed class InvoiceItemEditContext : BlazrEditContext<InvoiceItem>
         this.ItemUnitPrice = record.ItemUnitPrice;
     }
 
-    protected override InvoiceItem MapToRecord()
-        => new()
+    protected override InvoiceItem MapEditFieldsToRecord()
+        => this.BaseRecord with
         {
-            InvoiceItemUid = new(this.Uid.Value),
-            EntityState = this.EntityState,
             ProductUid = new(this.ProductUid.FromNullableGuid()),
             ProductName = this.ProductName,
             ProductCode = this.ProductCode,
@@ -49,4 +47,7 @@ public sealed class InvoiceItemEditContext : BlazrEditContext<InvoiceItem>
             ItemQuantity = this.ItemQuantity,
             ItemUnitPrice = this.ItemUnitPrice,
         };
+
+    protected override InvoiceItem MapEditFieldsAndStateToRecord()
+        => MapEditFieldsToRecord() with { EntityState = this.EntityState };
 }

@@ -15,11 +15,9 @@ public sealed class ProductEditContext : BlazrEditContext<Product>
  
     public ProductEditContext() : base() { }
 
-    protected override Product MapToRecord()
-        => new()
+    protected override Product MapEditFieldsToRecord()
+        => this.BaseRecord with
         {
-            ProductUid = new(this.Uid.Value),
-            EntityState = this.EntityState,
             ProductName = this.ProductName,
             ProductUnitPrice = this.ProductUnitPrice,
             ProductCode = this.ProductCode
@@ -32,4 +30,7 @@ public sealed class ProductEditContext : BlazrEditContext<Product>
         this.ProductCode = record.ProductCode;
         this.ProductUnitPrice = record.ProductUnitPrice;
     }
+
+    protected override Product MapEditFieldsAndStateToRecord()
+        => MapEditFieldsToRecord() with { EntityState = this.EntityState };
 }
