@@ -13,7 +13,7 @@ namespace Blazr.Core;
 /// <param name="Value"></param>
 public readonly record struct EntityUid(Guid Value)
 {
-    public bool IsEmpty => this.Value == Guid.Empty;
-
     public static EntityUid Empty => new EntityUid(Guid.Empty);
+
+    public bool IsEmpty => this.Value == Guid.Empty;
 }

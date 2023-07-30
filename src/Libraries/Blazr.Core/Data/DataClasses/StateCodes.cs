@@ -8,14 +8,12 @@ namespace Blazr.Core;
 
 public class StateCodes
 {
-    public static StateCode Deleted = new(int.MinValue, "Deleted");
     public static StateCode New = new(0, "New");
     public static StateCode Existing = new(1, "Existing");
     public static StateCode Null = new(int.MaxValue, "Null");
 
     public static List<StateCode> StateCodeList = new()
     {
-        Deleted,
         Existing,
         New,
         Null
