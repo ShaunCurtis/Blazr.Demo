@@ -28,9 +28,12 @@ public abstract class BlazrEditContext<TRecord> : IBlazrRecordEditContext<TRecor
         this.MapToContext(this.BaseRecord);
     }
 
-    public void Load(TRecord record)
+    public void Load(TRecord? record = null)
     {
-        this.BaseRecord = record;
+        this.BaseRecord = record is null
+            ? this.NewRecord
+            : record;
+
         this.MapToContext(this.BaseRecord);
     }
 
@@ -41,11 +44,11 @@ public abstract class BlazrEditContext<TRecord> : IBlazrRecordEditContext<TRecor
         => _isMarkedForDeletion = true;
 
     void IBlazrEditContext.SetAsSaved()
-    {
-        this.BaseRecord = this.AsRecord;
-    }
+        => this.BaseRecord = this.AsRecord;
 
     protected abstract void MapToContext(TRecord record);
+    
+    protected abstract TRecord NewRecord { get; }
 
     protected abstract TRecord MapEditFieldsToRecord();
 

@@ -74,13 +74,13 @@ public class CustomerPresenterTests
         var broker = provider.GetService<IDataBroker>()!;
 
         var expectedCount = _testDataProvider.Customers.Count();
-        var testItem = new Customer { CustomerUid = new(Guid.NewGuid()), CustomerName = "Dan Air", EntityState= Blazr.Core.EntityState.New};
-        var testUid = testItem.Uid;
+        //var testItem = new Customer { CustomerUid = new(Guid.NewGuid()), CustomerName = "Dan Air", EntityState= Blazr.Core.EntityState.New};
+        //var testUid = testItem.Uid;
 
         var expectedItem = testItem with { EntityState = Blazr.Core.EntityState.Existing };
 
-        await presenter.LoadAsync(testUid);
-        presenter.RecordContext.CustomerName = newCustomerName;
+        await presenter.LoadAsync(EntityUid.Empty);
+        presenter.RecordContext.CustomerName = "Dan Air";
 
         await presenter.SaveItemAsync();
 

@@ -50,7 +50,10 @@ public class BlazrEditPresenter<TRecord, TEntityService, TEditContext>
 
     protected virtual async ValueTask GetItemAsync(ItemQueryRequest request)
     {
-        ItemQueryResult<TRecord> result = await _dataBroker.GetItemAsync<TRecord>(request);
+        var result = ItemQueryResult<TRecord>.Success(new TRecord());
+
+        if (!request.Uid.IsEmpty)
+            result = await _dataBroker.GetItemAsync<TRecord>(request);
 
         if (result.Successful && result.Item is not null)
             RecordContext.Load(result.Item);
@@ -69,7 +72,7 @@ public class BlazrEditPresenter<TRecord, TEntityService, TEditContext>
 
         if (record.Uid.IsEmpty)
         {
-            LastResult = CommandResult.Failure("No commands can be run on  an empty Uid.");
+            LastResult = CommandResult.Failure("No commands can be run on an empty Uid.");
             return;
         }
 
@@ -97,5 +100,4 @@ public class BlazrEditPresenter<TRecord, TEntityService, TEditContext>
 
         this.LastResult = result;
     }
-
 }
