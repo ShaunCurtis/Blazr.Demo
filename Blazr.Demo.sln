@@ -63,6 +63,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lists", "Lists", "{3416A04A
 		Notes\Lists\Lists-in-the-UI.md = Notes\Lists\Lists-in-the-UI.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.OneWayStreet", "src\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj", "{3A85F554-29BF-4FE8-9937-17419D66625F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -117,6 +119,10 @@ Global
 		{AF254561-09CB-40BA-B71D-3871F64A95B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF254561-09CB-40BA-B71D-3871F64A95B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF254561-09CB-40BA-B71D-3871F64A95B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A85F554-29BF-4FE8-9937-17419D66625F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A85F554-29BF-4FE8-9937-17419D66625F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A85F554-29BF-4FE8-9937-17419D66625F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A85F554-29BF-4FE8-9937-17419D66625F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -137,6 +143,7 @@ Global
 		{E828B3D5-D907-4466-9847-38B3A4257128} = {7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}
 		{6A95252C-4B3E-473A-953F-16929B064A64} = {7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}
 		{3416A04A-864D-46C1-AC05-E304501FA288} = {7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}
+		{3A85F554-29BF-4FE8-9937-17419D66625F} = {46A08B54-D8D0-4359-89C4-AE928FE4CF22}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {990115E5-5129-41F0-AACF-598505F1FD10}

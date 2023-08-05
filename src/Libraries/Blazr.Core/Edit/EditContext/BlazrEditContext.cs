@@ -28,10 +28,13 @@ public abstract class BlazrEditContext<TRecord> : IBlazrRecordEditContext<TRecor
         this.MapToContext(this.BaseRecord);
     }
 
+    public void LoadAsNew()
+        => this.Load(null);
+
     public void Load(TRecord? record = null)
     {
         this.BaseRecord = record is null
-            ? this.NewRecord
+            ? new TRecord()
             : record;
 
         this.MapToContext(this.BaseRecord);
@@ -47,8 +50,6 @@ public abstract class BlazrEditContext<TRecord> : IBlazrRecordEditContext<TRecor
         => this.BaseRecord = this.AsRecord;
 
     protected abstract void MapToContext(TRecord record);
-    
-    protected abstract TRecord NewRecord { get; }
 
     protected abstract TRecord MapEditFieldsToRecord();
 

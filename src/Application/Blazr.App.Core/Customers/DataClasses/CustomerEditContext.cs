@@ -25,12 +25,5 @@ public sealed class CustomerEditContext : BlazrEditContext<Customer>
 
     protected override Customer MapEditFieldsAndStateToRecord()
         => MapEditFieldsToRecord() with { EntityState = this.EntityState };
-
-    protected override Customer NewRecord =>
-     new Customer() {
-            CustomerUid = new(Guid.NewGuid()),
-            CustomerName = "Not Set",
-            EntityState = Blazr.Core.EntityState.New
-        };
-    }
 }
+

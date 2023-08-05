@@ -10,9 +10,9 @@ public readonly record struct CustomerUid(Guid Value);
 
 public sealed record Customer : IEntity, IStateEntity, ICommandEntity
 {
-    public CustomerUid CustomerUid { get; init; }
+    public CustomerUid CustomerUid { get; init; } = new CustomerUid(Guid.NewGuid());
 
-    public EntityState EntityState { get; init; }
+    public EntityState EntityState { get; init; } = EntityState.New;
 
     public string CustomerName { get; init; } = "Not Set";
 
