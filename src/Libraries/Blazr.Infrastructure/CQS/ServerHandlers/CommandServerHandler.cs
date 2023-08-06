@@ -55,7 +55,7 @@ public sealed class CommandServerHandler<TDbContext>
                 : CommandResult.Failure("Error adding Record");
         }
 
-        // Check if wee should delete it
+        // Check if we should delete it
         if (stateRecord.EntityState.MarkedForDeletion)
         {
             dbContext.Remove<TRecord>(request.Item);

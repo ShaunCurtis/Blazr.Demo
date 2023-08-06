@@ -66,13 +66,13 @@ public sealed class InvoiceAggregateCommandHandler<TDbContext>
         }
         catch (DbUpdateException)
         {
-            var message = $"Failed to save the ToDo aggregate {request.Item.Uid}.  Transaction aborted";
+            var message = $"Failed to save the Invoice aggregate {request.Item.Uid}.  Transaction aborted";
             _logger.LogError(message);
             return CommandResult.Failure(message);
         }
         catch (Exception e)
         {
-            var message = $"An error occured trying to save ToDo aggregate {request.Item.Uid}.  Detail: {e.Message}.";
+            var message = $"An error occured trying to save the Invoice aggregate {request.Item.Uid}.  Detail: {e.Message}.";
             _logger.LogError(message);
             return CommandResult.Failure(message);
         }
