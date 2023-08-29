@@ -50,8 +50,6 @@ public class BlazrEditPresenter<TRecord, TEntityService, TEditContext>
 
     protected virtual async ValueTask GetItemAsync(ItemQueryRequest request)
     {
-        this.RecordContext.
-
         if (!request.Uid.IsEmpty)
         {
             ItemQueryResult<TRecord> result = await _dataBroker.GetItemAsync<TRecord>(request);
