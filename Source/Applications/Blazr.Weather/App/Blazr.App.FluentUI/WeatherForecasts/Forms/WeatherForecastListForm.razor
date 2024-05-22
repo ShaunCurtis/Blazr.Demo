@@ -1,0 +1,80 @@
+﻿@namespace Blazr.App.FluentUI
+@inject IListPresenter<DmoWeatherForecast> Presenter
+@inject IDialogService DialogService
+
+<PageTitle>Weather Forecasts</PageTitle>
+
+<h1>Customers</h1>
+<FluentStack Style="margin-bottom: 24px;" HorizontalAlignment="HorizontalAlignment.Right" VerticalAlignment="VerticalAlignment.Center">
+    <FluentButton Color="var(--info)" IconStart="@(new Icons.Regular.Size16.AddCircle())"
+                  OnClick="@OnAddAsync">
+        New Weather Forecast
+    </FluentButton>
+</FluentStack>
+
+<FluentDataGrid Id="weathergrid" 
+    ItemsProvider="this.Presenter.GetItemsAsync<DmoWeatherForecast>" 
+        Pagination="_pagination"
+        TGridItem=DmoWeatherForecast>
+    <PropertyColumn Title="Id" Property="@(c => c!.WeatherForecastId.Value.ToDisplayId())" Align=Align.Start />
+    <PropertyColumn Title="Date" Property="@(c => c!.Date)" Format="dd-MMM-yy" Sortable="true" IsDefaultSortColumn InitialSortDirection="SortDirection.Ascending" Align=Align.Start />
+    <PropertyColumn Title="Temp &deg; C" Sortable="true" Format="N0" Property="@(c => c!.Temperature.TemperatureC)" Align=Align.End />
+    <PropertyColumn Title="Temp &deg; F" Sortable="true" Format="N0" Property="@(c => c!.Temperature.TemperatureF)" Align=Align.End />
+    <PropertyColumn Title="Summary" Sortable="true" Property="@(c => c!.Summary)" Align=Align.Center />
+    <TemplateColumn Title="Actions" Align="@Align.End">
+        <FluentButton aria-label="View item" IconEnd="@(new Icons.Regular.Size16.ContentView())" OnClick="() => OnViewAsync(context.WeatherForecastId)" />
+        <FluentButton aria-label="Edit item" IconEnd="@(new Icons.Regular.Size16.Edit())" OnClick="() => OnEditAsync(context.WeatherForecastId)" />
+    </TemplateColumn>
+</FluentDataGrid>
+
+<FluentPaginator State="_pagination" />
+
+@code {
+    [Parameter] public int PageSize { get; set; } = 10;
+    private PaginationState _pagination = new PaginationState { ItemsPerPage = 10 };
+    private GridSort<DmoWeatherForecast> sortByName = GridSort<DmoWeatherForecast>
+    .ByAscending(p => p.Temperature.TemperatureC);
+
+    protected override void OnParametersSet()
+    {
+        if (this.PageSize != _pagination.ItemsPerPage)
+            _pagination.ItemsPerPage = this.PageSize;
+    }
+
+    private async Task OnEditAsync(WeatherForecastId id)
+    {
+        var dialog = await DialogService.ShowDialogAsync<WeatherForecastEditForm>(id, new DialogParameters()
+            {
+                Title = $"Edit Weather Forecast",
+                PreventDismissOnOverlayClick = true,
+                PreventScroll = true,
+            });
+
+        var result = await dialog.Result;
+    }
+
+    private async Task OnViewAsync(WeatherForecastId id)
+    {
+        var dialog = await DialogService.ShowDialogAsync<WeatherForecastViewForm>(id, new DialogParameters()
+            {
+                Title = $"View Weather Forecast",
+                PreventDismissOnOverlayClick = true,
+                PreventScroll = true,
+            });
+
+        var result = await dialog.Result;
+    }
+
+    private async Task OnAddAsync()
+    {
+        var id = new WeatherForecastId(Guid.Empty);
+        var dialog = await DialogService.ShowDialogAsync<WeatherForecastEditForm>(id, new DialogParameters()
+            {
+                Title = $"New Weather Forecast",
+                PreventDismissOnOverlayClick = true,
+                PreventScroll = true,
+            });
+
+        var result = await dialog.Result;
+    }
+}

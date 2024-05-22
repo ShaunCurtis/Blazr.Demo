@@ -1,0 +1,63 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@namespace Blazr.App.FluentUI
+@implements IDialogContentComponent<CustomerId>
+@inject IViewPresenter<DmoCustomer> Presenter
+
+<!-- Header -->
+<FluentDialogHeader ShowDismiss="true">
+    <FluentStack VerticalAlignment="VerticalAlignment.Center">
+        <FluentIcon Value="@(new Icons.Regular.Size24.ContentView())" />
+        <FluentLabel Typo="Typography.PaneHeader">
+            @Dialog.Instance.Parameters.Title
+        </FluentLabel>
+    </FluentStack>
+</FluentDialogHeader>
+
+<!-- Body -->
+<FluentDialogBody>
+    <FluentGrid Spacing="1" AdaptiveRendering="true" >
+        <FluentGridItem sm="12" md="6">
+            <FluentTextField Style="width: 100%;"
+                             Value="@this.Presenter.Item.Id.Value.ToString()"
+                             Label="Full Id"
+                             ReadOnly />
+        </FluentGridItem>
+        <FluentGridItem sm="12" md="6">
+            <FluentTextField Style="width: 100%;"
+                             Value="@this.Presenter.Item.CustomerName"
+                             Label="Customer Name"
+                             ReadOnly />
+        </FluentGridItem>
+    </FluentGrid>
+</FluentDialogBody>
+
+<!-- Footer -->
+<FluentDialogFooter>
+    <FluentButton Appearance="Appearance.Accent"
+                  OnClick="@ExitAsync">
+        Exit
+    </FluentButton>
+</FluentDialogFooter>
+
+@code
+{
+    private EditContext _editContext = default!;
+
+    [CascadingParameter]
+    public FluentDialog Dialog { get; set; } = default!;
+
+    [Parameter]
+    public CustomerId Content { get; set; } = default!;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await this.Presenter.LoadAsync(this.Content);
+        _editContext = new EditContext(Content);
+    }
+
+    private async Task ExitAsync()
+    {
+        await Dialog.CancelAsync();
+    }
+}

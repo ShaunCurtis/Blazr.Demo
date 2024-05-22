@@ -1,0 +1,65 @@
+﻿@namespace Blazr.App.FluentUI
+@inject IListPresenter<DmoCustomer> Presenter
+@inject IDialogService DialogService
+
+<PageTitle>Customers</PageTitle>
+
+<h1>Customers</h1>
+<FluentStack Style="margin-bottom: 24px;" HorizontalAlignment="HorizontalAlignment.Right" VerticalAlignment="VerticalAlignment.Center">
+    <FluentButton Color="var(--info)" IconStart="@(new Icons.Regular.Size16.AddCircle())"
+                  OnClick="@OnAddAsync">
+        New Customer
+    </FluentButton>
+</FluentStack>
+
+<FluentDataGrid Id="customergrid" ItemsProvider="this.Presenter.GetItemsAsync<DmoCustomer>" GridTemplateColumns="1fr 3fr" TGridItem=DmoCustomer>
+    <PropertyColumn Title="Id" Property="@(c => c!.CustomerId.Value.ToDisplayId())" Align=Align.Start />
+    <PropertyColumn Title="Customer Name" Property="@(c => c!.CustomerName)" Sortable="true" Align=Align.Start />
+    <TemplateColumn Title="Actions" Align="@Align.End">
+        <FluentButton aria-label="View item" IconEnd="@(new Icons.Regular.Size16.ContentView())" OnClick="() => OnViewAsync(context.CustomerId)" />
+        <FluentButton aria-label="Edit item" IconEnd="@(new Icons.Regular.Size16.Edit())" OnClick="() => OnEditAsync(context.CustomerId)" />
+    </TemplateColumn>
+</FluentDataGrid>
+
+@code {
+    private GridSort<Guid> _rankSort = GridSort<Guid>
+        .ByDescending(x => x);
+
+    private async Task OnEditAsync(CustomerId id)
+    {
+        var dialog = await DialogService.ShowDialogAsync<CustomerEditForm>(id, new DialogParameters()
+            {
+                Title = $"Edit Customer",
+                PreventDismissOnOverlayClick = true,
+                PreventScroll = true,
+            });
+
+        var result = await dialog.Result;
+    }
+
+    private async Task OnViewAsync(CustomerId id)
+    {
+        var dialog = await DialogService.ShowDialogAsync<CustomerViewForm>(id, new DialogParameters()
+            {
+                Title = $"View Customer",
+                PreventDismissOnOverlayClick = true,
+                PreventScroll = true,
+            });
+
+        var result = await dialog.Result;
+    }
+
+    private async Task OnAddAsync()
+    {
+        var id = new CustomerId(Guid.Empty);
+        var dialog = await DialogService.ShowDialogAsync<CustomerEditForm>(id, new DialogParameters()
+            {
+                Title = $"New Customer",
+                PreventDismissOnOverlayClick = true,
+                PreventScroll = true,
+            });
+
+        var result = await dialog.Result;
+    }
+
+}

@@ -1,0 +1,186 @@
+﻿@namespace Blazr.App.FluentUI
+@implements IDialogContentComponent<WeatherForecastId>
+@implements IDisposable
+@inject WeatherForecastEditPresenter Presenter
+@inject IToastService ToastService
+
+<!-- Header -->
+<FluentDialogHeader ShowDismiss="_isClean">
+    <FluentStack VerticalAlignment="VerticalAlignment.Center">
+        @if (this.Presenter.IsNew)
+        {
+            <FluentIcon Value="@(new Icons.Regular.Size24.Add())" />
+        }
+        else
+        {
+            <FluentIcon Value="@(new Icons.Regular.Size24.Edit())" />
+        }
+        <FluentLabel Typo="Typography.PaneHeader">
+            @Dialog.Instance.Parameters.Title
+        </FluentLabel>
+    </FluentStack>
+</FluentDialogHeader>
+
+<!-- Body -->
+<FluentDialogBody>
+
+    @if (!this.Presenter.LastDataResult.Successful)
+    {
+        <FluentMessageBar Title="Save Failed" Intent="@MessageIntent.Error">
+            @this.Presenter.LastDataResult.Message
+        </FluentMessageBar>
+
+    }
+
+    @if (this.Presenter.EditContext is not null)
+    {
+        <EditForm EditContext="Presenter.EditContext">
+
+            <BlazrEditStateTracker LockNavigation="true" />
+            
+            <BlazrValidator TRecord="WeatherForecastEditContext" 
+                TValidator="WeatherForecastEditContextValidator" />
+
+            <FluentGrid Spacing="1" AdaptiveRendering="true">
+
+                <FluentGridItem sm="12" md="6">
+                    <FluentNumberField Style="width: 100%;"
+                                       @bind-Value="@this.Presenter.RecordEditContext.Temperature"
+                                       Placeholder="Enter the Temperature in Deg Celcius"
+                                       Immediate
+                                       Label="Temperature &deg; C" />
+                </FluentGridItem>
+                <FluentGridItem sm="12" md="6">
+
+                    <FluentDatePicker @bind-Value="@this.Presenter.RecordEditContext.Date"
+                                      Placeholder="Enter the date of the forecast"
+                                      Label="Forecast Date" />
+                </FluentGridItem>
+
+            </FluentGrid>
+
+            <FluentGrid Spacing="1" AdaptiveRendering="true">
+
+                <FluentGridItem sm="12" md="6">
+                    <FluentSelect Items="SummaryOptions.Summaries" 
+                                  OptionText="i => i" OptionValue="i => i" 
+                                  @bind-Value="this.Presenter.RecordEditContext.Summary"
+                                  @bind-Value:after="this.OnAfterSummaryChanged"
+                                  Label="Summary" />
+                </FluentGridItem>
+
+            </FluentGrid>
+
+            @if(this.Presenter.IsInvalid)
+            {
+                <FluentMessageBar Title="Validation Errors"
+                                  Style="margin: 1rem;  border: 1px solid var(--error);color: var(--error);"
+                                  Intent="MessageIntent.Error" 
+                                  AllowDismiss="false" >
+
+                    <FluentValidationSummary />
+
+                </FluentMessageBar>
+            }
+        </EditForm>
+    }
+
+</FluentDialogBody>
+
+<!-- Footer -->
+<FluentDialogFooter>
+
+    <FluentButton Appearance=" _isDirty ? Appearance.Accent : Appearance.Neutral" Disabled="_isClean" OnClick="@OnSaveAsync">
+        @(this.Presenter.IsNew ? "Add" : "Save")
+    </FluentButton>
+
+    <FluentButton Appearance="@( _isClean ? Appearance.Accent : Appearance.Neutral)" hidden="@_isDirty" OnClick="@OnExitAsync">
+        Exit
+    </FluentButton>
+
+    <FluentButton Appearance="Appearance.Neutral" hidden="@_isClean" OnClick="@OnExitAsync" style="color: var(--error);">
+        Exit Without Saving
+    </FluentButton>
+
+</FluentDialogFooter>
+
+@code
+{
+    [CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+    [Parameter] public WeatherForecastId Content { get; set; } = default!;
+
+    private bool _isDirty;
+    private bool _isClean => !_isDirty;
+    private bool _stateStoreAttached;
+    private BlazrEditStateStore? _store;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await this.Presenter.LoadAsync(this.Content);
+    }
+
+    protected override void OnParametersSet()
+    {
+        _isDirty = this.Presenter.EditContext.GetEditState();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        // The EditContext is only created after the first render.
+        // We need to make sure the StateStore has been attached to the EditContext
+        // before we try and get it.
+        // The only place we can do this is in the second OnAfterRender UI event
+        _store = _store ?? this.Presenter.EditContext.GetStateStore();
+        if (_store is not null && !_stateStoreAttached)
+        {
+            _store.StoreUpdated += OnEditStateMayHaveChanged;
+            _stateStoreAttached = true;
+        }
+    }
+
+    private async Task OnSaveAsync()
+    {
+        if (!this.Presenter.EditContext.Validate())
+        {
+            this.ToastService.ShowError("The record data is not valid.  Fix the highlighted errors.");
+            return;
+        }
+
+        await this.Presenter.SaveItemAsync();
+
+        if (this.Presenter.LastDataResult.Successful)
+            await Dialog.CloseAsync(Content);
+    }
+
+    private async Task OnExitAsync()
+    {
+        await Dialog.CancelAsync();
+    }
+
+    protected void OnEditStateMayHaveChanged(object? sender, EventArgs e)
+    {
+        _isDirty = this.Presenter.EditContext.GetEditState();
+        this.StateHasChanged();
+    }
+
+    protected void OnValidationStateMayHaveChanged(object? sender, ValidationStateChangedEventArgs e)
+    {
+        //_isDirty = this.Presenter.EditContext.GetEditState();
+        this.StateHasChanged();
+    }
+
+    private void OnAfterSummaryChanged()
+    {
+        var editcontext = this.Presenter.EditContext;
+        var model = this.Presenter.RecordEditContext;
+        var fi = new FieldIdentifier(this.Presenter.RecordEditContext, "Summary");
+        if (editcontext.IsModified(fi) == model.IsSummaryClean)
+            editcontext.NotifyFieldChanged(fi);
+    }
+
+    public void Dispose()
+    {
+        if (_store is not null)
+            _store.StoreUpdated -= OnEditStateMayHaveChanged;
+    }
+}

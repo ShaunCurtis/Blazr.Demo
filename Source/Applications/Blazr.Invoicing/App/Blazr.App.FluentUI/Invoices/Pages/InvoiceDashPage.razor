@@ -1,0 +1,11 @@
+﻿@page "/invoice/{Id:guid}"
+
+@namespace Blazr.App.FluentUI
+
+<InvoiceDashboard InvoiceId="_invoiceId" />
+
+@code{
+    [Parameter] public Guid Id { get; set; }
+
+    private InvoiceId _invoiceId => new(Id);
+}

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.*-* " />
+    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.*-* " />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj" />
+    <ProjectReference Include="..\..\App\Blazr.App.Core\Blazr.App.Core.csproj" />
+    <ProjectReference Include="..\..\App\Blazr.App.FluentUI\Blazr.App.FluentUI.csproj" />
+    <ProjectReference Include="..\..\App\Blazr.App.Infrastructure\Blazr.App.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\App\Blazr.App.Presentation\Blazr.App.Presentation.csproj" />
+  </ItemGroup>
+</Project>

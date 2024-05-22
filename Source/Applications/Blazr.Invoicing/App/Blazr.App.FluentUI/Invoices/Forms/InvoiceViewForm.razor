@@ -1,0 +1,90 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@namespace Blazr.App.FluentUI
+@implements IDialogContentComponent<InvoiceId>
+@inject IViewPresenter<DmoInvoice> Presenter
+@inject IToastService ToastService
+
+@if (_isDialog)
+{
+    <FluentDialogHeader Visible="false" />
+
+    <FluentDialogBody>
+        <FluentStack VerticalAlignment="VerticalAlignment.Center">
+            <FluentIcon Value="@(new Icons.Regular.Size24.DocumentBorder())" />
+            <FluentLabel Typo="Typography.PaneHeader">
+                Invoice View
+            </FluentLabel>
+        </FluentStack>
+
+        <InvoiceViewer Item="_item" />
+
+        <FluentStack VerticalAlignment="VerticalAlignment.Center" HorizontalAlignment="HorizontalAlignment.Right">
+            <FluentButton Appearance="Appearance.Neutral"
+                          OnClick="@ExitAsync">
+                Exit
+            </FluentButton>
+        </FluentStack>
+
+        <FluentDialogFooter Visible="false" />
+
+    </FluentDialogBody>
+
+    return;
+}
+
+<InvoiceViewer Item="_item" />
+
+@code
+{
+    [CascadingParameter] private FluentDialog Dialog { get; set; } = default!;
+    [CascadingParameter] private InvoiceComposite Composite { get; set; } = default!;
+    [Parameter] public InvoiceId Content { get; set; } = new(Guid.Empty);
+
+    private bool _isDialog => this.Dialog is not null;
+    private DmoInvoice _item = default!;
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (this.Composite is not null)
+            this.Composite.StateHasChanged += this.OnCompositeStateChanged;
+
+        await LoadAsync();
+    }
+
+    protected async Task LoadAsync()
+    {
+        DmoInvoice? item = null;
+
+        if (this.Composite is not null)
+            item = this.Composite.Invoice;
+
+        if (item is null)
+        {
+            await this.Presenter.LoadAsync(this.Content);
+            item = this.Presenter.Item;
+        }
+
+        _item = item;
+
+        if (!this.Presenter.LastDataResult.Successful)
+            this.ToastService.ShowError(this.Presenter.LastDataResult.Message ?? "An Error occured retriving the record.");
+    }
+
+    private async void OnCompositeStateChanged(object? sender, EventArgs e)
+    {
+        await this.LoadAsync();
+        this.StateHasChanged();
+    }
+
+    private async Task ExitAsync()
+    {
+        await Dialog.CancelAsync();
+    }
+
+    public void Dispose()
+    {
+        if (this.Composite is not null)
+            this.Composite.StateHasChanged -= this.OnCompositeStateChanged;
+    }
+}

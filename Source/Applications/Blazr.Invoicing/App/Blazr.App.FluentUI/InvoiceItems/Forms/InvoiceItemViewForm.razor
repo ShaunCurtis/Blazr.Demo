@@ -1,0 +1,74 @@
+﻿@namespace Blazr.App.FluentUI
+@implements IDialogContentComponent<InvoiceItemId>
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@inject IViewPresenter<DmoInvoiceItem> Presenter
+@inject IToastService ToastService
+
+@if (_isDialog)
+{
+    <FluentDialogHeader Visible="false" />
+
+    <FluentDialogBody>
+
+    <FluentStack VerticalAlignment="VerticalAlignment.Center">
+        <FluentIcon Value="@(new Icons.Regular.Size24.DocumentBorder())" />
+        <FluentLabel Typo="Typography.PaneHeader">
+            Invoice Item View
+        </FluentLabel>
+    </FluentStack>
+
+        <InvoiceItemViewer Item="_item" />
+
+    </FluentDialogBody>
+
+    <FluentStack VerticalAlignment="VerticalAlignment.Center" HorizontalAlignment="HorizontalAlignment.Right">
+        <FluentButton Appearance="Appearance.Neutral"
+                      OnClick="@ExitAsync">
+            Exit
+        </FluentButton>
+    </FluentStack>
+
+    <FluentDialogFooter Visible="false" />
+
+    return;
+}
+
+<InvoiceItemViewer Item="_item" />
+
+@if (_isDialog)
+{
+}
+
+@code {
+    [CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+    [Parameter] public InvoiceItemId Content { get; set; } = default!;
+    [CascadingParameter] private InvoiceComposite Composite { get; set; } = default!;
+
+    private bool _isDialog => this.Dialog is not null;
+    private DmoInvoiceItem _item = default!;
+
+    protected async override Task OnInitializedAsync()
+    {
+        DmoInvoiceItem? item = null;
+
+        if (this.Composite is not null)
+            item = this.Composite.GetInvoiceItem(this.Content);
+
+        if (item is null)
+        {
+            await this.Presenter.LoadAsync(this.Content);
+            item = this.Presenter.Item;
+        }
+
+        _item = item;
+
+        if (!this.Presenter.LastDataResult.Successful)
+            this.ToastService.ShowError(this.Presenter.LastDataResult.Message ?? "An Error occured retriving the record.");
+    }
+
+    private async Task ExitAsync()
+    {
+        await Dialog.CancelAsync();
+    }
+}

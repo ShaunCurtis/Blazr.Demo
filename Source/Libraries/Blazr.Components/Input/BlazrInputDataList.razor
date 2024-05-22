@@ -1,0 +1,50 @@
+﻿@*
+/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================
+*@
+
+@namespace Blazr.Components.Editor
+@typeparam TListItem
+
+<InputText @attributes=this.AdditionalAttributes
+           list="@listId"
+           Value=@this.Value
+           ValueChanged=OnChange
+           ValueExpression=this.ValueExpression
+           placeholder="@this.PlaceholderText" />
+
+<datalist id="@listId">
+
+    @foreach (var option in this.DisplayOptionsItems)
+    {
+        <option>@(this.OptionDelegate(option))</option>
+    }
+
+</datalist>
+
+@code {
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+    [Parameter] public Expression<Func<string>>? ValueExpression { get; set; }
+
+    [Parameter, EditorRequired] public IEnumerable<TListItem> DisplayOptionsItems { get; set; } = default!;
+    [Parameter, EditorRequired] public Func<TListItem, string> OptionDelegate { get; set; } = default!;
+
+    [Parameter] public string PlaceholderText { get; set; } = "Select a Value";
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private readonly string listId = Guid.NewGuid().ToString();
+
+    protected override void OnInitialized()
+    {
+        // Check we have a Options list if not throw an exception before we try and render a null list
+        ArgumentNullException.ThrowIfNull(this.DisplayOptionsItems);
+        ArgumentNullException.ThrowIfNull(this.OptionDelegate);
+    }
+
+    private Task OnChange(string value)
+        => this.ValueChanged.InvokeAsync(value);
+}

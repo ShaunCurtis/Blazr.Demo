@@ -1,0 +1,55 @@
+﻿@*
+/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================
+*@
+
+@typeparam TValue
+@namespace Blazr.Components.Editor
+@inherits InputNumber<TValue>
+
+@if (UpdateOnInput)
+{
+    <input class="@this.CssClass"
+           type="number"
+           value="@this.CurrentValueAsString"
+           step="@_stepAttributeValue"
+    @oninput="(value) => CurrentValueAsString = value?.Value?.ToString() ?? null"
+    @attributes=this.AdditionalAttributes
+    @ref=this.Element />
+}
+else
+{
+    <input class="@this.CssClass"
+           type="number"
+           value="@this.CurrentValueAsString"
+           step="@_stepAttributeValue"
+    @onchange="(value) => CurrentValueAsString = value?.Value?.ToString() ?? null"
+    @attributes=this.AdditionalAttributes
+    @ref=this.Element />
+}
+
+@code {
+    [Parameter] public bool UpdateOnInput { get; set; }
+
+    private static readonly string _stepAttributeValue = GetStepAttributeValue();
+
+    private static string GetStepAttributeValue()
+    {
+        var targetType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+        var isValidType = targetType == typeof(int) ||
+            targetType == typeof(long) ||
+            targetType == typeof(short) ||
+            targetType == typeof(float) ||
+            targetType == typeof(double) ||
+            targetType == typeof(decimal);
+
+        if (!isValidType)
+            throw new InvalidOperationException($"The type '{targetType}' is not a supported numeric type.");
+
+        return "any";
+    }
+}

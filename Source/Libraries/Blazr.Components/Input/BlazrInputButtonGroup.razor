@@ -1,0 +1,47 @@
+﻿@*
+/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================
+*@
+
+@namespace Blazr.Components.Editor
+@inherits InputBase<bool>
+
+<div class="@this.Class">
+    <div class="btn-group">
+        <button type="button" class="@_buttonTrueCss" @onclick="() => OnClick(true)">@this.TrueText</button>
+        <button type="button" class="@_buttonFalseCss" @onclick="() => OnClick(false)">@this.FalseText</button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Class { get; set; } = string.Empty;
+    [Parameter] public string TrueSelectedCss { get; set; } = "btn btn-sm btn-danger";
+    [Parameter] public string FalseSelectedCss { get; set; } = "btn btn-sm btn-success";
+    [Parameter] public string TrueNotSelectedCss { get; set; } = "btn btn-sm btn-secondary";
+    [Parameter] public string FalseNotSelectedCss { get; set; } = "btn btn-sm btn-secondary";
+    [Parameter] public string TrueText { get; set; } = "On";
+    [Parameter] public string FalseText { get; set; } = "Off";
+
+    private string _buttonTrueCss => this.Value ? this.TrueSelectedCss : this.TrueNotSelectedCss;
+    private string _buttonFalseCss => !this.Value ? this.FalseSelectedCss : this.FalseNotSelectedCss;
+    private bool _trueDisabled => this.Value;
+    private bool _falseDisabled => !this.Value;
+
+    [DisallowNull] public ElementReference? Element { get; protected set; }
+
+    private async Task OnClick(bool value)
+    {
+        if (this.Value != value)
+        {
+            await this.ValueChanged.InvokeAsync(value);
+            EditContext?.NotifyFieldChanged(FieldIdentifier);
+        }
+    }
+
+    // Dummy implementation - Not used in component
+    protected override bool TryParseValueFromString(string? value, out bool result, [NotNullWhen(false)] out string? validationErrorMessage)
+        => throw new NotSupportedException($"This component does not parse string inputs. Bind to the '{nameof(CurrentValue)}' property, not '{nameof(CurrentValueAsString)}'.");
+}

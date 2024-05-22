@@ -1,0 +1,44 @@
+﻿@*
+/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================
+*@
+
+@namespace Blazr.Components.Editor
+@inherits InputBase<bool>
+
+<div class="@this.Class">
+    <button type="button" class="@_buttonCss" @onclick=OnClick @ref=this.Element>@_buttonText</button>
+</div>
+
+@code {
+    [Parameter] public string Class { get; set; } = string.Empty;
+    [Parameter] public string TrueCss { get; set; } = "btn btn-sm btn-success";
+    [Parameter] public string FalseCss { get; set; } = "btn btn-sm btn-danger";
+    [Parameter] public string TrueText { get; set; } = "On";
+    [Parameter] public string FalseText { get; set; } = "Off";
+
+    private string _buttonCss => this.Value ? this.TrueCss : this.FalseCss;
+    private string _buttonText => this.Value ? this.TrueText : this.FalseText;
+
+    [DisallowNull] public ElementReference? Element { get; protected set; }
+
+    private Task OnClick()
+    {
+        // set to a dummy value - it's not used
+        // We just want to trigger the setter
+        this.CurrentValueAsString = Guid.NewGuid().ToString();
+        return Task.CompletedTask;
+    }
+
+    // Run as part of the setter to convert the string value returned by the html element into a bool
+    protected override bool TryParseValueFromString(string? value, out bool result, [NotNullWhen(false)] out string? validationErrorMessage)
+    {
+        validationErrorMessage = null;
+        // Set result to the opposite of current setting
+        result = !this.Value;
+        return true;
+    }
+}

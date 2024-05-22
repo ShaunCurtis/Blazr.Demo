@@ -1,0 +1,71 @@
+﻿@namespace Blazr.App.FluentUI
+@inject IListPresenter<DmoInvoice> Presenter
+@inject IDialogService DialogService
+@inject NavigationManager NavManager
+<PageTitle>Invoices</PageTitle>
+
+<h1>Invoices</h1>
+<FluentStack Style="margin-bottom: 24px;" HorizontalAlignment="HorizontalAlignment.Right" VerticalAlignment="VerticalAlignment.Center">
+    <FluentButton Color="var(--info)" IconStart="@(new Icons.Regular.Size16.AddCircle())"
+                  OnClick="@OnAddAsync">
+        Add An Invoice
+    </FluentButton>
+</FluentStack>
+
+<FluentDataGrid Id="invoicegrid" ItemsProvider="this.Presenter.GetItemsAsync<DmoInvoice>" GridTemplateColumns="1fr 3fr" TGridItem=DmoInvoice>
+    <PropertyColumn Title="Id" Property="@(c => c!.InvoiceId.Value.ToDisplayId())" Align=Align.Start />
+    <PropertyColumn Title="Date" Property="@(c => c!.Date)" Sortable="true" Align=Align.Start />
+    <PropertyColumn Title="Customer" Property="@(c => c!.CustomerName)" Sortable="true" Align=Align.Start />
+    <PropertyColumn Title="Amount" Property="@(c => c!.TotalAmount)" Sortable="true" Align=Align.Start />
+    <TemplateColumn Title="Actions" Align="@Align.End">
+        <FluentButton aria-label="View item" IconEnd="@(new Icons.Regular.Size16.ContentView())" OnClick="() => OnViewAsync(context.InvoiceId)" />
+        <FluentButton aria-label="Edit item" IconEnd="@(new Icons.Regular.Size16.Edit())" OnClick="() => OnEditAsync(context.InvoiceId)" />
+    </TemplateColumn>
+</FluentDataGrid>
+
+@code {
+    private GridSort<Guid> _rankSort = GridSort<Guid>
+        .ByDescending(x => x);
+
+    private Task OnEditAsync(InvoiceId id)
+    {
+        this.NavManager.NavigateTo($"/invoice/{id.Value}");
+        return Task.CompletedTask;
+        // var dialog = await DialogService.ShowDialogAsync<CustomerEditForm>(id, new DialogParameters()
+        //     {
+        //         Title = $"Edit Invoice",
+        //         PreventDismissOnOverlayClick = true,
+        //         PreventScroll = true,
+        //     });
+
+        // var result = await dialog.Result;
+    }
+
+    private async Task OnViewAsync(InvoiceId id)
+    {
+        var dialog = await DialogService.ShowDialogAsync<InvoiceViewForm>(id, new DialogParameters()
+            {
+                Title = $"View Invoice",
+                Width = "80%",
+                PreventDismissOnOverlayClick = true,
+                PreventScroll = true,
+            });
+
+        var result = await dialog.Result;
+    }
+
+    private async Task OnAddAsync()
+    {
+        var id = new CustomerId(Guid.Empty);
+        var dialog = await DialogService.ShowDialogAsync<CustomerEditForm>(id, new DialogParameters()
+            {
+                Title = $"New Invoice",
+                Width ="80%",
+                PreventDismissOnOverlayClick = true,
+                PreventScroll = true,
+            });
+
+        var result = await dialog.Result;
+    }
+
+}

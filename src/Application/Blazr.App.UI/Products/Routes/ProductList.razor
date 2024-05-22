@@ -1,8 +1,0 @@
-﻿@page "/Product"
-@namespace Blazr.App.UI
-@attribute [Authorize("IsUserPolicy")]
-
-<ProductPagedList StateId=RouteId />
-@code {
-    private static Guid RouteId = Guid.NewGuid();
-}
