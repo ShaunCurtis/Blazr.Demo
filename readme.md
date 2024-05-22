@@ -1,8 +1,18 @@
 # Blazor.Demo
 
-Blazr.Demo is a Repo that contains a solution that implements my latest incarnation of the **Blazr Application Framework**.
+Blazr.Demo contains solutions that implement my latest **Blazr Application Framework**.
 
-The framework is loosely based on various coding ideologies and concepts.  It follows *Clean Design* principles and splits domains into separate project to enforce rigid dependancies.
+The framework is loosely based on various coding ideologies and concepts.
+
+1. *Clean Design*: code is split into domains.  Each domain is a separate project that enforces rigid clean design dependancies.
+2. A Read Only CQS data pipeline.  All data pipeline objects are read only.  
+
+1. ....
+
+There are two demo solutions:
+
+1. Blazr.Weather - demonstrates the framework using the standard template.
+1. Blazr.Invoicing - demonstrates some key complex object concepts using the classic *Invoice* aggregate context.
 
 Documentation is provided as a set of notes in the Notes directory.
 

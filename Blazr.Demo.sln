@@ -5,16 +5,12 @@ VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3202D38B-2447-47BF-BC01-4B4EBE4AD1EB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Applications", "{B510AAB1-D896-44C1-AD47-06FE8B2B2B3F}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notes", "Notes", "{7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F4A9813B-DACD-4868-B440-A64CA9DFE6D3}"
 	ProjectSection(SolutionItems) = preProject
 		readme.md = readme.md
 	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployments", "Deployments", "{A41A7D64-4604-4F01-B4EA-DAF75ED4A900}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data Pipeline", "Data Pipeline", "{E828B3D5-D907-4466-9847-38B3A4257128}"
 	ProjectSection(SolutionItems) = preProject
@@ -39,9 +35,37 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lists", "Lists", "{3416A04A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{3C6624D6-FC28-4230-B8E7-AF2F5C0B229B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Blazr.Weather", "Blazr.Weather", "{7BFD4D1C-6E50-44DE-B037-ECAAFD3C2F1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr", "Source\Libraries\Blazr\Blazr.csproj", "{76770DC5-417A-497E-9DF7-A522CC33DF98}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Components", "Source\Libraries\Blazr.Components\Blazr.Components.csproj", "{7B78C980-318E-4FC8-BD8F-79E0E85EC4C1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.EditStateTracker", "Source\Libraries\Blazr.EditStateTracker\Blazr.EditStateTracker.csproj", "{7CF65B0D-408A-469B-8659-C2D5F9A93608}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.OneWayStreet", "Source\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj", "{DCF0C8F2-92C7-418D-B115-DA45530382B5}"
 EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{76770DC5-417A-497E-9DF7-A522CC33DF98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76770DC5-417A-497E-9DF7-A522CC33DF98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76770DC5-417A-497E-9DF7-A522CC33DF98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76770DC5-417A-497E-9DF7-A522CC33DF98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B78C980-318E-4FC8-BD8F-79E0E85EC4C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B78C980-318E-4FC8-BD8F-79E0E85EC4C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B78C980-318E-4FC8-BD8F-79E0E85EC4C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B78C980-318E-4FC8-BD8F-79E0E85EC4C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CF65B0D-408A-469B-8659-C2D5F9A93608}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CF65B0D-408A-469B-8659-C2D5F9A93608}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CF65B0D-408A-469B-8659-C2D5F9A93608}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CF65B0D-408A-469B-8659-C2D5F9A93608}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCF0C8F2-92C7-418D-B115-DA45530382B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCF0C8F2-92C7-418D-B115-DA45530382B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCF0C8F2-92C7-418D-B115-DA45530382B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCF0C8F2-92C7-418D-B115-DA45530382B5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
@@ -49,7 +73,10 @@ Global
 		{E828B3D5-D907-4466-9847-38B3A4257128} = {7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}
 		{6A95252C-4B3E-473A-953F-16929B064A64} = {7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}
 		{3416A04A-864D-46C1-AC05-E304501FA288} = {7A66F7C4-E8B1-4F9B-924D-9F948B7C97EE}
-		{7BFD4D1C-6E50-44DE-B037-ECAAFD3C2F1A} = {B510AAB1-D896-44C1-AD47-06FE8B2B2B3F}
+		{76770DC5-417A-497E-9DF7-A522CC33DF98} = {3C6624D6-FC28-4230-B8E7-AF2F5C0B229B}
+		{7B78C980-318E-4FC8-BD8F-79E0E85EC4C1} = {3C6624D6-FC28-4230-B8E7-AF2F5C0B229B}
+		{7CF65B0D-408A-469B-8659-C2D5F9A93608} = {3C6624D6-FC28-4230-B8E7-AF2F5C0B229B}
+		{DCF0C8F2-92C7-418D-B115-DA45530382B5} = {3C6624D6-FC28-4230-B8E7-AF2F5C0B229B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {990115E5-5129-41F0-AACF-598505F1FD10}
