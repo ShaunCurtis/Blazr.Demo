@@ -5,7 +5,7 @@
 /// ============================================================
 namespace Blazr.App.Infrastructure;
 
-public class DboWeatherForecastMap : IDboEntityMap<DboWeatherForecast, DmoWeatherForecast>
+public sealed class DboWeatherForecastMap : IDboEntityMap<DboWeatherForecast, DmoWeatherForecast>
 {
     public DmoWeatherForecast MapTo(DboWeatherForecast item)
         => Map(item);

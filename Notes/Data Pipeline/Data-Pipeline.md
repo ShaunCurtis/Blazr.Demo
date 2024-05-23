@@ -2,75 +2,96 @@
 
 The application data pipeline is a composite design incorporating patterns from several frameworks.
 
-The primary implementation is over Entity Framework, so we create a thin organisational broker layer. Entity Framework implements the basic repository and unit of work patterns for you, so don't wrap it in another fat layer. 
+The primary implementation uses Entity Framework as the **Object Request Mapper**, overlayed by a thin organisational broker layer. Entity Framework implements the basic repository and unit of work patterns: there's no need for another fat layer. 
 
-It's intention is to address persistence and retrieval in both a standards based generic context and complex aggregate contexts.  In summary, handle the 80% of cases that fit the standards approach, and provide the flexibility to handle the 20% custom cases.
+It's intent is to address persistence and retrieval in a standards based generic context with the flexibility to handle the more compkex aggregate cases with custom implementations.
 
 ## All data within the data pipeline is READONLY.
 
-When you retrieve data from a data source it's a **copy** of the data within the data source.  It's not a pointer to the source data that you can mutate as you wish: it's read only.  To change the original, you pass a mutated copy of the original into the data store.
+When you retrieve data from a data source it's a **copy** of the data within the data source.  It's not a pointer to the source data that you can mutate as you wish: it's read only.
 
-Implementing readonly objects is simple in C# 8+.  We have a value based object called a `record` and the `{ get; init; }` property definition.
+You change the original by passing a mutated copy of the original into the data store.
 
-We can declare our data object like this:
+Implementing readonly objects is simple in C# 8+ using `record` value based objects with `{ get; init; }` property definitions.
+
+We can declare our core model data object like this:
 
 ```
-public sealed record Product : IGuidIdentity, IStateEntity
+public sealed record DmoWeatherForecast : ICommandEntity
 {
-    [Key] public Guid Uid { get; init; } = Guid.Empty;
-    [NotMapped] public int StateCode { get; init; } = 1;
-    public string ProductCode { get; init; } = "Not Set";
-    public string ProductName { get; init; } = "Not Set";
-    public decimal ProductUnitPrice { get; init; } = 0;
-}
-```
-## All data within the data pipeline has Unique Identity.
-
-`IGuidIdentity` is a simple guid interface.
-
-```charp
-public interface IGuidIdentity 
-{ 
-    public Guid Uid { get; }
+    public WeatherForecastId WeatherForecastId { get; init; } = new(Guid.Empty);
+    public DateOnly Date { get; init; }
+    public Temperature Temperature { get; set; } = new(0);
+    public string? Summary { get; set; }
 }
 ```
 
-## All data objects are state aware.
-
-It's important in any application to understand and track the state of a record.  Not understsnding state is the cause of many coding problems.
-
-State is managed by a `StateCode` property defined by the `IStateEntity` interface. 
+Core objects avoid *Primitive Obsession* where appropriate, so in the above record the identity is implemented as a value object:
 
 ```csharp
-public interface IStateEntity 
-{ 
-    public int StateCode { get; }
-}
+public sealed record WeatherForecastId(Guid Value) : IGuidKey;
 ```
 
-In the product record above `StateCode` is not stored in the data store.
+And `Temperature` is treated the same:
 
 ```csharp
-    [NotMapped] public int StateCode { get; init; } = 1;
-```
-
-The state codes are defined in a static helper class as `consts`.
-
-```csharp
-public class StateCodes
+public record Temperature
 {
-    public const int Record = 1;
-    public const int New = 0;
-    public const int Delete = int.MinValue;
+    private readonly decimal _temperature;
+    public decimal TemperatureC => _temperature;
+    public decimal TemperatureF => 32 + (_temperature / 0.5556m);
 
-    public static bool IsModified(int value) => value < 0 && value is not int.MinValue;
-    public static bool IsDirty(int value) => value < 0;
+    public Temperature(decimal temperatureDebCelcius)
+    {
+        _temperature = temperatureDebCelcius;
+    }
 }
 ```
 
-The `StateCode` provides process management.  The default is one state called Record.  We switch the state from positive to negative for clean/dirty status.
+The *Infrastructure* database object that represents `DmoWeatherForecast` looks like this:
 
-A record read from the database has a state of `1`.  When we create an edited copy of that object,we set the state to `-1`.  Any record with a state of `0` is a new record, and [as a convention] any record with the state set to the minimum value for an int is marked for deletion.
+```csharp
+public sealed record DboWeatherForecast : ICommandEntity, IKeyedEntity
+{
+    [Key] public Guid WeatherForecastID { get; init; } = Guid.Empty;
+    public DateTime Date { get; init; }
+    public decimal Temperature { get; set; }
+    public string? Summary { get; set; }
+
+    public object KeyValue => this.WeatherForecastID;
+}
+```
+
+We implement a mapper to map data between the two objects:
+
+```csharp
+public sealed class DboWeatherForecastMap : IDboEntityMap<DboWeatherForecast, DmoWeatherForecast>
+{
+    public DmoWeatherForecast MapTo(DboWeatherForecast item)
+        => Map(item);
+
+    public DboWeatherForecast MapTo(DmoWeatherForecast item)
+        => Map(item);
+
+    public static DmoWeatherForecast Map(DboWeatherForecast item)
+        => new()
+        {
+            WeatherForecastId = new(item.WeatherForecastID),
+            Date = DateOnly.FromDateTime(item.Date),
+            Temperature = new(item.Temperature),
+            Summary = item.Summary
+        };
+
+    public static DboWeatherForecast Map(DmoWeatherForecast item)
+        => new()
+        {
+            WeatherForecastID = item.WeatherForecastId.Value,
+            Date = item.Date.ToDateTime(TimeOnly.MinValue),
+            Temperature = item.Temperature.TemperatureC,
+            Summary = item.Summary
+        };
+}
+```
 
 ### Data Broker
 

@@ -6,7 +6,7 @@
 
 namespace Blazr.App.Infrastructure;
 
-public record DboWeatherForecast : ICommandEntity, IKeyedEntity
+public sealed record DboWeatherForecast : ICommandEntity, IKeyedEntity
 {
     [Key] public Guid WeatherForecastID { get; init; } = Guid.Empty;
     public DateTime Date { get; init; }
