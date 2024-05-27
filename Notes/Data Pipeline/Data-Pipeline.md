@@ -6,138 +6,96 @@ The primary implementation uses Entity Framework as the **Object Request Mapper*
 
 It's intent is to address persistence and retrieval in a standards based generic context with the flexibility to handle the more compkex aggregate cases with custom implementations.
 
-## All data within the data pipeline is READONLY.
-
-When you retrieve data from a data source it's a **copy** of the data within the data source.  It's not a pointer to the source data that you can mutate as you wish: it's read only.
+All data within the data pipeline is *READONLY*.  When you retrieve data from a data source it's a **copy** of the data within the data source.  It's not a pointer to the source data that you can mutate as you wish: it's read only.
 
 You change the original by passing a mutated copy of the original into the data store.
 
 Implementing readonly objects is simple in C# 8+ using `record` value based objects with `{ get; init; }` property definitions.
 
-We can declare our core model data object like this:
+We can divide data pipeline activity into two basic activities:
 
-```
-public sealed record DmoWeatherForecast : ICommandEntity
-{
-    public WeatherForecastId WeatherForecastId { get; init; } = new(Guid.Empty);
-    public DateOnly Date { get; init; }
-    public Temperature Temperature { get; set; } = new(0);
-    public string? Summary { get; set; }
-}
-```
+1. Querying for single items or lists of items.
+2. Submitting conmands to change data.
 
-Core objects avoid *Primitive Obsession* where appropriate, so in the above record the identity is implemented as a value object:
+## Querying
 
-```csharp
-public sealed record WeatherForecastId(Guid Value) : IGuidKey;
-```
+Querying falls into two categories.
 
-And `Temperature` is treated the same:
+### Querying for a list of items
+
+The application uses a `FluentDataGrid` to display a list of weather forecasts.  It has an associated `FluentPaginator` to control paging operations. We provide a delegate function in the List Presenter to map  to the `ItemsProvider` parameter.  Note the clear separation of concerns.  The `FluentDataGrid` manages all the UI interactivity and the `ListPresenter`does all the data pipeline work.
 
 ```csharp
-public record Temperature
-{
-    private readonly decimal _temperature;
-    public decimal TemperatureC => _temperature;
-    public decimal TemperatureF => 32 + (_temperature / 0.5556m);
-
-    public Temperature(decimal temperatureDebCelcius)
-    {
-        _temperature = temperatureDebCelcius;
-    }
-}
+ GetItemsAsync<TGridItem>(GridItemsProviderRequest<TRecord> request);
 ```
 
-The *Infrastructure* database object that represents `DmoWeatherForecast` looks like this:
+ `GetItemsAsync` maps the `GridItemsProviderRequest` [specific to the `FluentDataGrid`] to a data pipeline `ListQueryRequest` and then passes the request to the DI registered `IDataBroker`.
 
 ```csharp
-public sealed record DboWeatherForecast : ICommandEntity, IKeyedEntity
-{
-    [Key] public Guid WeatherForecastID { get; init; } = Guid.Empty;
-    public DateTime Date { get; init; }
-    public decimal Temperature { get; set; }
-    public string? Summary { get; set; }
+ var result = await _dataBroker.ExecuteQueryAsync<TRecord>(listRequest);
+ ```
 
-    public object KeyValue => this.WeatherForecastID;
-}
-```
+In the server registered application this passes the request to the `IListRequestHandler` DI registered handler.
 
-We implement a mapper to map data between the two objects:
-
-```csharp
-public sealed class DboWeatherForecastMap : IDboEntityMap<DboWeatherForecast, DmoWeatherForecast>
-{
-    public DmoWeatherForecast MapTo(DboWeatherForecast item)
-        => Map(item);
-
-    public DboWeatherForecast MapTo(DmoWeatherForecast item)
-        => Map(item);
-
-    public static DmoWeatherForecast Map(DboWeatherForecast item)
-        => new()
-        {
-            WeatherForecastId = new(item.WeatherForecastID),
-            Date = DateOnly.FromDateTime(item.Date),
-            Temperature = new(item.Temperature),
-            Summary = item.Summary
-        };
-
-    public static DboWeatherForecast Map(DmoWeatherForecast item)
-        => new()
-        {
-            WeatherForecastID = item.WeatherForecastId.Value,
-            Date = item.Date.ToDateTime(TimeOnly.MinValue),
-            Temperature = item.Temperature.TemperatureC,
-            Summary = item.Summary
-        };
-}
-```
-
-### Data Broker
-
-We define the "contract" that the infrastructure domain code needs to honour as an `interface`.
-
-```csharp
-public interface IDataBroker
-{
-    public ValueTask<ListQueryResult<TRecord>> GetItemsAsync<TRecord>(ListQueryRequest request) where TRecord : class, new();
-    public ValueTask<ItemQueryResult<TRecord>> GetItemAsync<TRecord>(ItemQueryRequest request) where TRecord : class, new();
-    public ValueTask<CommandResult> ExecuteCommandAsync<TRecord>(CommandRequest<TRecord> request) where TRecord : class, new();
-}
-```
-
-There are some key design points to take from this definition:
-
-1. Generics are applied at the method level, not the class level.  There's one concrete implementation that implements the interface for all data classes.
-2. Methods are passed a "Request" object and return a "Result" object.
-3. Everything is Task based and returns a `ValueTask`.
-
-The server implementation class looks like this.
-
-For example the item request hander is defined as `IItemRequestHandler` and populated by DI in the constructor. `GetItemAsync` calls the `ExecuteAsync` method on the interface.  Each operation in the data broker has a corresponding handler defined by an interface and obtained through DI.
-
-
-```csharp
-public sealed class RepositoryDataBroker : IDataBroker
-{
-    private readonly IListRequestHandler _listRequestHandler;
-    private readonly IItemRequestHandler _itemRequestHandler;
-    private readonly ICommandHandler _commandHandler;
-
-    public RepositoryDataBroker(IListRequestHandler listRequestHandler, IItemRequestHandler itemRequestHandler, CommandHandler commandHandler)
-    {
-        _listRequestHandler = listRequestHandler;
-        _itemRequestHandler = itemRequestHandler;
-        _commandHandler = commandHandler;
-    }
-
-    public ValueTask<ListQueryResult<TRecord>> GetItemsAsync<TRecord>(ListQueryRequest request) where TRecord : class, new()
+ ```csharp
+public ValueTask<ListQueryResult<TRecord>> ExecuteQueryAsync<TRecord>(ListQueryRequest request) where TRecord : class
         => _listRequestHandler.ExecuteAsync<TRecord>(request);
+```
 
-    public ValueTask<ItemQueryResult<TRecord>> GetItemAsync<TRecord>(ItemQueryRequest request) where TRecord : class, new()
-        => _itemRequestHandler.ExecuteAsync<TRecord>(request);
+This checks DI to see if there's a specific handler registered for `TRecord` [in our case `DmoWeatherForecast`].  If there is, it executes the specific handler, if not the generic handler handles the request.
 
-    public ValueTask<CommandResult> ExecuteCommandAsync<TRecord>(CommandRequest<TRecord> request) where TRecord : class, new()
-        => _commandHandler.ExecuteAsync<TRecord>(request);
+```csharp
+    public async ValueTask<ListQueryResult<TRecord>> ExecuteAsync<TRecord>(ListQueryRequest request)
+        where TRecord : class
+    {
+        IListRequestHandler<TRecord>? _customHandler = null;
+
+        _customHandler = _serviceProvider.GetService<IListRequestHandler<TRecord>>();
+
+        // If we get one then one is registered in DI and we execute it
+        if (_customHandler is not null)
+            return await _customHandler.ExecuteAsync(request);
+
+        // If there's no custom handler registered we run the base handler
+        return await this.GetItemsAsync<TRecord>(request);
+    }
+```
+
+We have defined a custom handler:
+
+```csharp
+services.AddScoped<IListRequestHandler<DmoWeatherForecast>, MappedListRequestServerHandler<InMemoryTestDbContext, DmoWeatherForecast, DboWeatherForecast>>();
+```
+
+I'll not show the detail here, but it builds an `IQueryable` query for `DboWeatherForecast` executees the query on the data store, maps the returned `DboWeatherForecast` objects to a `DmoWeatherForecast` list and returns a `ListQueryResult<DmoWeatherForecast>`.  This passes back up to the Presenter which maps the `ListQueryResult<DmoWeatherForecast>` to a `GridItemsProviderResult<DmoWeatherForecast>` which is returned to the `FluentDataGrid`.
+
+### Querying for an item
+
+Queries for an item from the UI use the generic `IViewPresenter<TRecord>`.
+
+```csharp
+public interface IViewPresenter<TRecord>
+    where TRecord : class, new()
+{
+    public IDataResult LastDataResult { get; }
+    public TRecord Item { get; }
+
+    public Task LoadAsync(object id);
 }
+```
+
+It's the responsibility of the implementation to handle the object type.  The generic implementation expects a `IGuidKey`, but will pass the object if it doesn't get one.
+
+```csharp
+    public async Task LoadAsync(object id)
+    {
+        // Get the actual value of the Id type
+        if (id is IGuidKey entity)
+            id = entity.Value;
+
+        var request = ItemQueryRequest.Create(id);
+        var result = await _dataBroker.ExecuteQueryAsync<TRecord>(request);
+        LastDataResult = result;
+        this.Item = result.Item ?? new();
+    }
 ```
