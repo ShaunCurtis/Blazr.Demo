@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\..\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj" />
+		<ProjectReference Include="..\..\..\App\Blazr.App.Core\Blazr.App.Core.csproj" />
+		<ProjectReference Include="..\..\..\App\Blazr.App.FluentUI\Blazr.App.FluentUI.csproj" />
+		<ProjectReference Include="..\..\..\App\Blazr.App.Infrastructure\Blazr.App.Infrastructure.csproj" />
+		<ProjectReference Include="..\..\..\App\Blazr.App.Presentation\Blazr.App.Presentation.csproj" />
+		<ProjectReference Include="..\..\Blazr.App.Fluent.Server\Blazr.App.Fluent.Server.csproj" />
+		<ProjectReference Include="..\Blazr.App.Fluent.WASM.Client\Blazr.App.Fluent.WASM.Client.csproj" />
+
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.5" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.*-* " />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.*-* " />
+	</ItemGroup>
+
+</Project>

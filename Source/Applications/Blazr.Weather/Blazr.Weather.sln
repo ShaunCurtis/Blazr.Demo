@@ -32,12 +32,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notes", "Notes", "{BACA9390-F662-4A47-833B-5294A92C9270}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data Pipeline", "Data Pipeline", "{9ED1DACA-06D6-4C70-9F36-023DA0D9877C}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\..\Notes\Data Pipeline\Commands.md = ..\..\..\Notes\Data Pipeline\Commands.md
-		..\..\..\Notes\Data Pipeline\Data-Pipeline.md = ..\..\..\Notes\Data Pipeline\Data-Pipeline.md
-		..\..\..\Notes\Data Pipeline\Item-Requests.md = ..\..\..\Notes\Data Pipeline\Item-Requests.md
-		..\..\..\Notes\Data Pipeline\List-Requests.md = ..\..\..\Notes\Data Pipeline\List-Requests.md
-	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.Fluent.WASM", "Deployments\Blazr.App.Fluent.WASM\Blazr.App.Fluent.WASM\Blazr.App.Fluent.WASM.csproj", "{1839E8E4-6DEE-4C1B-A4E9-98558E2A3AFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.Fluent.WASM.Client", "Deployments\Blazr.App.Fluent.WASM\Blazr.App.Fluent.WASM.Client\Blazr.App.Fluent.WASM.Client.csproj", "{35DBBC5A-C813-4A59-9013-07ED394DCB3F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +79,14 @@ Global
 		{B64A5E68-4E43-455F-B595-0024459BE1C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B64A5E68-4E43-455F-B595-0024459BE1C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B64A5E68-4E43-455F-B595-0024459BE1C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1839E8E4-6DEE-4C1B-A4E9-98558E2A3AFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1839E8E4-6DEE-4C1B-A4E9-98558E2A3AFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1839E8E4-6DEE-4C1B-A4E9-98558E2A3AFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1839E8E4-6DEE-4C1B-A4E9-98558E2A3AFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35DBBC5A-C813-4A59-9013-07ED394DCB3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35DBBC5A-C813-4A59-9013-07ED394DCB3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35DBBC5A-C813-4A59-9013-07ED394DCB3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35DBBC5A-C813-4A59-9013-07ED394DCB3F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,6 +105,8 @@ Global
 		{F70D0267-01F5-4F27-BDFA-FC5BEA51931F} = {8586352C-E909-4DAF-BFE3-67F19258D1DA}
 		{B64A5E68-4E43-455F-B595-0024459BE1C9} = {7195E0D7-CEA4-46FB-B05F-5C1356675632}
 		{9ED1DACA-06D6-4C70-9F36-023DA0D9877C} = {BACA9390-F662-4A47-833B-5294A92C9270}
+		{1839E8E4-6DEE-4C1B-A4E9-98558E2A3AFA} = {7195E0D7-CEA4-46FB-B05F-5C1356675632}
+		{35DBBC5A-C813-4A59-9013-07ED394DCB3F} = {7195E0D7-CEA4-46FB-B05F-5C1356675632}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4BFC383C-CBF4-49EE-BBD6-4E95F57CF086}

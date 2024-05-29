@@ -1,6 +1,6 @@
 global using Blazr.App.Infrastructure;
 global using Blazr.App.Presentation;
-using Blazr.App.Fluent.Server.Components;
+using Blazr.App.Fluent.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
 
