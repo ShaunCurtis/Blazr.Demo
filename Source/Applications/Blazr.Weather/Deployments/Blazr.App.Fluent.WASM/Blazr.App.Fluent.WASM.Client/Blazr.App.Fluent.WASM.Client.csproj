@@ -1,6 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
-  <PropertyGroup>
+	<Target Name="AllowUsingAspNetCoreInBlazorWasm" AfterTargets="ProcessFrameworkReferences">
+		<ItemGroup>
+			<UnavailableRuntimePack Remove="Microsoft.AspNetCore.App" />
+		</ItemGroup>
+	</Target>
+
+	<PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -10,6 +16,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj" />
+    <ProjectReference Include="..\..\..\App\Blazr.App.Core\Blazr.App.Core.csproj" />
+    <ProjectReference Include="..\..\..\App\Blazr.App.FluentUI\Blazr.App.FluentUI.csproj" />
+    <ProjectReference Include="..\..\..\App\Blazr.App.Infrastructure\Blazr.App.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\App\Blazr.App.Presentation\Blazr.App.Presentation.csproj" />
   </ItemGroup>
 
 </Project>

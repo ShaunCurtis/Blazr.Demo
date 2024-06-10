@@ -1,9 +1,19 @@
+global using Blazr.App.Infrastructure;
+global using Blazr.App.Presentation;
+global using Blazr.App.Fluent.Server;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.FluentUI.AspNetCore.Components;
+using Blazr.App.Fluent.WASM.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
+
+builder.Services.AddFluentUIComponents();
+builder.Services.AddAppServerMappedInfrastructureServices();
+//builder.Services.AddAppServerPresentationServices();
 
 var app = builder.Build();
 
@@ -24,8 +34,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-app.MapRazorComponents<Blazr.App.Fluent.WASM.App>()
+//app.AddAppAPIEndpoints();
+
+app.MapRazorComponents<Blazr.App.Fluent.WASM.Server.App>()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(Blazr.App.Fluent.WASM.Client._Imports).Assembly);
+    .AddAdditionalAssemblies([typeof(Blazr.App.FluentUI._Imports).Assembly]);
 
 app.Run();
