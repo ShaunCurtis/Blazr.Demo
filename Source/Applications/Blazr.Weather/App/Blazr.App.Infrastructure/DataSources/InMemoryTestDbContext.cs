@@ -8,7 +8,7 @@ namespace Blazr.App.Infrastructure;
 public sealed class InMemoryTestDbContext
     : DbContext
 {
-    public required DbSet<DboWeatherForecast> WeatherForecasts { get; set; } = default!;
+    public DbSet<DboWeatherForecast> WeatherForecasts { get; set; } = default!;
 
     public InMemoryTestDbContext(DbContextOptions<InMemoryTestDbContext> options) : base(options) { }
 

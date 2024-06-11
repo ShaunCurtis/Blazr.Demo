@@ -10,3 +10,4 @@ public interface IGuidKey
 {
     public Guid Value { get; }
 }
+

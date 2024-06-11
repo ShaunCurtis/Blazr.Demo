@@ -21,6 +21,8 @@ public static class AppDictionary
         public const string InvoiceItemFilterByInvoiceSpecification = "InvoiceItemFilterByInvoiceSpecification";
 
         public const string WeatherHttpClient = "WeatherHttpClient";
-        public const string WeatherForecastListAPIUrl = "/API/Weather/GetForecasts";
+        public const string WeatherForecastListAPIUrl = "/API/WeatherForecast/GetList";
+        public const string WeatherForecastItemAPIUrl = "/API/WeatherForecast/GetItem";
+        public const string WeatherForecastCommandAPIUrl = "/API/WeatherForecast/Command";
     }
 }

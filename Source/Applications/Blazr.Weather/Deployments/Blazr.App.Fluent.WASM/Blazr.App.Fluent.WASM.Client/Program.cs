@@ -11,9 +11,13 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient(AppDictionary.WeatherForecast.WeatherHttpClient, client => { client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress); });
 
-builder.Services.AddScoped<IListRequestHandler, ListRequestAPIHandler>();
+builder.Services.AddScoped<IDataBroker, ServerDataBroker>();
 
-builder.Services.AddScoped<IListRequestHandler<DmoWeatherForecast>, WeatherAPIListRequestHandler>();
+builder.Services.AddScoped<IListRequestHandler, ListRequestAPIHandler>();
+builder.Services.AddScoped<IItemRequestHandler, ItemRequestAPIHandler>();
+builder.Services.AddScoped<ICommandHandler, CommandAPIHandler>();
+
+builder.Services.AddScoped<IListRequestHandler<DmoWeatherForecast>, WeatherForecastAPIListRequestHandler>();
 builder.Services.AddTransient<IListPresenter<DmoWeatherForecast>, ListPresenter<DmoWeatherForecast>>();
 
 builder.Services.AddFluentUIComponents();

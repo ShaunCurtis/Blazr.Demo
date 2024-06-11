@@ -12,7 +12,7 @@ public sealed record ListQueryResult<TRecord> : IDataResult
     public string? Message { get; init; }
     public int TotalCount { get; init; }
 
-    private ListQueryResult() { }
+    public ListQueryResult() { }
 
     public static ListQueryResult<TRecord> Success(IEnumerable<TRecord> Items, int totalCount, string? message = null)
         => new ListQueryResult<TRecord> {Successful=true,  Items= Items, TotalCount = totalCount, Message= message };

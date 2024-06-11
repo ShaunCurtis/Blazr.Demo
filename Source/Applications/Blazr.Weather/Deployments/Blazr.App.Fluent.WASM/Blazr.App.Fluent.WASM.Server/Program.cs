@@ -13,9 +13,14 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddFluentUIComponents();
 builder.Services.AddAppServerMappedInfrastructureServices();
-//builder.Services.AddAppServerPresentationServices();
+builder.Services.AddAppServerPresentationServices();
 
 var app = builder.Build();
+
+// get the DbContext factory and add the test data
+var factory = app.Services.GetService<IDbContextFactory<InMemoryTestDbContext>>();
+if (factory is not null)
+    TestDataProvider.Instance().LoadDbContext<InMemoryTestDbContext>(factory);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -34,7 +39,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-//app.AddAppAPIEndpoints();
+app.AddAppAPIEndpoints();
 
 app.MapRazorComponents<Blazr.App.Fluent.WASM.Server.App>()
     .AddInteractiveWebAssemblyRenderMode()

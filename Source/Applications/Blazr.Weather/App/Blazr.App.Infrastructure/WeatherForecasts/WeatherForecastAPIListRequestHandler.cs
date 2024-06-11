@@ -8,11 +8,11 @@ using System.Net.Http.Json;
 
 namespace Blazr.App.Infrastructure;
 
-public class WeatherAPIListRequestHandler : IListRequestHandler<DmoWeatherForecast>
+public class WeatherForecastAPIListRequestHandler : IListRequestHandler<DmoWeatherForecast>
 {
     private readonly IHttpClientFactory _httpClientFactory;
 
-    public WeatherAPIListRequestHandler(IHttpClientFactory httpClientFactory)
+    public WeatherForecastAPIListRequestHandler(IHttpClientFactory httpClientFactory)
     {
         _httpClientFactory = httpClientFactory;
     }
@@ -21,7 +21,8 @@ public class WeatherAPIListRequestHandler : IListRequestHandler<DmoWeatherForeca
     {
         using var http = _httpClientFactory.CreateClient(AppDictionary.WeatherForecast.WeatherHttpClient);
 
-        var httpResult = await http.PostAsJsonAsync<ListQueryRequest>(AppDictionary.WeatherForecast.WeatherForecastListAPIUrl, request);
+        var apiRequeat = ListQueryAPIRequest.FromRequest(request);
+        var httpResult = await http.PostAsJsonAsync<ListQueryAPIRequest>(AppDictionary.WeatherForecast.WeatherForecastListAPIUrl, apiRequeat);
 
         if (!httpResult.IsSuccessStatusCode)
             return ListQueryResult<DmoWeatherForecast>.Failure($"The server returned a status code of : {httpResult.StatusCode}");
