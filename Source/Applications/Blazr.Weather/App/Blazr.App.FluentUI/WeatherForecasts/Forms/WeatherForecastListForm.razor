@@ -4,13 +4,18 @@
 
 <PageTitle>Weather Forecasts</PageTitle>
 
-<h1>Customers</h1>
-<FluentStack Style="margin-bottom: 24px;" HorizontalAlignment="HorizontalAlignment.Right" VerticalAlignment="VerticalAlignment.Center">
-    <FluentButton Color="var(--info)" IconStart="@(new Icons.Regular.Size16.AddCircle())"
-                  OnClick="@OnAddAsync">
-        New Weather Forecast
-    </FluentButton>
-</FluentStack>
+<FluentGrid Style="margin-bottom: 24px;">
+    <FluentGridItem Justify="JustifyContent.FlexStart">
+        <h3>Weather Forecasts</h3>
+    </FluentGridItem>
+    <FluentGridItem Justify="JustifyContent.FlexEnd">
+        <FluentButton Color="var(--info)" IconStart="@(new Icons.Regular.Size16.AddCircle())"
+                      OnClick="@OnAddAsync">
+            New Weather Forecast
+        </FluentButton>
+    </FluentGridItem>
+
+</FluentGrid>
 
 <FluentDataGrid Id="weathergrid" 
     ItemsProvider="this.Presenter.GetItemsAsync<DmoWeatherForecast>" 

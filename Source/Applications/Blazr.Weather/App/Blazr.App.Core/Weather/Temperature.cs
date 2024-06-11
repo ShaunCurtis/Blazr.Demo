@@ -9,14 +9,13 @@ namespace Blazr.App.Core;
 
 public record Temperature
 {
-    private readonly decimal temperature;
-    public decimal TemperatureC => temperature;
-    public decimal TemperatureF => 32 + (temperature / 0.5556m);
+    public decimal TemperatureC { get; init; }
+    public decimal TemperatureF => 32 + (this.TemperatureC / 0.5556m);
     
     public Temperature() { }
 
     public Temperature(decimal temperature)
     {
-        this.temperature = temperature;
+        this.TemperatureC = temperature;
     }
 }
