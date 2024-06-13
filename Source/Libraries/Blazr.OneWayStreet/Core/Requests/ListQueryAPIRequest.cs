@@ -15,7 +15,7 @@ public sealed record ListQueryAPIRequest
     public ListQueryAPIRequest() { }
 
     public static ListQueryAPIRequest FromRequest(ListQueryRequest request)
-        =>  new()
+        => new()
         {
             StartIndex = request.StartIndex,
             PageSize = request.PageSize,
@@ -23,13 +23,13 @@ public sealed record ListQueryAPIRequest
             Sorters = request.Sorters.ToList(),
         };
 
-    public ListQueryRequest ToRequest()
+    public ListQueryRequest ToRequest(CancellationToken? cancellation = null)
         => new()
         {
             Filters = this.Filters ?? Enumerable.Empty<FilterDefinition>(),
             Sorters = this.Sorters ?? Enumerable.Empty<SortDefinition>(),
             StartIndex = this.StartIndex,
             PageSize = this.PageSize,
-            Cancellation = new()
+            Cancellation = cancellation ?? CancellationToken.None
         };
 }

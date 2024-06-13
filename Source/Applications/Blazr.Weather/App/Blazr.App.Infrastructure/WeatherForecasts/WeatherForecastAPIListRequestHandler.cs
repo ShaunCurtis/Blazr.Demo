@@ -21,8 +21,8 @@ public class WeatherForecastAPIListRequestHandler : IListRequestHandler<DmoWeath
     {
         using var http = _httpClientFactory.CreateClient(AppDictionary.WeatherForecast.WeatherHttpClient);
 
-        var apiRequeat = ListQueryAPIRequest.FromRequest(request);
-        var httpResult = await http.PostAsJsonAsync<ListQueryAPIRequest>(AppDictionary.WeatherForecast.WeatherForecastListAPIUrl, apiRequeat);
+        var apiRequest = ListQueryAPIRequest.FromRequest(request);
+        var httpResult = await http.PostAsJsonAsync<ListQueryAPIRequest>(AppDictionary.WeatherForecast.WeatherForecastListAPIUrl, apiRequest, request.Cancellation);
 
         if (!httpResult.IsSuccessStatusCode)
             return ListQueryResult<DmoWeatherForecast>.Failure($"The server returned a status code of : {httpResult.StatusCode}");

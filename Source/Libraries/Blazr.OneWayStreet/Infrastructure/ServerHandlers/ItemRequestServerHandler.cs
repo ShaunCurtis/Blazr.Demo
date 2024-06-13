@@ -18,21 +18,21 @@ public sealed class ItemRequestServerHandler<TDbContext>
         _factory = factory;
     }
 
-    public async ValueTask<ItemQueryResult<TRecord>> ExecuteAsync<TRecord>(ItemQueryRequest request)
+    public async ValueTask<ItemQueryResult<TRecord>> ExecuteAsync<TRecord, TKey>(ItemQueryRequest<TKey> request)
         where TRecord : class
     {
         // Try and get a registered custom handler
-        var _customHandler = _serviceProvider.GetService<IItemRequestHandler<TRecord>>();
+        var _customHandler = _serviceProvider.GetService<IItemRequestHandler<TRecord, TKey>>();
 
-        // If we one is registered in DI and execute it
+        // If one is registered in DI and execute it
         if (_customHandler is not null)
             return await _customHandler.ExecuteAsync(request);
 
         // If not run the base handler
-        return await this.GetItemAsync<TRecord>(request);
+        return await this.GetItemAsync<TRecord, TKey>(request);
     }
 
-    private async ValueTask<ItemQueryResult<TRecord>> GetItemAsync<TRecord>(ItemQueryRequest request)
+    private async ValueTask<ItemQueryResult<TRecord>> GetItemAsync<TRecord, TKey>(ItemQueryRequest<TKey> request)
     where TRecord : class
     {
         using var dbContext = _factory.CreateDbContext();
@@ -43,7 +43,7 @@ public sealed class ItemRequestServerHandler<TDbContext>
        // var record = await dbContext.Set<TRecord>().SingleOrDefaultAsync(item => item.EntityUid == request.Uid, request.Cancellation);
 
         if (record is null)
-            return ItemQueryResult<TRecord>.Failure($"No record retrieved with a Uid of {request.KeyValue.ToString()}");
+            return ItemQueryResult<TRecord>.Failure($"No record retrieved with the Key provided");
 
         return ItemQueryResult<TRecord>.Success(record);
     }

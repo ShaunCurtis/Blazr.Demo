@@ -14,7 +14,7 @@ public static class ApplicationInfrastructureServices
         services.AddDbContextFactory<InMemoryTestDbContext>(options
             => options.UseInMemoryDatabase($"TestDatabase-{Guid.NewGuid().ToString()}"));
 
-        services.AddScoped<IDataBroker, ServerDataBroker>();
+        services.AddScoped<IDataBroker, DataBroker>();
 
         // Add the standard handlers
         services.AddScoped<IListRequestHandler, ListRequestServerHandler<InMemoryTestDbContext>>();

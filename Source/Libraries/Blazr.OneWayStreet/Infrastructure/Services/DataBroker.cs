@@ -6,13 +6,13 @@
 
 namespace Blazr.OneWayStreet.Infrastructure;
 
-public sealed class ServerDataBroker : IDataBroker
+public sealed class DataBroker : IDataBroker
 {
     private readonly IListRequestHandler _listRequestHandler;
     private readonly IItemRequestHandler _itemRequestHandler;
     private readonly ICommandHandler _commandHandler;
 
-    public ServerDataBroker(
+    public DataBroker(
         IListRequestHandler listRequestHandler,
         IItemRequestHandler itemRequestHandler,
         ICommandHandler commandHandler)

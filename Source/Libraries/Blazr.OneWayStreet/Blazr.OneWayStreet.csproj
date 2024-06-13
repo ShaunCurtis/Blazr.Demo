@@ -24,10 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="license.txt">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
