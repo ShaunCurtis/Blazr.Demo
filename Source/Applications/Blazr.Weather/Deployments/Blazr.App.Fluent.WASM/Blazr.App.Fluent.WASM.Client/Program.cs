@@ -20,11 +20,13 @@ builder.Services.AddScoped<ICommandHandler, CommandAPIHandler>();
 
 builder.Services.AddScoped<IListRequestHandler<DmoWeatherForecast>, WeatherForecastAPIListRequestHandler>();
 builder.Services.AddScoped<IItemRequestHandler<DmoWeatherForecast, Guid>, WeatherForecastAPIItemRequestHandler>();
+builder.Services.AddScoped<ICommandHandler<DmoWeatherForecast>, WeatherForecastAPICommandHandler>();
 
 builder.Services.AddAppServerPresentationServices();
 
 builder.Services.AddTransient<IListPresenter<DmoWeatherForecast>, ListPresenter<DmoWeatherForecast>>();
 builder.Services.AddTransient<IViewPresenter<DmoWeatherForecast, Guid>, ViewPresenter<DmoWeatherForecast, Guid>>();
+builder.Services.AddTransient<WeatherForecastEditPresenter>();
 
 builder.Services.AddFluentUIComponents();
 builder.AddBlazrRenderStateWASMServices();

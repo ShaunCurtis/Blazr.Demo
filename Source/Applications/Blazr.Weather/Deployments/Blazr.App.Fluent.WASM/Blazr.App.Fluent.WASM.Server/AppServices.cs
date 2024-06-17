@@ -19,5 +19,11 @@ public static class AppServices
             var result = await handler.ExecuteAsync(request.ToRequest(cancellationToken));
             return Results.Ok(result);
         });
+
+        app.MapPost(AppDictionary.WeatherForecast.WeatherForecastCommandAPIUrl, async ([FromBody] CommandAPIRequest<DmoWeatherForecast> request, ICommandHandler<DmoWeatherForecast> handler, CancellationToken cancellationToken) =>
+        {
+            var result = await handler.ExecuteAsync(request.ToRequest(cancellationToken));
+            return Results.Ok(result);
+        });
     }
 }
