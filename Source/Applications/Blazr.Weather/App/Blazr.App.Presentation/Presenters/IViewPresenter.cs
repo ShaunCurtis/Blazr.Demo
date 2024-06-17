@@ -5,11 +5,11 @@
 /// ============================================================
 namespace Blazr.App.Presentation;
 
-public interface IViewPresenter<TRecord>
+public interface IViewPresenter<TRecord, TKey>
     where TRecord : class, new()
 {
     public IDataResult LastDataResult { get; }
     public TRecord Item { get; }
 
-    public Task LoadAsync(object id);
+    public Task LoadAsync(TKey id);
 }

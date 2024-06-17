@@ -11,7 +11,7 @@ public sealed record ItemQueryResult<TRecord> : IDataResult
     public bool Successful { get; init; }
     public string? Message { get; init; }
 
-    private ItemQueryResult() { }
+    public ItemQueryResult() { }
 
     public static ItemQueryResult<TRecord> Success(TRecord Item, string? message = null)
         => new ItemQueryResult<TRecord> { Successful=true, Item= Item, Message= message};

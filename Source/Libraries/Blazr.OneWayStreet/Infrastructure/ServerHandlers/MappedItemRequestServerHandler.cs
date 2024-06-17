@@ -14,8 +14,8 @@ namespace Blazr.OneWayStreet.Infrastructure;
 /// <typeparam name="TDbContext"></typeparam>
 /// <typeparam name="TDomainRecord">Domain Record to Map the incoming infrastructure record to</typeparam>
 /// <typeparam name="TDatabaseRecord">This is the Dbo object the Handler will retrieve from the database</typeparam>
-public sealed class MappedItemRequestServerHandler<TDbContext, TDomainRecord, TDatabaseRecord>
-    : IItemRequestHandler<TDomainRecord>
+public sealed class MappedItemRequestServerHandler<TDbContext, TDomainRecord, TDatabaseRecord, TKey>
+    : IItemRequestHandler<TDomainRecord, TKey>
     where TDbContext : DbContext
     where TDatabaseRecord : class
     where TDomainRecord : class
@@ -29,12 +29,12 @@ public sealed class MappedItemRequestServerHandler<TDbContext, TDomainRecord, TD
         _factory = factory;
     }
 
-    public async ValueTask<ItemQueryResult<TDomainRecord>> ExecuteAsync(ItemQueryRequest request)
+    public async ValueTask<ItemQueryResult<TDomainRecord>> ExecuteAsync(ItemQueryRequest<TKey> request)
     {
         return await this.GetItemAsync(request);
     }
 
-    private async ValueTask<ItemQueryResult<TDomainRecord>> GetItemAsync(ItemQueryRequest request)
+    private async ValueTask<ItemQueryResult<TDomainRecord>> GetItemAsync(ItemQueryRequest<TKey> request)
     {
         // Get and check we have a mapper for the Dbo object to Dco Domain Model
         IDboEntityMap<TDatabaseRecord, TDomainRecord>? mapper = null;
@@ -50,12 +50,12 @@ public sealed class MappedItemRequestServerHandler<TDbContext, TDomainRecord, TD
         var inRecord = await dbContext.Set<TDatabaseRecord>().FindAsync(request.KeyValue, request.Cancellation);
 
         if (inRecord is null)
-            return ItemQueryResult<TDomainRecord>.Failure($"No record retrieved with a Uid of {request.KeyValue.ToString()}");
+            return ItemQueryResult<TDomainRecord>.Failure($"No record retrieved with a Uid of {request.KeyValue?.ToString()}");
 
         var outRecord = mapper.MapTo(inRecord);
 
         if (outRecord is null)
-            return ItemQueryResult<TDomainRecord>.Failure($"Unable to map record retrieved with a Uid of {request.KeyValue.ToString()}");
+            return ItemQueryResult<TDomainRecord>.Failure($"Unable to map record retrieved with a Uid of {request.KeyValue?.ToString()}");
 
         return ItemQueryResult<TDomainRecord>.Success(outRecord);
     }

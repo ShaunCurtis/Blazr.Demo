@@ -1,8 +1,18 @@
-﻿@inherits LayoutComponentBase
+﻿@using Blazr.RenderState
+@using Microsoft.AspNetCore.Http
+@inherits LayoutComponentBase
+@inject IBlazrRenderStateService RenderState
+
 <FluentLayout>
     <FluentHeader>
         Blazr Weather Forecast Demo
+        <FluentSpacer />
+        @if (this.RenderState.IsPreRender)
+        {
+            <FluentBadge Fill="somevalue" BackgroundColor="red" Color="white">Rendering</FluentBadge>
+        }
     </FluentHeader>
+
     <FluentStack Class="main" Orientation="Orientation.Horizontal" Width="100%">
         <NavMenu />
         <FluentBodyContent>
@@ -11,11 +21,13 @@
             </div>
         </FluentBodyContent>
     </FluentStack>
+
     <FluentFooter>
         <div>
             &copy; Cold Elm Coders 2024
         </div>
     </FluentFooter>
+
 </FluentLayout>
 
 <FluentDialogProvider />

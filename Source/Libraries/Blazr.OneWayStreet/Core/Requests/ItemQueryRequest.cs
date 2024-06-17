@@ -19,16 +19,16 @@ public readonly record struct ItemQueryRequest
         => new ItemQueryRequest(keyValue, cancellation ?? new());
 }
 
-public readonly record struct ItemQueryRequest<IKey>
+public readonly record struct ItemQueryRequest<TKey>
 {
-    public IKey KeyValue { get; init; }
+    public TKey KeyValue { get; init; }
     public CancellationToken Cancellation { get; init; }
 
-    public ItemQueryRequest(IKey keyValue, CancellationToken? cancellation = null)
+    public ItemQueryRequest(TKey keyValue, CancellationToken? cancellation = null)
     {
         this.KeyValue = keyValue;
         this.Cancellation = cancellation ?? new(); ;
     }
-    public static ItemQueryRequest Create(IKey keyValue, CancellationToken? cancellation = null)
-        => new ItemQueryRequest(keyValue, cancellation ?? new());
+    public static ItemQueryRequest<TKey> Create(TKey keyValue, CancellationToken? cancellation = null)
+        => new ItemQueryRequest<TKey>(keyValue, cancellation ?? new());
 }

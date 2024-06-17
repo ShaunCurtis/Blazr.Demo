@@ -16,12 +16,12 @@ public sealed class ItemRequestAPIHandler
         _serviceProvider = serviceProvider;
     }
 
-    public async ValueTask<ItemQueryResult<TRecord>> ExecuteAsync<TRecord>(ItemQueryRequest request)
+    public async ValueTask<ItemQueryResult<TRecord>> ExecuteAsync<TRecord, TKey>(ItemQueryRequest<TKey> request)
         where TRecord : class
     {
-        IItemRequestHandler<TRecord>? _customHandler = null;
+        IItemRequestHandler<TRecord, TKey>? _customHandler = null;
 
-        _customHandler = _serviceProvider.GetService<IItemRequestHandler<TRecord>>();
+        _customHandler = _serviceProvider.GetService<IItemRequestHandler<TRecord, TKey>>();
 
         // Get the custom handler
         if (_customHandler is not null)

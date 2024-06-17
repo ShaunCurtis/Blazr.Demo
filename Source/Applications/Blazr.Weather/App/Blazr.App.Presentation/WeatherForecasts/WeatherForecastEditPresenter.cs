@@ -34,8 +34,8 @@ public class WeatherForecastEditPresenter
         // The Update Path.  Get the requested record if it exists
         if (id.Value != Guid.Empty)
         {
-            var request = ItemQueryRequest.Create(id.Value);
-            var result = await _dataBroker.ExecuteQueryAsync<DmoWeatherForecast>(request);
+            var request = ItemQueryRequest<Guid>.Create(id.Value);
+            var result = await _dataBroker.ExecuteQueryAsync<DmoWeatherForecast, Guid>(request);
             LastDataResult = result;
             if (this.LastDataResult.Successful)
             {

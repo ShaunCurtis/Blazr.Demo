@@ -4,6 +4,7 @@ global using Blazr.App.Fluent.Server;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.FluentUI.AspNetCore.Components;
 using Blazr.App.Fluent.WASM.Server;
+using Blazr.RenderState.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddFluentUIComponents();
+builder.AddBlazrRenderStateServerServices();
 builder.Services.AddAppServerMappedInfrastructureServices();
 builder.Services.AddAppServerPresentationServices();
 

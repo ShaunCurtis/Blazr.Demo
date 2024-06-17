@@ -5,7 +5,7 @@
 /// ============================================================
 namespace Blazr.App.Presentation;
 
-public class ViewPresenter<TRecord> : IViewPresenter<TRecord>
+public class ViewPresenter<TRecord, TKey> : IViewPresenter<TRecord, TKey>
     where TRecord : class, new()
 {
     private readonly IDataBroker _dataBroker;
@@ -17,14 +17,10 @@ public class ViewPresenter<TRecord> : IViewPresenter<TRecord>
         _dataBroker = dataBroker;
     }
 
-    public async Task LoadAsync(object id)
+    public async Task LoadAsync(TKey id)
     {
-        // Get the actual value of the Id type
-        if (id is IGuidKey entity)
-            id = entity.Value;
-
-        var request = ItemQueryRequest.Create(id);
-        var result = await _dataBroker.ExecuteQueryAsync<TRecord>(request);
+        var request = ItemQueryRequest<TKey>.Create(id);
+        var result = await _dataBroker.ExecuteQueryAsync<TRecord, TKey>(request);
         LastDataResult = result;
         this.Item = result.Item ?? new();
     }

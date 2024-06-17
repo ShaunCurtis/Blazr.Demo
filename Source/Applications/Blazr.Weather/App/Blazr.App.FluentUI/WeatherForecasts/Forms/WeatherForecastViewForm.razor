@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Components.Forms
 @namespace Blazr.App.FluentUI
 @implements IDialogContentComponent<WeatherForecastId>
-@inject IViewPresenter<DmoWeatherForecast> Presenter
+@inject IViewPresenter<DmoWeatherForecast, Guid> Presenter
 
 <!-- Header -->
 <FluentDialogHeader ShowDismiss="true">
@@ -74,7 +74,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-        await this.Presenter.LoadAsync(this.Content);
+        await this.Presenter.LoadAsync(this.Content.Value);
         _editContext = new EditContext(Content);
     }
 
