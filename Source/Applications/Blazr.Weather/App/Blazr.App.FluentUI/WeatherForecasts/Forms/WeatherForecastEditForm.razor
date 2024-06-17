@@ -113,15 +113,18 @@
     private bool _isClean => !_isDirty;
     private bool _stateStoreAttached;
     private BlazrEditStateStore? _store;
+    public readonly Guid ComponentId = Guid.NewGuid();
 
     protected async override Task OnInitializedAsync()
     {
+        Console.WriteLine($"{this.ComponentId.ToString().Substring(0, 8)} - {this.GetType().Name} - OnInitializedAsync ");
         await this.Presenter.LoadAsync(this.Content);
     }
 
     protected override void OnParametersSet()
     {
-        _isDirty = this.Presenter.EditContext.GetEditState();
+        _isDirty = this.Presenter.EditContext?.GetEditState() ?? false;
+        Console.WriteLine($"{this.ComponentId.ToString().Substring(0, 8)} - {this.GetType().Name} - OnParametersSet ");
     }
 
     protected override void OnAfterRender(bool firstRender)
@@ -130,17 +133,18 @@
         // We need to make sure the StateStore has been attached to the EditContext
         // before we try and get it.
         // The only place we can do this is in the second OnAfterRender UI event
-        _store = _store ?? this.Presenter.EditContext.GetStateStore();
+        _store = _store ?? this.Presenter.EditContext?.GetStateStore();
         if (_store is not null && !_stateStoreAttached)
         {
             _store.StoreUpdated += OnEditStateMayHaveChanged;
             _stateStoreAttached = true;
         }
+        Console.WriteLine($"{this.ComponentId.ToString().Substring(0, 8)} - {this.GetType().Name} - OnAfterRender - {firstRender} ");
     }
 
     private async Task OnSaveAsync()
     {
-        if (!this.Presenter.EditContext.Validate())
+        if (!this.Presenter.EditContext?.Validate() ?? false)
         {
             this.ToastService.ShowError("The record data is not valid.  Fix the highlighted errors.");
             return;
@@ -159,7 +163,7 @@
 
     protected void OnEditStateMayHaveChanged(object? sender, EventArgs e)
     {
-        _isDirty = this.Presenter.EditContext.GetEditState();
+        _isDirty = this.Presenter.EditContext?.GetEditState() ?? false;
         this.StateHasChanged();
     }
 
@@ -174,7 +178,7 @@
         var editcontext = this.Presenter.EditContext;
         var model = this.Presenter.RecordEditContext;
         var fi = new FieldIdentifier(this.Presenter.RecordEditContext, "Summary");
-        if (editcontext.IsModified(fi) == model.IsSummaryClean)
+        if (editcontext?.IsModified(fi) == model.IsSummaryClean)
             editcontext.NotifyFieldChanged(fi);
     }
 

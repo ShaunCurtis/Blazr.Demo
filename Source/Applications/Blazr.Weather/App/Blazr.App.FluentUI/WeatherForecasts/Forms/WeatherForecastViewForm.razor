@@ -64,6 +64,7 @@
 
 @code
 {
+    public readonly Guid ComponentId = Guid.NewGuid();
     private EditContext _editContext = default!;
 
     [CascadingParameter]
@@ -74,6 +75,7 @@
 
     protected async override Task OnInitializedAsync()
     {
+        Console.WriteLine($"{this.ComponentId.ToString().Substring(0,8)} - {this.GetType().Name} - OnInitializedAsync ");
         await this.Presenter.LoadAsync(this.Content.Value);
         _editContext = new EditContext(Content);
     }

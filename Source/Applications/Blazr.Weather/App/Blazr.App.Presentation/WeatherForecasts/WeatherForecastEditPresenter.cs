@@ -12,17 +12,17 @@ public class WeatherForecastEditPresenter
     private readonly IToastService _toastService;
 
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
-    public EditContext EditContext { get; private set; }
+    public EditContext? EditContext { get; private set; }
     public WeatherForecastEditContext RecordEditContext { get; private set; }
     public bool IsNew { get; private set; }
 
-    public bool IsInvalid => this.EditContext.GetValidationMessages().Any();
+    public bool IsInvalid => this.EditContext?.GetValidationMessages().Any() ?? false;
 
     public WeatherForecastEditPresenter(IDataBroker dataBroker, IToastService toastService)
     {
         _dataBroker = dataBroker;
         this.RecordEditContext = new(new());
-        this.EditContext = new(this.RecordEditContext);
+        //this.EditContext = new(this.RecordEditContext);
         _toastService = toastService;
     }
 
@@ -41,6 +41,7 @@ public class WeatherForecastEditPresenter
             {
                 RecordEditContext = new(result.Item!);
                 this.EditContext = new(this.RecordEditContext);
+                this.EditContext.OnFieldChanged += this.OnChange;
             }
             return;
         }
@@ -48,7 +49,14 @@ public class WeatherForecastEditPresenter
         // The new path.  Get a new record
         this.RecordEditContext = new(new() { WeatherForecastId = new(Guid.NewGuid()), Date= DateOnly.FromDateTime(DateTime.Now), Summary="Not Provided" });
         this.EditContext = new(this.RecordEditContext);
+        this.EditContext.OnFieldChanged += this.OnChange;
         this.IsNew = true;
+    }
+
+    // TODO -  Debug Code
+    private void OnChange(object? sender, FieldChangedEventArgs e)
+    {
+        Console.WriteLine($"{e.FieldIdentifier.FieldName} changed");
     }
 
     public async Task<IDataResult> SaveItemAsync()
