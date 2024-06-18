@@ -8,6 +8,8 @@ using Blazr.RenderState.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
@@ -18,6 +20,8 @@ builder.Services.AddAppServerMappedInfrastructureServices();
 builder.Services.AddAppServerPresentationServices();
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 // get the DbContext factory and add the test data
 var factory = app.Services.GetService<IDbContextFactory<InMemoryTestDbContext>>();

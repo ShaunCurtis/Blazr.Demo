@@ -11,7 +11,7 @@ public sealed record CommandResult : IDataResult
     public string? Message { get; init; }
     public object? KeyValue { get; init; }
 
-    private CommandResult() { }
+    public CommandResult() { }
 
     public static CommandResult Success(string? message = null)
         => new CommandResult { Successful = true, Message= message };

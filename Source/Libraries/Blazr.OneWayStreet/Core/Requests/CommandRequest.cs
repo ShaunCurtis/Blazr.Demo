@@ -10,7 +10,7 @@ public record struct CommandRequest<TRecord>(TRecord Item, CommandState State, C
 public record struct CommandAPIRequest<TRecord>
 {
     public TRecord? Item { get; init; }
-    public CommandState State { get; init; } = CommandState.None;
+    public int CommandIndex { get; init; }
 
     public CommandAPIRequest() { }
 
@@ -18,24 +18,26 @@ public record struct CommandAPIRequest<TRecord>
         => new()
         {
             Item = command.Item,
-            State = command.State,
+            CommandIndex = command.State.Index
         };
 
     public CommandRequest<TRecord> ToRequest(CancellationToken? cancellation = null)
         => new()
         {
             Item = this.Item ?? default!,
-            State = this.State,
+            State = CommandState.GetState(this.CommandIndex),
             Cancellation = cancellation ?? CancellationToken.None
         };
 }
 
 public record CommandState
 {
-    public int Index { get; private init; }
-    public string Value { get; private init; }
+    public int Index { get; private init; } = 0;
+    public string Value { get; private init; } = "None";
 
-    internal CommandState(int index, string value)
+    public CommandState() { }
+
+    public CommandState(int index, string value)
     {
         Index = index;
         Value = value;
@@ -45,4 +47,14 @@ public record CommandState
     public static CommandState Add = new CommandState(1, "Add");
     public static CommandState Update = new CommandState(2, "Update");
     public static CommandState Delete = new CommandState(-1, "Delete");
+
+    public static CommandState GetState(int index)
+        => (index) switch
+        {
+            1 => CommandState.Add,
+            2 => CommandState.Update,
+            -1 => CommandState.Delete,
+            _ => CommandState.None,
+        };
+
 }
