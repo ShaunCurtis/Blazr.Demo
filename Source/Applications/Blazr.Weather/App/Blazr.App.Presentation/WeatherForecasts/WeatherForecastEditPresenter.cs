@@ -3,6 +3,9 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
+using Blazr.EditStateTracker.Components;
+using Microsoft.AspNetCore.Components.Forms;
+
 namespace Blazr.App.Presentation;
 
 public class WeatherForecastEditPresenter
@@ -41,7 +44,8 @@ public class WeatherForecastEditPresenter
             {
                 RecordEditContext = new(result.Item!);
                 this.EditContext = new(this.RecordEditContext);
-                this.EditContext.OnFieldChanged += this.OnChange;
+                //this.EditContext.Properties["ComponentId"] = Guid.NewGuid();
+                //this.EditContext.OnFieldChanged += this.OnChange;
             }
             return;
         }
@@ -49,15 +53,20 @@ public class WeatherForecastEditPresenter
         // The new path.  Get a new record
         this.RecordEditContext = new(new() { WeatherForecastId = new(Guid.NewGuid()), Date= DateOnly.FromDateTime(DateTime.Now), Summary="Not Provided" });
         this.EditContext = new(this.RecordEditContext);
-        this.EditContext.OnFieldChanged += this.OnChange;
+        //this.EditContext.Properties["ComponentId"] = Guid.NewGuid();
+        //this.EditContext.OnFieldChanged += this.OnChange;
         this.IsNew = true;
     }
 
     // TODO -  Debug Code
-    private void OnChange(object? sender, FieldChangedEventArgs e)
-    {
-        Console.WriteLine($"{e.FieldIdentifier.FieldName} changed");
-    }
+    //private void OnChange(object? sender, FieldChangedEventArgs e)
+    //{
+    //    var x = this.EditContext!.GetValidationMessages().Count();
+    //    if (this.EditContext!.Properties.TryGetValue("ComponentId", out object? value))
+    //        Console.WriteLine($"{value?.ToString()} changed");
+
+    //    Console.WriteLine($"{e.FieldIdentifier.FieldName} changed");
+    //}
 
     public async Task<IDataResult> SaveItemAsync()
     {
