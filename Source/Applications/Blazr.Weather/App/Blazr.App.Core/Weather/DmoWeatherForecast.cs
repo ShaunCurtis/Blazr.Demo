@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace Blazr.App.Core;
 
-public sealed record WeatherForecastId : IGuidKey
+public sealed record WeatherForecastId
 {
     public Guid Value { get; init; }
 

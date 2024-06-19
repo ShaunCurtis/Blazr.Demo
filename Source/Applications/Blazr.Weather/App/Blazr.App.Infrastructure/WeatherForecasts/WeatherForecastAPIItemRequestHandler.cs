@@ -4,7 +4,6 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-using Blazr.OneWayStreet.Core;
 using System.Net.Http.Json;
 
 namespace Blazr.App.Infrastructure;
