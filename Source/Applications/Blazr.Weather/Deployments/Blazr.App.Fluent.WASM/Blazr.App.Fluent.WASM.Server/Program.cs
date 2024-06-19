@@ -1,9 +1,8 @@
+global using Blazr.App.API;
 global using Blazr.App.Infrastructure;
 global using Blazr.App.Presentation;
-global using Blazr.App.Fluent.Server;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.FluentUI.AspNetCore.Components;
-using Blazr.App.Fluent.WASM.Server;
 using Blazr.RenderState.Server;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +20,10 @@ builder.Services.AddAppServerPresentationServices();
 
 var app = builder.Build();
 
+// Aspire endpoints
 app.MapDefaultEndpoints();
+// Adds in all the API endpoints
+app.AddAppAPIEndpoints();
 
 // get the DbContext factory and add the test data
 var factory = app.Services.GetService<IDbContextFactory<InMemoryTestDbContext>>();
@@ -44,8 +46,6 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
-
-app.AddAppAPIEndpoints();
 
 app.MapRazorComponents<Blazr.App.Fluent.WASM.Server.App>()
     .AddInteractiveWebAssemblyRenderMode()

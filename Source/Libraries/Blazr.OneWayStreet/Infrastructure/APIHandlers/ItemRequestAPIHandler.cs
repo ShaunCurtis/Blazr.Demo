@@ -18,6 +18,7 @@ public sealed class ItemRequestAPIHandler
 
     public async ValueTask<ItemQueryResult<TRecord>> ExecuteAsync<TRecord, TKey>(ItemQueryRequest<TKey> request)
         where TRecord : class
+        where TKey : IEntityKey
     {
         IItemRequestHandler<TRecord, TKey>? _customHandler = null;
 

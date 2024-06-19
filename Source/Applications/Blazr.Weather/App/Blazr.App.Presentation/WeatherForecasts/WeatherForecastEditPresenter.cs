@@ -3,9 +3,6 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-using Blazr.EditStateTracker.Components;
-using Microsoft.AspNetCore.Components.Forms;
-
 namespace Blazr.App.Presentation;
 
 public class WeatherForecastEditPresenter
@@ -37,8 +34,8 @@ public class WeatherForecastEditPresenter
         // The Update Path.  Get the requested record if it exists
         if (id.Value != Guid.Empty)
         {
-            var request = ItemQueryRequest<Guid>.Create(id.Value);
-            var result = await _dataBroker.ExecuteQueryAsync<DmoWeatherForecast, Guid>(request);
+            var request = ItemQueryRequest<WeatherForecastId>.Create(id);
+            var result = await _dataBroker.ExecuteQueryAsync<DmoWeatherForecast, WeatherForecastId>(request);
             LastDataResult = result;
             if (this.LastDataResult.Successful)
             {
@@ -51,7 +48,7 @@ public class WeatherForecastEditPresenter
         }
 
         // The new path.  Get a new record
-        this.RecordEditContext = new(new() { WeatherForecastId = new(Guid.NewGuid()), Date= DateOnly.FromDateTime(DateTime.Now), Summary="Not Provided" });
+        this.RecordEditContext = new(new() { WeatherForecastId = new(Guid.NewGuid()), Date = DateOnly.FromDateTime(DateTime.Now), Summary = "Not Provided" });
         this.EditContext = new(this.RecordEditContext);
         //this.EditContext.Properties["ComponentId"] = Guid.NewGuid();
         //this.EditContext.OnFieldChanged += this.OnChange;

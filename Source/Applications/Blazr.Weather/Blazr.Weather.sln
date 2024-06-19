@@ -37,11 +37,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Fluent.WASM.Clien
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Fluent.WASM.Server", "Deployments\Blazr.App.Fluent.WASM\Blazr.App.Fluent.WASM.Server\Blazr.App.Fluent.WASM.Server.csproj", "{0FBA2CAC-6B6C-4DCB-9065-95CEBEC8B7EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.Weather.AppHost", "Blazr.Weather.AppHost\Blazr.Weather.AppHost.csproj", "{6EE505DE-01E0-4D07-805E-9993781BE04C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Weather.AppHost", "Blazr.Weather.AppHost\Blazr.Weather.AppHost.csproj", "{6EE505DE-01E0-4D07-805E-9993781BE04C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Weather.ServiceDefaults", "Blazr.Weather.ServiceDefaults\Blazr.Weather.ServiceDefaults.csproj", "{FAE1523F-59A7-41F6-BFB0-BC6FE0816C66}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aspire", "Aspire", "{A0B73802-157E-4CF5-BD54-D2CC5B76EC24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.API", "App\Blazr.App.API\Blazr.App.API.csproj", "{89B0BE95-0E5E-4959-B988-586744CCDC3D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,10 @@ Global
 		{FAE1523F-59A7-41F6-BFB0-BC6FE0816C66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAE1523F-59A7-41F6-BFB0-BC6FE0816C66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAE1523F-59A7-41F6-BFB0-BC6FE0816C66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89B0BE95-0E5E-4959-B988-586744CCDC3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89B0BE95-0E5E-4959-B988-586744CCDC3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89B0BE95-0E5E-4959-B988-586744CCDC3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89B0BE95-0E5E-4959-B988-586744CCDC3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -123,6 +129,7 @@ Global
 		{0FBA2CAC-6B6C-4DCB-9065-95CEBEC8B7EE} = {7195E0D7-CEA4-46FB-B05F-5C1356675632}
 		{6EE505DE-01E0-4D07-805E-9993781BE04C} = {A0B73802-157E-4CF5-BD54-D2CC5B76EC24}
 		{FAE1523F-59A7-41F6-BFB0-BC6FE0816C66} = {A0B73802-157E-4CF5-BD54-D2CC5B76EC24}
+		{89B0BE95-0E5E-4959-B988-586744CCDC3D} = {8586352C-E909-4DAF-BFE3-67F19258D1DA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4BFC383C-CBF4-49EE-BBD6-4E95F57CF086}
