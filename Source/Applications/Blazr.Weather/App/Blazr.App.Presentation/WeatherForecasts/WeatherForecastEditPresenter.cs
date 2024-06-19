@@ -83,7 +83,10 @@ public class WeatherForecastEditPresenter
         var result = await _dataBroker.ExecuteCommandAsync<DmoWeatherForecast>(command);
 
         if (result.Successful)
-            _toastService.ShowSuccess("The Weather Forecast was saved.");
+        {
+            var outcome = this.IsNew ? "saved" : "updated";
+            _toastService.ShowSuccess($"The Weather Forecast was {outcome}.");
+        }
         else
             _toastService.ShowError(result.Message ?? "The Weather Forecast could not be saved.");
 
