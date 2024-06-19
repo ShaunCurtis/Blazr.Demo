@@ -19,6 +19,7 @@ public sealed class MappedItemRequestServerHandler<TDbContext, TDomainRecord, TD
     where TDbContext : DbContext
     where TDatabaseRecord : class
     where TDomainRecord : class
+    where TKey : IEntityKey
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly IDbContextFactory<TDbContext> _factory;
@@ -29,7 +30,8 @@ public sealed class MappedItemRequestServerHandler<TDbContext, TDomainRecord, TD
         _factory = factory;
     }
 
-    public async ValueTask<ItemQueryResult<TDomainRecord>> ExecuteAsync(ItemQueryRequest<TKey> request)
+    public async ValueTask<ItemQueryResult<TDomainRecord>> ExecuteAsync(ItemQueryRequest<TKey> request) 
+    
     {
         return await this.GetItemAsync(request);
     }
@@ -47,15 +49,15 @@ public sealed class MappedItemRequestServerHandler<TDbContext, TDomainRecord, TD
         using var dbContext = _factory.CreateDbContext();
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-        var inRecord = await dbContext.Set<TDatabaseRecord>().FindAsync(request.KeyValue, request.Cancellation);
+        var inRecord = await dbContext.Set<TDatabaseRecord>().FindAsync(request.Key.KeyValue, request.Cancellation);
 
         if (inRecord is null)
-            return ItemQueryResult<TDomainRecord>.Failure($"No record retrieved with a Uid of {request.KeyValue?.ToString()}");
+            return ItemQueryResult<TDomainRecord>.Failure($"No record retrieved with a Uid of {request.Key.KeyValue?.ToString()}");
 
         var outRecord = mapper.MapTo(inRecord);
 
         if (outRecord is null)
-            return ItemQueryResult<TDomainRecord>.Failure($"Unable to map record retrieved with a Uid of {request.KeyValue?.ToString()}");
+            return ItemQueryResult<TDomainRecord>.Failure($"Unable to map record retrieved with a Uid of {request.Key?.ToString()}");
 
         return ItemQueryResult<TDomainRecord>.Success(outRecord);
     }

@@ -20,6 +20,7 @@ public sealed class ItemRequestServerHandler<TDbContext>
 
     public async ValueTask<ItemQueryResult<TRecord>> ExecuteAsync<TRecord, TKey>(ItemQueryRequest<TKey> request)
         where TRecord : class
+        where TKey : IEntityKey
     {
         // Try and get a registered custom handler
         var _customHandler = _serviceProvider.GetService<IItemRequestHandler<TRecord, TKey>>();
@@ -33,12 +34,13 @@ public sealed class ItemRequestServerHandler<TDbContext>
     }
 
     private async ValueTask<ItemQueryResult<TRecord>> GetItemAsync<TRecord, TKey>(ItemQueryRequest<TKey> request)
-    where TRecord : class
+        where TRecord : class
+        where TKey : IEntityKey
     {
         using var dbContext = _factory.CreateDbContext();
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-        var record = await dbContext.Set<TRecord>().FindAsync(request.KeyValue, request.Cancellation);
+        var record = await dbContext.Set<TRecord>().FindAsync(request.Key.KeyValue, request.Cancellation);
 
        // var record = await dbContext.Set<TRecord>().SingleOrDefaultAsync(item => item.EntityUid == request.Uid, request.Cancellation);
 

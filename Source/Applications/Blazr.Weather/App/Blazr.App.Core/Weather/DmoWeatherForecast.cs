@@ -3,15 +3,14 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-using System.Text.Json.Serialization;
-
 namespace Blazr.App.Core;
 
-public sealed record WeatherForecastId
+public sealed record WeatherForecastId : IEntityKey
 {
     public Guid Value { get; init; }
 
-    [JsonConstructor]
+    public object KeyValue => this.Value;
+
     public WeatherForecastId(Guid value)
     {
         this.Value = value;

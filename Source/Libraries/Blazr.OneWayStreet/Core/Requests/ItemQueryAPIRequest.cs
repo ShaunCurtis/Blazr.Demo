@@ -18,15 +18,4 @@ public readonly record struct ItemQueryAPIRequest<IKey>
     {
         this.KeyValue = keyValue;
     }
-
-    public static ItemQueryAPIRequest<IKey> FromRequest(ItemQueryRequest<IKey> request)
-        => new(request.KeyValue);
-
-    public ItemQueryRequest<IKey> ToRequest(CancellationToken? cancellation = null)
-        => new()
-        {
-            KeyValue = this.KeyValue,
-            Cancellation = cancellation ?? CancellationToken.None
-        };
-
 }

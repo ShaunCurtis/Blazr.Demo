@@ -8,7 +8,7 @@ using System.Net.Http.Json;
 
 namespace Blazr.App.Infrastructure;
 
-public class WeatherForecastAPIItemRequestHandler : IItemRequestHandler<DmoWeatherForecast, Guid>
+public class WeatherForecastAPIItemRequestHandler : IItemRequestHandler<DmoWeatherForecast, WeatherForecastId>
 {
     private readonly IHttpClientFactory _httpClientFactory;
 
@@ -17,7 +17,7 @@ public class WeatherForecastAPIItemRequestHandler : IItemRequestHandler<DmoWeath
         _httpClientFactory = httpClientFactory;
     }
 
-    public async ValueTask<ItemQueryResult<DmoWeatherForecast>> ExecuteAsync(ItemQueryRequest<Guid> request)
+    public async ValueTask<ItemQueryResult<DmoWeatherForecast>> ExecuteAsync(ItemQueryRequest<WeatherForecastId> request)
     {
         using var http = _httpClientFactory.CreateClient(AppDictionary.WeatherForecast.WeatherHttpClient);
 
