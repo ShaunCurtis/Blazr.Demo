@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 
-namespace Blazr.Components;
+namespace Blazr.Validation;
 
 public sealed class BlazrValidator<TRecord, TValidator> : BlazrControlBase, IDisposable
     where TRecord : class

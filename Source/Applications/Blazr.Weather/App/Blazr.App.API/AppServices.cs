@@ -30,7 +30,15 @@ public static class AppAPIServices
 
         app.MapPost(AppDictionary.WeatherForecast.WeatherForecastCommandAPIUrl, async ([FromBody] CommandAPIRequest<DmoWeatherForecast> request, ICommandHandler<DmoWeatherForecast> handler, CancellationToken cancellationToken) =>
         {
-            var result = await handler.ExecuteAsync(request.ToRequest(cancellationToken));
+            var commandResult = await handler.ExecuteAsync(request.ToRequest(cancellationToken));
+            CommandAPIResult<Guid> result = new();
+            Guid key = Guid.Empty;
+
+            // See if we have a returned Guid key
+            Guid.TryParse(commandResult.KeyValue?.ToString(), out key);
+
+            result = new CommandAPIResult<Guid>() { Successful = commandResult.Successful, Message=commandResult.Message, KeyValue = key };
+
             return Results.Ok(result);
         });
     }

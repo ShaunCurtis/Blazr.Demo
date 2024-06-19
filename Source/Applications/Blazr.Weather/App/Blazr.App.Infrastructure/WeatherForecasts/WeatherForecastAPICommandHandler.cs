@@ -28,7 +28,12 @@ public class WeatherForecastAPICommandHandler : ICommandHandler<DmoWeatherForeca
         if (!httpResult.IsSuccessStatusCode)
             return CommandResult.Failure($"The server returned a status code of : {httpResult.StatusCode}");
 
-        var commandResult = await httpResult.Content.ReadFromJsonAsync<CommandResult>();
+        var commandAPIResult = await httpResult.Content.ReadFromJsonAsync<CommandAPIResult<Guid>>();
+
+        CommandResult? commandResult = null;
+
+        if (commandAPIResult is not null)
+            commandResult = commandAPIResult.ToCommandResult();
 
         return commandResult ?? CommandResult.Failure($"No data was returned");
     }

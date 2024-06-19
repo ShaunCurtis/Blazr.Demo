@@ -22,3 +22,20 @@ public sealed record CommandResult : IDataResult
     public static CommandResult Failure(string message)
         => new CommandResult { Message = message};
 }
+
+public sealed record CommandAPIResult<TKey>
+{
+    public bool Successful { get; init; }
+    public string? Message { get; init; }
+    public TKey KeyValue { get; init; } = default!;
+
+    public CommandAPIResult() { }
+
+    public CommandResult ToCommandResult()
+        => new()
+        {
+            Successful = Successful,
+            Message = Message,
+            KeyValue = KeyValue
+        };
+}
