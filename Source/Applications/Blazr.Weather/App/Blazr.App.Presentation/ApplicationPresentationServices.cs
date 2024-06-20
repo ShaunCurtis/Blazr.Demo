@@ -16,7 +16,7 @@ public static class ApplicationPresentationServices
 
     private static void AddWeatherForecastServices(IServiceCollection services)
     {
-        services.AddTransient<IListPresenter<DmoWeatherForecast>, ListPresenter<DmoWeatherForecast>>();
+        services.AddTransient<IFluentGridListPresenter<DmoWeatherForecast>, FluentGridPresenter<DmoWeatherForecast>>();
         services.AddTransient<IViewPresenter<DmoWeatherForecast, WeatherForecastId>, ViewPresenter<DmoWeatherForecast, WeatherForecastId>>();
         services.AddTransient<WeatherForecastEditPresenter>();
     }

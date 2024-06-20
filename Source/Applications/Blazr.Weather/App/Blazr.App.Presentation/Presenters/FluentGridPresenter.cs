@@ -5,7 +5,7 @@
 /// ============================================================
 namespace Blazr.App.Presentation;
 
-public class ListPresenter<TRecord> : IListPresenter<TRecord>
+public class FluentGridPresenter<TRecord> : IFluentGridListPresenter<TRecord>
     where TRecord : class, new()
 {
     private readonly IDataBroker _dataBroker;
@@ -13,7 +13,7 @@ public class ListPresenter<TRecord> : IListPresenter<TRecord>
     public int DefaultPageSize { get; set; } = 20;
     public List<FilterDefinition>? Filters { get; set; }
 
-    public ListPresenter(IDataBroker dataBroker)
+    public FluentGridPresenter(IDataBroker dataBroker)
     {
         _dataBroker = dataBroker;
     }

@@ -24,7 +24,7 @@ builder.Services.AddScoped<ICommandHandler<DmoWeatherForecast>, WeatherForecastA
 
 builder.Services.AddAppServerPresentationServices();
 
-builder.Services.AddTransient<IListPresenter<DmoWeatherForecast>, ListPresenter<DmoWeatherForecast>>();
+builder.Services.AddTransient<IFluentGridListPresenter<DmoWeatherForecast>, FluentGridPresenter<DmoWeatherForecast>>();
 builder.Services.AddTransient<IViewPresenter<DmoWeatherForecast, WeatherForecastId>, ViewPresenter<DmoWeatherForecast, WeatherForecastId>>();
 builder.Services.AddTransient<WeatherForecastEditPresenter>();
 

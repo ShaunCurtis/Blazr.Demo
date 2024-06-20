@@ -5,7 +5,7 @@
 /// ============================================================
 namespace Blazr.App.Presentation;
 
-public interface IListPresenter<TRecord>
+public interface IFluentGridListPresenter<TRecord>
     where TRecord : class, new()
 {
     public IDataResult LastDataResult { get; }
