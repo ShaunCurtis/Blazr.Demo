@@ -1,0 +1,19 @@
+﻿@namespace Blazr.App.UI.MudBlazor
+
+@inject IMudGridListPresenter<DmoWeatherForecast> Presenter
+
+<MudDataGrid T="DmoWeatherForecast" ServerData="this.Presenter.GetItemsAsync" >
+    <Columns>
+        <PropertyColumn Sortable="false" Property="x => x.WeatherForecastId.Value.ToDisplayId()" Title="Id" />
+        <PropertyColumn Sortable="true" Property="x => x.Date" Format="dd-MMM-yy" Title="Date" />
+        <PropertyColumn Property="x => x.Temperature.TemperatureC" Format="N0" Title="Temperature C" />
+        <PropertyColumn Property="x => x.Temperature.TemperatureF" Format="N0" Title="Temperature F" />
+        <PropertyColumn Sortable="true" Property="x => x.Summary" Title="Summary" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="DmoWeatherForecast" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+}

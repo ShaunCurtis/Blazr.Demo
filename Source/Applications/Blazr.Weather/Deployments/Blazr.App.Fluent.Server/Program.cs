@@ -16,7 +16,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddFluentUIComponents();
 builder.AddBlazrRenderStateServerServices();
 builder.Services.AddAppServerMappedInfrastructureServices();
-builder.Services.AddAppServerPresentationServices();
+builder.Services.AddAppFluentUIPresentationServices();
 
 var app = builder.Build();
 

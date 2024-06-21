@@ -1,15 +1,30 @@
-using Blazr.App.MuBlazor.Server.Components;
+global using Blazr.App.Infrastructure;
+global using Blazr.App.Presentation;
+using Blazr.RenderState.Server;
+using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddMudServices();
+builder.AddBlazrRenderStateServerServices();
+builder.Services.AddAppServerMappedInfrastructureServices();
+builder.Services.AddAppMudBlazorPresentationServices();
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
+
+// get the DbContext factory and add the test data
+var factory = app.Services.GetService<IDbContextFactory<InMemoryTestDbContext>>();
+if (factory is not null)
+    TestDataProvider.Instance().LoadDbContext<InMemoryTestDbContext>(factory);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -24,7 +39,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+app.MapRazorComponents<Blazr.App.MudBlazor.Server.App>()
+    .AddInteractiveServerRenderMode()
+        .AddAdditionalAssemblies([typeof(Blazr.App.UI.MudBlazor._Imports).Assembly]);
 
 app.Run();

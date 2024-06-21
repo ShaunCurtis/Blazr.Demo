@@ -3,9 +3,11 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-namespace Blazr.App.Presentation;
+using Microsoft.FluentUI.AspNetCore.Components;
 
-public interface IFluentGridListPresenter<TRecord>
+namespace Blazr.App.Presentation.FluentUI;
+
+public interface IFluentGridPresenter<TRecord>
     where TRecord : class, new()
 {
     public IDataResult LastDataResult { get; }

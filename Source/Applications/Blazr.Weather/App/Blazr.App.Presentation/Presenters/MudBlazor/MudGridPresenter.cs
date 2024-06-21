@@ -3,9 +3,11 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-namespace Blazr.App.Presentation;
+using MudBlazor;
 
-public class FluentGridPresenter<TRecord> : IFluentGridListPresenter<TRecord>
+namespace Blazr.App.Presentation.MudBlazor;
+
+public class MudGridPresenter<TRecord> : IMudGridListPresenter<TRecord>
     where TRecord : class, new()
 {
     private readonly IDataBroker _dataBroker;
@@ -13,36 +15,35 @@ public class FluentGridPresenter<TRecord> : IFluentGridListPresenter<TRecord>
     public int DefaultPageSize { get; set; } = 20;
     public List<FilterDefinition>? Filters { get; set; }
 
-    public FluentGridPresenter(IDataBroker dataBroker)
+    public MudGridPresenter(IDataBroker dataBroker)
     {
         _dataBroker = dataBroker;
     }
 
-    public async ValueTask<GridItemsProviderResult<TRecord>> GetItemsAsync<TGridItem>(GridItemsProviderRequest<TRecord> request)
+    public async Task<GridData<TRecord>> GetItemsAsync(GridState<TRecord> request)
     {
         // Get the defined sorters
         List<SortDefinition>? sorters = null;
 
-        var definedSorters = request.GetSortByProperties();
-        if (definedSorters is not null)
+        foreach (var sorter in request.SortDefinitions)
         {
-            sorters = new();
-            foreach (var sorter in definedSorters)
+            var sortDefinition = new SortDefinition()
             {
-                var sortDefinition = new SortDefinition()
-                {
-                    SortField = sorter.PropertyName,
-                    SortDescending = sorter.Direction == SortDirection.Descending
-                };
-                sorters.Add(sortDefinition);
-            }
+                SortField = sorter.SortBy,
+                SortDescending = sorter.Descending
+            };
+
+            if (sorters is null)
+                sorters = new();
+
+            sorters.Add(sortDefinition);
         }
 
         // Define the Query Request
         var listRequest = new ListQueryRequest()
         {
-            StartIndex = request.StartIndex,
-            PageSize = request.Count ?? this.DefaultPageSize,
+            StartIndex = request.Page * request.PageSize,
+            PageSize = request.PageSize,
             Sorters = sorters ?? Enumerable.Empty<SortDefinition>(),
             Filters = this.Filters ?? Enumerable.Empty<FilterDefinition>()
         };
@@ -50,6 +51,6 @@ public class FluentGridPresenter<TRecord> : IFluentGridListPresenter<TRecord>
         var result = await _dataBroker.ExecuteQueryAsync<TRecord>(listRequest);
         this.LastDataResult = result;
 
-        return new GridItemsProviderResult<TRecord>() { Items = result.Items.ToList(), TotalItemCount = result.TotalCount };
+        return new GridData<TRecord>() { Items = result.Items.ToList(), TotalItems = result.TotalCount };
     }
 }

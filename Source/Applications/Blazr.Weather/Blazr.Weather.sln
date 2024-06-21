@@ -51,7 +51,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fluent", "Fluent", "{D5AA4A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.Validation", "..\..\Libraries\Blazr.Validation\Blazr.Validation.csproj", "{6BD3C095-1452-4996-A6AA-32C4DA1FB846}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.MuBlazor.Server", "Deployments\Blazr.App.MuBlazor.Server\Blazr.App.MuBlazor.Server.csproj", "{609E27B3-5258-4100-B380-527EBD84F904}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.MudBlazor.Server", "Deployments\Blazr.App.MuBlazor.Server\Blazr.App.MudBlazor.Server.csproj", "{609E27B3-5258-4100-B380-527EBD84F904}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.UI.MudBlazor", "App\Blazr.App.UI.MudBlazor\Blazr.App.UI.MudBlazor.csproj", "{29B85635-4C87-433B-8BFB-0531A8127A45}"
 EndProject

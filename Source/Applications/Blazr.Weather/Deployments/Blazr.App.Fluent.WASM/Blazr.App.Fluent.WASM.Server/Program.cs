@@ -16,12 +16,13 @@ builder.Services.AddRazorComponents()
 builder.Services.AddFluentUIComponents();
 builder.AddBlazrRenderStateServerServices();
 builder.Services.AddAppServerMappedInfrastructureServices();
-builder.Services.AddAppServerPresentationServices();
+builder.Services.AddAppFluentUIPresentationServices();
 
 var app = builder.Build();
 
 // Aspire endpoints
 app.MapDefaultEndpoints();
+
 // Adds in all the API endpoints
 app.AddAppAPIEndpoints();
 

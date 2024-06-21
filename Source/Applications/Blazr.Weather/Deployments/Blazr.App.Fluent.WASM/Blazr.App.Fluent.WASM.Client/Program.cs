@@ -1,6 +1,7 @@
 using Blazr.App.Core;
 using Blazr.App.Infrastructure;
 using Blazr.App.Presentation;
+using Blazr.App.Presentation.FluentUI;
 using Blazr.OneWayStreet.Core;
 using Blazr.OneWayStreet.Infrastructure;
 using Blazr.RenderState.WASM;
@@ -22,9 +23,9 @@ builder.Services.AddScoped<IListRequestHandler<DmoWeatherForecast>, WeatherForec
 builder.Services.AddScoped<IItemRequestHandler<DmoWeatherForecast, WeatherForecastId>, WeatherForecastAPIItemRequestHandler>();
 builder.Services.AddScoped<ICommandHandler<DmoWeatherForecast>, WeatherForecastAPICommandHandler>();
 
-builder.Services.AddAppServerPresentationServices();
+builder.Services.AddAppFluentUIPresentationServices();
 
-builder.Services.AddTransient<IFluentGridListPresenter<DmoWeatherForecast>, FluentGridPresenter<DmoWeatherForecast>>();
+builder.Services.AddTransient<IFluentGridPresenter<DmoWeatherForecast>, FluentGridPresenter<DmoWeatherForecast>>();
 builder.Services.AddTransient<IViewPresenter<DmoWeatherForecast, WeatherForecastId>, ViewPresenter<DmoWeatherForecast, WeatherForecastId>>();
 builder.Services.AddTransient<WeatherForecastEditPresenter>();
 

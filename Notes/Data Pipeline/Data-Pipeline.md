@@ -107,3 +107,4 @@ The service definition for the WeatherForecast record is:
 ```csharp
 services.AddTransient<IViewPresenter<DmoWeatherForecast, WeatherForecastId>, ViewPresenter<DmoWeatherForecast, WeatherForecastId>>();
 ```
+1`
