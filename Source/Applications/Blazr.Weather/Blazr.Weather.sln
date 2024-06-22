@@ -43,17 +43,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Weather.ServiceDefaul
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aspire", "Aspire", "{A0B73802-157E-4CF5-BD54-D2CC5B76EC24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.API", "App\Blazr.App.API\Blazr.App.API.csproj", "{89B0BE95-0E5E-4959-B988-586744CCDC3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.API", "App\Blazr.App.API\Blazr.App.API.csproj", "{89B0BE95-0E5E-4959-B988-586744CCDC3D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MudBlazor", "MudBlazor", "{75F6EC35-E7F2-4ACB-92B7-4BEEC096632D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fluent", "Fluent", "{D5AA4A3A-1B50-4C63-9EEF-1C1953D5F3C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.Validation", "..\..\Libraries\Blazr.Validation\Blazr.Validation.csproj", "{6BD3C095-1452-4996-A6AA-32C4DA1FB846}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Validation", "..\..\Libraries\Blazr.Validation\Blazr.Validation.csproj", "{6BD3C095-1452-4996-A6AA-32C4DA1FB846}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.MudBlazor.Server", "Deployments\Blazr.App.MuBlazor.Server\Blazr.App.MudBlazor.Server.csproj", "{609E27B3-5258-4100-B380-527EBD84F904}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.MudBlazor.Server", "Deployments\Blazr.App.MuBlazor.Server\Blazr.App.MudBlazor.Server.csproj", "{609E27B3-5258-4100-B380-527EBD84F904}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.UI.MudBlazor", "App\Blazr.App.UI.MudBlazor\Blazr.App.UI.MudBlazor.csproj", "{29B85635-4C87-433B-8BFB-0531A8127A45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.UI.MudBlazor", "App\Blazr.App.UI.MudBlazor\Blazr.App.UI.MudBlazor.csproj", "{29B85635-4C87-433B-8BFB-0531A8127A45}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

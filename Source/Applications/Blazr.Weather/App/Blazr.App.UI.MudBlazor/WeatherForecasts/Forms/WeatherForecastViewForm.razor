@@ -1,0 +1,66 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@namespace Blazr.App.UI.MudBlazor
+@inject IViewPresenter<DmoWeatherForecast, WeatherForecastId> Presenter
+
+<MudDialog>
+    <DialogContent>
+
+        <MudGrid>
+            <MudItem xs="12">
+                <MudText Typo="Typo.h4">Weather Forecast Viewer</MudText>
+                <MudSpacer />
+                <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Default" />
+            </MudItem>
+        </MudGrid>
+
+        <MudGrid>
+            <MudItem xs="12" sm="6">
+                <MudField Label="Date" Variant="Variant.Filled">
+                    @this.Presenter.Item.Date.ToString("dd-MMM-yy")"
+                </MudField>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudField Label="Summary" Variant="Variant.Filled">
+                    @this.Presenter.Item.Summary"
+                </MudField>
+            </MudItem>
+        </MudGrid>
+
+        <MudGrid>
+            <MudItem xs="12" sm="6">
+                <MudField Label="Temperature &deg; C" Variant="Variant.Filled">
+                    @this.Presenter.Item.Temperature.TemperatureC.ToString("D0")"
+                </MudField>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudField Label="Temperature &deg; F" Variant="Variant.Filled">
+                    @this.Presenter.Item.Temperature.TemperatureF.ToString("D0")"
+                </MudField>
+            </MudItem>
+        </MudGrid>
+
+        <MudGrid>
+            <MudItem xs="12" sm="6">
+                <MudField Label="Full Id" Variant="Variant.Filled">
+                    @this.Presenter.Item.WeatherForecastId.Value.ToString()"
+                </MudField>
+            </MudItem>
+        </MudGrid>
+
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Icon="@Icons.Material.Filled.Close" Color="Color.Primary" OnClick="this.Close">
+            Exit
+        </MudButton>
+    </DialogActions>
+
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+
+    private void Close() 
+        => MudDialog?.Close(DialogResult.Ok(true));
+
+}
