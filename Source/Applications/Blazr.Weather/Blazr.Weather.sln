@@ -43,17 +43,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Weather.ServiceDefaul
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aspire", "Aspire", "{A0B73802-157E-4CF5-BD54-D2CC5B76EC24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.API", "App\Blazr.App.API\Blazr.App.API.csproj", "{89B0BE95-0E5E-4959-B988-586744CCDC3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.API", "App\Blazr.App.API\Blazr.App.API.csproj", "{89B0BE95-0E5E-4959-B988-586744CCDC3D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MudBlazor", "MudBlazor", "{75F6EC35-E7F2-4ACB-92B7-4BEEC096632D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fluent", "Fluent", "{D5AA4A3A-1B50-4C63-9EEF-1C1953D5F3C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.Validation", "..\..\Libraries\Blazr.Validation\Blazr.Validation.csproj", "{6BD3C095-1452-4996-A6AA-32C4DA1FB846}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Validation", "..\..\Libraries\Blazr.Validation\Blazr.Validation.csproj", "{6BD3C095-1452-4996-A6AA-32C4DA1FB846}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.MudBlazor.Server", "Deployments\Blazr.App.MuBlazor.Server\Blazr.App.MudBlazor.Server.csproj", "{609E27B3-5258-4100-B380-527EBD84F904}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.MudBlazor.Server", "Deployments\Blazr.App.MuBlazor.Server\Blazr.App.MudBlazor.Server.csproj", "{609E27B3-5258-4100-B380-527EBD84F904}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.UI.MudBlazor", "App\Blazr.App.UI.MudBlazor\Blazr.App.UI.MudBlazor.csproj", "{29B85635-4C87-433B-8BFB-0531A8127A45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.UI.MudBlazor", "App\Blazr.App.UI.MudBlazor\Blazr.App.UI.MudBlazor.csproj", "{29B85635-4C87-433B-8BFB-0531A8127A45}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.UI.Vanilla", "App\Blazr.App.UI.Vanilla\Blazr.App.UI.Vanilla.csproj", "{497DB79B-A7C5-4315-8F63-6E85E9CB08F1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Vanilla", "Vanilla", "{67EC99B5-538B-445A-8DE3-5E4F8AC0A870}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Vanilla.Server", "Deployments\Blazr.App.Vanilla.Server\Blazr.App.Vanilla.Server.csproj", "{C56B19E9-3BB0-4229-82A3-F8A63F82876B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,6 +135,14 @@ Global
 		{29B85635-4C87-433B-8BFB-0531A8127A45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29B85635-4C87-433B-8BFB-0531A8127A45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29B85635-4C87-433B-8BFB-0531A8127A45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{497DB79B-A7C5-4315-8F63-6E85E9CB08F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{497DB79B-A7C5-4315-8F63-6E85E9CB08F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{497DB79B-A7C5-4315-8F63-6E85E9CB08F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{497DB79B-A7C5-4315-8F63-6E85E9CB08F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C56B19E9-3BB0-4229-82A3-F8A63F82876B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C56B19E9-3BB0-4229-82A3-F8A63F82876B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C56B19E9-3BB0-4229-82A3-F8A63F82876B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C56B19E9-3BB0-4229-82A3-F8A63F82876B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -157,6 +171,9 @@ Global
 		{6BD3C095-1452-4996-A6AA-32C4DA1FB846} = {5BD42DD4-7575-4C63-9B93-78B77376CAAC}
 		{609E27B3-5258-4100-B380-527EBD84F904} = {75F6EC35-E7F2-4ACB-92B7-4BEEC096632D}
 		{29B85635-4C87-433B-8BFB-0531A8127A45} = {8586352C-E909-4DAF-BFE3-67F19258D1DA}
+		{497DB79B-A7C5-4315-8F63-6E85E9CB08F1} = {8586352C-E909-4DAF-BFE3-67F19258D1DA}
+		{67EC99B5-538B-445A-8DE3-5E4F8AC0A870} = {7195E0D7-CEA4-46FB-B05F-5C1356675632}
+		{C56B19E9-3BB0-4229-82A3-F8A63F82876B} = {67EC99B5-538B-445A-8DE3-5E4F8AC0A870}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4BFC383C-CBF4-49EE-BBD6-4E95F57CF086}

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Blazr.RenderState" Version="1.0.0" />
+		<PackageReference Include="Blazr.RenderState.Server" Version="1.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj" />
+		<ProjectReference Include="..\..\App\Blazr.App.Core\Blazr.App.Core.csproj" />
+		<ProjectReference Include="..\..\App\Blazr.App.Infrastructure\Blazr.App.Infrastructure.csproj" />
+		<ProjectReference Include="..\..\App\Blazr.App.Presentation\Blazr.App.Presentation.csproj" />
+		<ProjectReference Include="..\..\App\Blazr.App.UI.Vanilla\Blazr.App.UI.Vanilla.csproj" />
+		<ProjectReference Include="..\..\Blazr.Weather.ServiceDefaults\Blazr.Weather.ServiceDefaults.csproj" />
+	</ItemGroup>
+
+</Project>

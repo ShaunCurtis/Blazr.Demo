@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -6,24 +6,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Components\Markdown\**" />
-    <Content Remove="Components\Markdown\**" />
-    <EmbeddedResource Remove="Components\Markdown\**" />
-    <None Remove="Components\Markdown\**" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Blazr.RenderState" Version="1.0.0" />
-		<PackageReference Include="Markdig" Version="0.37.0" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.8.1" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.*-* " />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.6" />
+	  <PackageReference Include="Blazr.RenderState" Version="1.0.0" />
+  </ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\Libraries\Blazr.EditStateTracker\Blazr.EditStateTracker.csproj" />
@@ -36,6 +27,5 @@
 	<ItemGroup>
 	  <Folder Include="WeatherForecasts\" />
 	</ItemGroup>
-
 
 </Project>
