@@ -1,14 +1,27 @@
 ﻿@namespace Blazr.App.UI.MudBlazor
-
 @inject IMudGridListPresenter<DmoWeatherForecast> Presenter
+@inject IDialogService DialogService
 
-<MudDataGrid T="DmoWeatherForecast" ServerData="this.Presenter.GetItemsAsync" >
+<MudDataGrid T="DmoWeatherForecast" ServerData="this.Presenter.GetItemsAsync">
+    <ToolBarContent>
+        <MudText Typo="Typo.h4">Weather Forecasts</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Default"/>
+    </ToolBarContent>
     <Columns>
         <PropertyColumn Sortable="false" Property="x => x.WeatherForecastId.Value.ToDisplayId()" Title="Id" />
         <PropertyColumn Sortable="true" Property="x => x.Date" Format="dd-MMM-yy" Title="Date" />
         <PropertyColumn Property="x => x.Temperature.TemperatureC" Format="N0" Title="Temperature C" />
         <PropertyColumn Property="x => x.Temperature.TemperatureF" Format="N0" Title="Temperature F" />
         <PropertyColumn Sortable="true" Property="x => x.Summary" Title="Summary" />
+        <TemplateColumn CellClass="d-flex justify-end">
+            <CellTemplate>
+                <MudStack Row>
+                    <MudIconButton Icon="@Icons.Material.Filled.GridView"></MudIconButton>
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+
     </Columns>
     <PagerContent>
         <MudDataGridPager T="DmoWeatherForecast" />
@@ -16,4 +29,10 @@
 </MudDataGrid>
 
 @code {
+
+    private void OnView()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<WeatherForecastViewForm>("View Weather Forecast", options);
+    }
 }
