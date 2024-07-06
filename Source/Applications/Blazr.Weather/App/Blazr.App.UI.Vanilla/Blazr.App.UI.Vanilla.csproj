@@ -6,12 +6,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="Components\Modal\ModalDialog.razor" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.6" />
 	  <PackageReference Include="Blazr.RenderState" Version="1.0.0" />
   </ItemGroup>
@@ -25,7 +30,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="WeatherForecasts\" />
+	  <UpToDateCheckInput Remove="Components\Modal\ModalDialog.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="Components\Modal\ModalDialog.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Components\Modal\ModalDialog.razor" />
 	</ItemGroup>
 
 </Project>

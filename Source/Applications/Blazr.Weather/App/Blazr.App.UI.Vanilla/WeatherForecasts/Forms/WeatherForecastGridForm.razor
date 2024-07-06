@@ -1,0 +1,78 @@
+﻿@namespace Blazr.App.UI.Vanilla
+
+@inject IVanillaGridPresenter<DmoWeatherForecast> Presenter
+
+
+<div class="container">
+    <div class="row mb-2">
+        <div class="col h2">Weather Forecasts</div>
+        <div class="col-auto">
+            <button class="btn btn-sm btn-primary" @onclick="@OnAddAsync">
+                New Weather Forecast
+            </button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="grid" tabindex="-1">
+            <QuickGrid TGridItem="DmoWeatherForecast" ItemsProvider="this.Presenter.GetItemsAsync<DmoWeatherForecast>" Pagination="_pagination">
+                <PropertyColumn Title="Id" Property="@(c => c!.WeatherForecastId.Value.ToDisplayId())" Align=Align.Start />
+                <PropertyColumn Title="Date" Property="@(c => c!.Date)" Format="dd-MMM-yy" Sortable="true" IsDefaultSortColumn InitialSortDirection="SortDirection.Ascending" Align=Align.Start />
+                <PropertyColumn Title="Temp &deg; C" Sortable="true" Format="N0" Property="@(c => c!.Temperature.TemperatureC)" Align=Align.End />
+                <PropertyColumn Title="Temp &deg; F" Sortable="true" Format="N0" Property="@(c => c!.Temperature.TemperatureF)" Align=Align.End />
+                <PropertyColumn Title="Summary" Sortable="true" Property="@(c => c!.Summary)" Align=Align.Center />
+                <TemplateColumn Title="Actions" Align="@Align.End">
+                    <button class="btn btn-sm btn-dark" @onclick="() => OnViewAsync(context.WeatherForecastId)">View</button>
+                    <button class="btn btn-sm btn-primary" @onclick="() => OnEditAsync(context.WeatherForecastId)">Edit</button>
+                </TemplateColumn>
+            </QuickGrid>
+        </div>
+
+        <Paginator State="@_pagination" />
+    </div>
+</div>
+
+
+@code {
+    private PaginationState _pagination = new PaginationState { ItemsPerPage = 10 };
+
+
+    private async Task OnEditAsync(WeatherForecastId id)
+    {
+        // var dialog = await DialogService.ShowDialogAsync<WeatherForecastEditForm>(id, new DialogParameters()
+        //     {
+        //         Title = $"Edit Weather Forecast",
+        //         PreventDismissOnOverlayClick = true,
+        //         PreventScroll = true,
+        //     });
+
+        // var result = await dialog.Result;
+    }
+
+    private async Task OnViewAsync(WeatherForecastId id)
+    {
+        // var dialog = await DialogService.ShowDialogAsync<WeatherForecastViewForm>(id, new DialogParameters()
+        //     {
+        //         Title = $"View Weather Forecast",
+        //         PreventDismissOnOverlayClick = true,
+        //         PreventScroll = true,
+        //     });
+
+        // var result = await dialog.Result;
+    }
+
+    private async Task OnAddAsync()
+    {
+        // var id = new WeatherForecastId(Guid.Empty);
+        // var dialog = await DialogService.ShowDialogAsync<WeatherForecastEditForm>(id, new DialogParameters()
+        //     {
+        //         Title = $"New Weather Forecast",
+        //         PreventDismissOnOverlayClick = true,
+        //         PreventScroll = true,
+        //     });
+
+        // var result = await dialog.Result;
+    }
+
+}

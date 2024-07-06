@@ -1,4 +1,8 @@
-using Blazr.App.Vanilla.Server.Components;
+global using Blazr.App.Infrastructure;
+global using Blazr.App.Presentation;
+using Blazr.App.Vanilla.Server;
+using Blazr.RenderState.Server;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,9 +12,19 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.AddBlazrRenderStateServerServices();
+builder.Services.AddAppServerMappedInfrastructureServices();
+builder.Services.AddAppVanillaPresentationServices();
+
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
+
+// get the DbContext factory and add the test data
+var factory = app.Services.GetService<IDbContextFactory<InMemoryTestDbContext>>();
+if (factory is not null)
+    TestDataProvider.Instance().LoadDbContext<InMemoryTestDbContext>(factory);
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -26,6 +40,7 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode()
+    .AddAdditionalAssemblies([typeof(Blazr.App.UI.Vanilla._Imports).Assembly]);
 
 app.Run();
