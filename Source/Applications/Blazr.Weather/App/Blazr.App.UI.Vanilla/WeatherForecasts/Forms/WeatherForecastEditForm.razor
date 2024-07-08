@@ -1,11 +1,143 @@
 ﻿@namespace Blazr.App.UI.Vanilla
+@implements IDisposable
+@inject WeatherForecastEditPresenter Presenter
+@inject IAppToastService ToastService
 
 @using Blazr.App.Presentation
 
-@inject IViewPresenter<DmoWeatherForecast, WeatherForecastId> Presenter
+@inject WeatherForecastEditPresenter Presenter
 
-<h3>WeatherForecastEditForm</h3>
+<div class="container">
+    <div class="row mb-2">
+        <div class="col h2">Weather Forecast Editor</div>
+    </div>
+    @if (this.Presenter.EditContext is not null)
+    {
+        <EditForm EditContext="Presenter.EditContext">
+
+            <BlazrEditStateTracker LockNavigation="true" />
+
+            <BlazrValidator TRecord="WeatherForecastEditContext"
+                            TValidator="WeatherForecastEditContextValidator" />
+
+            <div class="row mb-2">
+
+                <div class="col-12 col-sm-6 ">
+                    <div class="form-floating mb-3">
+                        <InputDate class="form-control" @bind-Value="_record.Date" />
+                        <label for="floatingInput">Date</label>
+                    </div>
+                    <ValidationMessage For="() => _record.Date" />
+                </div>
+
+                <div class="col-12 col-sm-6 ">
+                    <div class="form-floating mb-3">
+                        <InputNumber class="form-control" @bind-Value="_record.Temperature" />
+                        <label for="floatingInput">Temperature &deg; C</label>
+                    </div>
+                    <ValidationMessage For="() => _record.Temperature" />
+                </div>
+
+            </div>
+
+            <div class="row mb-2">
+
+                <div class="col-12 col-sm-6 ">
+                    <div class="form-floating mb-3">
+                        <InputSelect class="form-select" @bind-Value="@_record.Summary">
+                            @foreach (var summary in SummaryOptions.Summaries)
+                            {
+                                <option value="@summary">@summary</option>
+                            }
+                        </InputSelect>
+                        <label for="floatingInput">Summary</label>
+                    </div>
+                    <ValidationMessage For="() => _record.Summary" />
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-12 text-end ">
+                    <button hidden="@_isDirty" class="btn btn-dark" @onclick="this.OnExitAsync">Exit</button>
+                    <button hidden="@_isClean" class="btn btn-danger" @onclick="this.OnExitAsync">Exit without Save</button>
+                    <button disabled="@_isClean" class="btn btn-primary" @onclick="this.OnSaveAsync"> @(this.Presenter.IsNew ? "Add" : "Save")</button>
+                </div>
+            </div>
+
+        </EditForm>
+    }
+</div>
 
 @code {
+    [CascadingParameter] private Action? Close { get; set; }
+    [Parameter] public WeatherForecastId WeatherForecastId { get; set; } = default!;
+
+    private bool _isDirty;
+    private bool _isClean => !_isDirty;
+    private bool _stateStoreAttached;
+    private BlazrEditStateStore? _store;
+    public readonly Guid ComponentId = Guid.NewGuid();
+    private WeatherForecastEditContext _record => this.Presenter.RecordEditContext;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await this.Presenter.LoadAsync(this.WeatherForecastId);
+    }
+
+    protected override void OnParametersSet()
+    {
+        _isDirty = this.Presenter.EditContext?.GetEditState() ?? false;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        // The EditContext is only created after the first render.
+        // We need to make sure the StateStore has been attached to the EditContext
+        // before we try and get it.
+        // The only place we can do this is in the second OnAfterRender UI event
+        _store = _store ?? this.Presenter.EditContext?.GetStateStore();
+        if (_store is not null && !_stateStoreAttached)
+        {
+            _store.StoreUpdated += OnEditStateMayHaveChanged;
+            _stateStoreAttached = true;
+        }
+    }
+
+    private async Task OnSaveAsync()
+    {
+        if (!this.Presenter.EditContext?.Validate() ?? false)
+        {
+            this.ToastService.ShowError("The record data is not valid.  Fix the highlighted errors.");
+            return;
+        }
+
+        await this.Presenter.SaveItemAsync();
+
+        if (this.Presenter.LastDataResult.Successful)
+            this.Close?.Invoke();
+    }
+
+    private Task OnExitAsync()
+    {
+        this.Close?.Invoke();
+        return Task.CompletedTask;
+    }
+
+    protected void OnEditStateMayHaveChanged(object? sender, EventArgs e)
+    {
+        _isDirty = this.Presenter.EditContext?.GetEditState() ?? false;
+        this.StateHasChanged();
+    }
+
+    protected void OnValidationStateMayHaveChanged(object? sender, ValidationStateChangedEventArgs e)
+    {
+        this.StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        if (_store is not null)
+            _store.StoreUpdated -= OnEditStateMayHaveChanged;
+    }
 
 }

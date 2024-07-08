@@ -3,16 +3,19 @@
 public class ModalOptions
 {
     public string? Title { get; set; }
-    public string ModalSize { get; set; } = BsModalSizes.Default;
+    public ModalSize Size { get; set; } = ModalSizes.Default;
     public Dictionary<string, object> Parameters { get; set; } =new();
     public Type? Component { get; set; }
 }
 
-public static class BsModalSizes
+
+public record ModalSize(string Value);
+
+public static class ModalSizes
 {
-    public const string Small = "modal-dialog modal-sm";
-    public const string Normal = "modal-dialog";
-    public const string Large = "modal-dialog modal-lg";
-    public const string ExtraLarge = "modal-dialog modal-xl";
-    public const string Default = Large;
+    public static ModalSize Small => new ModalSize("modal-dialog modal-sm");
+    public static ModalSize Normal = new ModalSize("modal-dialog");
+    public static ModalSize Large = new ModalSize("modal-dialog modal-lg");
+    public static ModalSize ExtraLarge = new ModalSize("modal-dialog modal-xl");
+    public static ModalSize Default = Large;
 }

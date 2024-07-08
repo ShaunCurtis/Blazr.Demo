@@ -62,7 +62,6 @@
 @code
 {
     public readonly Guid ComponentId = Guid.NewGuid();
-    private EditContext _editContext = default!;
 
     [CascadingParameter]
     public FluentDialog Dialog { get; set; } = default!;
@@ -74,7 +73,6 @@
     {
         Console.WriteLine($"{this.ComponentId.ToString().Substring(0,8)} - {this.GetType().Name} - OnInitializedAsync ");
         await this.Presenter.LoadAsync(this.Content);
-        _editContext = new EditContext(Content);
     }
 
     private async Task ExitAsync()

@@ -1,8 +1,9 @@
 ﻿@namespace Blazr.App.UI.FluentUI
+
 @implements IDialogContentComponent<WeatherForecastId>
 @implements IDisposable
 @inject WeatherForecastEditPresenter Presenter
-@inject IToastService ToastService
+@inject IAppToastService ToastService
 
 <!-- Header -->
 <FluentDialogHeader ShowDismiss="_isClean">

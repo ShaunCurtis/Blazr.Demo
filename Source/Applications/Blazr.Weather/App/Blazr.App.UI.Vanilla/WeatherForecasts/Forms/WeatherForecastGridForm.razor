@@ -40,40 +40,30 @@
     private ModalOptions _modalOptions = new();
     private bool _showModal;
 
-    private async Task OnEditAsync(WeatherForecastId id)
+    private Task OnEditAsync(WeatherForecastId id)
     {
-        // var dialog = await DialogService.ShowDialogAsync<WeatherForecastEditForm>(id, new DialogParameters()
-        //     {
-        //         Title = $"Edit Weather Forecast",
-        //         PreventDismissOnOverlayClick = true,
-        //         PreventScroll = true,
-        //     });
-
-        // var result = await dialog.Result;
+        _modalOptions = new ModalOptions() { Component = typeof(WeatherForecastEditForm), Parameters = this.GetParameters(id) };
+        _showModal = true;
+        return Task.CompletedTask;
     }
 
     private Task OnViewAsync(WeatherForecastId id)
     {
-        _modalOptions = new ModalOptions() { Component=typeof(WeatherForecastViewForm) };
+        _modalOptions = new ModalOptions() { Size = ModalSizes.Large, Component = typeof(WeatherForecastViewForm), Parameters = this.GetParameters(id) };
         _showModal = true;
         return Task.CompletedTask;
     }
 
     private Task OnAddAsync()
     {
-        _modalOptions = new ModalOptions() { Component = typeof(Weather) };
+        _modalOptions = new ModalOptions() { Size= ModalSizes.Large, Component = typeof(WeatherForecastEditForm), Parameters = this.GetParameters() };
         _showModal = true;
         return Task.CompletedTask;
+    }
 
-        // var id = new WeatherForecastId(Guid.Empty);
-        // var dialog = await DialogService.ShowDialogAsync<WeatherForecastEditForm>(id, new DialogParameters()
-        //     {
-        //         Title = $"New Weather Forecast",
-        //         PreventDismissOnOverlayClick = true,
-        //         PreventScroll = true,
-        //     });
-
-        // var result = await dialog.Result;
+    private Dictionary<string, object> GetParameters(WeatherForecastId? id = null)
+    {
+        return new Dictionary<string, object>() { { "WeatherForecastId", id ?? new WeatherForecastId(Guid.Empty) } };
     }
 
 }

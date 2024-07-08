@@ -1,0 +1,62 @@
+﻿@inject IAppToastService ToastService
+@implements IDisposable
+
+    <div class="toast-container position-absolute top-0 end-0 m-5 p-3">
+
+        <div class="toast text-white bg-primary show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body">
+                Test Toast
+            </div>
+        </div>
+
+        @foreach (var toast in _toastViewService.Toasts)
+        {
+            <div class="toast @this.ToastCss(toast.Type)" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body">
+                    @toast.Message
+                </div>
+            </div>
+        }
+    </div>
+
+@code {
+    private IAppToastViewService _toastViewService = default!;
+    private Timer? _timer;
+
+    protected override void OnInitialized()
+    {
+        if (ToastService is IAppToastViewService appToastViewService)
+            _toastViewService = appToastViewService;
+
+        ArgumentNullException.ThrowIfNull(_toastViewService);
+
+        _toastViewService.ToastsChanged += this.OnToastsChanged;
+        this.OnTimerExpired(null);
+    }
+
+    private string ToastCss(ToastType toastType) => toastType switch
+    {
+        ToastType.Success => "text-white bg-success",
+        ToastType.Warning => "text-white bg-warning",
+        ToastType.Error => "text-white bg-danger",
+        _ => "text-white bg-primary"
+    };
+
+    private void OnToastsChanged(object? sender, EventArgs e)
+    {
+        this.OnTimerExpired(null);
+        this.InvokeAsync(StateHasChanged);
+    }
+
+    private void OnTimerExpired(object? state)
+    {
+        var timeOut = _toastViewService.NextToastTimeOut();
+        if (timeOut != TimeSpan.Zero)
+            _timer = new Timer(this.OnTimerExpired, null, timeOut.Microseconds, Timeout.Infinite);
+    }
+
+    public void Dispose()
+    {
+        _toastViewService.ToastsChanged += this.OnToastsChanged;
+    }
+}

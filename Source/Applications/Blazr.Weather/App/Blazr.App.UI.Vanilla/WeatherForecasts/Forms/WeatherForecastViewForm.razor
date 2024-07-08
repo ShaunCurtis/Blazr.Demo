@@ -9,17 +9,62 @@
         <div class="col h2">Weather Forecast Viewer</div>
     </div>
     <div class="row mb-2">
-        <div class="col">
+        <div class="col-12 col-sm-6 ">
             <div class="form-floating mb-3">
                 <input type="text" class="form-control" readonly value="@this.Presenter.Item.Date.ToString("dd-MMM-yy")">
                 <label for="floatingInput">Date</label>
             </div>
         </div>
+        <div class="col-12 col-sm-6 ">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" readonly value="@this.Presenter.Item.Summary">
+                <label for="floatingInput">Summary</label>
+            </div>
+        </div>
     </div>
-
+    <div class="row mb-2">
+        <div class="col-12 col-sm-6 ">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" readonly value="@this.Presenter.Item.Temperature.TemperatureC.ToString("N0")">
+                <label for="floatingInput">Temperature &deg; C</label>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 ">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" readonly value="@this.Presenter.Item.Temperature.TemperatureF.ToString("N0")">
+                <label for="floatingInput">Temperature &deg; F</label>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-12 col-md-8">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" readonly value="@this.Presenter.Item.WeatherForecastId.Value">
+                <label for="floatingInput">Full Id</label>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-12 text-end">
+            <button class="btn btn-dark" @onclick="this.OnExit" >Exit</button>
+        </div>
+    </div>
 </div>
 
 @code {
     [CascadingParameter] private Action? Close { get; set; }
+    [Parameter] public WeatherForecastId WeatherForecastId { get; set; } = default!;
 
+    public readonly Guid ComponentId = Guid.NewGuid();
+
+    protected async override Task OnInitializedAsync()
+    {
+        ArgumentNullException.ThrowIfNull(Close);
+        await this.Presenter.LoadAsync(this.WeatherForecastId);
+    }
+
+    private void OnExit()
+    {
+        this.Close?.Invoke();
+    }
 }

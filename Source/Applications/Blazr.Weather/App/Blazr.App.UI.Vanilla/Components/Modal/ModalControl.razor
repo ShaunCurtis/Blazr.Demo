@@ -4,9 +4,9 @@
         <CascadingValue Value="this.CloseDialog" IsFixed>
 
             <div class="modal fade @_modalCss" tabindex="-1">
-                <div class="modal-dialog">
+                <div class="@this.Options.Size.Value">
                     <div class="modal-content">
-                        @if (this.Options.Title is null)
+                        @if (this.Options.Title is not null)
                         {
                             <div class="modal-header">
                                 <h5 class="modal-title">@this.Options.Title</h5>
@@ -29,13 +29,16 @@
     [Parameter] public bool Show { get; set; } = false;
     [Parameter] public EventCallback<bool> ShowChanged { get; set; }
 
-    private bool _show;
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
 
     private string _modalCss => this.Show ? "show" : "hide";
 
     private void CloseDialog()
     {
-        this.ShowChanged.InvokeAsync(true);
+        this.ShowChanged.InvokeAsync(false);
     }
 
 }

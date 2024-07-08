@@ -3,7 +3,7 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-using Microsoft.FluentUI.AspNetCore.Components;
+using Blazr.App.Presentation.Toasts;
 
 namespace Blazr.App.Presentation;
 
@@ -11,7 +11,7 @@ public class WeatherForecastEditPresenter
 
 {
     private readonly IDataBroker _dataBroker;
-    private readonly IToastService _toastService;
+    private readonly IAppToastService _toastService;
 
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
     public EditContext? EditContext { get; private set; }
@@ -20,7 +20,7 @@ public class WeatherForecastEditPresenter
 
     public bool IsInvalid => this.EditContext?.GetValidationMessages().Any() ?? false;
 
-    public WeatherForecastEditPresenter(IDataBroker dataBroker, IToastService toastService)
+    public WeatherForecastEditPresenter(IDataBroker dataBroker, IAppToastService toastService)
     {
         _dataBroker = dataBroker;
         this.RecordEditContext = new(new());

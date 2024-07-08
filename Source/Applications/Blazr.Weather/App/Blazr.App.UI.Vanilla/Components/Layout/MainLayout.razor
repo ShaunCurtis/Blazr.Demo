@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-
+@using Blazr.App.UI.Vanilla.Components.Toasts
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -13,6 +13,7 @@
         <article class="content px-4">
             @Body
         </article>
+        <ToastContainer />
     </main>
 </div>
 
@@ -21,3 +22,4 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
