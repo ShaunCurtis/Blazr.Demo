@@ -52,14 +52,19 @@
         // var result = await dialog.Result;
     }
 
-    private async Task OnViewAsync(WeatherForecastId id)
+    private Task OnViewAsync(WeatherForecastId id)
     {
         _modalOptions = new ModalOptions() { Component=typeof(WeatherForecastViewForm) };
         _showModal = true;
+        return Task.CompletedTask;
     }
 
-    private async Task OnAddAsync()
+    private Task OnAddAsync()
     {
+        _modalOptions = new ModalOptions() { Component = typeof(Weather) };
+        _showModal = true;
+        return Task.CompletedTask;
+
         // var id = new WeatherForecastId(Guid.Empty);
         // var dialog = await DialogService.ShowDialogAsync<WeatherForecastEditForm>(id, new DialogParameters()
         //     {

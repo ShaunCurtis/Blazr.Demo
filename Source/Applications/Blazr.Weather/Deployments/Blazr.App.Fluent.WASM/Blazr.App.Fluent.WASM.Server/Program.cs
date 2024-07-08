@@ -50,6 +50,6 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<Blazr.App.Fluent.WASM.Server.App>()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies([typeof(Blazr.App.FluentUI._Imports).Assembly]);
+    .AddAdditionalAssemblies([typeof(Blazr.App.UI.FluentUI._Imports).Assembly]);
 
 app.Run();

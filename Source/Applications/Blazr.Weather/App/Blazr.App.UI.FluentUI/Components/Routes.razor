@@ -1,4 +1,4 @@
-﻿<Router AppAssembly="@typeof(Blazr.App.FluentUI.Components.Routes).Assembly">
+﻿<Router AppAssembly="@typeof(Blazr.App.UI.FluentUI.Components.Routes).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
@@ -8,6 +8,6 @@
 @code {
     private List<System.Reflection.Assembly> _additionalAssemblies = new()
     {
-        typeof(Blazr.App.FluentUI.WeatherForecastListPage).Assembly,
+        typeof(Blazr.App.UI.FluentUI.WeatherForecastListPage).Assembly,
     };
 }

@@ -35,14 +35,14 @@ public static class ApplicationPresentationServices
     private static void AddWeatherForecastMudBlazorServices(IServiceCollection services)
     {
         services.AddTransient<IMudGridListPresenter<DmoWeatherForecast>, MudGridPresenter<DmoWeatherForecast>>();
-        //services.AddTransient<IViewPresenter<DmoWeatherForecast, WeatherForecastId>, ViewPresenter<DmoWeatherForecast, WeatherForecastId>>();
-        //services.AddTransient<WeatherForecastEditPresenter>();
+        services.AddTransient<IViewPresenter<DmoWeatherForecast, WeatherForecastId>, ViewPresenter<DmoWeatherForecast, WeatherForecastId>>();
+        services.AddTransient<WeatherForecastEditPresenter>();
     }
 
     private static void AddWeatherForecastVanillaServices(IServiceCollection services)
     {
         services.AddTransient<IVanillaGridPresenter<DmoWeatherForecast>, VanillaGridPresenter<DmoWeatherForecast>>();
         services.AddTransient<IViewPresenter<DmoWeatherForecast, WeatherForecastId>, ViewPresenter<DmoWeatherForecast, WeatherForecastId>>();
-        //services.AddTransient<WeatherForecastEditPresenter>();
+        services.AddTransient<WeatherForecastEditPresenter>();
     }
 }
