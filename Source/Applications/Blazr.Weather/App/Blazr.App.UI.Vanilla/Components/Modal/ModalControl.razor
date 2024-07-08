@@ -1,0 +1,41 @@
+﻿@if (Show)
+{
+    <CascadingValue Value="this.Options" IsFixed>
+        <CascadingValue Value="this.CloseDialog" IsFixed>
+
+            <div class="modal fade @_modalCss" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        @if (this.Options.Title is null)
+                        {
+                            <div class="modal-header">
+                                <h5 class="modal-title">@this.Options.Title</h5>
+                                <button type="button" class="btn-close" aria-label="Close"></button>
+                            </div>
+                        }
+                        <div class="modal-body">
+                            <DynamicComponent Type="this.Options.Component" Parameters="this.Options.Parameters" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </CascadingValue>
+    </CascadingValue>
+}
+
+@code {
+    [Parameter] public ModalOptions Options { get; set; } = new();
+    [Parameter] public bool Show { get; set; } = false;
+    [Parameter] public EventCallback<bool> ShowChanged { get; set; }
+
+    private bool _show;
+
+    private string _modalCss => this.Show ? "show" : "hide";
+
+    private void CloseDialog()
+    {
+        this.ShowChanged.InvokeAsync(true);
+    }
+
+}

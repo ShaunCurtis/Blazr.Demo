@@ -33,10 +33,12 @@
     </div>
 </div>
 
+<ModalControl Options="_modalOptions" @bind-Show="_showModal" />
 
 @code {
     private PaginationState _pagination = new PaginationState { ItemsPerPage = 10 };
-
+    private ModalOptions _modalOptions = new();
+    private bool _showModal;
 
     private async Task OnEditAsync(WeatherForecastId id)
     {
@@ -52,14 +54,8 @@
 
     private async Task OnViewAsync(WeatherForecastId id)
     {
-        // var dialog = await DialogService.ShowDialogAsync<WeatherForecastViewForm>(id, new DialogParameters()
-        //     {
-        //         Title = $"View Weather Forecast",
-        //         PreventDismissOnOverlayClick = true,
-        //         PreventScroll = true,
-        //     });
-
-        // var result = await dialog.Result;
+        _modalOptions = new ModalOptions() { Component=typeof(WeatherForecastViewForm) };
+        _showModal = true;
     }
 
     private async Task OnAddAsync()

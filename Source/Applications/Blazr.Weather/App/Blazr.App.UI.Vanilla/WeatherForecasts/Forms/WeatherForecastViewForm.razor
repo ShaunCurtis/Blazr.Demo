@@ -1,0 +1,25 @@
+﻿@namespace Blazr.App.UI.Vanilla
+
+@using Blazr.App.Presentation
+
+@inject IViewPresenter<DmoWeatherForecast, WeatherForecastId> Presenter
+
+<div class="container">
+    <div class="row mb-2">
+        <div class="col h2">Weather Forecast Viewer</div>
+    </div>
+    <div class="row mb-2">
+        <div class="col">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" readonly value="@this.Presenter.Item.Date.ToString("dd-MMM-yy")">
+                <label for="floatingInput">Date</label>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@code {
+    [CascadingParameter] private Action? Close { get; set; }
+
+}

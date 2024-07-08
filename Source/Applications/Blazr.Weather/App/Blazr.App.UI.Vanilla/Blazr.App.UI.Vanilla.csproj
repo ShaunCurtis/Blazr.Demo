@@ -1,14 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Content Remove="Components\Modal\ModalDialog.razor" />
-  </ItemGroup>
 
 
   <ItemGroup>
@@ -27,18 +23,6 @@
 		<ProjectReference Include="..\..\..\..\Libraries\Blazr.Validation\Blazr.Validation.csproj" />
 		<ProjectReference Include="..\Blazr.App.Core\Blazr.App.Core.csproj" />
 		<ProjectReference Include="..\Blazr.App.Presentation\Blazr.App.Presentation.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="Components\Modal\ModalDialog.razor" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <_ContentIncludedByDefault Remove="Components\Modal\ModalDialog.razor" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Include="Components\Modal\ModalDialog.razor" />
 	</ItemGroup>
 
 </Project>

@@ -42,7 +42,7 @@ public static class ApplicationPresentationServices
     private static void AddWeatherForecastVanillaServices(IServiceCollection services)
     {
         services.AddTransient<IVanillaGridPresenter<DmoWeatherForecast>, VanillaGridPresenter<DmoWeatherForecast>>();
-        //services.AddTransient<IViewPresenter<DmoWeatherForecast, WeatherForecastId>, ViewPresenter<DmoWeatherForecast, WeatherForecastId>>();
+        services.AddTransient<IViewPresenter<DmoWeatherForecast, WeatherForecastId>, ViewPresenter<DmoWeatherForecast, WeatherForecastId>>();
         //services.AddTransient<WeatherForecastEditPresenter>();
     }
 }
