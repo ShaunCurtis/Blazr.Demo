@@ -1,8 +1,9 @@
-﻿@namespace Blazr.App.UI.MudBlazor
+﻿@namespace Blazr.App.UI.Mud
+
 @inject IMudGridListPresenter<DmoWeatherForecast> Presenter
 @inject IDialogService DialogService
-@using Mud = MudBlazor
-<MudDataGrid T="DmoWeatherForecast" Context="record" ServerData="this.Presenter.GetItemsAsync" @ref=_grid>
+
+<MudDataGrid T="DmoWeatherForecast" Context="record" ServerData="this.Presenter.GetItemsAsync"  @ref="_grid">
     <ToolBarContent>
         <MudText Typo="Typo.h4">Weather Forecasts</MudText>
         <MudSpacer />
@@ -30,4 +31,30 @@
 </MudDataGrid>
 
 @code {
+    private MudDataGrid<DmoWeatherForecast>? _grid;
+
+    private async Task OnView(WeatherForecastId id)
+    {
+        // Build out the parameters
+        var parameters = new DialogParameters() { { "WeatherForecastId", id } };
+        var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true };
+
+        // open the dialog.  It's read only so there's no mutation and no need to update the grid
+        _ = await DialogService.ShowAsync<WeatherForecastViewForm>("View Weather Forecast", parameters, options);
+    }
+
+    private async Task OnEdit(WeatherForecastId id)
+    {
+        // Build out the parameters and options locking the backdrop
+        var parameters = new DialogParameters() { { "WeatherForecastId", id } };
+        var options = new DialogOptions { DisableBackdropClick = true, CloseOnEscapeKey = false, FullWidth = true };
+
+        // get the dialog reference and await the result
+        var dialog = await DialogService.ShowAsync<WeatherForecastEditForm>("Edit Weather Forecast", parameters, options);
+        var result = await dialog.Result;
+
+        // If not cancelled then relaod the grid as the record will have been mutated
+        if (!result.Canceled && _grid is not null)
+           await _grid.ReloadServerData();
+    }
 }

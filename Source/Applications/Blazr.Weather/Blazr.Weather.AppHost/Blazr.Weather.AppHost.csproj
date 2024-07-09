@@ -18,6 +18,7 @@
     <ProjectReference Include="..\Deployments\Blazr.App.Fluent.WASM\Blazr.App.Fluent.WASM.Server\Blazr.App.Fluent.WASM.Server.csproj" />
     <ProjectReference Include="..\Deployments\Blazr.App.MuBlazor.Server\Blazr.App.MudBlazor.Server.csproj" />
     <ProjectReference Include="..\Deployments\Blazr.App.Vanilla.Server\Blazr.App.Vanilla.Server.csproj" />
+    <ProjectReference Include="..\Deployments\Vanilla\Blazr.App.Vanilla.WASM.Server\Blazr.App.Vanilla.WASM.Server.csproj" />
   </ItemGroup>
 
 </Project>

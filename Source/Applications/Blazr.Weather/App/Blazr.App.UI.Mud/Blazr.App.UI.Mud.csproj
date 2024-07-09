@@ -1,15 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
 
 
-	<ItemGroup>
-		<SupportedPlatform Include="browser" />
-	</ItemGroup>
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="MudBlazor" Version="6.*" />
@@ -25,10 +25,5 @@
 		<ProjectReference Include="..\Blazr.App.Presentation\Blazr.App.Presentation.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Content Update="_Imports.razor">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	  </Content>
-	</ItemGroup>
 
 </Project>

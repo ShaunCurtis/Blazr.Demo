@@ -5,7 +5,7 @@
 /// ============================================================
 using MudBlazor;
 
-namespace Blazr.App.Presentation.MudBlazor;
+namespace Blazr.App.Presentation.Mud;
 
 public interface IMudGridListPresenter<TRecord>
     where TRecord : class, new()

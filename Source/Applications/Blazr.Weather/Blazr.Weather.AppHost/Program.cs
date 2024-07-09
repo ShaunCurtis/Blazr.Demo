@@ -8,4 +8,6 @@ builder.AddProject<Projects.Blazr_App_MudBlazor_Server>("blazr-app-mudblazor-ser
 
 builder.AddProject<Projects.Blazr_App_Vanilla_Server>("blazr-app-vanilla-server");
 
+builder.AddProject<Projects.Blazr_App_Vanilla_WASM_Server>("blazr-app-vanilla-wasm-server");
+
 builder.Build().Run();
