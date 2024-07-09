@@ -4,17 +4,14 @@
 
 <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:11;">
 
-    <div class="toast text-white bg-primary show" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-body">
-            Test Toast
-        </div>
-    </div>
-
     @foreach (var toast in _toastViewService.Toasts)
     {
-        <div class="toast show @this.ToastCss(toast.Type)" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-body">
-                @toast.Message
+        <div class="toast show @this.ToastCss(toast.Type)" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    @toast.Message
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" @onclick="() => this.DismissToast(toast.Uid)"></button>
             </div>
         </div>
     }
@@ -23,6 +20,7 @@
 @code {
     private IAppToastViewService _toastViewService = default!;
     private Timer? _timer;
+    private object _token = new();
 
     protected override void OnInitialized()
     {
@@ -45,18 +43,31 @@
 
     private void OnToastsChanged(object? sender, EventArgs e)
     {
-        this.OnTimerExpired(null);
-        this.InvokeAsync(StateHasChanged);
+        if (sender != _token)
+        {
+            this.OnTimerExpired(null);
+            this.InvokeAsync(StateHasChanged);
+        }
     }
 
     private void OnTimerExpired(object? state)
     {
+        // Get the next timeout
         var timeOut = _toastViewService.NextToastTimeOut();
-        Debug.WriteLine($"OnTimerExpired - TimeOut: {timeOut.Seconds}");
+
+        // And if we have one add a one off timer
         if (timeOut != TimeSpan.Zero)
             _timer = new Timer(this.OnTimerExpired, null, timeOut, Timeout.InfiniteTimeSpan);
         else
             _timer = null;
+
+        // Update the UI at least one Toast has timed out
+        this.InvokeAsync(StateHasChanged);
+    }
+
+    private void DismissToast(Guid id)
+    {
+        _toastViewService.DismissToast(id, _token);
     }
 
     public void Dispose()

@@ -1,12 +1,12 @@
 ﻿@namespace Blazr.App.UI.MudBlazor
 @inject IMudGridListPresenter<DmoWeatherForecast> Presenter
 @inject IDialogService DialogService
-
-<MudDataGrid T="DmoWeatherForecast" ServerData="this.Presenter.GetItemsAsync">
+@using Mud = MudBlazor
+<MudDataGrid T="DmoWeatherForecast" Context="record" ServerData="this.Presenter.GetItemsAsync" @ref=_grid>
     <ToolBarContent>
         <MudText Typo="Typo.h4">Weather Forecasts</MudText>
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Default"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Default" />
     </ToolBarContent>
     <Columns>
         <PropertyColumn Sortable="false" Property="x => x.WeatherForecastId.Value.ToDisplayId()" Title="Id" />
@@ -17,7 +17,8 @@
         <TemplateColumn CellClass="d-flex justify-end">
             <CellTemplate>
                 <MudStack Row>
-                    <MudIconButton Icon="@Icons.Material.Filled.GridView"></MudIconButton>
+                    <MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.TableView" @onclick="() => this.OnView(context.Item.WeatherForecastId)"></MudIconButton>
+                    <MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.Edit" @onclick="() => this.OnEdit(context.Item.WeatherForecastId)"></MudIconButton>
                 </MudStack>
             </CellTemplate>
         </TemplateColumn>
@@ -29,10 +30,4 @@
 </MudDataGrid>
 
 @code {
-
-    private void OnView()
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = true };
-        DialogService.Show<WeatherForecastViewForm>("View Weather Forecast", options);
-    }
 }

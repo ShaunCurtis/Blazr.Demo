@@ -6,43 +6,35 @@
     <DialogContent>
 
         <MudGrid>
-            <MudItem xs="12">
-                <MudText Typo="Typo.h4">Weather Forecast Viewer</MudText>
-                <MudSpacer />
-                <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Default" />
-            </MudItem>
-        </MudGrid>
-
-        <MudGrid>
             <MudItem xs="12" sm="6">
                 <MudField Label="Date" Variant="Variant.Filled">
-                    @this.Presenter.Item.Date.ToString("dd-MMM-yy")"
+                    @this.Presenter.Item.Date.ToString("dd-MMM-yy")
                 </MudField>
             </MudItem>
             <MudItem xs="12" sm="6">
                 <MudField Label="Summary" Variant="Variant.Filled">
-                    @this.Presenter.Item.Summary"
+                    @this.Presenter.Item.Summary
                 </MudField>
             </MudItem>
         </MudGrid>
 
         <MudGrid>
             <MudItem xs="12" sm="6">
-                <MudField Label="Temperature &deg; C" Variant="Variant.Filled">
-                    @this.Presenter.Item.Temperature.TemperatureC.ToString("D0")"
+                <MudField Label="Temperature &deg;C" Variant="Variant.Filled">
+                    @this.Presenter.Item.Temperature.TemperatureC.ToString("N0")
                 </MudField>
             </MudItem>
             <MudItem xs="12" sm="6">
-                <MudField Label="Temperature &deg; F" Variant="Variant.Filled">
-                    @this.Presenter.Item.Temperature.TemperatureF.ToString("D0")"
+                <MudField Label="Temperature &deg;F" Variant="Variant.Filled">
+                    @this.Presenter.Item.Temperature.TemperatureF.ToString("N0")
                 </MudField>
             </MudItem>
         </MudGrid>
 
         <MudGrid>
-            <MudItem xs="12" sm="6">
+            <MudItem xs="12" lg="8">
                 <MudField Label="Full Id" Variant="Variant.Filled">
-                    @this.Presenter.Item.WeatherForecastId.Value.ToString()"
+                    @this.Presenter.Item.WeatherForecastId.Value.ToString()
                 </MudField>
             </MudItem>
         </MudGrid>
@@ -59,8 +51,15 @@
 
 @code {
     [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
+    [Parameter] public WeatherForecastId WeatherForecastId { get; set; } = default!;
 
-    private void Close() 
+    protected async override Task OnInitializedAsync()
+    {
+        ArgumentNullException.ThrowIfNull(WeatherForecastId);
+        await this.Presenter.LoadAsync(this.WeatherForecastId);
+    }
+
+    private void Close()
         => MudDialog?.Close(DialogResult.Ok(true));
-
 }
+

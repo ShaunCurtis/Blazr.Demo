@@ -1,18 +1,11 @@
-﻿@namespace Blazr.App.UI.Vanilla
+﻿@using Microsoft.AspNetCore.Components.Forms
+@namespace Blazr.App.UI.MudBlazor
 @implements IDisposable
 @inject WeatherForecastEditPresenter Presenter
 @inject IAppToastService ToastService
 
-@using Blazr.App.Presentation
-
-@inject WeatherForecastEditPresenter Presenter
-
-<div class="container">
-    <div class="row mb-2">
-        <div class="col h2">Weather Forecast Editor</div>
-    </div>
-    @if (this.Presenter.EditContext is not null)
-    {
+<MudDialog>
+    <DialogContent>
         <EditForm EditContext="Presenter.EditContext">
 
             <BlazrEditStateTracker LockNavigation="true" />
@@ -20,56 +13,35 @@
             <BlazrValidator TRecord="WeatherForecastEditContext"
                             TValidator="WeatherForecastEditContextValidator" />
 
-            <div class="row mb-2">
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudDatePicker Label="Date" HelperText="Date must be in the future." @bind-Date="_record.Date" For="() => _record.Date" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudNumericField Label="Temperature &deg; C" HelperText="Enter a Temperature between -40 and 60" @bind-Value="_record.Temperature" For="() => _record.Temperature" />
+                </MudItem>
+            </MudGrid>
 
-                <div class="col-12 col-sm-6 ">
-                    <div class="form-floating mb-3">
-                        <InputDate class="form-control" @bind-Value="_record.Date" />
-                        <label for="floatingInput">Date</label>
-                    </div>
-                    <ValidationMessage For="() => _record.Date" />
-                </div>
-
-                <div class="col-12 col-sm-6 ">
-                    <div class="form-floating mb-3">
-                        <InputNumber class="form-control" @bind-Value="_record.Temperature" />
-                        <label for="floatingInput">Temperature &deg; C</label>
-                    </div>
-                    <ValidationMessage For="() => _record.Temperature" />
-                </div>
-
-            </div>
-
-            <div class="row mb-2">
-
-                <div class="col-12 col-sm-6 ">
-                    <div class="form-floating mb-3">
-                        <InputSelect class="form-select" @bind-Value="@_record.Summary">
-                            @foreach (var summary in SummaryOptions.Summaries)
-                            {
-                                <option value="@summary">@summary</option>
-                            }
-                        </InputSelect>
-                        <label for="floatingInput">Summary</label>
-                    </div>
-                    <ValidationMessage For="() => _record.Summary" />
-                </div>
-            </div>
-
-            <div class="row mb-2">
-                <div class="col-12 text-end ">
-                    <button hidden="@_isDirty" class="btn btn-dark" @onclick="this.OnExitAsync">Exit</button>
-                    <button hidden="@_isClean" class="btn btn-danger" @onclick="this.OnExitAsync">Exit without Save</button>
-                    <button disabled="@_isClean" class="btn btn-primary" @onclick="this.OnSaveAsync">@(this.Presenter.IsNew ? "Add" : "Save")</button>
-                </div>
-            </div>
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudAutocomplete T="string" Label="Summary" @bind-Value="_record.Summary" SearchFunc="this.SearchSummary" ResetValueOnEmptyText="true" />
+                </MudItem>
+            </MudGrid>
 
         </EditForm>
-    }
-</div>
+
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton hidden="@_isClean" Icon="@Icons.Material.Filled.Close" Color="Color.Error" OnClick="this.OnExitAsync">Exit without Saving</MudButton>
+        <MudButton hidden="@_isDirty" Icon="@Icons.Material.Filled.Close" Color="Color.Dark" OnClick="this.OnExitAsync">Exit</MudButton>
+        <MudButton Disabled="_isClean" Icon="@Icons.Material.Filled.Save" Color="Color.Primary" OnClick="this.OnSaveAsync">@(this.Presenter.IsNew ? "Add" : "Save")</MudButton>
+    </DialogActions>
+
+</MudDialog>
 
 @code {
-    [CascadingParameter] private Action? Close { get; set; }
+    [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
     [Parameter] public WeatherForecastId WeatherForecastId { get; set; } = default!;
 
     private bool _isDirty;
@@ -114,12 +86,12 @@
         await this.Presenter.SaveItemAsync();
 
         if (this.Presenter.LastDataResult.Successful)
-            this.Close?.Invoke();
+            MudDialog?.Close(DialogResult.Ok(true));
     }
 
     private Task OnExitAsync()
     {
-        this.Close?.Invoke();
+        MudDialog?.Close(DialogResult.Ok(true));
         return Task.CompletedTask;
     }
 
@@ -134,10 +106,20 @@
         this.StateHasChanged();
     }
 
+    private Task<IEnumerable<string>> SearchSummary(string value)
+    {
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return Task.FromResult(SummaryOptions.Summaries);
+
+        return Task.FromResult(SummaryOptions.Summaries.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+    }
+
     public void Dispose()
     {
         if (_store is not null)
             _store.StoreUpdated -= OnEditStateMayHaveChanged;
     }
-
 }
+
