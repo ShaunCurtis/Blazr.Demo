@@ -1,23 +1,24 @@
-﻿@inject IAppToastService ToastService
+﻿@using System.Diagnostics
+@inject IAppToastService ToastService
 @implements IDisposable
 
-    <div class="toast-container position-absolute top-0 end-0 m-5 p-3">
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:11;">
 
-        <div class="toast text-white bg-primary show" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast text-white bg-primary show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-body">
+            Test Toast
+        </div>
+    </div>
+
+    @foreach (var toast in _toastViewService.Toasts)
+    {
+        <div class="toast show @this.ToastCss(toast.Type)" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-body">
-                Test Toast
+                @toast.Message
             </div>
         </div>
-
-        @foreach (var toast in _toastViewService.Toasts)
-        {
-            <div class="toast @this.ToastCss(toast.Type)" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-body">
-                    @toast.Message
-                </div>
-            </div>
-        }
-    </div>
+    }
+</div>
 
 @code {
     private IAppToastViewService _toastViewService = default!;
@@ -51,8 +52,11 @@
     private void OnTimerExpired(object? state)
     {
         var timeOut = _toastViewService.NextToastTimeOut();
+        Debug.WriteLine($"OnTimerExpired - TimeOut: {timeOut.Seconds}");
         if (timeOut != TimeSpan.Zero)
-            _timer = new Timer(this.OnTimerExpired, null, timeOut.Microseconds, Timeout.Infinite);
+            _timer = new Timer(this.OnTimerExpired, null, timeOut, Timeout.InfiniteTimeSpan);
+        else
+            _timer = null;
     }
 
     public void Dispose()
