@@ -22,7 +22,7 @@ public static class ApplicationPresentationServices
     }
     public static void AddAppMudBlazorPresentationServices(this IServiceCollection services)
     {
-        services.AddScoped<IAppToastService, VanillaUIToastService>();
+        services.AddScoped<IAppToastService, MudBlazorUIToastService>();
 
         AddWeatherForecastMudBlazorServices(services);
     }

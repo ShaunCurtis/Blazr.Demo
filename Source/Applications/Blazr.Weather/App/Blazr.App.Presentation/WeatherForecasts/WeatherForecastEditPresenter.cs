@@ -24,7 +24,6 @@ public class WeatherForecastEditPresenter
     {
         _dataBroker = dataBroker;
         this.RecordEditContext = new(new());
-        //this.EditContext = new(this.RecordEditContext);
         _toastService = toastService;
     }
 
@@ -43,8 +42,6 @@ public class WeatherForecastEditPresenter
             {
                 RecordEditContext = new(result.Item!);
                 this.EditContext = new(this.RecordEditContext);
-                //this.EditContext.Properties["ComponentId"] = Guid.NewGuid();
-                //this.EditContext.OnFieldChanged += this.OnChange;
             }
             return;
         }
@@ -52,20 +49,8 @@ public class WeatherForecastEditPresenter
         // The new path.  Get a new record
         this.RecordEditContext = new(new() { WeatherForecastId = new(Guid.NewGuid()), Date = DateOnly.FromDateTime(DateTime.Now), Summary = "Not Provided" });
         this.EditContext = new(this.RecordEditContext);
-        //this.EditContext.Properties["ComponentId"] = Guid.NewGuid();
-        //this.EditContext.OnFieldChanged += this.OnChange;
         this.IsNew = true;
     }
-
-    // TODO -  Debug Code
-    //private void OnChange(object? sender, FieldChangedEventArgs e)
-    //{
-    //    var x = this.EditContext!.GetValidationMessages().Count();
-    //    if (this.EditContext!.Properties.TryGetValue("ComponentId", out object? value))
-    //        Console.WriteLine($"{value?.ToString()} changed");
-
-    //    Console.WriteLine($"{e.FieldIdentifier.FieldName} changed");
-    //}
 
     public async Task<IDataResult> SaveItemAsync()
     {

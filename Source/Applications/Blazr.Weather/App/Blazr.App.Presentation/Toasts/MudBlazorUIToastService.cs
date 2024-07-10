@@ -4,35 +4,35 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-using Microsoft.FluentUI.AspNetCore.Components;
+using MudBlazor;
 
 namespace Blazr.App.Presentation.Toasts;
 
 /// <summary>
-/// Basic facade into the FluentUI toaster
-/// Uses the default Timeout due to bugs in setting the timeout
+/// Basic facade into the MudBlazor Snackbar
+/// Uses the default Timeout for simplicity
 /// </summary>
-public class FluentUIToastService : IAppToastService
+public class MudBlazorUIToastService : IAppToastService
 {
-    private IToastService _toastService;
+    private ISnackbar _snackbar;
 
-    public FluentUIToastService(IToastService toastService)
+    public MudBlazorUIToastService(ISnackbar snackbar)
     {
-        _toastService = toastService;
+        _snackbar = snackbar;
     }
 
     public void ShowError(string message, TimeSpan? timeout = null)
     {
-        _toastService.ShowError(message);
+        _snackbar.Add(message, Severity.Error, c => c.SnackbarVariant = Variant.Filled);
     }
 
     public void ShowSuccess(string message, TimeSpan? timeout = null)
     {
-        _toastService.ShowSuccess(message);
+        _snackbar.Add(message, Severity.Success, c => c.SnackbarVariant = Variant.Filled);
     }
 
     public void ShowWarning(string message, TimeSpan? timeout = null)
     {
-        _toastService.ShowWarning(message);
+        _snackbar.Add(message, Severity.Warning, c => c.SnackbarVariant = Variant.Filled);
     }
 }
