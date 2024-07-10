@@ -8,10 +8,10 @@ using Blazr.App.Presentation.Toasts;
 namespace Blazr.App.Presentation;
 
 public class WeatherForecastEditPresenter
-
 {
     private readonly IDataBroker _dataBroker;
     private readonly IAppToastService _toastService;
+    private readonly INewProvider<DmoWeatherForecast> _newProvider;
 
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
     public EditContext? EditContext { get; private set; }
@@ -20,11 +20,12 @@ public class WeatherForecastEditPresenter
 
     public bool IsInvalid => this.EditContext?.GetValidationMessages().Any() ?? false;
 
-    public WeatherForecastEditPresenter(IDataBroker dataBroker, IAppToastService toastService)
+    public WeatherForecastEditPresenter(IDataBroker dataBroker, IAppToastService toastService, INewProvider<DmoWeatherForecast> newProvider)
     {
         _dataBroker = dataBroker;
         this.RecordEditContext = new(new());
         _toastService = toastService;
+        _newProvider = newProvider;
     }
 
     public async Task LoadAsync(WeatherForecastId id)
@@ -47,7 +48,7 @@ public class WeatherForecastEditPresenter
         }
 
         // The new path.  Get a new record
-        this.RecordEditContext = new(new() { WeatherForecastId = new(Guid.NewGuid()), Date = DateOnly.FromDateTime(DateTime.Now) });
+        this.RecordEditContext = new(_newProvider.GetNew());
         this.EditContext = new(this.RecordEditContext);
         this.IsNew = true;
     }
@@ -68,7 +69,7 @@ public class WeatherForecastEditPresenter
 
         if (result.Successful)
         {
-            var outcome = this.IsNew ? "saved" : "updated";
+            var outcome = this.IsNew ? "added" : "updated";
             _toastService.ShowSuccess($"The Weather Forecast was {outcome}.");
         }
         else

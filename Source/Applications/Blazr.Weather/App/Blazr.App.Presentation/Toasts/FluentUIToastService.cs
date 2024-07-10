@@ -15,6 +15,7 @@ namespace Blazr.App.Presentation.Toasts;
 public class FluentUIToastService : IAppToastService
 {
     private IToastService _toastService;
+    private int _defaultTimeOut = 10;
 
     public FluentUIToastService(IToastService toastService)
     {
