@@ -14,10 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Deployments\Blazr.App.Fluent.Server\Blazr.App.Fluent.Server.csproj" />
-    <ProjectReference Include="..\Deployments\Blazr.App.Fluent.WASM\Blazr.App.Fluent.WASM.Server\Blazr.App.Fluent.WASM.Server.csproj" />
-    <ProjectReference Include="..\Deployments\Blazr.App.MuBlazor.Server\Blazr.App.MudBlazor.Server.csproj" />
-    <ProjectReference Include="..\Deployments\Blazr.App.Vanilla.Server\Blazr.App.Vanilla.Server.csproj" />
+    <ProjectReference Include="..\Deployments\FluentUI\Blazr.App.Fluent.Server\Blazr.App.Fluent.Server.csproj" />
+    <ProjectReference Include="..\Deployments\FluentUI\Blazr.App.Fluent.WASM.Server\Blazr.App.Fluent.WASM.Server.csproj" />
+    <ProjectReference Include="..\Deployments\MudBlazor\Blazr.App.MudBlazor.Server\Blazr.App.MudBlazor.Server.csproj" />
+    <ProjectReference Include="..\Deployments\MudBlazor\Blazr.App.MudBlazor.WASM.Server\Blazr.App.MudBlazor.WASM.Server.csproj" />
+    <ProjectReference Include="..\Deployments\Vanilla\Blazr.App.Vanilla.Server\Blazr.App.Vanilla.Server.csproj" />
     <ProjectReference Include="..\Deployments\Vanilla\Blazr.App.Vanilla.WASM.Server\Blazr.App.Vanilla.WASM.Server.csproj" />
   </ItemGroup>
 

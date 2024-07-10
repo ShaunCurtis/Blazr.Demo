@@ -21,18 +21,18 @@ public class FluentUIToastService : IAppToastService
     public void ShowError(string message, TimeSpan? timeout = null)
     {
         var timespan = timeout ?? TimeSpan.FromSeconds(_defaultTimeOut);
-        _toastService.ShowError(message, timespan.Seconds);
+        _toastService.ShowError(message);
     }
 
     public void ShowSuccess(string message, TimeSpan? timeout = null)
     {
         var timespan = timeout ?? TimeSpan.FromSeconds(_defaultTimeOut);
-        _toastService.ShowSuccess(message, timespan.Seconds);
+        _toastService.ShowSuccess(message);
     }
 
     public void ShowWarning(string message, TimeSpan? timeout = null)
     {
         var timespan = timeout ?? TimeSpan.FromSeconds(_defaultTimeOut);
-        _toastService.ShowWarning(message, timespan.Seconds);
+        _toastService.ShowWarning(message);
     }
 }

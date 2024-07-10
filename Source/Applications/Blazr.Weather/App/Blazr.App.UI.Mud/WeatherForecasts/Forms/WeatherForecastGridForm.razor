@@ -3,11 +3,11 @@
 @inject IMudGridListPresenter<DmoWeatherForecast> Presenter
 @inject IDialogService DialogService
 
-<MudDataGrid T="DmoWeatherForecast" Context="record" ServerData="this.Presenter.GetItemsAsync"  @ref="_grid">
+<MudDataGrid T="DmoWeatherForecast" Context="record" ServerData="this.Presenter.GetItemsAsync" @ref="_grid">
     <ToolBarContent>
         <MudText Typo="Typo.h4">Weather Forecasts</MudText>
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Default" />
+        <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Default" @onclick="this.OnAddAsync" />
     </ToolBarContent>
     <Columns>
         <PropertyColumn Sortable="false" Property="x => x.WeatherForecastId.Value.ToDisplayId()" Title="Id" />
@@ -33,6 +33,12 @@
 @code {
     private MudDataGrid<DmoWeatherForecast>? _grid;
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && _grid is not null)
+            await _grid.SetSortAsync("Date", SortDirection.Ascending, x => x.Date);
+    }
+
     private async Task OnView(WeatherForecastId id)
     {
         // Build out the parameters
@@ -55,6 +61,24 @@
 
         // If not cancelled then relaod the grid as the record will have been mutated
         if (!result.Canceled && _grid is not null)
-           await _grid.ReloadServerData();
+            await _grid.ReloadServerData();
+    }
+
+    //TODO - Got to here
+    private async Task OnAddAsync()
+    {
+        // Create a "New" id
+        var id = WeatherForecastId.NewEntity;
+
+        // Build out the parameters and options locking the backdrop
+        var parameters = new DialogParameters() { { "WeatherForecastId", id } };
+        var options = new DialogOptions { DisableBackdropClick = true, CloseOnEscapeKey = false, FullWidth = true };
+
+        var dialog = await DialogService.ShowAsync<WeatherForecastEditForm>("Add Weather Forecast", parameters, options);
+        var result = await dialog.Result;
+
+        // If not cancelled then relaod the grid as the record will have been mutated
+        if (!result.Canceled && _grid is not null)
+            await _grid.ReloadServerData();
     }
 }

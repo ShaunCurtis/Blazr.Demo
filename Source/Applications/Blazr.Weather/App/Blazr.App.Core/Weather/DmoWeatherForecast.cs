@@ -15,6 +15,9 @@ public sealed record WeatherForecastId : IEntityKey
     {
         this.Value = value;
     }
+
+    public static WeatherForecastId NewEntity
+        => new(Guid.Empty);
 }
 
 public sealed record DmoWeatherForecast: ICommandEntity
