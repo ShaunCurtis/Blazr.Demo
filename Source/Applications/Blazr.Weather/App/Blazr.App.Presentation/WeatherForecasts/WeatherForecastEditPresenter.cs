@@ -24,7 +24,6 @@ public class WeatherForecastEditPresenter
     {
         _dataBroker = dataBroker;
         this.RecordEditContext = new(new());
-        //this.EditContext = new(this.RecordEditContext);
         _toastService = toastService;
     }
 

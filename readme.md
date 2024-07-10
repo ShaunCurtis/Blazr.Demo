@@ -2,19 +2,24 @@
 
 Blazr.Demo contains solutions that implement my latest **Blazr Application Framework**.
 
-The framework is loosely based on various coding ideologies and concepts.
+The framework is loosely based on various coding ideologies.
 
 1. *Clean Design*: code is split into domains.  Each domain is a separate project that enforces rigid clean design dependancies.
 2. A Read Only CQS data pipeline.  All data pipeline objects are read only.  
 
 1. ....
 
-There are two demo solutions:
+The repository contains:
 
-1. Blazr.Weather - demonstrates the framework using the standard template.
-1. Blazr.Invoicing - demonstrates some key complex object concepts using the classic *Invoice* aggregate context.
+1. Two demo solutions:
+   1. Blazr.Weather - demonstrates the framework using the standard *WeatherForecast* template.
+   1. Blazr.Invoicing - demonstrates some key complex object concepts using the classic *Invoice* aggregate context.
+   
+2. A set of Libraries that provide key functionalty.  These are all available as Nuget packages.
 
-Documentation is provided as a set of notes in the Notes directory.
+3. Documentation [in the form of MD files] as a set of notes scattered through the respository in the relevant places.
+
+The two demo solutions implement various UI frontends.  These include Vanilla Bootstrap, MudBlazor and FluentUI in both Server and WASM deployments.
 
 It isn't complete or finished.  But it is useable.
 

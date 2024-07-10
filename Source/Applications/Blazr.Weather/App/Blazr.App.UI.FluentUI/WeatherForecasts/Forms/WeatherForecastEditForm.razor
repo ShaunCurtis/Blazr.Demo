@@ -118,14 +118,12 @@
 
     protected async override Task OnInitializedAsync()
     {
-        Console.WriteLine($"{this.ComponentId.ToString().Substring(0, 8)} - {this.GetType().Name} - OnInitializedAsync ");
         await this.Presenter.LoadAsync(this.Content);
     }
 
     protected override void OnParametersSet()
     {
         _isDirty = this.Presenter.EditContext?.GetEditState() ?? false;
-        Console.WriteLine($"{this.ComponentId.ToString().Substring(0, 8)} - {this.GetType().Name} - OnParametersSet ");
     }
 
     protected override void OnAfterRender(bool firstRender)
@@ -140,7 +138,6 @@
             _store.StoreUpdated += OnEditStateMayHaveChanged;
             _stateStoreAttached = true;
         }
-        Console.WriteLine($"{this.ComponentId.ToString().Substring(0, 8)} - {this.GetType().Name} - OnAfterRender - {firstRender} ");
     }
 
     private async Task OnSaveAsync()
@@ -170,7 +167,6 @@
 
     protected void OnValidationStateMayHaveChanged(object? sender, ValidationStateChangedEventArgs e)
     {
-        //_isDirty = this.Presenter.EditContext.GetEditState();
         this.StateHasChanged();
     }
 

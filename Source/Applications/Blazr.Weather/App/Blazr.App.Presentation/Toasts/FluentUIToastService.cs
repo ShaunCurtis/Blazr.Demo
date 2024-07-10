@@ -8,10 +8,13 @@ using Microsoft.FluentUI.AspNetCore.Components;
 
 namespace Blazr.App.Presentation.Toasts;
 
+/// <summary>
+/// Basic facade into the FluentUI toaster
+/// Uses the default Timeout due to bugs in setting the timeout
+/// </summary>
 public class FluentUIToastService : IAppToastService
 {
     private IToastService _toastService;
-    private int _defaultTimeOut = 20;
 
     public FluentUIToastService(IToastService toastService)
     {
@@ -21,7 +24,7 @@ public class FluentUIToastService : IAppToastService
     public void ShowError(string message, TimeSpan? timeout = null)
     {
         var timespan = timeout ?? TimeSpan.FromSeconds(_defaultTimeOut);
-        _toastService.ShowError(message);
+        _toastService.ShowError(message, timespan.Seconds);
     }
 
     public void ShowSuccess(string message, TimeSpan? timeout = null)

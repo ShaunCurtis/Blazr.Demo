@@ -52,16 +52,21 @@
 
     private void OnTimerExpired(object? state)
     {
+        // Clear down the current timer if it exists
+        if (_timer is not null)
+        {
+            _timer.Dispose();
+            _timer = null;
+        }
+
         // Get the next timeout
         var timeOut = _toastViewService.NextToastTimeOut();
 
-        // And if we have one add a one off timer
+        // If we have one, add a new one time timer
         if (timeOut != TimeSpan.Zero)
             _timer = new Timer(this.OnTimerExpired, null, timeOut, Timeout.InfiniteTimeSpan);
-        else
-            _timer = null;
-
-        // Update the UI at least one Toast has timed out
+ 
+        // Update the UI - a Toast has beed added or removed
         this.InvokeAsync(StateHasChanged);
     }
 
@@ -72,6 +77,6 @@
 
     public void Dispose()
     {
-        _toastViewService.ToastsChanged += this.OnToastsChanged;
+        _toastViewService.ToastsChanged -= this.OnToastsChanged;
     }
 }
