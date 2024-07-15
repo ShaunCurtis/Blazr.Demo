@@ -18,8 +18,11 @@ public sealed record WeatherForecastId : IEntityKey
 
     public static WeatherForecastId NewEntity
         => new(Guid.Empty);
+
+    public string AsString => Value.ToString();
 }
 
+[APIInfo(pathName : "WeatherForecast", clientName: AppDictionary.Common.WeatherHttpClient)]
 public sealed record DmoWeatherForecast: ICommandEntity
 {
     public WeatherForecastId WeatherForecastId { get; init; } = new(Guid.Empty);

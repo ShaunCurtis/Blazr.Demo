@@ -9,6 +9,7 @@ public static class AppDictionary
 {
     public static class Common
     {
+        public const string WeatherHttpClient = "WeatherHttpClient";
     }
 
     public static class WeatherForecast
@@ -20,8 +21,7 @@ public static class AppDictionary
         public const string Summary = "Summary";
         public const string InvoiceItemFilterByInvoiceSpecification = "InvoiceItemFilterByInvoiceSpecification";
 
-        public const string WeatherHttpClient = "WeatherHttpClient";
-        public const string WeatherForecastListAPIUrl = "/API/WeatherForecast/GetList";
+        public const string WeatherForecastListAPIUrl = "/API/WeatherForecast/GetItems";
         public const string WeatherForecastItemAPIUrl = "/API/WeatherForecast/GetItem";
         public const string WeatherForecastCommandAPIUrl = "/API/WeatherForecast/Command";
     }

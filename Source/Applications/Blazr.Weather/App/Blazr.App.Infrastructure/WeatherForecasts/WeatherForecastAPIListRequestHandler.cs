@@ -19,7 +19,7 @@ public class WeatherForecastAPIListRequestHandler : IListRequestHandler<DmoWeath
 
     public async ValueTask<ListQueryResult<DmoWeatherForecast>> ExecuteAsync(ListQueryRequest request)
     {
-        using var http = _httpClientFactory.CreateClient(AppDictionary.WeatherForecast.WeatherHttpClient);
+        using var http = _httpClientFactory.CreateClient(AppDictionary.Common.WeatherHttpClient);
 
         var apiRequest = ListQueryAPIRequest.FromRequest(request);
         var httpResult = await http.PostAsJsonAsync<ListQueryAPIRequest>(AppDictionary.WeatherForecast.WeatherForecastListAPIUrl, apiRequest, request.Cancellation);

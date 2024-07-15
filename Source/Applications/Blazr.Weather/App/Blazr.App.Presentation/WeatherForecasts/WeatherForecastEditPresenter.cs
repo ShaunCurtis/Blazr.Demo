@@ -11,7 +11,7 @@ public class WeatherForecastEditPresenter
 {
     private readonly IDataBroker _dataBroker;
     private readonly IAppToastService _toastService;
-    private readonly INewProvider<DmoWeatherForecast> _newProvider;
+    private readonly INewRecordProvider<DmoWeatherForecast> _newProvider;
 
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
     public EditContext? EditContext { get; private set; }
@@ -20,7 +20,7 @@ public class WeatherForecastEditPresenter
 
     public bool IsInvalid => this.EditContext?.GetValidationMessages().Any() ?? false;
 
-    public WeatherForecastEditPresenter(IDataBroker dataBroker, IAppToastService toastService, INewProvider<DmoWeatherForecast> newProvider)
+    public WeatherForecastEditPresenter(IDataBroker dataBroker, IAppToastService toastService, INewRecordProvider<DmoWeatherForecast> newProvider)
     {
         _dataBroker = dataBroker;
         this.RecordEditContext = new(new());
@@ -47,8 +47,8 @@ public class WeatherForecastEditPresenter
             return;
         }
 
-        // The new path.  Get a new record
-        this.RecordEditContext = new(_newProvider.GetNew());
+        // The new path.  Get a new record using the NewRecordProvider service
+        this.RecordEditContext = new(_newProvider.NewRecord());
         this.EditContext = new(this.RecordEditContext);
         this.IsNew = true;
     }

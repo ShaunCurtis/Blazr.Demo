@@ -10,12 +10,22 @@ public sealed class ListRequestAPIHandler
     : IListRequestHandler
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly IHttpClientFactory _httpClientFactory;
 
-    public ListRequestAPIHandler(IServiceProvider serviceProvider)
+    public ListRequestAPIHandler(IServiceProvider serviceProvider, IHttpClientFactory httpClientFactory)
     {
         _serviceProvider = serviceProvider;
+        _httpClientFactory = httpClientFactory;
     }
 
+    /// <summary>
+    /// Uses a specific handler if one is configured in DI
+    /// If not, uses a generic handler using the APIInfo attributes to configure the HttpClient request  
+    /// Converts the supplied KeyValue to a string and passes it as the value
+    /// </summary>
+    /// <typeparam name="TRecord"></typeparam>
+    /// <param name="request"></param>
+    /// <returns></returns>
     public async ValueTask<ListQueryResult<TRecord>> ExecuteAsync<TRecord>(ListQueryRequest request)
         where TRecord : class
     {
@@ -27,7 +37,28 @@ public sealed class ListRequestAPIHandler
         if (_customHandler is not null)
             return await _customHandler.ExecuteAsync(request);
 
-        // If there's no custom handler throw an exception
-        throw new DataPipelineException("No API Handler defined for this action");
+        return await GetAsync<TRecord>(request);
+    }
+
+    public async ValueTask<ListQueryResult<TRecord>> GetAsync<TRecord>(ListQueryRequest request)
+        where TRecord : class
+    {
+        var attribute = Attribute.GetCustomAttribute(typeof(TRecord), typeof(APIInfo));
+
+        if (attribute is null || !(attribute is APIInfo apiInfo))
+            throw new DataPipelineException($"No API attribute defined for Record {typeof(TRecord).Name}");
+
+        using var http = _httpClientFactory.CreateClient(apiInfo.PathName);
+        
+        var apiRequest = ListQueryAPIRequest.FromRequest(request);
+        
+        var httpResult = await http.PostAsJsonAsync<ListQueryAPIRequest>($"/API/{apiInfo.PathName}/GetItems", apiRequest, request.Cancellation);
+
+        if (!httpResult.IsSuccessStatusCode)
+            return ListQueryResult<TRecord>.Failure($"The server returned a status code of : {httpResult.StatusCode}");
+
+        var listResult = await httpResult.Content.ReadFromJsonAsync<ListQueryResult<TRecord>>();
+
+        return listResult ?? ListQueryResult<TRecord>.Failure($"No data was returned");
     }
 }

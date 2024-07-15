@@ -10,12 +10,21 @@ public sealed class CommandAPIHandler
     : ICommandHandler
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly IHttpClientFactory _httpClientFactory;
 
-    public CommandAPIHandler(IServiceProvider serviceProvider)
+    public CommandAPIHandler(IServiceProvider serviceProvider, IHttpClientFactory httpClientFactory)
     {
         _serviceProvider = serviceProvider;
+        _httpClientFactory = httpClientFactory;
     }
 
+    /// <summary>
+    /// Uses a specific handler if one is configured in DI
+    /// If not, uses a generic handler using the APIInfo attributes to configure the HttpClient request  
+    /// </summary>
+    /// <typeparam name="TRecord"></typeparam>
+    /// <param name="request"></param>
+    /// <returns></returns>
     public async ValueTask<CommandResult> ExecuteAsync<TRecord>(CommandRequest<TRecord> request)
         where TRecord : class
     {
@@ -27,7 +36,35 @@ public sealed class CommandAPIHandler
         if (_customHandler is not null)
             return await _customHandler.ExecuteAsync(request);
 
-        // If there's no custom handler throw an exception
-        throw new DataPipelineException("No API Handler defined for this action");
+        return await CommandAsync<TRecord>(request);
     }
+
+
+    public async ValueTask<CommandResult> CommandAsync<TRecord>(CommandRequest<TRecord> request)
+        where TRecord : class
+    {
+        var attribute = Attribute.GetCustomAttribute(typeof(TRecord), typeof(APIInfo));
+
+        if (attribute is null || !(attribute is APIInfo apiInfo))
+            throw new DataPipelineException($"No API attribute defined for Record {typeof(TRecord).Name}");
+
+        using var http = _httpClientFactory.CreateClient(apiInfo.PathName);
+
+        var apiRequest = CommandAPIRequest<TRecord>.FromRequest(request);
+
+        var httpResult = await http.PostAsJsonAsync<CommandAPIRequest<TRecord>>($"/API/{apiInfo.PathName}/Command", apiRequest, request.Cancellation);
+
+        if (!httpResult.IsSuccessStatusCode)
+            return CommandResult.Failure($"The server returned a status code of : {httpResult.StatusCode}");
+
+        var commandAPIResult = await httpResult.Content.ReadFromJsonAsync<CommandAPIResult<Guid>>();
+
+        CommandResult? commandResult = null;
+
+        if (commandAPIResult is not null)
+            commandResult = commandAPIResult.ToCommandResult();
+
+        return commandResult ?? CommandResult.Failure($"No data was returned");
+    }
+
 }

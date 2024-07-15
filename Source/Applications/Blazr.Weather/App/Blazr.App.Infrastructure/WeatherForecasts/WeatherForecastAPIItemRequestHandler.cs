@@ -19,7 +19,7 @@ public class WeatherForecastAPIItemRequestHandler : IItemRequestHandler<DmoWeath
 
     public async ValueTask<ItemQueryResult<DmoWeatherForecast>> ExecuteAsync(ItemQueryRequest<WeatherForecastId> request)
     {
-        using var http = _httpClientFactory.CreateClient(AppDictionary.WeatherForecast.WeatherHttpClient);
+        using var http = _httpClientFactory.CreateClient(AppDictionary.Common.WeatherHttpClient);
 
         var apiRequest = new ItemQueryAPIRequest<Guid>(request.Key.Value);
         var httpResult = await http.PostAsJsonAsync<ItemQueryAPIRequest<Guid>>(AppDictionary.WeatherForecast.WeatherForecastItemAPIUrl, apiRequest, request.Cancellation);

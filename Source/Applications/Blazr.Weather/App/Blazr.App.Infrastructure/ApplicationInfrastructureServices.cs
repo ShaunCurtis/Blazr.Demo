@@ -56,7 +56,7 @@ public static class ApplicationInfrastructureServices
         services.AddTransient<IRecordFilterHandler<DboWeatherForecast>, WeatherForecastFilterHandler>();
         services.AddTransient<IRecordSortHandler<DboWeatherForecast>, WeatherForecastSortHandler>();
 
-        services.AddScoped<INewProvider<DmoWeatherForecast>, NewWeatherForecastProvider>();
+        services.AddScoped<INewRecordProvider<DmoWeatherForecast>, NewWeatherForecastProvider>();
     }
 
 }

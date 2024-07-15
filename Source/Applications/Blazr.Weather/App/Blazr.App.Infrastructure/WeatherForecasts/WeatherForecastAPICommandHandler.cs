@@ -19,7 +19,7 @@ public class WeatherForecastAPICommandHandler : ICommandHandler<DmoWeatherForeca
 
     public async ValueTask<CommandResult> ExecuteAsync(CommandRequest<DmoWeatherForecast> request)
     {
-        using var http = _httpClientFactory.CreateClient(AppDictionary.WeatherForecast.WeatherHttpClient);
+        using var http = _httpClientFactory.CreateClient(AppDictionary.Common.WeatherHttpClient);
 
         var apiRequest = CommandAPIRequest<DmoWeatherForecast>.FromRequest(request);
 

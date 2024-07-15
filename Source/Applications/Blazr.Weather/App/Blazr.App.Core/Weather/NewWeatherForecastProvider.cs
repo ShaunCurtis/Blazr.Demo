@@ -5,9 +5,9 @@
 /// ============================================================
 namespace Blazr.App.Core;
 
-public class NewWeatherForecastProvider : INewProvider<DmoWeatherForecast>
+public class NewWeatherForecastProvider : INewRecordProvider<DmoWeatherForecast>
 {
-    public DmoWeatherForecast GetNew()
+    public DmoWeatherForecast NewRecord()
     {
         return new DmoWeatherForecast() { WeatherForecastId = new(Guid.NewGuid()), Date = DateOnly.FromDateTime(DateTime.Now) };
     }
