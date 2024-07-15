@@ -21,7 +21,11 @@ The repository contains:
 
 The two demo solutions implement various UI frontends.  These include Vanilla Bootstrap, MudBlazor and FluentUI in both Server and WASM deployments.
 
-It isn't complete or finished.  But it is useable.
+The Weather Solution is complete bar some final testing and clean up.
+
+The Invoice Solution is a major rework in progress!
+
+The documenbtation is very much a work-in-progress.
 
 Take and use what you wish.
 

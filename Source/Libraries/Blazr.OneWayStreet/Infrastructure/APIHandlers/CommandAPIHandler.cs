@@ -40,7 +40,6 @@ public sealed class CommandAPIHandler
         return await CommandAsync<TRecord>(request);
     }
 
-
     public async ValueTask<CommandResult> CommandAsync<TRecord>(CommandRequest<TRecord> request)
         where TRecord : class
     {
@@ -67,5 +66,4 @@ public sealed class CommandAPIHandler
 
         return commandResult ?? CommandResult.Failure($"No data was returned");
     }
-
 }
