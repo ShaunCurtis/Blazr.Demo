@@ -4,13 +4,11 @@ The application data pipeline is a composite design incorporating patterns from 
 
 The primary implementation uses Entity Framework as the **Object Request Mapper**, overlayed by a thin organisational broker layer. Entity Framework implements the basic repository and unit of work patterns.
 
-It's intent is to address persistence and retrieval in a standards based generic context with the flexibility to handle the more compkex aggregate cases with custom implementations.
+It's intent is to address persistence and retrieval in a standards based generic context with custom implementations to handle more complex and  aggregate cases.
 
-All data within the data pipeline is *READONLY*.  Data retrieved from a data source is a **copy** of the data within the data source.  You don't mutate the source data by make changes to the copy.
+All data within the data pipeline is *READONLY*: declared as either `record` or `readonly struct`.  
 
-You change the original by passing a mutated copy of the original into the data store.
-
-Implementing readonly objects is simple in C# 8+ using `record` value based objects with `{ get; init; }` property definitions.
+Data retrieved from a data source is a **copy** of the data within the data source.  You don't mutate the source data by changing the copy: you pass a mutated copy to the data store.
 
 The data pipeline performs two basic activities:
 
@@ -38,26 +36,12 @@ And return:
 
 The pipeline implements it's own request and result objects designed to work in both server and WASM/API environments.
 
-The ListPresenter implmentations manage the in and out mappings between the request and result objects.
+The ListPresenter implementations manage the in and out mappings between the request and result objects specific to the grid implementations and the pipeline objects.  In the solution there are implementations for FluentUI, MudBlazor and QuickGrid. 
 
-The FluentUI application uses a `FluentDataGrid` to display a list of weather forecasts.  It has an associated `FluentPaginator` to control paging operations.  This plugs into the `FluentGridPresenter`. The basic structure looks like this: We provide a delegate function in the List Presenter to map  to the `ItemsProvider` parameter.  Note the clear separation of concerns.  The `FluentDataGrid` manages all the UI interactivity and the `ListPresenter`does all the data pipeline work.
-
-```csharp
-   public async ValueTask<GridItemsProviderResult<TRecord>> GetItemsAsync<TGridItem>(GridItemsProviderRequest<TRecord> request)
-   {
-       // Build a ListRequest from the GridItemsProviderRequest 
-
-       // Make the request into the data pipeline
-       var result = await _dataBroker.ExecuteQueryAsync<TRecord>(listRequest);
-
-       // Return a GridItemsProviderResult from the returned ListQueryResult  
-       return new GridItemsProviderResult<TRecord>() { Items = result.Items.ToList(), TotalItemCount = result.TotalCount };
-   }
-   ```
-The service definition for the WeatherForecast record is:
+The service definition for the WeatherForecast FluentUI record is:
 
 ```csharp
-services.AddTransient<IFluentGridListPresenter<DmoWeatherForecast>, FluentGridPresenter<DmoWeatherForecast>>();
+services.AddTransient<IFluentGridPresenter<DmoWeatherForecast>, FluentGridPresenter<DmoWeatherForecast>>();
 ```
 
 ### Querying for an item
@@ -76,35 +60,16 @@ public interface IViewPresenter<TRecord, TKey>
 }
 ```
 
-The standard implementation.  Definition of the key is needed for the API calls.  We can't pass generic objects through APIs.
-
-```csharp
-public class ViewPresenter<TRecord, TKey> : IViewPresenter<TRecord, TKey>
-    where TRecord : class, new()
-    where TKey : IEntityKey
-{
-    private readonly IDataBroker _dataBroker;
-    public IDataResult LastDataResult { get; private set; } = DataResult.Success();
-    public TRecord Item { get; private set; } = new();
-
-    public ViewPresenter(IDataBroker dataBroker)
-    {
-        _dataBroker = dataBroker;
-    }
-
-    public async Task LoadAsync(TKey id)
-    {
-        var request = ItemQueryRequest<TKey>.Create(id);
-        var result = await _dataBroker.ExecuteQueryAsync<TRecord, TKey>(request);
-        LastDataResult = result;
-        this.Item = result.Item ?? new();
-    }
-}
-```
-
 The service definition for the WeatherForecast record is:
 
 ```csharp
 services.AddTransient<IViewPresenter<DmoWeatherForecast, WeatherForecastId>, ViewPresenter<DmoWeatherForecast, WeatherForecastId>>();
 ```
-1`
+
+### Editing a Record
+
+There is no defined generic presenter.  All presenters are record specific.
+
+```csharp
+services.AddTransient<WeatherForecastEditPresenter>();
+```

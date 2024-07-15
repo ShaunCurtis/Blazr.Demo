@@ -48,7 +48,7 @@ public sealed class ListRequestAPIHandler
         if (attribute is null || !(attribute is APIInfo apiInfo))
             throw new DataPipelineException($"No API attribute defined for Record {typeof(TRecord).Name}");
 
-        using var http = _httpClientFactory.CreateClient(apiInfo.PathName);
+        using var http = _httpClientFactory.CreateClient(apiInfo.ClientName);
         
         var apiRequest = ListQueryAPIRequest.FromRequest(request);
         

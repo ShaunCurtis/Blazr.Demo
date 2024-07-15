@@ -25,17 +25,20 @@ public static class ApplicationInfrastructureServices
         services.AddMappedWeatherForecastServerInfrastructureServices();
     }
 
-    public static void AddAppClientMappedInfrastructureServices(this IServiceCollection services)
+    public static void AddAppClientMappedInfrastructureServices(this IServiceCollection services, string baseHostEnvironmentAddress)
     {
+        services.AddHttpClient();
+        services.AddHttpClient(AppDictionary.Common.WeatherHttpClient, client => { client.BaseAddress = new Uri(baseHostEnvironmentAddress);});
+
         services.AddScoped<IDataBroker, DataBroker>();
 
         services.AddScoped<IListRequestHandler, ListRequestAPIHandler>();
         services.AddScoped<IItemRequestHandler, ItemRequestAPIHandler>();
         services.AddScoped<ICommandHandler, CommandAPIHandler>();
 
-        services.AddScoped<IListRequestHandler<DmoWeatherForecast>, WeatherForecastAPIListRequestHandler>();
-        services.AddScoped<IItemRequestHandler<DmoWeatherForecast, WeatherForecastId>, WeatherForecastAPIItemRequestHandler>();
-        services.AddScoped<ICommandHandler<DmoWeatherForecast>, WeatherForecastAPICommandHandler>();
+        //services.AddScoped<IListRequestHandler<DmoWeatherForecast>, WeatherForecastAPIListRequestHandler>();
+        //services.AddScoped<IItemRequestHandler<DmoWeatherForecast, WeatherForecastId>, WeatherForecastAPIItemRequestHandler>();
+        //services.AddScoped<ICommandHandler<DmoWeatherForecast>, WeatherForecastAPICommandHandler>();
     }
 
     public static void AddTestData(IServiceProvider provider)
