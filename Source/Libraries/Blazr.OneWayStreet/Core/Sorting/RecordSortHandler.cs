@@ -35,6 +35,7 @@ public abstract class RecordSortHandler<TRecord>
         query = AddDefaultSort(query);
         return query;
     }
+
     private IEnumerable<SortDefinition> ApplyPropertyNameMap(IEnumerable<SortDefinition> inDefinitions)
     {
         List<SortDefinition> sortDefinitions = new List<SortDefinition>();

@@ -175,7 +175,7 @@
         var editcontext = this.Presenter.EditContext;
         var model = this.Presenter.RecordEditContext;
         var fi = new FieldIdentifier(this.Presenter.RecordEditContext, "Summary");
-        if (editcontext?.IsModified(fi) == model.IsSummaryClean)
+        if (editcontext?.IsModified(fi) == model.IsSummaryClean())
             editcontext.NotifyFieldChanged(fi);
     }
 

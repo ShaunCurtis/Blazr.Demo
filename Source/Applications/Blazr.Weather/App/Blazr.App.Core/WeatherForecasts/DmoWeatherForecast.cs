@@ -12,14 +12,10 @@ public sealed record WeatherForecastId : IEntityKey
     public object KeyValue => this.Value;
 
     public WeatherForecastId(Guid value)
-    {
-        this.Value = value;
-    }
+        => this.Value = value;
 
     public static WeatherForecastId NewEntity
         => new(Guid.Empty);
-
-    public string AsString => Value.ToString();
 }
 
 [APIInfo(pathName : "WeatherForecast", clientName: AppDictionary.Common.WeatherHttpClient)]

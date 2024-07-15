@@ -19,7 +19,7 @@ public static class AppDictionary
         public const string Date = "Date";
         public const string Temperature = "Temperature";
         public const string Summary = "Summary";
-        public const string InvoiceItemFilterByInvoiceSpecification = "InvoiceItemFilterByInvoiceSpecification";
+        public const string WeatherForecastFilterBySummarySpecification = "WeatherForecastFilterBySummarySpecification";
 
         public const string WeatherForecastListAPIUrl = "/API/WeatherForecast/GetItems";
         public const string WeatherForecastItemAPIUrl = "/API/WeatherForecast/GetItem";

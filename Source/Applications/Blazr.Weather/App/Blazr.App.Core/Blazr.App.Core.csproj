@@ -15,4 +15,8 @@
 	  <ProjectReference Include="..\..\..\..\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Common\" />
+	</ItemGroup>
+
 </Project>

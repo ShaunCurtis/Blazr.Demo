@@ -56,5 +56,4 @@ public record CommandState
             -1 => CommandState.Delete,
             _ => CommandState.None,
         };
-
 }

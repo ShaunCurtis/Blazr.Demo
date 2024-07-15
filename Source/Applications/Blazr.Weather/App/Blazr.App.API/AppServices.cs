@@ -11,7 +11,6 @@ public static class AppAPIServices
     public static void AddAppAPIEndpoints(this WebApplication app)
     {
         AddGenericWeatherForecastAPIEndpoints(app);
-        //AddWeatherForecastAPIEndpoints(app);
     }
 
     public static void AddWeatherForecastAPIEndpoints(this WebApplication app)

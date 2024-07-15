@@ -10,7 +10,7 @@ public class WeatherForecastFilterHandler : RecordFilterHandler<DboWeatherForeca
     public override IPredicateSpecification<DboWeatherForecast>? GetSpecification(FilterDefinition filter)
         => filter.FilterName switch
         {
-            AppDictionary.WeatherForecast.InvoiceItemFilterByInvoiceSpecification => new WeatherForecastFilterBySummarySpecification(filter),
+            AppDictionary.WeatherForecast.WeatherForecastFilterBySummarySpecification => new WeatherForecastFilterBySummarySpecification(filter),
             _ => null
         };
 }

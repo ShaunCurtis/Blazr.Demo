@@ -12,7 +12,7 @@ namespace Blazr.App.Presentation.Toasts;
 public class VanillaUIToastService : IAppToastService, IAppToastViewService
 {
     private readonly List<Toast> _toasts = new();
-    private TimeSpan _defaultTimeOut = TimeSpan.FromSeconds(20);
+    private TimeSpan _defaultTimeOut = TimeSpan.FromSeconds(10);
     
     /// <summary>
     /// Event raised when thw Toast list changes

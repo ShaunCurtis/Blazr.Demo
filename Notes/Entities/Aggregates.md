@@ -1,5 +1,7 @@
 # Aggregate Objects
 
+> This is dead content
+
 Aggregates provide a structured framework for dealing with complex objects.  An invoice is a good example.
 
 A invoice consists of an invoice object and a collection of invoice item objects.  The two are intimately linked: an invoice item does not exist outside the context of an invoice, an invoice is not an invoice without items to invoice.

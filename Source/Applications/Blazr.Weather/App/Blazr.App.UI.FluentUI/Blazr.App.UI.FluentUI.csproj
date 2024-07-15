@@ -33,9 +33,5 @@
 		<ProjectReference Include="..\Blazr.App.Presentation\Blazr.App.Presentation.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="WeatherForecasts\" />
-	</ItemGroup>
-
 
 </Project>

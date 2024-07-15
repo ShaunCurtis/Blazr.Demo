@@ -9,6 +9,11 @@ namespace Blazr.App.Infrastructure;
 
 public static class ApplicationInfrastructureServices
 {
+    /// <summary>
+    /// Adds the server side Mapped Infrastructure services
+    /// and generic handlers
+    /// </summary>
+    /// <param name="services"></param>
     public static void AddAppServerMappedInfrastructureServices(this IServiceCollection services)
     {
         services.AddDbContextFactory<InMemoryTestDbContext>(options
@@ -25,10 +30,15 @@ public static class ApplicationInfrastructureServices
         services.AddMappedWeatherForecastServerInfrastructureServices();
     }
 
+    /// <summary>
+    /// Adds the generic services for the API Data Pipeline infrastructure
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="baseHostEnvironmentAddress"></param>
     public static void AddAppClientMappedInfrastructureServices(this IServiceCollection services, string baseHostEnvironmentAddress)
     {
         services.AddHttpClient();
-        services.AddHttpClient(AppDictionary.Common.WeatherHttpClient, client => { client.BaseAddress = new Uri(baseHostEnvironmentAddress);});
+        services.AddHttpClient(AppDictionary.Common.WeatherHttpClient, client => { client.BaseAddress = new Uri(baseHostEnvironmentAddress); });
 
         services.AddScoped<IDataBroker, DataBroker>();
 
@@ -36,11 +46,27 @@ public static class ApplicationInfrastructureServices
         services.AddScoped<IItemRequestHandler, ItemRequestAPIHandler>();
         services.AddScoped<ICommandHandler, CommandAPIHandler>();
 
+        services.AddAppClientMappedWeatherForecastInfrastructureServices();
+    }
+
+    /// <summary>
+    /// Adds specific WeatherForecast API call implementations
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="baseHostEnvironmentAddress"></param>
+    public static void AddAppClientMappedWeatherForecastInfrastructureServices(this IServiceCollection services)
+    {
+        services.AddScoped<INewRecordProvider<DmoWeatherForecast>, NewWeatherForecastProvider>();
+
         //services.AddScoped<IListRequestHandler<DmoWeatherForecast>, WeatherForecastAPIListRequestHandler>();
         //services.AddScoped<IItemRequestHandler<DmoWeatherForecast, WeatherForecastId>, WeatherForecastAPIItemRequestHandler>();
         //services.AddScoped<ICommandHandler<DmoWeatherForecast>, WeatherForecastAPICommandHandler>();
     }
 
+    /// <summary>
+    ///  Adds the test data to the in-memory DB context
+    /// </summary>
+    /// <param name="provider"></param>
     public static void AddTestData(IServiceProvider provider)
     {
         var factory = provider.GetService<IDbContextFactory<InMemoryTestDbContext>>();
@@ -49,6 +75,10 @@ public static class ApplicationInfrastructureServices
             TestDataProvider.Instance().LoadDbContext<InMemoryTestDbContext>(factory);
     }
 
+    /// <summary>
+    /// Adds the Server side Mapped Handlers
+    /// </summary>
+    /// <param name="services"></param>
     public static void AddMappedWeatherForecastServerInfrastructureServices(this IServiceCollection services)
     {
         services.AddScoped<IDboEntityMap<DboWeatherForecast, DmoWeatherForecast>, DboWeatherForecastMap>();

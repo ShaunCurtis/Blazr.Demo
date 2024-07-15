@@ -7,18 +7,17 @@ namespace Blazr.App.Core;
 
 public sealed class WeatherForecastEditContext
 {
-    private DmoWeatherForecast _baseRecord;
+    public DmoWeatherForecast BaseRecord { get; }
 
     [TrackState] public string? Summary { get; set; }
     [TrackState] public decimal Temperature { get; set; }
     [TrackState] public DateTime? Date { get; set; }
 
-    public WeatherForecastId Id => _baseRecord.WeatherForecastId;
-    public bool IsSummaryClean => Summary is not null ? Summary.Equals(_baseRecord.Summary) : true;
-    public bool IsDirty => _baseRecord != this.AsRecord;
+    public WeatherForecastId Id => this.BaseRecord.WeatherForecastId;
+    public bool IsDirty => this.BaseRecord != this.AsRecord;
 
     public DmoWeatherForecast AsRecord =>
-        _baseRecord with
+        this.BaseRecord with
         {
             Date = DateOnly.FromDateTime(this.Date ?? DateTime.Now),
             Summary = this.Summary,
@@ -27,7 +26,7 @@ public sealed class WeatherForecastEditContext
 
     public WeatherForecastEditContext(DmoWeatherForecast record)
     {
-        _baseRecord = record;
+        this.BaseRecord = record;
         this.Load(record);
     }
 
@@ -39,5 +38,5 @@ public sealed class WeatherForecastEditContext
     }
 
     public void Reset()
-        => this.Load(_baseRecord);
+        => this.Load(this.BaseRecord);
 }

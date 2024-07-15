@@ -3,43 +3,83 @@
 Generically we can define a command like this:
 
 ```csharp
-CommandResult CommandAsync(Command command);
+CommandResult CommandAsync(CommandRequest command);
 ```
 
-A generic command handler needs state tracking: we need the state of a record to know how to deal with it.
+Commands can implement one of three actions: 
 
-```csharp
-public interface IStateEntity 
-{ 
-    public int StateCode { get; }
-}
-```
-
-You can read more about State in the *Entity Objects* section.
-
-The Command only needs to know three states:
-
-1. Update - it will save a submitted record, replacing the existing data store record.  It doesn't care if it's mutated, that's the decision of the core domain code.
+1. Update - overwrite the record in the data store.
 2. Delete - delete the record from the data store.
 3. Add - Add the record to the data store.
  
-Tracking state seems over-complicated for simple objects.  When I want to delete a weather forwcast, I just call delete on Entity Framework.
+These three actions are defined in a record class.  They are not defined in an enum because the action state crosses domain boundaries and API interfaces.
 
-True, but complex objects require tracking.  If a user deletes an item from the shopping basket do you immediately delete the item from the database.  How does the shopping cart know it's been deleted: it needs to keep the total price updated.  What happens if the buyer changes his mind and wants to revert to his saved basket?
+```csharp
+public record CommandState
+{
+    public int Index { get; private init; } = 0;
+    public string Value { get; private init; } = "None";
 
-## The CommandEntity Interface
+    public CommandState() { }
 
-`ICommandEntity` is an empty interface.  It's purpose is to label those entities that allow independant Create/Update/Delete operations.  Some entities will be part of aggregates: they can only be Created/Updated/Deleted as part of the aggregate Create/Update/Delete operations. operations.   
+    public CommandState(int index, string value)
+    {
+        Index = index;
+        Value = value;
+    }
+
+    public static CommandState None = new CommandState(0, "None");
+    public static CommandState Add = new CommandState(1, "Add");
+    public static CommandState Update = new CommandState(2, "Update");
+    public static CommandState Delete = new CommandState(-1, "Delete");
+
+    public static CommandState GetState(int index)
+        => (index) switch
+        {
+            1 => CommandState.Add,
+            2 => CommandState.Update,
+            -1 => CommandState.Delete,
+            _ => CommandState.None,
+        };
+}
+```
 
 ## The Request
 
 we can define a generic command request object:
 
 ```
-public record struct CommandRequest<TRecord>(TRecord Item, CancellationToken Cancellation = new());
+public record struct CommandRequest<TRecord>(TRecord Item, CommandState State, CancellationToken Cancellation = new());
 ```
 
 It's an immutable struct because it doesn't need to be anything more.  Almost all data pipelines are now async and implement cancellation, so our request defines a `CancellationToken` to allow cancellation of aborted commands.
+
+The API version removes the cancellation token and needs a parsmeterless constructor:
+
+```csharp
+public record struct CommandAPIRequest<TRecord>
+{
+    public TRecord? Item { get; init; }
+    public int CommandIndex { get; init; }
+
+    public CommandAPIRequest() { }
+
+    public static CommandAPIRequest<TRecord> FromRequest(CommandRequest<TRecord> command)
+        => new()
+        {
+            Item = command.Item,
+            CommandIndex = command.State.Index
+        };
+
+    public CommandRequest<TRecord> ToRequest(CancellationToken? cancellation = null)
+        => new()
+        {
+            Item = this.Item ?? default!,
+            State = CommandState.GetState(this.CommandIndex),
+            Cancellation = cancellation ?? CancellationToken.None
+        };
+}
+```
 
 ## The Result
 
@@ -61,35 +101,65 @@ And then the result using generics.
 public sealed record CommandResult : IDataResult
 { 
     public bool Successful { get; init; }
-    public string Message { get; init; } = string.Empty;
+    public string? Message { get; init; }
+    public object? KeyValue { get; init; }
 
-    private CommandResult() { }
+    public CommandResult() { }
 
     public static CommandResult Success(string? message = null)
-        => new CommandResult { Successful = true, Message= message ?? string.Empty };
+        => new CommandResult { Successful = true, Message= message };
+
+    public static CommandResult SuccessWithKey(object keyValue, string? message = null)
+        => new CommandResult { Successful = true, KeyValue = keyValue, Message = message };
 
     public static CommandResult Failure(string message)
         => new CommandResult { Message = message};
 }
 ```
 
-There are two static constructors to control how a result is constructed: it either succeeded or failed.
+Again we need an API version as we can't transmit generic objects correctly.
+
+```csharp
+public sealed record CommandAPIResult<TKey>
+{
+    public bool Successful { get; init; }
+    public string? Message { get; init; }
+    public TKey KeyValue { get; init; } = default!;
+
+    public CommandAPIResult() { }
+
+    public CommandResult ToCommandResult()
+        => new()
+        {
+            Successful = Successful,
+            Message = Message,
+            KeyValue = KeyValue
+        };
+}
+```
 
 ## The Handler
 
 The Core domain defines a *contract* interface that it uses to get items.  It doesn't care where they come from.  You may be implementing Blazor Server and calling directly into the database, or Blazor WASM and making API calls.
 
-This is `ICommandHandler`.  There are two implementations: one for generic handlers and one for individual object based handlers.  They both define a single `ExecuteAsync` method.
+This is `ICommandHandler`.  There are two implementations: a generic handler and a specific object based handler.  They both define a single `ExecuteAsync` method.
 
 ```csharp
 public interface ICommandHandler
 {
     public ValueTask<CommandResult> ExecuteAsync<TRecord>(CommandRequest<TRecord> request)
-        where TRecord : class, IStateEntity, new();
+        where TRecord : class;
 }
 
 public interface ICommandHandler<TRecord>
-        where TRecord : class, IStateEntity, new()
+        where TRecord : class
+{
+    public ValueTask<CommandResult> ExecuteAsync(CommandRequest<TRecord> request);
+}
+
+public interface ICommandHandler<TRecord, TDbo>
+        where TRecord : class
+        where TDbo : class
 {
     public ValueTask<CommandResult> ExecuteAsync(CommandRequest<TRecord> request);
 }
@@ -108,73 +178,13 @@ public sealed class CommandServerHandler<TDbContext>
     private readonly IDbContextFactory<TDbContext> _factory;
 
     public CommandServerHandler(IServiceProvider serviceProvider, IDbContextFactory<TDbContext> factory)
-    { 
+    {
         _serviceProvider = serviceProvider;
         _factory = factory;
     }
 
     public async ValueTask<CommandResult> ExecuteAsync<TRecord>(CommandRequest<TRecord> request)
-        where TRecord : class, IStateEntity, new()
-    {
-        //...
-    }
-
-    public async ValueTask<CommandResult> ExecuteCommandAsync<TRecord>(CommandRequest<TRecord> request)
-    where TRecord : class, IStateEntity, new()
-    {
-        //...
-    }
-}
-```
-
-The default server method looks like this.  It gets a *unit of work* `DbContext` from the factory, calls the relevant Update/Add/Delete method on the context and returns a `CommandResult` based on the result.
-
-```
-    private async ValueTask<CommandResult> ExecuteCommandAsync<TRecord>(CommandRequest<TRecord> request)
-    where TRecord : class, IStateEntity, new()
-    {
-        using var dbContext = _factory.CreateDbContext();
-
-        var record = new TRecord();
-
-        if ((record is not ICommandEntity))
-            return CommandResult.Failure($"{record.GetType().Name} Does not implement ICommandEntity and therefore you can't Update/Add/Delete it directly.");
-
-        var stateRecord = request.Item;
-
-        if (StateCodes.IsUpdate(stateRecord.StateCode))
-        {
-            dbContext.Update<TRecord>(request.Item);
-            return await dbContext.SaveChangesAsync(request.Cancellation) == 1
-                ? CommandResult.Success("Record Updated")
-                : CommandResult.Failure("Error saving Record");
-        }
-
-        if (stateRecord.StateCode == StateCodes.New)
-        {
-            dbContext.Add<TRecord>(request.Item);
-            return await dbContext.SaveChangesAsync(request.Cancellation) == 1
-                ? CommandResult.Success("Record Added")
-                : CommandResult.Failure("Error adding Record");
-        }
-
-        if (stateRecord.StateCode == StateCodes.Delete)
-        {
-            dbContext.Remove<TRecord>(request.Item);
-            return await dbContext.SaveChangesAsync(request.Cancellation) == 1
-                ? CommandResult.Success("Record Deleted")
-                : CommandResult.Failure("Error deleting Record");
-        }
-
-        return CommandResult.Failure("Nothing executed.  Unrecognised StateCode.");
-    }
-```
-
-The final method implements `ICommandHandler.ExecuteAsync`.  It checks to see if a specific `TRecord` implemented `IItemRequestHandler` is registered in the service container, and if so executes it instead of the default handler.
-
-```csharp
-    public async ValueTask<CommandResult> ExecuteAsync<TRecord>(CommandRequest<TRecord> request)
-        where TRecord : class, IStateEntity, new()
+        where TRecord : class
     {
         // Try and get a registered custom handler
         var _customHandler = _serviceProvider.GetService<ICommandHandler<TRecord>>();
@@ -186,6 +196,124 @@ The final method implements `ICommandHandler.ExecuteAsync`.  It checks to see if
         // If not run the base handler
         return await this.ExecuteCommandAsync<TRecord>(request);
     }
+
+    private async ValueTask<CommandResult> ExecuteCommandAsync<TRecord>(CommandRequest<TRecord> request)
+    where TRecord : class
+    {
+        //...
+    }
+}
+```
+
+`ExecuteAsync` checks for a specific record registered handler.  If one exists it uses that, if not it calls the internal `ExecuteCommandAsync`.
+
+The default server method looks like this.  It gets a *unit of work* `DbContext` from the factory, calls the relevant Update/Add/Delete method on the context and returns a `CommandResult` based on the result.
+
+```
+    private async ValueTask<CommandResult> ExecuteCommandAsync<TRecord>(CommandRequest<TRecord> request)
+    where TRecord : class
+    {
+        using var dbContext = _factory.CreateDbContext();
+
+        if ((request.Item is not ICommandEntity))
+            return CommandResult.Failure($"{request.Item.GetType().Name} Does not implement ICommandEntity and therefore you can't Update/Add/Delete it directly.");
+
+        var stateRecord = request.Item;
+
+        // First check if it's new.
+        if (request.State == CommandState.Add)
+        {
+            dbContext.Add<TRecord>(request.Item);
+            return await dbContext.SaveChangesAsync(request.Cancellation) == 1
+                ? CommandResult.Success("Record Added")
+                : CommandResult.Failure("Error adding Record");
+        }
+
+        // Check if we should delete it
+        if (request.State == CommandState.Delete)
+        {
+            dbContext.Remove<TRecord>(request.Item);
+            return await dbContext.SaveChangesAsync(request.Cancellation) == 1
+                ? CommandResult.Success("Record Deleted")
+                : CommandResult.Failure("Error deleting Record");
+        }
+
+        // Finally it changed
+        if (request.State == CommandState.Update)
+        {
+            dbContext.Update<TRecord>(request.Item);
+            return await dbContext.SaveChangesAsync(request.Cancellation) == 1
+                ? CommandResult.Success("Record Updated")
+                : CommandResult.Failure("Error saving Record");
+        }
+
+        return CommandResult.Failure("Nothing executed.  Unrecognised State.");
+    }
+```
+### API Handler
+
+```csharp
+public sealed class CommandAPIHandler
+    : ICommandHandler
+{
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IHttpClientFactory _httpClientFactory;
+
+    public CommandAPIHandler(IServiceProvider serviceProvider, IHttpClientFactory httpClientFactory)
+    {
+        _serviceProvider = serviceProvider;
+        _httpClientFactory = httpClientFactory;
+    }
+
+    /// <summary>
+    /// Uses a specific handler if one is configured in DI
+    /// If not, uses a generic handler using the APIInfo attributes to configure the HttpClient request  
+    /// </summary>
+    /// <typeparam name="TRecord"></typeparam>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async ValueTask<CommandResult> ExecuteAsync<TRecord>(CommandRequest<TRecord> request)
+        where TRecord : class
+    {
+        ICommandHandler<TRecord>? _customHandler = null;
+
+        _customHandler = _serviceProvider.GetService<ICommandHandler<TRecord>>();
+
+        // Get the custom handler
+        if (_customHandler is not null)
+            return await _customHandler.ExecuteAsync(request);
+
+        return await CommandAsync<TRecord>(request);
+    }
+
+
+    public async ValueTask<CommandResult> CommandAsync<TRecord>(CommandRequest<TRecord> request)
+        where TRecord : class
+    {
+        var attribute = Attribute.GetCustomAttribute(typeof(TRecord), typeof(APIInfo));
+
+        if (attribute is null || !(attribute is APIInfo apiInfo))
+            throw new DataPipelineException($"No API attribute defined for Record {typeof(TRecord).Name}");
+
+        using var http = _httpClientFactory.CreateClient(apiInfo.ClientName);
+
+        var apiRequest = CommandAPIRequest<TRecord>.FromRequest(request);
+
+        var httpResult = await http.PostAsJsonAsync<CommandAPIRequest<TRecord>>($"/API/{apiInfo.PathName}/Command", apiRequest, request.Cancellation);
+
+        if (!httpResult.IsSuccessStatusCode)
+            return CommandResult.Failure($"The server returned a status code of : {httpResult.StatusCode}");
+
+        var commandAPIResult = await httpResult.Content.ReadFromJsonAsync<CommandAPIResult<Guid>>();
+
+        CommandResult? commandResult = null;
+
+        if (commandAPIResult is not null)
+            commandResult = commandAPIResult.ToCommandResult();
+
+        return commandResult ?? CommandResult.Failure($"No data was returned");
+    }
+}
 ```
 
 

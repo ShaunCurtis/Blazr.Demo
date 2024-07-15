@@ -69,6 +69,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.MudBlazor.WASM.Cl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.MudBlazor.WASM.Server", "Deployments\MudBlazor\Blazr.App.MudBlazor.WASM.Server\Blazr.App.MudBlazor.WASM.Server.csproj", "{F04658F4-FC0C-424C-95B8-49A875F6206C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E46C8B7C-0BEE-40BF-A6EE-68DC0ADFAA76}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Test", "..\..\..\Tests\Blazr.Test\Blazr.Test.csproj", "{95557E16-085B-4666-805A-F175CC2B6BB3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -167,6 +171,10 @@ Global
 		{F04658F4-FC0C-424C-95B8-49A875F6206C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F04658F4-FC0C-424C-95B8-49A875F6206C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F04658F4-FC0C-424C-95B8-49A875F6206C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95557E16-085B-4666-805A-F175CC2B6BB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95557E16-085B-4666-805A-F175CC2B6BB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95557E16-085B-4666-805A-F175CC2B6BB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95557E16-085B-4666-805A-F175CC2B6BB3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -202,6 +210,7 @@ Global
 		{28925034-7FF5-4F0C-A42B-CA968FEAC56A} = {E556039F-9D3E-4A8C-8117-B20CD6452578}
 		{42776228-998C-46AE-8A92-006E8457825A} = {75F6EC35-E7F2-4ACB-92B7-4BEEC096632D}
 		{F04658F4-FC0C-424C-95B8-49A875F6206C} = {75F6EC35-E7F2-4ACB-92B7-4BEEC096632D}
+		{95557E16-085B-4666-805A-F175CC2B6BB3} = {E46C8B7C-0BEE-40BF-A6EE-68DC0ADFAA76}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4BFC383C-CBF4-49EE-BBD6-4E95F57CF086}
