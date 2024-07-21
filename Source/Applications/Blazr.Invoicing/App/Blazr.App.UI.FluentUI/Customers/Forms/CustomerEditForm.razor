@@ -1,7 +1,8 @@
-﻿@namespace Blazr.App.FluentUI
-@implements IDialogContentComponent<InvoiceItemEditData>
-@inject IToastService ToastService
+﻿@namespace Blazr.App.UI.FluentUI
+@implements IDialogContentComponent<CustomerId>
 @implements IDisposable
+@inject CustomerEditPresenter Presenter
+@inject IToastService ToastService
 
 <!-- Header -->
 <FluentDialogHeader ShowDismiss="_isClean">
@@ -33,28 +34,21 @@
 
     @if (this.Presenter.EditContext is not null)
     {
-         <EditForm EditContext="Presenter.EditContext">
+        <EditForm EditContext="Presenter.EditContext">
             <BlazrEditStateTracker LockNavigation="true" />
-            <Blazr.Components.BlazrValidator TRecord="DmoInvoiceItemEditContext" TValidator="DmoInvoiceItemEditContextValidator" />
+            <Blazr.Components.BlazrValidator TRecord="CustomerEditContext" TValidator="DmoCustomerEditContextValidator" />
             <FluentGridItem sm="12">
                 <FluentTextField Style="width: 100%;"
-                                 @bind-Value="this.Presenter.RecordEditContext.Description"
-                                 Placeholder="Enter the line description"
+                                 @bind-Value="@this.Presenter.RecordEditContext.CustomerName"
+                                 Placeholder="Enter the Customer Name"
                                  Immediate
-                                 Label="Description" />
-            </FluentGridItem>
-            <FluentGridItem sm="12">
-                <FluentNumberField Style="width: 100%;"
-                                 @bind-Value="this.Presenter.RecordEditContext.Amount"
-                                 Placeholder="Enter the line description"
-                                 Immediate
-                                 Label="Amount" />
+                                 Label="Customer Name" />
             </FluentGridItem>
             <div style="color: var(--error);">
                 <FluentValidationSummary />
             </div>
         </EditForm>
-}
+    }
 
 </FluentDialogBody>
 
@@ -75,11 +69,10 @@
 
 </FluentDialogFooter>
 
-@code {
+@code
+{
     [CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
-    [Parameter] public InvoiceItemEditData Content { get; set; } = default!;
-
-    private InvoiceItemEditPresenter Presenter = default!;
+    [Parameter] public CustomerId Content { get; set; } = default!;
 
     private bool _isDirty;
     private bool _isClean => !_isDirty;
@@ -88,10 +81,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-        ArgumentNullException.ThrowIfNull(this.Content);
-
-        this.Presenter = new(this.Content.composite, this.ToastService);
-        await this.Presenter.LoadAsync(this.Content.invoiceItemId);
+        await this.Presenter.LoadAsync(this.Content);
     }
 
     protected override void OnParametersSet()
@@ -127,19 +117,20 @@
             await Dialog.CloseAsync(Content);
     }
 
+    private async Task OnExitAsync()
+    {
+        await Dialog.CancelAsync();
+    }
+
     protected void OnEditStateMayHaveChanged(object? sender, EventArgs e)
     {
         _isDirty = this.Presenter.EditContext.GetEditState();
         this.StateHasChanged();
     }
 
-    private async Task OnExitAsync()
-    {
-        await Dialog.CancelAsync();
-    }
-
     protected void OnValidationStateMayHaveChanged(object? sender, ValidationStateChangedEventArgs e)
     {
+        //_isDirty = this.Presenter.EditContext.GetEditState();
         this.StateHasChanged();
     }
 

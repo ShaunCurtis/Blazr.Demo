@@ -38,7 +38,7 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
-    .AddAdditionalAssemblies([typeof(Blazr.App.FluentUI.CustomerListForm).Assembly]);
+    .AddAdditionalAssemblies([typeof(Blazr.App.UI.FluentUI.CustomerListForm).Assembly]);
 
 app.Run();
 

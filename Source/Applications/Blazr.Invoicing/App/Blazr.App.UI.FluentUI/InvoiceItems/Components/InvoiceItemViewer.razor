@@ -1,4 +1,4 @@
-﻿@namespace Blazr.App.FluentUI
+﻿@namespace Blazr.App.UI.FluentUI
 
 <FluentGrid Style="padding:1em;" Spacing="1" AdaptiveRendering="true">
     <FluentGridItem sm="12" md="6">
@@ -9,26 +9,20 @@
     </FluentGridItem>
     <FluentGridItem sm="12" md="6">
         <FluentTextField Style="width: 100%;"
-                         Value="@this.Item.CustomerName"
+                         Value="@this.Item.Description"
                          Label="Customer Name"
                          ReadOnly />
     </FluentGridItem>
     <FluentGridItem sm="12" md="6">
         <FluentTextField Style="width: 100%;"
-                         Value="@this.Item.Date.ToString()"
-                         Label="Invoice Date"
-                         ReadOnly />
-    </FluentGridItem>
-    <FluentGridItem sm="12" md="6">
-        <FluentTextField Style="width: 100%;"
-                         Value="@this.Item.TotalAmount.ToString()"
+                         Value="@this.Item.Amount.ToString()"
                          Label="Invoice Amount"
                          ReadOnly />
     </FluentGridItem>
 </FluentGrid>
 
 @code {
-    [Parameter, EditorRequired] public DmoInvoice Item { get; set; } = default!;
+    [Parameter, EditorRequired] public DmoInvoiceItem Item { get; set; } = default!;
 
     protected override void OnInitialized()
     {

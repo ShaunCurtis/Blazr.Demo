@@ -1,8 +1,7 @@
-﻿@namespace Blazr.App.FluentUI
-@implements IDialogContentComponent<CustomerId>
-@implements IDisposable
-@inject CustomerEditPresenter Presenter
+﻿@namespace Blazr.App.UI.FluentUI
+@implements IDialogContentComponent<InvoiceComposite>
 @inject IToastService ToastService
+@inject IGuidLookUpPresenter<CustomerLookUpItem> CustomerLookupPresenter
 
 <!-- Header -->
 <FluentDialogHeader ShowDismiss="_isClean">
@@ -34,19 +33,30 @@
 
     @if (this.Presenter.EditContext is not null)
     {
-        <EditForm EditContext="Presenter.EditContext">
+        <EditForm EditContext="this.Presenter.EditContext">
+
             <BlazrEditStateTracker LockNavigation="true" />
-            <Blazr.Components.BlazrValidator TRecord="CustomerEditContext" TValidator="DmoCustomerEditContextValidator" />
+
+             <Blazr.Components.BlazrValidator TRecord="DmoInvoiceEditContext" TValidator="DmoInvoiceEditContextValidator" />
+
             <FluentGridItem sm="12">
-                <FluentTextField Style="width: 100%;"
-                                 @bind-Value="@this.Presenter.RecordEditContext.CustomerName"
-                                 Placeholder="Enter the Customer Name"
-                                 Immediate
-                                 Label="Customer Name" />
+
+                <FluentDatePicker @bind-Value="this.Presenter.RecordEditContext.Date" 
+                Placeholder="Enter a date"
+                Label="Description" />
+
             </FluentGridItem>
+
+            <FluentSelect 
+                Items="this.CustomerLookupPresenter.Items" 
+                OptionText="i => i.Name" 
+                @bind-SelectedOption="this.Presenter.RecordEditContext.Customer"
+                          @bind-SelectedOption:after="this.OnAfterCustomerChanged" />
+
             <div style="color: var(--error);">
                 <FluentValidationSummary />
             </div>
+
         </EditForm>
     }
 
@@ -69,19 +79,27 @@
 
 </FluentDialogFooter>
 
-@code
-{
+@code {
     [CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
-    [Parameter] public CustomerId Content { get; set; } = default!;
+    [Parameter] public InvoiceComposite Content { get; set; } = default!;
+
+    private InvoiceEditPresenter Presenter = default!;
 
     private bool _isDirty;
     private bool _isClean => !_isDirty;
     private bool _stateStoreAttached;
     private BlazrEditStateStore? _store;
 
+    protected override void OnInitialized()
+    {
+        ArgumentNullException.ThrowIfNull(this.Content);
+
+        this.Presenter = new(this.Content, this.ToastService);
+    }
+
     protected async override Task OnInitializedAsync()
     {
-        await this.Presenter.LoadAsync(this.Content);
+        await this.CustomerLookupPresenter.LoadAsync();
     }
 
     protected override void OnParametersSet()
@@ -103,6 +121,15 @@
         }
     }
 
+    private void OnAfterCustomerChanged()
+    {
+        var editcontext = this.Presenter.EditContext;
+        var model = this.Presenter.RecordEditContext;
+        var fi = new FieldIdentifier(this.Presenter.RecordEditContext, "Customer" );
+        if (editcontext.IsModified(fi) == model.IsCustomerClean)
+            editcontext.NotifyFieldChanged(fi);
+    }
+
     private async Task OnSaveAsync()
     {
         if (!this.Presenter.EditContext.Validate())
@@ -117,20 +144,19 @@
             await Dialog.CloseAsync(Content);
     }
 
-    private async Task OnExitAsync()
-    {
-        await Dialog.CancelAsync();
-    }
-
     protected void OnEditStateMayHaveChanged(object? sender, EventArgs e)
     {
         _isDirty = this.Presenter.EditContext.GetEditState();
         this.StateHasChanged();
     }
 
+    private async Task OnExitAsync()
+    {
+        await Dialog.CancelAsync();
+    }
+
     protected void OnValidationStateMayHaveChanged(object? sender, ValidationStateChangedEventArgs e)
     {
-        //_isDirty = this.Presenter.EditContext.GetEditState();
         this.StateHasChanged();
     }
 
