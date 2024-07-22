@@ -30,8 +30,8 @@ public class InvoiceCompositePresenter
 
         if (id.Value != Guid.Empty)
         {
-            var request = ItemQueryRequest.Create(id.Value);
-            var result = await _dataBroker.ExecuteQueryAsync<InvoiceComposite>(request);
+            var request = ItemQueryRequest<InvoiceId>.Create(id);
+            var result = await _dataBroker.ExecuteQueryAsync<InvoiceComposite, InvoiceId>(request);
             LastDataResult = result;
             if (this.LastDataResult.Successful)
             {

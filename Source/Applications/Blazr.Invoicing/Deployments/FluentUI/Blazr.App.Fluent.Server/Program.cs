@@ -6,6 +6,8 @@ using Microsoft.FluentUI.AspNetCore.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -15,6 +17,8 @@ builder.Services.AddAppServerMappedInfrastructureServices();
 builder.Services.AddAppServerPresentationServices();
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 
 // get the DbContext factory and add the test data

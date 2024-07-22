@@ -14,7 +14,7 @@ public static class ApplicationInfrastructureServices
         services.AddDbContextFactory<InMemoryTestDbContext>(options
             => options.UseInMemoryDatabase($"TestDatabase-{Guid.NewGuid().ToString()}"));
 
-        services.AddScoped<IDataBroker, ServerDataBroker>();
+        services.AddScoped<IDataBroker, DataBroker>();
 
         // Add the standard handlers
         services.AddScoped<IListRequestHandler, ListRequestServerHandler<InMemoryTestDbContext>>();
@@ -38,7 +38,7 @@ public static class ApplicationInfrastructureServices
     {
         services.AddScoped<IDboEntityMap<DboCustomer, DmoCustomer>, DboCustomerMap>();
         services.AddScoped<IListRequestHandler<DmoCustomer>, MappedListRequestServerHandler<InMemoryTestDbContext, DmoCustomer, DboCustomer>>();
-        services.AddScoped<IItemRequestHandler<DmoCustomer>, MappedItemRequestServerHandler<InMemoryTestDbContext, DmoCustomer, DboCustomer>>();
+        services.AddScoped<IItemRequestHandler<DmoCustomer, CustomerId>, MappedItemRequestServerHandler<InMemoryTestDbContext, DmoCustomer, DboCustomer, CustomerId>>();
         services.AddScoped<ICommandHandler<DmoCustomer>, MappedCommandServerHandler<InMemoryTestDbContext, DmoCustomer, DboCustomer>>();
 
         services.AddTransient<IRecordSortHandler<DboCustomer>, CustomerSortHandler>();
@@ -54,7 +54,7 @@ public static class ApplicationInfrastructureServices
         services.AddScoped<IItemRequestHandler<DmoInvoice>, InvoiceRequestServerHandler<InMemoryTestDbContext>>();
 
         services.AddScoped<IListRequestHandler<DmoInvoiceItem>, MappedListRequestServerHandler<InMemoryTestDbContext, DmoInvoiceItem, DboInvoiceItem>>();
-        services.AddScoped<IItemRequestHandler<DmoInvoiceItem>, MappedItemRequestServerHandler<InMemoryTestDbContext, DmoInvoiceItem, DboInvoiceItem>>();
+        services.AddScoped<IItemRequestHandler<DmoInvoiceItem, InvoiceItemId>, MappedItemRequestServerHandler<InMemoryTestDbContext, DmoInvoiceItem, DboInvoiceItem, InvoiceItemId>>();
 
         services.AddScoped<ICommandHandler<InvoiceComposite>, InvoiceCompositeCommandHandler<InMemoryTestDbContext>>();
         services.AddScoped<IItemRequestHandler<InvoiceComposite>, InvoiceCompositeItemRequestHandler<InMemoryTestDbContext>>();

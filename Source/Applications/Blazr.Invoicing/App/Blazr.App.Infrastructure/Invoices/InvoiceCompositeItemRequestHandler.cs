@@ -21,7 +21,7 @@ public sealed class InvoiceCompositeItemRequestHandler<TDbContext>
         using var dbContext = _factory.CreateDbContext();
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-        if (request.KeyValue is not Guid invoiceid)
+        if (request.Key is not Guid invoiceid)
             return ItemQueryResult<InvoiceComposite>.Failure("KeyValue in the Request is not a Guid");
 
         var dboRoot = await dbContext.Set<DvoInvoice>()

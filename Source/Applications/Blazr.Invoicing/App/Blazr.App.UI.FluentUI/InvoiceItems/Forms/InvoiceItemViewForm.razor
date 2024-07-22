@@ -2,7 +2,7 @@
 @implements IDialogContentComponent<InvoiceItemId>
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Components.Forms
-@inject IViewPresenter<DmoInvoiceItem> Presenter
+@inject IViewPresenter<DmoInvoiceItem, InvoiceItemId> Presenter
 @inject IToastService ToastService
 
 @if (_isDialog)

@@ -31,6 +31,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FluentUI", "FluentUI", "{BA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.App.Fluent.Server", "Deployments\FluentUI\Blazr.App.Fluent.Server\Blazr.App.Fluent.Server.csproj", "{A1CB0EE8-17F9-44C9-979C-9E60F64810E2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.Invoicing.AppHost", "Aspire\Blazr.Invoicing.AppHost\Blazr.Invoicing.AppHost.csproj", "{4F5F87F8-0BB8-41F0-A25B-59DAEBB3CCE0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Invoicing.ServiceDefaults", "Aspire\Blazr.Invoicing.ServiceDefaults\Blazr.Invoicing.ServiceDefaults.csproj", "{09BC7081-AD68-4DC3-A376-1146E64FE24A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aspire", "Aspire", "{5665E66A-373C-41FF-9848-F0749EC84258}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{84D04988-28FC-4ECF-A012-79D08F5AC84F}"
+	ProjectSection(SolutionItems) = preProject
+		error.txt = error.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +84,14 @@ Global
 		{A1CB0EE8-17F9-44C9-979C-9E60F64810E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1CB0EE8-17F9-44C9-979C-9E60F64810E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1CB0EE8-17F9-44C9-979C-9E60F64810E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F5F87F8-0BB8-41F0-A25B-59DAEBB3CCE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F5F87F8-0BB8-41F0-A25B-59DAEBB3CCE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F5F87F8-0BB8-41F0-A25B-59DAEBB3CCE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F5F87F8-0BB8-41F0-A25B-59DAEBB3CCE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09BC7081-AD68-4DC3-A376-1146E64FE24A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09BC7081-AD68-4DC3-A376-1146E64FE24A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09BC7081-AD68-4DC3-A376-1146E64FE24A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09BC7081-AD68-4DC3-A376-1146E64FE24A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,6 +110,8 @@ Global
 		{C947C6B1-9401-494C-9AD3-173E49BBFADC} = {DCDEF26F-25C9-4AD9-84C2-DAF67B6293F3}
 		{BAF256BE-FFC5-481B-B9BC-3E73F9332A74} = {D091B628-82EE-44CA-8A64-F9BFBB5DDE01}
 		{A1CB0EE8-17F9-44C9-979C-9E60F64810E2} = {BAF256BE-FFC5-481B-B9BC-3E73F9332A74}
+		{4F5F87F8-0BB8-41F0-A25B-59DAEBB3CCE0} = {5665E66A-373C-41FF-9848-F0749EC84258}
+		{09BC7081-AD68-4DC3-A376-1146E64FE24A} = {5665E66A-373C-41FF-9848-F0749EC84258}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7E4B6467-F90A-4290-A13E-5954C4E5D08C}

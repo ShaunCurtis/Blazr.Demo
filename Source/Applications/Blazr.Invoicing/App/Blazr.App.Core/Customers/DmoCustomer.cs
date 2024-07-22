@@ -5,7 +5,18 @@
 /// ============================================================
 namespace Blazr.App.Core;
 
-public record CustomerId(Guid Value) : IGuidKey;
+public sealed record CustomerId : IEntityKey
+{
+    public Guid Value { get; init; }
+
+    public object KeyValue => this.Value;
+
+    public CustomerId(Guid value)
+        => this.Value = value;
+
+    public static CustomerId NewEntity
+        => new(Guid.Empty);
+}
 
 public record DmoCustomer : ICommandEntity, IFluxRecord<CustomerId>
 {

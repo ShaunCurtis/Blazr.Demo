@@ -7,7 +7,7 @@ namespace Blazr.App.Presentation;
 
 public class CustomerEditPresenter
 {
-    private readonly IItemRequestHandler<DmoCustomer> _itemRequestHandler;
+    private readonly IItemRequestHandler<DmoCustomer, CustomerId> _itemRequestHandler;
     private readonly ICommandHandler<DmoCustomer> _commandHandler;
     private readonly IToastService _toastService;
 
@@ -16,7 +16,7 @@ public class CustomerEditPresenter
     public CustomerEditContext RecordEditContext { get; private set; }
     public bool IsNew { get; private set; }
 
-    public CustomerEditPresenter(IItemRequestHandler<DmoCustomer> itemRequestHandler, ICommandHandler<DmoCustomer> commandHandler, IToastService toastService)
+    public CustomerEditPresenter(IItemRequestHandler<DmoCustomer,CustomerId> itemRequestHandler, ICommandHandler<DmoCustomer> commandHandler, IToastService toastService)
     {
         _itemRequestHandler = itemRequestHandler;
         _commandHandler = commandHandler;
@@ -33,7 +33,7 @@ public class CustomerEditPresenter
         // The Update Path.  Get the requested record if it exists
         if (id.Value != Guid.Empty)
         {
-            var request = ItemQueryRequest.Create(id.Value);
+            var request = ItemQueryRequest<CustomerId>.Create(id);
             var result = await _itemRequestHandler.ExecuteAsync(request);
             LastDataResult = result;
             if (this.LastDataResult.Successful)

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -17,5 +17,6 @@
     <ProjectReference Include="..\..\..\App\Blazr.App.Infrastructure\Blazr.App.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\App\Blazr.App.Presentation\Blazr.App.Presentation.csproj" />
     <ProjectReference Include="..\..\..\App\Blazr.App.UI.FluentUI\Blazr.App.UI.FluentUI.csproj" />
+    <ProjectReference Include="..\..\..\Aspire\Blazr.Invoicing.ServiceDefaults\Blazr.Invoicing.ServiceDefaults.csproj" />
   </ItemGroup>
 </Project>

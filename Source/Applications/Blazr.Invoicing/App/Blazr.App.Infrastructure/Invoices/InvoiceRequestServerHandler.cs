@@ -37,19 +37,19 @@ public sealed class InvoiceRequestServerHandler<TDbContext>
 
         DvoInvoice? inRecord = null;
 
-        if (request.KeyValue is IGuidKey keyId)
+        if (request.Key is IGuidKey keyId)
             inRecord = await dbContext.Set<DvoInvoice>().FirstOrDefaultAsync(item => item.InvoiceID == keyId.Value);
 
-        if (request.KeyValue is Guid uid)
+        if (request.Key is Guid uid)
             inRecord = await dbContext.Set<DvoInvoice>().FirstOrDefaultAsync(item => item.InvoiceID == uid);
 
         if (inRecord is null)
-            return ItemQueryResult<DmoInvoice>.Failure($"No record retrieved with a Id of {request.KeyValue.ToString()}");
+            return ItemQueryResult<DmoInvoice>.Failure($"No record retrieved with a Id of {request.Key.ToString()}");
 
         var outRecord = DvoInvoiceMap.Map(inRecord);
 
         if (outRecord is null)
-            return ItemQueryResult<DmoInvoice>.Failure($"Unable to map record retrieved with a Id of {request.KeyValue.ToString()}");
+            return ItemQueryResult<DmoInvoice>.Failure($"Unable to map record retrieved with a Id of {request.Key.ToString()}");
 
         return ItemQueryResult<DmoInvoice>.Success(outRecord);
     }

@@ -35,7 +35,7 @@
     {
          <EditForm EditContext="Presenter.EditContext">
             <BlazrEditStateTracker LockNavigation="true" />
-            <Blazr.Components.BlazrValidator TRecord="DmoInvoiceItemEditContext" TValidator="DmoInvoiceItemEditContextValidator" />
+            <BlazrFluentValidator TRecord="DmoInvoiceItemEditContext" TValidator="DmoInvoiceItemEditContextValidator" />
             <FluentGridItem sm="12">
                 <FluentTextField Style="width: 100%;"
                                  @bind-Value="this.Presenter.RecordEditContext.Description"

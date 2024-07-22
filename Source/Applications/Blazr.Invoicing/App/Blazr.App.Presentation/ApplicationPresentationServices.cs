@@ -19,7 +19,7 @@ public static class ApplicationPresentationServices
     private static void AddCustomerServices(IServiceCollection services)
     {
         services.AddTransient<IListPresenter<DmoCustomer>, ListPresenter<DmoCustomer>>();
-        services.AddTransient<IViewPresenter<DmoCustomer>, ViewPresenter<DmoCustomer>>();
+        services.AddTransient<IViewPresenter<DmoCustomer, CustomerId>, ViewPresenter<DmoCustomer, CustomerId>>();
         services.AddTransient<CustomerEditPresenter>();
 
         services.AddScoped<IGuidLookUpPresenter<CustomerLookUpItem>, GuidLookUpPresenter<CustomerLookUpItem>>();
@@ -28,13 +28,13 @@ public static class ApplicationPresentationServices
     private static void AddInvoiceServices(IServiceCollection services)
     {
         services.AddTransient<IListPresenter<DmoInvoice>, ListPresenter<DmoInvoice>>();
-        services.AddTransient<IViewPresenter<DmoInvoice>, ViewPresenter<DmoInvoice>>();
+        services.AddTransient<IViewPresenter<DmoInvoice, InvoiceId>, ViewPresenter<DmoInvoice, InvoiceId>>();
         services.AddTransient<InvoiceCompositePresenter>();
     }
 
     private static void AddInvoiceItemServices(IServiceCollection services)
     {
         services.AddTransient<IListPresenter<DmoInvoiceItem>, ListPresenter<DmoInvoiceItem>>();
-        services.AddTransient<IViewPresenter<DmoInvoiceItem>, ViewPresenter<DmoInvoiceItem>>();
+        services.AddTransient<IViewPresenter<DmoInvoiceItem, InvoiceItemId>, ViewPresenter<DmoInvoiceItem, InvoiceItemId>>();
     }
 }

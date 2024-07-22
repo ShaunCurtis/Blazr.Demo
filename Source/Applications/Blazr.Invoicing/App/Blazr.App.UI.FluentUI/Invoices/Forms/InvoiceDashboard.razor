@@ -77,7 +77,7 @@
     private bool _loading = true;
     private InvoiceComposite _item = new InvoiceComposite(new(), Enumerable.Empty<DmoInvoiceItem>(), true);
     private bool _isDirty => this.Presenter.Composite.State != OneWayStreet.Flux.FluxState.Clean;
-    private bool _isError;
+    private bool _isError = false;
     private string _message => _isError ? this.Presenter.LastDataResult.Message ?? "Unspecified Error" : "Invoice changes are not currently saved to the data store!";
     private MessageIntent _messageIntent => _isError ? MessageIntent.Error : MessageIntent.Warning;
 
