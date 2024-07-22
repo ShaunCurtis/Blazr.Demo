@@ -5,8 +5,13 @@
 /// ============================================================
 namespace Blazr.App.Infrastructure;
 
+/// <summary>
+/// Class to build an Invoice Composite from the data store
+/// This requires getting the invoice and the associated invoice items
+/// </summary>
+/// <typeparam name="TDbContext"></typeparam>
 public sealed class InvoiceCompositeItemRequestHandler<TDbContext>
-    : IItemRequestHandler<InvoiceComposite>
+    : IItemRequestHandler<InvoiceComposite, InvoiceId>
     where TDbContext : DbContext
 {
     private readonly IDbContextFactory<TDbContext> _factory;
@@ -16,29 +21,34 @@ public sealed class InvoiceCompositeItemRequestHandler<TDbContext>
         _factory = factory;
     }
 
-    public async ValueTask<ItemQueryResult<InvoiceComposite>> ExecuteAsync(ItemQueryRequest request)
+    public async ValueTask<ItemQueryResult<InvoiceComposite>> ExecuteAsync(ItemQueryRequest<InvoiceId> request)
     {
+        // Get a DbContext scoped to the method and turn off change tracking 
         using var dbContext = _factory.CreateDbContext();
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-        if (request.Key is not Guid invoiceid)
-            return ItemQueryResult<InvoiceComposite>.Failure("KeyValue in the Request is not a Guid");
-
+        // Get the Invoice  record
+        var invoiceid = request.Key.Value;
         var dboRoot = await dbContext.Set<DvoInvoice>()
             .SingleOrDefaultAsync(item => item.InvoiceID == invoiceid, request.Cancellation);
 
+        // If we don't get anything return faiure
         if (dboRoot is null)
             return ItemQueryResult<InvoiceComposite>.Failure("No record retrieved");
 
+        // Map the data store object to the domain entity
         var root = DvoInvoiceMap.Map(dboRoot);
 
-        var sections = await dbContext.Set<DboInvoiceItem>()
+        // Get all the invoice items.  it may be none
+        List<DmoInvoiceItem> items = await dbContext.Set<DboInvoiceItem>()
             .Where(item => item.InvoiceID == invoiceid)
             .Select(item => DboInvoiceItemMap.Map(item))
             .ToListAsync();
 
-        var composite = new InvoiceComposite(root, sections ?? Enumerable.Empty<DmoInvoiceItem>());
+        // create the composite with the data store retrieved items
+        var composite = new InvoiceComposite(root, items);
 
+        // Return success
         return ItemQueryResult<InvoiceComposite>.Success(composite);
     }
 }

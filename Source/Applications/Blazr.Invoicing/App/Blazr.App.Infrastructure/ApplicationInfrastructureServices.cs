@@ -42,6 +42,7 @@ public static class ApplicationInfrastructureServices
         services.AddScoped<ICommandHandler<DmoCustomer>, MappedCommandServerHandler<InMemoryTestDbContext, DmoCustomer, DboCustomer>>();
 
         services.AddTransient<IRecordSortHandler<DboCustomer>, CustomerSortHandler>();
+        services.AddScoped<INewRecordProvider<DmoCustomer>, NewCustomerProvider>();
     }
 
     public static void AddMappedInvoiceServerInfrastructureServices(this IServiceCollection services)
@@ -51,20 +52,21 @@ public static class ApplicationInfrastructureServices
         services.AddScoped<IDboEntityMap<DboInvoiceItem, DmoInvoiceItem>, DboInvoiceItemMap>();
 
         services.AddScoped<IListRequestHandler<DmoInvoice>, MappedListRequestServerHandler<InMemoryTestDbContext, DmoInvoice, DvoInvoice>>();
-        services.AddScoped<IItemRequestHandler<DmoInvoice>, InvoiceRequestServerHandler<InMemoryTestDbContext>>();
+        services.AddScoped<IItemRequestHandler<DmoInvoice, InvoiceId>, InvoiceRequestServerHandler<InMemoryTestDbContext>>();
 
         services.AddScoped<IListRequestHandler<DmoInvoiceItem>, MappedListRequestServerHandler<InMemoryTestDbContext, DmoInvoiceItem, DboInvoiceItem>>();
         services.AddScoped<IItemRequestHandler<DmoInvoiceItem, InvoiceItemId>, MappedItemRequestServerHandler<InMemoryTestDbContext, DmoInvoiceItem, DboInvoiceItem, InvoiceItemId>>();
 
         services.AddScoped<ICommandHandler<InvoiceComposite>, InvoiceCompositeCommandHandler<InMemoryTestDbContext>>();
-        services.AddScoped<IItemRequestHandler<InvoiceComposite>, InvoiceCompositeItemRequestHandler<InMemoryTestDbContext>>();
+        services.AddScoped<IItemRequestHandler<InvoiceComposite, InvoiceId>, InvoiceCompositeItemRequestHandler<InMemoryTestDbContext>>();
 
-        services.AddTransient<IRecordFilterHandler<DboInvoice>, InvoiceFilterHandler>();
-        services.AddTransient<IRecordSortHandler<DboInvoice>, InvoiceSortHandler>();
+        services.AddTransient<IRecordFilterHandler<DvoInvoice>, InvoiceFilterHandler>();
+        services.AddTransient<IRecordSortHandler<DvoInvoice>, InvoiceSortHandler>();
 
         services.AddTransient<IRecordFilterHandler<DboInvoiceItem>, InvoiceItemFilterHandler>();
         services.AddTransient<IRecordSortHandler<DboInvoiceItem>, InvoiceItemSortHandler>();
 
+        services.AddScoped<INewRecordProvider<DmoInvoice>, NewInvoiceProvider>();
         //services.AddTransient<InvoiceComposite>();
     }
 }

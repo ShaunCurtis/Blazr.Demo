@@ -3,14 +3,12 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
+namespace Blazr.App.Core;
 
-namespace Blazr.App.Infrastructure;
-
-public class InvoiceSortHandler : RecordSortHandler<DvoInvoice>, IRecordSortHandler<DvoInvoice>
+public class NewInvoiceProvider : INewRecordProvider<DmoInvoice>
 {
-    public InvoiceSortHandler()
+    public DmoInvoice NewRecord()
     {
-        DefaultSorter = (item) => item.Date;
-        DefaultSortDescending = false;
+        return new DmoInvoice() { InvoiceId = new(Guid.NewGuid()), Date = DateOnly.FromDateTime(DateTime.Now) };
     }
 }

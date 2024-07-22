@@ -5,11 +5,11 @@
 /// ============================================================
 namespace Blazr.App.Presentation;
 
-//TODO - I don't think we use this any more
 public class InvoiceCompositePresenter
 {
     private readonly IDataBroker _dataBroker;
     private readonly IToastService _toastService;
+    private readonly INewRecordProvider<DmoInvoice> _recordProvider;
 
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
 
@@ -17,17 +17,21 @@ public class InvoiceCompositePresenter
 
     public IQueryable<DmoInvoiceItem> InvoiceItems => this.Composite.InvoiceItems.AsQueryable();
 
-    public InvoiceCompositePresenter(IToastService toastService, IDataBroker dataBroker)
+    public InvoiceCompositePresenter(IToastService toastService, IDataBroker dataBroker, INewRecordProvider<DmoInvoice> recordProvider)
     {
         _toastService = toastService;
         _dataBroker = dataBroker;
-        this.Composite = new InvoiceComposite(new(), Enumerable.Empty<DmoInvoiceItem>(), true);
+        _recordProvider = recordProvider;
+
+        // Build a new context
+        this.Composite = new InvoiceComposite(_recordProvider.NewRecord(), Enumerable.Empty<DmoInvoiceItem>(), true);
     }
 
     public async Task LoadAsync(InvoiceId id)
     {
         this.LastDataResult = DataResult.Success();
 
+        // if we have an empty guid them we go with the new context created in the constructor
         if (id.Value != Guid.Empty)
         {
             var request = ItemQueryRequest<InvoiceId>.Create(id);
@@ -41,6 +45,7 @@ public class InvoiceCompositePresenter
         }
     }
 
+    //TODO - I don;t think this is needed anymore
     //public async Task<IDataResult> SaveItemAsync()
     //{
 

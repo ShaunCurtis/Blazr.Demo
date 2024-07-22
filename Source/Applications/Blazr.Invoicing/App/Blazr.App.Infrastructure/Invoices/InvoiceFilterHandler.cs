@@ -5,9 +5,9 @@
 /// ============================================================
 namespace Blazr.App.Infrastructure;
 
-public class InvoiceFilterHandler : RecordFilterHandler<DboInvoice>, IRecordFilterHandler<DboInvoice>
+public class InvoiceFilterHandler : RecordFilterHandler<DvoInvoice>, IRecordFilterHandler<DvoInvoice>
 {
-    public override IPredicateSpecification<DboInvoice>? GetSpecification(FilterDefinition filter)
+    public override IPredicateSpecification<DvoInvoice>? GetSpecification(FilterDefinition filter)
         => filter.FilterName switch
         {
             AppDictionary.Invoice.InvoiceFilterByCustomerSpecification => new InvoiceFilterByCustomerSpecification(filter),

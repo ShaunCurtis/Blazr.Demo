@@ -37,21 +37,20 @@
 
             <BlazrEditStateTracker LockNavigation="true" />
 
-            
-             <BlazrFluentValidator TRecord="DmoInvoiceEditContext" TValidator="DmoInvoiceEditContextValidator" />
+
+            <BlazrFluentValidator TRecord="DmoInvoiceEditContext" TValidator="DmoInvoiceEditContextValidator" />
 
             <FluentGridItem sm="12">
 
-                <FluentDatePicker @bind-Value="this.Presenter.RecordEditContext.Date" 
-                Placeholder="Enter a date"
-                Label="Description" />
+                <FluentDatePicker @bind-Value="this.Presenter.RecordEditContext.Date"
+                                  Placeholder="Enter a date"
+                                  Label="Description" />
 
             </FluentGridItem>
 
-            <FluentSelect 
-                Items="this.CustomerLookupPresenter.Items" 
-                OptionText="i => i.Name" 
-                @bind-SelectedOption="this.Presenter.RecordEditContext.Customer"
+            <FluentSelect Items="this.CustomerLookupPresenter.Items"
+                          OptionText="i => i.Name"
+                          @bind-SelectedOption="this.Presenter.RecordEditContext.Customer"
                           @bind-SelectedOption:after="this.OnAfterCustomerChanged" />
 
             <div style="color: var(--error);">
@@ -126,7 +125,7 @@
     {
         var editcontext = this.Presenter.EditContext;
         var model = this.Presenter.RecordEditContext;
-        var fi = new FieldIdentifier(this.Presenter.RecordEditContext, "Customer" );
+        var fi = new FieldIdentifier(this.Presenter.RecordEditContext, "Customer");
         if (editcontext.IsModified(fi) == model.IsCustomerClean)
             editcontext.NotifyFieldChanged(fi);
     }

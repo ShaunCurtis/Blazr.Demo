@@ -13,7 +13,7 @@ namespace Blazr.App.Infrastructure;
 /// </summary>
 /// <typeparam name="TDbContext"></typeparam>
 public sealed class InvoiceRequestServerHandler<TDbContext>
-    : IItemRequestHandler<DmoInvoice>
+    : IItemRequestHandler<DmoInvoice, InvoiceId>
     where TDbContext : DbContext
 {
     private readonly IServiceProvider _serviceProvider;
@@ -25,23 +25,20 @@ public sealed class InvoiceRequestServerHandler<TDbContext>
         _factory = factory;
     }
 
-    public async ValueTask<ItemQueryResult<DmoInvoice>> ExecuteAsync(ItemQueryRequest request)
+    public async ValueTask<ItemQueryResult<DmoInvoice>> ExecuteAsync(ItemQueryRequest<InvoiceId> request)
     {
         return await this.GetItemAsync(request);
     }
 
-    private async ValueTask<ItemQueryResult<DmoInvoice>> GetItemAsync(ItemQueryRequest request)
+    private async ValueTask<ItemQueryResult<DmoInvoice>> GetItemAsync(ItemQueryRequest<InvoiceId> request)
     {
         using var dbContext = _factory.CreateDbContext();
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
         DvoInvoice? inRecord = null;
 
-        if (request.Key is IGuidKey keyId)
-            inRecord = await dbContext.Set<DvoInvoice>().FirstOrDefaultAsync(item => item.InvoiceID == keyId.Value);
-
-        if (request.Key is Guid uid)
-            inRecord = await dbContext.Set<DvoInvoice>().FirstOrDefaultAsync(item => item.InvoiceID == uid);
+        var uid = request.Key.Value;
+        inRecord = await dbContext.Set<DvoInvoice>().FirstOrDefaultAsync(item => item.InvoiceID == uid);
 
         if (inRecord is null)
             return ItemQueryResult<DmoInvoice>.Failure($"No record retrieved with a Id of {request.Key.ToString()}");

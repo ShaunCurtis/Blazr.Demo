@@ -28,22 +28,22 @@
 
         <FluentStack VerticalAlignment="VerticalAlignment.Center" HorizontalAlignment="HorizontalAlignment.Right">
 
-            <FluentButton Appearance="Appearance.Accent" OnClick="@EditAsync">
+            <FluentButton Appearance="Appearance.Accent" OnClick="this.EditAsync">
                 Edit Invoice Data
             </FluentButton>
 
             @if (_isDirty)
             {
-                <FluentButton Appearance="Appearance.Accent" OnClick="@ExitAsync">
+                <FluentButton Appearance="Appearance.Accent" OnClick="this.SaveAsync">
                     Save Invoice
                 </FluentButton>
-                <FluentButton Appearance="Appearance.Neutral" OnClick="@ExitWithoutSavingAsync" style="color: var(--error);">
+                <FluentButton Appearance="Appearance.Neutral" OnClick="this.ExitWithoutSavingAsync" style="color: var(--error);">
                     Exit Without Saving
                 </FluentButton>
             }
             else
             {
-                <FluentButton Appearance="Appearance.Neutral" OnClick="@ExitAsync">
+                <FluentButton Appearance="Appearance.Neutral" OnClick="this.ExitAsync">
                     Exit
                 </FluentButton>
             }
@@ -75,24 +75,30 @@
     [Parameter, EditorRequired] public InvoiceId InvoiceId { get; set; } = new(Guid.Empty);
 
     private bool _loading = true;
-    private InvoiceComposite _item = new InvoiceComposite(new(), Enumerable.Empty<DmoInvoiceItem>(), true);
+    //private InvoiceComposite _item = new InvoiceComposite(new(), Enumerable.Empty<DmoInvoiceItem>(), true);
     private bool _isDirty => this.Presenter.Composite.State != OneWayStreet.Flux.FluxState.Clean;
     private bool _isError = false;
     private string _message => _isError ? this.Presenter.LastDataResult.Message ?? "Unspecified Error" : "Invoice changes are not currently saved to the data store!";
     private MessageIntent _messageIntent => _isError ? MessageIntent.Error : MessageIntent.Warning;
-
+    private Task? _editor;
     protected async override Task OnInitializedAsync()
     {
         await Task.Delay(500);
         await this.Presenter.LoadAsync(this.InvoiceId);
         this.Presenter.Composite.StateHasChanged += this.OnCompositeStateChanged;
         _loading = false;
+
+        if (this.Presenter.Composite.State == OneWayStreet.Flux.FluxState.New)
+            _editor = EditAsync();
     }
 
     private Task OnLocationChanging(LocationChangingContext context)
     {
         if (_isDirty)
+        {
             context.PreventNavigation();
+            this.ToastService.ShowError("You can't navigate away from an unsaved invoice.  Choose Save or Exit Without Saving.");
+        }
 
         return Task.CompletedTask;
     }
