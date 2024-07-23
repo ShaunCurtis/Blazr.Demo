@@ -10,7 +10,7 @@ public class DmoInvoiceEditContext
     private DmoInvoice _baseRecord;
     public InvoiceId Id => _baseRecord.InvoiceId;
 
-    [TrackState] public CustomerLookUpItem Customer { get; set; }
+    [TrackState] public CustomerLookUpItem? Customer { get; set; }
 
     // We use a DateTime here as some edit controls only like DateTime
     [TrackState] public DateTime? Date { get; set; } = DateTime.Now;
@@ -37,8 +37,8 @@ public class DmoInvoiceEditContext
     {
         return item with
         {
-            CustomerId = new(this.Customer.Id),
-            CustomerName = this.Customer.Name,
+            CustomerId = new(this.Customer?.Id ?? Guid.Empty),
+            CustomerName = this.Customer?.Name ?? "Not Set",
             Date = DateOnly.FromDateTime(this.Date ?? DateTime.Now ),
         };
     }

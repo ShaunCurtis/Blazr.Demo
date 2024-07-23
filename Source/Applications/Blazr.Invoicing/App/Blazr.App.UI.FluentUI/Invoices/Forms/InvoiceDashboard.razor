@@ -6,6 +6,13 @@
 @inject InvoiceCompositePresenter Presenter
 @implements IDisposable
 
+<FluentOverlay @bind-Visible="_loading"
+               Opacity="0.4"
+               Alignment="Align.Center"
+               Justification="JustifyContent.Center">
+    <FluentProgressRing />
+</FluentOverlay>
+
 @if (!_loading)
 {
     <CascadingValue Value="this.Presenter.Composite">
@@ -63,12 +70,6 @@
     </CascadingValue>
 }
 
-<FluentOverlay @bind-Visible="_loading"
-               Opacity="0.4"
-               Alignment="Align.Center"
-               Justification="JustifyContent.Center">
-    <FluentProgressRing />
-</FluentOverlay>
 <NavigationLock OnBeforeInternalNavigation="this.OnLocationChanging" ConfirmExternalNavigation="_isDirty" />
 
 @code {
@@ -81,9 +82,11 @@
     private string _message => _isError ? this.Presenter.LastDataResult.Message ?? "Unspecified Error" : "Invoice changes are not currently saved to the data store!";
     private MessageIntent _messageIntent => _isError ? MessageIntent.Error : MessageIntent.Warning;
     private Task? _editor;
+
     protected async override Task OnInitializedAsync()
     {
         await Task.Delay(500);
+
         await this.Presenter.LoadAsync(this.InvoiceId);
         this.Presenter.Composite.StateHasChanged += this.OnCompositeStateChanged;
         _loading = false;
@@ -94,6 +97,7 @@
 
     private Task OnLocationChanging(LocationChangingContext context)
     {
+        // Need to check if the invoice is dirty before letting the user exit
         if (_isDirty)
         {
             context.PreventNavigation();
@@ -110,21 +114,34 @@
 
     private async Task EditAsync()
     {
+        // Pop up the Editor dialog
         var dialog = await DialogService.ShowDialogAsync<InvoiceEditForm>(this.Presenter.Composite, new DialogParameters()
             {
-                Title = $"Edit Invoice",
+                Title = this.Presenter.Composite.IsNew ? "Add Invoice" : "Edit Invoice",
                 PreventDismissOnOverlayClick = true,
                 PreventScroll = true,
             });
 
+        // Await the result when the dialog closes
         var result = await dialog.Result;
+
+        // If we have a cancelled new invoice we need to exit back to the invoices page
+        if (result.Cancelled && this.Presenter.Composite.State == OneWayStreet.Flux.FluxState.New)
+        {
+            this.ToastService.ShowEvent("You exited creating the new invoice.");
+            this.Presenter.Composite.Persisted();
+            this.NavManager.NavigateTo($"/invoices");
+        }
     }
 
     private async Task SaveAsync()
     {
+        // Build the command request and execute it
         var state = this.Presenter.Composite.State.AsCommandState;
         CommandRequest<InvoiceComposite> command = new() { Item = this.Presenter.Composite, State = state };
         var result = await this.DataBroker.ExecuteCommandAsync(command);
+
+        // On Success we need to update the composite state so we can exit to the invoices page
         if (result.Successful)
         {
             this.Presenter.Composite.Persisted();
@@ -135,12 +152,14 @@
 
     private Task ExitAsync()
     {
+        // Normal exit.  Will be aborted by the Navigation Locker if the composite is dirty
         this.NavManager.NavigateTo($"/invoices");
         return Task.CompletedTask;
     }
 
     private Task ExitWithoutSavingAsync()
     {
+        // We aren't saving the composite so we can update the state so we can exit
         this.Presenter.Composite.Persisted();
 
         this.NavManager.NavigateTo($"/invoices");

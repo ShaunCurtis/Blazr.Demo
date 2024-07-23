@@ -13,7 +13,7 @@ public class InvoiceEditPresenter
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
     public EditContext EditContext { get; private set; }
     public DmoInvoiceEditContext RecordEditContext { get; private set; }
-    public bool IsNew { get; private set; }
+    public bool IsNew => _composite.State == OneWayStreet.Flux.FluxState.New;
 
     public InvoiceEditPresenter(InvoiceComposite composite, IToastService toastService)
     {

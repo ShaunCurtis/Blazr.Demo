@@ -14,6 +14,7 @@ public record InvoiceComposite
     public DmoInvoice Invoice => _invoice.Item;
     public FluxState State => _invoice.State;
     public IEnumerable<DmoInvoiceItem> InvoiceItems => _invoiceItems.Select(item => item.Item).AsEnumerable();
+    public bool IsNew => _invoice.State == FluxState.New;
 
     public event EventHandler? StateHasChanged;
 
