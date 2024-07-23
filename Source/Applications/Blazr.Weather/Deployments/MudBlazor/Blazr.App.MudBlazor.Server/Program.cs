@@ -1,5 +1,6 @@
 global using Blazr.App.Infrastructure;
 global using Blazr.App.Presentation;
+using Blazr.App.UI.Mud;
 using Blazr.RenderState.Server;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
@@ -16,6 +17,7 @@ builder.Services.AddMudServices();
 builder.AddBlazrRenderStateServerServices();
 builder.Services.AddAppServerMappedInfrastructureServices();
 builder.Services.AddAppMudBlazorPresentationServices();
+builder.Services.AddAppMudUIServices();
 
 var app = builder.Build();
 

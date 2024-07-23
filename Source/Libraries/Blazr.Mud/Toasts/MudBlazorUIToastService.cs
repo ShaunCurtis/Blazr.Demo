@@ -7,7 +7,7 @@
 using Blazr.Presentation.Toasts;
 using MudBlazor;
 
-namespace Blazr.App.Presentation.Toasts;
+namespace Blazr.Mud.Toasts;
 
 /// <summary>
 /// Basic facade into the MudBlazor Snackbar
