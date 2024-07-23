@@ -3,7 +3,7 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-using Blazr.App.Presentation.Toasts;
+using Blazr.Presentation.Toasts;
 
 namespace Blazr.App.Presentation;
 
@@ -19,6 +19,13 @@ public class WeatherForecastEditPresenter
     public bool IsNew { get; private set; }
 
     public bool IsInvalid => this.EditContext?.GetValidationMessages().Any() ?? false;
+
+    //public WeatherForecastEditPresenter(IDataBroker dataBroker, INewRecordProvider<DmoWeatherForecast> newProvider)
+    //{
+    //    _dataBroker = dataBroker;
+    //    this.RecordEditContext = new(new());
+    //    _newProvider = newProvider;
+    //}
 
     public WeatherForecastEditPresenter(IDataBroker dataBroker, IAppToastService toastService, INewRecordProvider<DmoWeatherForecast> newProvider)
     {

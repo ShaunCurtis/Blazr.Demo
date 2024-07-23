@@ -1,5 +1,6 @@
 global using Blazr.App.Infrastructure;
 global using Blazr.App.Presentation;
+using Blazr.App.UI.Vanilla;
 using Blazr.App.Vanilla.Server;
 using Blazr.RenderState.Server;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +14,9 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.AddBlazrRenderStateServerServices();
-builder.Services.AddAppServerMappedInfrastructureServices();
 builder.Services.AddAppVanillaPresentationServices();
+builder.Services.AddAppServerMappedInfrastructureServices();
+builder.Services.AddAppVanillaUIServices();
 
 var app = builder.Build();
 

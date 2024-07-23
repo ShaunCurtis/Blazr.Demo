@@ -1,4 +1,4 @@
-﻿namespace Blazr.App.UI.Vanilla.Components.Modal;
+﻿namespace Blazr.Bootstrap;
 
 public class ModalOptions
 {

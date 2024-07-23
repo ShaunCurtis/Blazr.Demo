@@ -4,6 +4,7 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
+using Blazr.Presentation.Toasts;
 using MudBlazor;
 
 namespace Blazr.App.Presentation.Toasts;

@@ -10,7 +10,9 @@ namespace Blazr.App.Core;
 public record Temperature
 {
     public decimal TemperatureC { get; init; }
-    public decimal TemperatureF => 32 + (this.TemperatureC / 0.5556m);
+    [JsonIgnore] public decimal TemperatureF => 32 + (this.TemperatureC / 0.5556m);
+
+    public Temperature() { }
 
     /// <summary>
     /// temperature should be provided in degrees Celcius

@@ -4,12 +4,14 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.App.Presentation.Toasts;
+using Blazr.Presentation.Toasts;
+
+namespace Blazr.Bootstrap.Toasts;
 
 /// <summary>
 /// Manages the Toasts in a Vanilla Bootstrap UI.
 /// </summary>
-public class VanillaUIToastService : IAppToastService, IAppToastViewService
+public class BootstrapUIToastService : IAppToastService, IAppToastViewService
 {
     private readonly List<Toast> _toasts = new();
     private TimeSpan _defaultTimeOut = TimeSpan.FromSeconds(10);

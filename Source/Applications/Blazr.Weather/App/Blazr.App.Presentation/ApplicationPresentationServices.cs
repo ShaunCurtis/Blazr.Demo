@@ -8,6 +8,7 @@ using Blazr.App.Presentation.FluentUI;
 using Blazr.App.Presentation.Mud;
 using Blazr.App.Presentation.Toasts;
 using Blazr.App.Presentation.Vanilla;
+using Blazr.Presentation.Toasts;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Blazr.App.Presentation;
@@ -28,7 +29,7 @@ public static class ApplicationPresentationServices
     }
     public static void AddAppVanillaPresentationServices(this IServiceCollection services)
     {
-        services.AddScoped<IAppToastService, VanillaUIToastService>();
+        //services.AddScoped<IAppToastService, VanillaUIToastService>();
 
         AddWeatherForecastVanillaServices(services);
     }
