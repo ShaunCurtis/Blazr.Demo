@@ -42,7 +42,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		error.txt = error.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.Bootstrap", "..\..\Libraries\Blazr.Bootstrap\Blazr.Bootstrap.csproj", "{76AB3549-182A-4A5A-9351-3E4FF7CD8CF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazr.Bootstrap", "..\..\Libraries\Blazr.Bootstrap\Blazr.Bootstrap.csproj", "{76AB3549-182A-4A5A-9351-3E4FF7CD8CF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

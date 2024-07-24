@@ -1,47 +1,107 @@
 # Aggregate Objects
 
-> This is dead content
+> This is being updated
 
 Aggregates provide a structured framework for dealing with complex objects.  An invoice is a good example.
 
-A invoice consists of an invoice object and a collection of invoice item objects.  The two are intimately linked: an invoice item does not exist outside the context of an invoice, an invoice is not an invoice without items to invoice.
+An invoice consists of an invoice object and a collection of invoice item objects.  The two are intimately linked: an invoice item does not exist outside the context of an invoice, an invoice is not an invoice without items to invoice.
 
-In the database you may store these separately in tables, but in code they should be considered a single entity.
+In the database you may store these in separate tables, but in your application design they should be considered a single entity.
 
-The single entity we use is an *AggregateRoot*.  Some treat the invoice as the aggregate, but I prefer to abstract further.
+The standard way of dealing with this is to make the invoice the *AggregateRoot* and build an aggregate object around the invoice.
 
-My Invoice aggregate class looks like this.  I'll look at the internal objects shortly.
+I prefer to abstract further: I've called my objects *Composites* rather than *Aggregates* to avoid confusion.
+
+The key atributes of a composite are:
+1. It exposes readonly objects that represent the composite data.
+1. It exposes Mwthods to mutate the state of the objects.
+1. It tracks the change state of the data objects.
+
+Some implemented technologies:
+
+1. Records.  Everything is a `record` unless it specifically needs to mutate.  All data objects are defined as records.
+
+1. The data pipeline is implemented in the `Blazr.OneWayStreet` library.  This includes a *Flux* based mutation implemenntation for objects and lists of objects.  See the *OneWayStreet Flux* note for more details.
+
+If you defined an interface for the Invoice composite, it would look like this:
+
 
 ```csharp
-public sealed class InvoiceAggregate : IGuidIdentity, IStateEntity
+public interface IInvoiceComposite
 {
-    private readonly AggregateItemList<InvoiceItem> _invoiceItems = new(Enumerable.Empty<InvoiceItem>());
-    private readonly AggregateItem<Invoice> _invoice; 
+    DmoInvoice Invoice { get; }
+    IEnumerable<DmoInvoiceItem> InvoiceItems { get; }
 
-    public InvoiceAggregate() 
-        => _invoice = AggregateItemFactory.AsNew(new Invoice());
+    bool IsNew { get; }
+    FluxState State { get; }
 
-    public InvoiceAggregate(Invoice invoice, IEnumerable<InvoiceItem>? items)
-    {
-        _invoice = AggregateItemFactory.AsExisting(invoice);
-        _invoiceItems.Load(items);
-    }
+    event EventHandler? StateHasChanged;
 
-    ///...
+    bool DeleteInvoice();
+    IDataResult UpdateInvoice(FluxMutationDelegate<InvoiceId, DmoInvoice> mutation, object? sender = null);
+
+    DmoInvoiceItem? GetInvoiceItem(InvoiceItemId uid);
+    FluxState GetInvoiceItemState(InvoiceItemId uid);
+
+    bool AddInvoiceItem(DmoInvoiceItem invoiceItem);
+    bool DeleteinvoiceItem(InvoiceItemId uid);
+    IDataResult UpdateInvoiceItem(InvoiceItemId id, FluxMutationDelegate<InvoiceItemId, DmoInvoiceItem> mutation, object? sender = null);
+
+    DmoInvoiceItem GetNewInvoiceItem();
+
+    void Persisted();
 }
 ```
 
-As stated elsewhere, my data pipeline is:
+With the class the Invoice and items are defined as:
 
- - readonly: all data objects are records.
- - state aware: all data objects have a `StateCode` property.
+```csharp
+    private FluxContext<InvoiceId, DmoInvoice> _invoice;
+    private List<FluxContext<InvoiceItemId, DmoInvoiceItem>> _invoiceItems = new();
+```
 
- These attributes soimplify implementing aggregate functionality.  We have simple processes to:
+And the external readonly properties:
 
- - ensure they are immutable.
- - create copies.
- - compare objects.
- 
+```csharp
+    public DmoInvoice Invoice => _invoice.Item;
+    public IEnumerable<DmoInvoiceItem> InvoiceItems => _invoiceItems.Select(item => item.Item).AsEnumerable();
+```
+
+Flux state.  `IsNew` is a shortcut property used in Edit forms in the UI.
+
+```csharp
+    public FluxState State => _invoice.State;
+    public bool IsNew => _invoice.State == FluxState.New;
+```
+
+External notification Event:
+
+```csharp
+    public event EventHandler? StateHasChanged;
+```
+
+The constructor populates the values:
+
+```csharp
+    public InvoiceComposite(DmoInvoice invoice, IEnumerable<DmoInvoiceItem> invoiceItems, bool isNew = false)
+    {
+        var state = isNew ? FluxState.New : FluxState.Clean;
+
+        _invoice = isNew
+            ? FluxContext<InvoiceId, DmoInvoice>.CreateNew(invoice)
+            : FluxContext<InvoiceId, DmoInvoice>.CreateClean(invoice);
+
+        _invoice.StateHasChanged += this.OnInvoiceChanged;
+
+        foreach (var item in invoiceItems)
+        {
+            var context = FluxContext<InvoiceItemId, DmoInvoiceItem>.CreateClean(item);
+            _invoiceItems.Add(context);
+            context.StateHasChanged += OnInvoiceItemChanged;
+        }
+    }
+```
+
  In the definition above the invoice and the invoice items are private.  No external classes have access to their functionality.  This highlights an important rule:
 
  > All functionality in the aggregate and it's data must be implemented through methods and properties in the top level aggregate root object.  Specifically, you should not be able to mutate sub objects directly through those objects.
