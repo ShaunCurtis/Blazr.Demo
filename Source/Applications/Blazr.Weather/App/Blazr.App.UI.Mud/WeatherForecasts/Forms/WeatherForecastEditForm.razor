@@ -36,7 +36,7 @@
     <DialogActions>
         <MudButton hidden="@_isClean" IconClass="@Icons.Material.Filled.Close" Color="Color.Error" OnClick="this.OnExitAsync">Exit without Saving</MudButton>
         <MudButton hidden="@_isDirty" IconClass="@Icons.Material.Filled.Close" Color="Color.Dark" OnClick="this.OnExitAsync">Exit</MudButton>
-        <MudButton Disabled="_isClean" IconClass="@Icons.Material.Filled.Save" Color="Color.Primary" OnClick="this.OnSaveAsync">@(this.Presenter.IsNew ? "Add" : "Save")</MudButton>
+        <MudButton Disabled="_saveButtonDisabled" IconClass="@Icons.Material.Filled.Save" Color="Color.Primary" OnClick="this.OnSaveAsync">@_saveButtonText</MudButton>
     </DialogActions>
 
 </MudDialog>
@@ -49,8 +49,11 @@
     private bool _isClean => !_isDirty;
     private bool _stateStoreAttached;
     private BlazrEditStateStore? _store;
-    public readonly Guid ComponentId = Guid.NewGuid();
+    private bool _saveButtonDisabled => !this.Presenter.IsNew && _isClean;
+    private string _saveButtonText => this.Presenter.IsNew ? "Add" : "Save";
     private WeatherForecastEditContext _record => this.Presenter.RecordEditContext;
+
+    public readonly Guid ComponentId = Guid.NewGuid();
 
     protected async override Task OnInitializedAsync()
     {
