@@ -52,12 +52,14 @@ public sealed class CommandAPIHandler
 
         var apiRequest = CommandAPIRequest<TRecord>.FromRequest(request);
 
-        var httpResult = await http.PostAsJsonAsync<CommandAPIRequest<TRecord>>($"/API/{apiInfo.PathName}/Command", apiRequest, request.Cancellation);
+        var httpResult = await http.PostAsJsonAsync<CommandAPIRequest<TRecord>>($"/API/{apiInfo.PathName}/Command", apiRequest, request.Cancellation)
+            .ConfigureAwait(ConfigureAwaitOptions.None); ;
 
         if (!httpResult.IsSuccessStatusCode)
             return CommandResult.Failure($"The server returned a status code of : {httpResult.StatusCode}");
 
-        var commandAPIResult = await httpResult.Content.ReadFromJsonAsync<CommandAPIResult<Guid>>();
+        var commandAPIResult = await httpResult.Content.ReadFromJsonAsync<CommandAPIResult<Guid>>()
+            .ConfigureAwait(ConfigureAwaitOptions.None); 
 
         CommandResult? commandResult = null;
 

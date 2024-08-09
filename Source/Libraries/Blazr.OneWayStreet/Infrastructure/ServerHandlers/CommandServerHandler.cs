@@ -51,7 +51,7 @@ public sealed class CommandServerHandler<TDbContext>
         if (request.State == CommandState.Add)
         {
             dbContext.Add<TRecord>(request.Item);
-            return await dbContext.SaveChangesAsync(request.Cancellation) == 1
+            return await dbContext.SaveChangesAsync(request.Cancellation).ConfigureAwait(ConfigureAwaitOptions.None) == 1
                 ? CommandResult.Success("Record Added")
                 : CommandResult.Failure("Error adding Record");
         }
@@ -60,7 +60,7 @@ public sealed class CommandServerHandler<TDbContext>
         if (request.State == CommandState.Delete)
         {
             dbContext.Remove<TRecord>(request.Item);
-            return await dbContext.SaveChangesAsync(request.Cancellation) == 1
+            return await dbContext.SaveChangesAsync(request.Cancellation).ConfigureAwait(ConfigureAwaitOptions.None) == 1
                 ? CommandResult.Success("Record Deleted")
                 : CommandResult.Failure("Error deleting Record");
         }
@@ -69,7 +69,7 @@ public sealed class CommandServerHandler<TDbContext>
         if (request.State == CommandState.Update)
         {
             dbContext.Update<TRecord>(request.Item);
-            return await dbContext.SaveChangesAsync(request.Cancellation) == 1
+            return await dbContext.SaveChangesAsync(request.Cancellation).ConfigureAwait(ConfigureAwaitOptions.None) == 1
                 ? CommandResult.Success("Record Updated")
                 : CommandResult.Failure("Error saving Record");
         }

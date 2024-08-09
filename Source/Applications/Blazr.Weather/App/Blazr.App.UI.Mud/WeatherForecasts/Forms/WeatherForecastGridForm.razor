@@ -53,14 +53,14 @@
     {
         // Build out the parameters and options locking the backdrop
         var parameters = new DialogParameters() { { "WeatherForecastId", id } };
-        var options = new DialogOptions { DisableBackdropClick = true, CloseOnEscapeKey = false, FullWidth = true };
+        var options = new DialogOptions { BackdropClick = true, CloseOnEscapeKey = false, FullWidth = true };
 
         // get the dialog reference and await the result
         var dialog = await DialogService.ShowAsync<WeatherForecastEditForm>("Edit Weather Forecast", parameters, options);
         var result = await dialog.Result;
 
         // If not cancelled then relaod the grid as the record will have been mutated
-        if (!result.Canceled && _grid is not null)
+        if (result is not null && result.Canceled && _grid is not null)
             await _grid.ReloadServerData();
     }
 
@@ -72,13 +72,13 @@
 
         // Build out the parameters and options locking the backdrop
         var parameters = new DialogParameters() { { "WeatherForecastId", id } };
-        var options = new DialogOptions { DisableBackdropClick = true, CloseOnEscapeKey = false, FullWidth = true };
+        var options = new DialogOptions { BackdropClick = true, CloseOnEscapeKey = false, FullWidth = true };
 
         var dialog = await DialogService.ShowAsync<WeatherForecastEditForm>("Add Weather Forecast", parameters, options);
         var result = await dialog.Result;
 
         // If not cancelled then relaod the grid as the record will have been mutated
-        if (!result.Canceled && _grid is not null)
+        if (result is not null && result.Canceled && _grid is not null)
             await _grid.ReloadServerData();
     }
 }

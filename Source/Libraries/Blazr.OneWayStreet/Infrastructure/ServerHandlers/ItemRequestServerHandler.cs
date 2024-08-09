@@ -40,7 +40,9 @@ public sealed class ItemRequestServerHandler<TDbContext>
         using var dbContext = _factory.CreateDbContext();
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-        var record = await dbContext.Set<TRecord>().FindAsync(request.Key.KeyValue, request.Cancellation);
+        var record = await dbContext.Set<TRecord>()
+            .FindAsync(request.Key.KeyValue, request.Cancellation)
+            .ConfigureAwait(false);
 
        // var record = await dbContext.Set<TRecord>().SingleOrDefaultAsync(item => item.EntityUid == request.Uid, request.Cancellation);
 

@@ -76,7 +76,7 @@ public class MappedListRequestServerHandler<TDbContext, TDomainRecord, TDatabase
 
         // Get the total record count after applying the filters
         totalRecordCount = inQuery is IAsyncEnumerable<TDatabaseRecord>
-            ? await inQuery.CountAsync(request.Cancellation)
+            ? await inQuery.CountAsync(request.Cancellation).ConfigureAwait(ConfigureAwaitOptions.None)
             : inQuery.Count();
 
         // If we have sorters we need to gets the Sort Handler for TRecord
@@ -102,7 +102,7 @@ public class MappedListRequestServerHandler<TDbContext, TDomainRecord, TDatabase
 
         // Materialize the out list from the data source
         var list = outQuery is IAsyncEnumerable<TDomainRecord>
-            ? await outQuery.ToListAsync()
+            ? await outQuery.ToListAsync().ConfigureAwait(ConfigureAwaitOptions.None)
             : outQuery.ToList();
 
         return ListQueryResult<TDomainRecord>.Success(list, totalRecordCount);

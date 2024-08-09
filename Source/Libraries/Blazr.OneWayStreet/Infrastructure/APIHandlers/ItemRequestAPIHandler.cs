@@ -58,12 +58,14 @@ public sealed class ItemRequestAPIHandler
         if (postValue is null)
             throw new DataPipelineException($"Can't convert the suppleid key value to a string for {typeof(TRecord).Name}");
 
-        var httpResult = await http.PostAsJsonAsync<string>($"/API/{apiInfo.PathName}/GetItem", postValue, request.Cancellation);
+        var httpResult = await http.PostAsJsonAsync<string>($"/API/{apiInfo.PathName}/GetItem", postValue, request.Cancellation)
+            .ConfigureAwait(ConfigureAwaitOptions.None); 
 
         if (!httpResult.IsSuccessStatusCode)
             return ItemQueryResult<TRecord>.Failure($"The server returned a status code of : {httpResult.StatusCode}");
 
-        var listResult = await httpResult.Content.ReadFromJsonAsync<ItemQueryResult<TRecord>>();
+        var listResult = await httpResult.Content.ReadFromJsonAsync<ItemQueryResult<TRecord>>()
+            .ConfigureAwait(ConfigureAwaitOptions.None);
 
         return listResult ?? ItemQueryResult<TRecord>.Failure($"No data was returned");
     }

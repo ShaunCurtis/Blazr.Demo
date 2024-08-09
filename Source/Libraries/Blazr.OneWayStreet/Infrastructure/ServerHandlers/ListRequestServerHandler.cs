@@ -67,7 +67,7 @@ public sealed class ListRequestServerHandler<TDbContext>
 
         // Get the total record count after applying the filters
         totalRecordCount = query is IAsyncEnumerable<TRecord>
-            ? await query.CountAsync(request.Cancellation)
+            ? await query.CountAsync(request.Cancellation).ConfigureAwait(ConfigureAwaitOptions.None)
             : query.Count();
 
         // If we have sorters we need to gets the Sort Handler for TRecord
@@ -90,7 +90,7 @@ public sealed class ListRequestServerHandler<TDbContext>
 
         // Finally materialize the list from the data source
         var list = query is IAsyncEnumerable<TRecord>
-            ? await query.ToListAsync()
+            ? await query.ToListAsync().ConfigureAwait(ConfigureAwaitOptions.None)
             : query.ToList();
 
         return ListQueryResult<TRecord>.Success(list, totalRecordCount);

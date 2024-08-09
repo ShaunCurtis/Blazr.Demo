@@ -22,12 +22,14 @@ public class WeatherForecastAPIItemRequestHandler : IItemRequestHandler<DmoWeath
         using var http = _httpClientFactory.CreateClient(AppDictionary.Common.WeatherHttpClient);
 
         var apiRequest = new ItemQueryAPIRequest<Guid>(request.Key.Value);
-        var httpResult = await http.PostAsJsonAsync<ItemQueryAPIRequest<Guid>>(AppDictionary.WeatherForecast.WeatherForecastItemAPIUrl, apiRequest, request.Cancellation);
+        var httpResult = await http.PostAsJsonAsync<ItemQueryAPIRequest<Guid>>(AppDictionary.WeatherForecast.WeatherForecastItemAPIUrl, apiRequest, request.Cancellation)
+            .ConfigureAwait(ConfigureAwaitOptions.None);
 
         if (!httpResult.IsSuccessStatusCode)
             return ItemQueryResult<DmoWeatherForecast>.Failure($"The server returned a status code of : {httpResult.StatusCode}");
 
-        var listResult = await httpResult.Content.ReadFromJsonAsync<ItemQueryResult<DmoWeatherForecast>>();
+        var listResult = await httpResult.Content.ReadFromJsonAsync<ItemQueryResult<DmoWeatherForecast>>()
+            .ConfigureAwait(ConfigureAwaitOptions.None);
 
         return listResult ?? ItemQueryResult<DmoWeatherForecast>.Failure($"No data was returned");
     }

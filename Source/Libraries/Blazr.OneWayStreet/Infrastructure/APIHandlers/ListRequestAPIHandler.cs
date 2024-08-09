@@ -52,12 +52,14 @@ public sealed class ListRequestAPIHandler
         
         var apiRequest = ListQueryAPIRequest.FromRequest(request);
         
-        var httpResult = await http.PostAsJsonAsync<ListQueryAPIRequest>($"/API/{apiInfo.PathName}/GetItems", apiRequest, request.Cancellation);
+        var httpResult = await http.PostAsJsonAsync<ListQueryAPIRequest>($"/API/{apiInfo.PathName}/GetItems", apiRequest, request.Cancellation)
+            .ConfigureAwait(ConfigureAwaitOptions.None);
 
         if (!httpResult.IsSuccessStatusCode)
             return ListQueryResult<TRecord>.Failure($"The server returned a status code of : {httpResult.StatusCode}");
 
-        var listResult = await httpResult.Content.ReadFromJsonAsync<ListQueryResult<TRecord>>();
+        var listResult = await httpResult.Content.ReadFromJsonAsync<ListQueryResult<TRecord>>()
+            .ConfigureAwait(ConfigureAwaitOptions.None);
 
         return listResult ?? ListQueryResult<TRecord>.Failure($"No data was returned");
     }

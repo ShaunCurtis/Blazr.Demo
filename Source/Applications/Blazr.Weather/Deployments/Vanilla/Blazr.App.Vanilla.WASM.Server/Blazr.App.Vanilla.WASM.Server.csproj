@@ -8,7 +8,7 @@
 
   <ItemGroup>
 	  <PackageReference Include="Blazr.RenderState.Server" Version="1.0.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.6" />
+	  <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.7" />
 
 	  <ProjectReference Include="..\..\..\App\Blazr.App.API\Blazr.App.API.csproj" />
     <ProjectReference Include="..\..\..\App\Blazr.App.Core\Blazr.App.Core.csproj" />

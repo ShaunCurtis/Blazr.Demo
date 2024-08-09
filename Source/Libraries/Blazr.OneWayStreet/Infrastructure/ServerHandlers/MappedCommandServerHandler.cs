@@ -65,7 +65,9 @@ public sealed class MappedCommandServerHandler<TDbContext, TDomainRecord, TDatab
             failure = "Error Deleting Record";
 
             dbContext.Remove<TDatabaseRecord>(dboRecord);
-            recordsAffected = await dbContext.SaveChangesAsync(request.Cancellation);
+            recordsAffected = await dbContext
+                .SaveChangesAsync(request.Cancellation)
+                .ConfigureAwait(ConfigureAwaitOptions.None);
         }
 
         // Finally check if it's a update
@@ -75,7 +77,9 @@ public sealed class MappedCommandServerHandler<TDbContext, TDomainRecord, TDatab
             failure = "Error Updating Record";
 
             dbContext.Update<TDatabaseRecord>(dboRecord);
-            recordsAffected = await dbContext.SaveChangesAsync(request.Cancellation);
+            recordsAffected = await dbContext
+                .SaveChangesAsync(request.Cancellation)
+                .ConfigureAwait(ConfigureAwaitOptions.None);
         }
 
         // We will have either 1 or 0 changed records

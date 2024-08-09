@@ -33,7 +33,7 @@ public sealed class MappedItemRequestServerHandler<TDbContext, TDomainRecord, TD
     public async ValueTask<ItemQueryResult<TDomainRecord>> ExecuteAsync(ItemQueryRequest<TKey> request) 
     
     {
-        return await this.GetItemAsync(request);
+        return  await this.GetItemAsync(request);
     }
 
     private async ValueTask<ItemQueryResult<TDomainRecord>> GetItemAsync(ItemQueryRequest<TKey> request)
@@ -49,7 +49,9 @@ public sealed class MappedItemRequestServerHandler<TDbContext, TDomainRecord, TD
         using var dbContext = _factory.CreateDbContext();
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-        var inRecord = await dbContext.Set<TDatabaseRecord>().FindAsync(request.Key.KeyValue, request.Cancellation);
+        var inRecord = await dbContext.Set<TDatabaseRecord>()
+            .FindAsync(request.Key.KeyValue, request.Cancellation)
+            .ConfigureAwait(false);
 
         if (inRecord is null)
             return ItemQueryResult<TDomainRecord>.Failure($"No record retrieved with a Uid of {request.Key.KeyValue?.ToString()}");
