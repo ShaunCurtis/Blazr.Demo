@@ -6,7 +6,6 @@
 
 using Blazr.App.Presentation.FluentUI;
 using Blazr.App.Presentation.Mud;
-using Blazr.App.Presentation.Toasts;
 using Blazr.App.Presentation.Vanilla;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,20 +15,14 @@ public static class ApplicationPresentationServices
 {
     public static void AddAppFluentUIPresentationServices(this IServiceCollection services)
     {
-        services.AddScoped<IAppToastService, FluentUIToastService>();
-
         AddWeatherForecastFluentUIServices(services);
     }
     public static void AddAppMudBlazorPresentationServices(this IServiceCollection services)
     {
-        services.AddScoped<IAppToastService, MudBlazorUIToastService>();
-
         AddWeatherForecastMudBlazorServices(services);
     }
     public static void AddAppVanillaPresentationServices(this IServiceCollection services)
     {
-        services.AddScoped<IAppToastService, VanillaUIToastService>();
-
         AddWeatherForecastVanillaServices(services);
     }
 

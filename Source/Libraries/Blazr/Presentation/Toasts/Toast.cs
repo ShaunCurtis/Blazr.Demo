@@ -4,7 +4,7 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.App.Presentation.Toasts;
+namespace Blazr.Presentation.Toasts;
 
 /// <summary>
 /// Record representing a Toast in the Bootstrap UI enviroment

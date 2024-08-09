@@ -12,8 +12,8 @@ public record InvoiceComposite
     private List<FluxContext<InvoiceItemId, DmoInvoiceItem>> _invoiceItems = new();
 
     public DmoInvoice Invoice => _invoice.Item;
-    public FluxState State => _invoice.State;
     public IEnumerable<DmoInvoiceItem> InvoiceItems => _invoiceItems.Select(item => item.Item).AsEnumerable();
+    public FluxState State => _invoice.State;
     public bool IsNew => _invoice.State == FluxState.New;
 
     public event EventHandler? StateHasChanged;
@@ -36,6 +36,18 @@ public record InvoiceComposite
         }
     }
 
+    public IDataResult UpdateInvoice(FluxMutationDelegate<InvoiceId, DmoInvoice> mutation, object? sender = null)
+    {
+        var result = _invoice.Update(mutation, sender);
+        return result;
+    }
+
+    public bool DeleteInvoice()
+    {
+        _invoice.Delete(this);
+        return true;
+    }
+
     public DmoInvoiceItem? GetInvoiceItem(InvoiceItemId uid)
     {
         var context = _invoiceItems.FirstOrDefault(item => item.Id == uid);
@@ -55,18 +67,6 @@ public record InvoiceComposite
             return FluxState.Clean;
 
         return context.State;
-    }
-
-    public IDataResult UpdateInvoice(FluxMutationDelegate<InvoiceId, DmoInvoice> mutation, object? sender = null)
-    {
-        var result = _invoice.Update(mutation, sender);
-        return result;
-    }
-
-    public bool DeleteInvoice()
-    {
-        _invoice.Delete(this);
-        return true;
     }
 
     public bool AddInvoiceItem(DmoInvoiceItem invoiceItem)

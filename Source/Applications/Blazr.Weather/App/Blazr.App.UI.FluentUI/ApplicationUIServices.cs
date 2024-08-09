@@ -4,16 +4,16 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-using Blazr.Bootstrap.Toasts;
+using Blazr.FluentUI.Toasts;
 using Blazr.Presentation.Toasts;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Blazr.App.UI.Vanilla;
+namespace Blazr.App.UI.FluentUI;
 
-public static class ApplicationVanillaUIServices
+public static class ApplicationFluentUIServices
 {
-    public static void AddAppVanillaUIServices(this IServiceCollection services)
+    public static void AddAppFluentUIServices(this IServiceCollection services)
     {
-        services.AddScoped<IAppToastService, BootstrapUIToastService>();
+        services.AddScoped<IAppToastService, FluentUIToastService>();
     }
 }

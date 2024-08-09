@@ -1,9 +1,10 @@
 global using Blazr.App.Infrastructure;
 global using Blazr.App.Presentation;
 using Blazr.App.Fluent.Server;
+using Blazr.App.UI.FluentUI;
+using Blazr.RenderState.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
-using Blazr.RenderState.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Services.AddFluentUIComponents();
 builder.AddBlazrRenderStateServerServices();
 builder.Services.AddAppServerMappedInfrastructureServices();
 builder.Services.AddAppFluentUIPresentationServices();
+builder.Services.AddAppFluentUIServices();
 
 var app = builder.Build();
 

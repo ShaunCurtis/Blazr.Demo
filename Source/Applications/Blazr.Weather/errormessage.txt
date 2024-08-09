@@ -1,0 +1,19 @@
+System.AggregateException
+  HResult=0x80131500
+  Message=Some services are not able to be constructed (Error while validating the service descriptor 'ServiceType: Blazr.App.Presentation.WeatherForecastEditPresenter Lifetime: Transient ImplementationType: Blazr.App.Presentation.WeatherForecastEditPresenter': Unable to resolve service for type 'Blazr.Presentation.Toasts.IAppToastService' while attempting to activate 'Blazr.App.Presentation.WeatherForecastEditPresenter'.)
+  Source=Microsoft.Extensions.DependencyInjection
+  StackTrace:
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider..ctor(ICollection`1 serviceDescriptors, ServiceProviderOptions options)
+   at Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider(IServiceCollection services, ServiceProviderOptions options)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.<Main>$(String[] args) in D:\Source\GitHub\Blazr.Demo\Source\Applications\Blazr.Weather\Deployments\Vanilla\Blazr.App.Vanilla.Server\Program.cs:line 19
+
+  This exception was originally thrown at this call stack:
+    [External Code]
+
+Inner Exception 1:
+InvalidOperationException: Error while validating the service descriptor 'ServiceType: Blazr.App.Presentation.WeatherForecastEditPresenter Lifetime: Transient ImplementationType: Blazr.App.Presentation.WeatherForecastEditPresenter': Unable to resolve service for type 'Blazr.Presentation.Toasts.IAppToastService' while attempting to activate 'Blazr.App.Presentation.WeatherForecastEditPresenter'.
+
+Inner Exception 2:
+InvalidOperationException: Unable to resolve service for type 'Blazr.Presentation.Toasts.IAppToastService' while attempting to activate 'Blazr.App.Presentation.WeatherForecastEditPresenter'.

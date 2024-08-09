@@ -4,9 +4,10 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
+using Blazr.Presentation.Toasts;
 using Microsoft.FluentUI.AspNetCore.Components;
 
-namespace Blazr.App.Presentation.Toasts;
+namespace Blazr.FluentUI.Toasts;
 
 /// <summary>
 /// Basic facade into the FluentUI toaster
