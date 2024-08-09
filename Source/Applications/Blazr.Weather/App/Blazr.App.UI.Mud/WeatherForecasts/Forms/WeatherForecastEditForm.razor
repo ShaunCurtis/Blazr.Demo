@@ -69,6 +69,8 @@
         // before we try and get it.
         // The only place we can do this is in the second OnAfterRender UI event
         _store = _store ?? this.Presenter.EditContext?.GetStateStore();
+
+        // if we are capturing the store we need to wire up the edit state handler
         if (_store is not null && !_stateStoreAttached)
         {
             _store.StoreUpdated += OnEditStateMayHaveChanged;
@@ -78,14 +80,17 @@
 
     private async Task OnSaveAsync()
     {
+        // Check validation before saving.
         if (!this.Presenter.EditContext?.Validate() ?? false)
         {
             this.ToastService.ShowError("The record data is not valid.  Fix the highlighted errors.");
             return;
         }
 
+        // Save the item
         await this.Presenter.SaveItemAsync();
 
+        // Check the result and close the dialog
         if (this.Presenter.LastDataResult.Successful)
             MudDialog?.Close(DialogResult.Ok(true));
     }
@@ -96,14 +101,9 @@
         return Task.CompletedTask;
     }
 
-    protected void OnEditStateMayHaveChanged(object? sender, EventArgs e)
+    private void OnEditStateMayHaveChanged(object? sender, EventArgs e)
     {
         _isDirty = this.Presenter.EditContext?.GetEditState() ?? false;
-        this.StateHasChanged();
-    }
-
-    protected void OnValidationStateMayHaveChanged(object? sender, ValidationStateChangedEventArgs e)
-    {
         this.StateHasChanged();
     }
 
@@ -123,4 +123,3 @@
             _store.StoreUpdated -= OnEditStateMayHaveChanged;
     }
 }
-

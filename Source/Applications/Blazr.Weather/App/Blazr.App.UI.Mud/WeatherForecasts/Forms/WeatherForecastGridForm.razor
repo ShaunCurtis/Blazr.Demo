@@ -45,7 +45,7 @@
         var parameters = new DialogParameters() { { "WeatherForecastId", id } };
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true };
 
-        // open the dialog.  It's read only so there's no mutation and no need to update the grid
+        // open the dialog and await closure.  It's read only so there's no mutation and no need to update the grid
         _ = await DialogService.ShowAsync<WeatherForecastViewForm>("View Weather Forecast", parameters, options);
     }
 
@@ -59,12 +59,11 @@
         var dialog = await DialogService.ShowAsync<WeatherForecastEditForm>("Edit Weather Forecast", parameters, options);
         var result = await dialog.Result;
 
-        // If not cancelled then relaod the grid as the record will have been mutated
+        // If not cancelled then reload the grid as the record will have mutated
         if (result is not null && result.Canceled && _grid is not null)
             await _grid.ReloadServerData();
     }
 
-    //TODO - Got to here
     private async Task OnAddAsync()
     {
         // Create a "New" id
@@ -74,10 +73,11 @@
         var parameters = new DialogParameters() { { "WeatherForecastId", id } };
         var options = new DialogOptions { BackdropClick = true, CloseOnEscapeKey = false, FullWidth = true };
 
+        // Open the dialog with the new edot form settings and wait for a result
         var dialog = await DialogService.ShowAsync<WeatherForecastEditForm>("Add Weather Forecast", parameters, options);
         var result = await dialog.Result;
 
-        // If not cancelled then relaod the grid as the record will have been mutated
+        // If not cancelled then reload the grid as the list will have mutated
         if (result is not null && result.Canceled && _grid is not null)
             await _grid.ReloadServerData();
     }
