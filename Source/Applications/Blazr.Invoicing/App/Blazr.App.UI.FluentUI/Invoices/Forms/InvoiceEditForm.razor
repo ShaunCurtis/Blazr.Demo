@@ -49,8 +49,9 @@
 
             </FluentGridItem>
 
-            <FluentSelect Items="this.CustomerLookupPresenter.Items"
-            Placeholder="-- Select an Item --"
+            <FluentSelect TOption="CustomerLookUpItem"
+                          Items="this.CustomerLookupPresenter.Items"
+                          Placeholder="-- Select an Item --"
                           OptionText="i => i.Name"
                           @bind-SelectedOption="this.Presenter.RecordEditContext.Customer"
                           @bind-SelectedOption:after="this.OnAfterCustomerChanged" />
