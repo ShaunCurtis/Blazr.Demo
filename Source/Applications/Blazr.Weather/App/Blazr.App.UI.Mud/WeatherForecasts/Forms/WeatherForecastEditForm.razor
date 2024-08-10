@@ -17,7 +17,8 @@
             <MudGrid>
                 <MudItem xs="12" sm="6">
 
-                    <MudDatePicker Label="Date"
+                    <MudDatePicker Class="mb-2"
+                                   Label="Date"
                                    HelperText="Date must be in the future."
                                    @bind-Date="_record.Date"
                                    For="() => _record.Date" />
@@ -26,7 +27,8 @@
 
                 <MudItem xs="12" sm="6">
 
-                    <MudNumericField Label="Temperature &deg; C"
+                    <MudNumericField Class="mb-2"
+                                     Label="Temperature &deg; C"
                                      HelperText="Enter a Temperature between -40 and 60"
                                      @bind-Value="_record.Temperature"
                                      For="() => _record.Temperature" />
@@ -37,25 +39,14 @@
             <MudGrid>
                 <MudItem xs="12" sm="6">
 
-                    <MudSelect Label="Summary"
-                               @bind-Value="_record.Summary"
-                               HelperText="Summary"
-                               OpenIcon="@Icons.Material.Filled.Cloud"
-                               AdornmentColor="Color.Secondary">
-                        @foreach (var item in SummaryOptions.Summaries)
-                        {
-                            <MudSelectItem Value="@item">@item</MudSelectItem>
-                        }
-                    </MudSelect>
+                    <MudAutocomplete Class="mb-2"
+                                     Label="Summary" T="string"
+                                     @bind-Value="_record.Summary"
+                                     @bind-Value:after="this.OnAfterSummaryChanged"
+                                     SearchFunc="this.SearchSummary"
+                                     Strict="false"
+                                     ResetValueOnEmptyText="true" />
 
-                    @*                     <MudAutocomplete Label="Summary"
-                    T="string"
-                    @bind-Value="_record.Summary"
-                    @bind-Value:after="this.OnEditStateMayHaveChanged"
-                    SearchFunc="this.SearchSummary"
-                    Strict="false"
-                    ResetValueOnEmptyText="true" />
-                    *@
 
                 </MudItem>
             </MudGrid>
@@ -151,16 +142,35 @@
         return Task.CompletedTask;
     }
 
-    private void OnEditStateMayHaveChanged()
+    private void OnAfterSummaryChanged()
     {
-        _isDirty = this.Presenter.EditContext?.GetEditState() ?? false;
-        this.StateHasChanged();
+        var editcontext = this.Presenter.EditContext;
+        var model = this.Presenter.RecordEditContext;
+        var fi = new FieldIdentifier(this.Presenter.RecordEditContext, "Summary");
+        if (editcontext?.IsModified(fi) == model.IsSummaryClean())
+            editcontext.NotifyFieldChanged(fi);
     }
+
+    // private void OnEditStateMayHaveChanged()
+    // {
+    //     _isDirty = this.Presenter.EditContext?.GetEditState() ?? false;
+    //     this.StateHasChanged();
+    // }
 
     private void OnEditStateMayHaveChanged(object? sender, EventArgs e)
     {
         _isDirty = this.Presenter.EditContext?.GetEditState() ?? false;
         this.StateHasChanged();
+    }
+
+    private Task<IEnumerable<string>> SearchSummary(string value)
+    {
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return Task.FromResult(SummaryOptions.Summaries);
+
+        return Task.FromResult(SummaryOptions.Summaries.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
     }
 
     private Task<IEnumerable<string>> SearchSummary(string value, CancellationToken cancellationToken)

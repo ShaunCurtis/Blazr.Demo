@@ -7,12 +7,12 @@
 
         <MudGrid>
             <MudItem xs="12" sm="6">
-                <MudField Label="Date" Variant="Variant.Filled">
+                <MudField Class="mb-2" Label="Date" Variant="Variant.Filled">
                     @this.Presenter.Item.Date.ToString("dd-MMM-yy")
                 </MudField>
             </MudItem>
             <MudItem xs="12" sm="6">
-                <MudField Label="Summary" Variant="Variant.Filled">
+                <MudField Class="mb-2" Label="Summary" Variant="Variant.Filled">
                     @this.Presenter.Item.Summary
                 </MudField>
             </MudItem>
@@ -20,12 +20,12 @@
 
         <MudGrid>
             <MudItem xs="12" sm="6">
-                <MudField Label="Temperature &deg;C" Variant="Variant.Filled">
+                <MudField Class="mb-2" Label="Temperature &deg;C" Variant="Variant.Filled">
                     @this.Presenter.Item.Temperature.TemperatureC.ToString("N0")
                 </MudField>
             </MudItem>
             <MudItem xs="12" sm="6">
-                <MudField Label="Temperature &deg;F" Variant="Variant.Filled">
+                <MudField Class="mb-2" Label="Temperature &deg;F" Variant="Variant.Filled">
                     @this.Presenter.Item.Temperature.TemperatureF.ToString("N0")
                 </MudField>
             </MudItem>
@@ -33,7 +33,7 @@
 
         <MudGrid>
             <MudItem xs="12" lg="8">
-                <MudField Label="Full Id" Variant="Variant.Filled">
+                <MudField Class="mb-2" Label="Full Id" Variant="Variant.Filled">
                     @this.Presenter.Item.WeatherForecastId.Value.ToString()
                 </MudField>
             </MudItem>

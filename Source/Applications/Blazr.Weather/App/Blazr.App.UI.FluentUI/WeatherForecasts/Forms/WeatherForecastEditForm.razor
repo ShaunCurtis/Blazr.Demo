@@ -166,11 +166,6 @@
         this.StateHasChanged();
     }
 
-    protected void OnValidationStateMayHaveChanged(object? sender, ValidationStateChangedEventArgs e)
-    {
-        this.StateHasChanged();
-    }
-
     private void OnAfterSummaryChanged()
     {
         var editcontext = this.Presenter.EditContext;
