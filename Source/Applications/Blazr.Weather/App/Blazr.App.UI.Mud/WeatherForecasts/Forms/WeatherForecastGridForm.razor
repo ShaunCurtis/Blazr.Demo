@@ -31,7 +31,8 @@
 </MudDataGrid>
 
 @code {
-    private MudDataGrid<DmoWeatherForecast>? _grid;
+    // Grid is set in the markup so can't be null
+    private MudDataGrid<DmoWeatherForecast> _grid = default!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -60,7 +61,7 @@
         var result = await dialog.Result;
 
         // If not cancelled then reload the grid as the record will have mutated
-        if (result is not null && result.Canceled && _grid is not null)
+        if (!result?.Canceled ?? false)
             await _grid.ReloadServerData();
     }
 
@@ -78,7 +79,7 @@
         var result = await dialog.Result;
 
         // If not cancelled then reload the grid as the list will have mutated
-        if (result is not null && result.Canceled && _grid is not null)
+        if (!result?.Canceled ?? false)
             await _grid.ReloadServerData();
     }
 }
