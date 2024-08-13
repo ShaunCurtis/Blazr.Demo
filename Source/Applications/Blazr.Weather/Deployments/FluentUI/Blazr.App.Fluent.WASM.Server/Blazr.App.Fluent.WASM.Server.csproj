@@ -10,11 +10,11 @@
 		<ProjectReference Include="..\..\..\..\..\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj" />
 		<ProjectReference Include="..\..\..\App\Blazr.App.Core\Blazr.App.Core.csproj" />
 		<ProjectReference Include="..\..\..\App\Blazr.App.Infrastructure\Blazr.App.Infrastructure.csproj" />
+		<ProjectReference Include="..\..\..\App\Blazr.App.Presentation.FluentUI\Blazr.App.Presentation.FluentUI.csproj" />
 		<ProjectReference Include="..\..\..\App\Blazr.App.Presentation\Blazr.App.Presentation.csproj" />
 		<ProjectReference Include="..\..\..\App\Blazr.App.API\Blazr.App.API.csproj" />
 		<ProjectReference Include="..\..\..\App\Blazr.App.UI.FluentUI\Blazr.App.UI.FluentUI.csproj" />
 		<ProjectReference Include="..\..\..\Blazr.Weather.ServiceDefaults\Blazr.Weather.ServiceDefaults.csproj" />
-		<ProjectReference Include="..\Blazr.App.Fluent.Server\Blazr.App.Fluent.Server.csproj" />
 		<ProjectReference Include="..\Blazr.App.Fluent.WASM.Client\Blazr.App.Fluent.WASM.Client.csproj" />
 		<PackageReference Include="Blazr.RenderState.Server" Version="1.0.0" />
 

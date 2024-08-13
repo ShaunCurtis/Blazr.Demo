@@ -1,5 +1,5 @@
 global using Blazr.App.Infrastructure;
-global using Blazr.App.Presentation;
+global using Blazr.App.Presentation.FluentUI;
 using Blazr.App.Fluent.Server;
 using Blazr.App.UI.FluentUI;
 using Blazr.RenderState.Server;

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.9.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\Libraries\Blazr\Blazr.csproj" />
+		<ProjectReference Include="..\Blazr.App.Core\Blazr.App.Core.csproj" />
+		<ProjectReference Include="..\Blazr.App.Presentation\Blazr.App.Presentation.csproj" />
+	</ItemGroup>
+
+</Project>

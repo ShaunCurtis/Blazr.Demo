@@ -1,6 +1,6 @@
 global using Blazr.App.API;
 global using Blazr.App.Infrastructure;
-global using Blazr.App.Presentation;
+global using Blazr.App.Presentation.Mud;
 using Blazr.App.UI.Mud;
 using Blazr.RenderState.Server;
 using Microsoft.EntityFrameworkCore;

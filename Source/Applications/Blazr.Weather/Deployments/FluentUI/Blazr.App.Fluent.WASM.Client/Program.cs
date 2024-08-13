@@ -1,5 +1,5 @@
 using Blazr.App.Infrastructure;
-using Blazr.App.Presentation;
+using Blazr.App.Presentation.FluentUI;
 using Blazr.App.UI.FluentUI;
 using Blazr.RenderState.WASM;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

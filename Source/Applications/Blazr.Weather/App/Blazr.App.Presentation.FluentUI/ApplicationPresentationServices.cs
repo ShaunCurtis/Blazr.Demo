@@ -4,21 +4,20 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-using Blazr.App.Presentation.Vanilla;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Blazr.App.Presentation;
+namespace Blazr.App.Presentation.FluentUI;
 
 public static class ApplicationPresentationServices
 {
-    public static void AddAppVanillaPresentationServices(this IServiceCollection services)
+    public static void AddAppFluentUIPresentationServices(this IServiceCollection services)
     {
-        AddWeatherForecastVanillaServices(services);
+        AddWeatherForecastFluentUIServices(services);
     }
 
-    private static void AddWeatherForecastVanillaServices(IServiceCollection services)
+    private static void AddWeatherForecastFluentUIServices(IServiceCollection services)
     {
-        services.AddTransient<IVanillaGridPresenter<DmoWeatherForecast>, VanillaGridPresenter<DmoWeatherForecast>>();
+        services.AddTransient<IFluentGridPresenter<DmoWeatherForecast>, FluentGridPresenter<DmoWeatherForecast>>();
         services.AddTransient<IViewPresenter<DmoWeatherForecast, WeatherForecastId>, ViewPresenter<DmoWeatherForecast, WeatherForecastId>>();
         services.AddTransient<WeatherForecastEditPresenter>();
     }
