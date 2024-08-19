@@ -6,17 +6,20 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Common\**" />
+    <EmbeddedResource Remove="Common\**" />
+    <None Remove="Common\**" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\..\..\Libraries\Blazr.Diode\Blazr.Diode.csproj" />
 	  <ProjectReference Include="..\..\..\..\Libraries\Blazr.EditStateTracker\Blazr.EditStateTracker.csproj" />
 	  <ProjectReference Include="..\..\..\..\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Common\" />
 	</ItemGroup>
 
 </Project>

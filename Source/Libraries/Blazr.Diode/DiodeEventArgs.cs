@@ -3,7 +3,17 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-namespace Blazr.OneWayStreet.Flux;
 
-public delegate FluxMutationResult<TRecord> FluxMutationDelegate<TIdentity, TRecord>(FluxContext<TIdentity, TRecord> item)
-    where TRecord : class, IFluxRecord<TIdentity>, new();
+namespace Blazr.Diode;
+
+public class DiodeEventArgs : EventArgs
+{
+    public object? Item { get; set; }
+    public DiodeState State { get; set; }
+
+    public DiodeEventArgs(object? item, DiodeState state)
+    {
+        Item = item;
+        State = state;
+    }
+}

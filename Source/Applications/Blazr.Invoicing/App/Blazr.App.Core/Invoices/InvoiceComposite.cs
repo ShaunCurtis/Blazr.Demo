@@ -8,35 +8,35 @@ namespace Blazr.App.Core;
 
 public record InvoiceComposite
 {
-    private FluxContext<InvoiceId, DmoInvoice> _invoice;
-    private List<FluxContext<InvoiceItemId, DmoInvoiceItem>> _invoiceItems = new();
+    private DiodeContext<InvoiceId, DmoInvoice> _invoice;
+    private List<DiodeContext<InvoiceItemId, DmoInvoiceItem>> _invoiceItems = new();
 
     public DmoInvoice Invoice => _invoice.Item;
     public IEnumerable<DmoInvoiceItem> InvoiceItems => _invoiceItems.Select(item => item.Item).AsEnumerable();
-    public FluxState State => _invoice.State;
-    public bool IsNew => _invoice.State == FluxState.New;
+    public DiodeState State => _invoice.State;
+    public bool IsNew => _invoice.State == DiodeState.New;
 
     public event EventHandler? StateHasChanged;
 
     public InvoiceComposite(DmoInvoice invoice, IEnumerable<DmoInvoiceItem> invoiceItems, bool isNew = false)
     {
-        var state = isNew ? FluxState.New : FluxState.Clean;
+        var state = isNew ? DiodeState.New : DiodeState.Clean;
 
         _invoice = isNew
-            ? FluxContext<InvoiceId, DmoInvoice>.CreateNew(invoice)
-            : FluxContext<InvoiceId, DmoInvoice>.CreateClean(invoice);
+            ? DiodeContext<InvoiceId, DmoInvoice>.CreateNew(invoice)
+            : DiodeContext<InvoiceId, DmoInvoice>.CreateClean(invoice);
 
         _invoice.StateHasChanged += this.OnInvoiceChanged;
 
         foreach (var item in invoiceItems)
         {
-            var context = FluxContext<InvoiceItemId, DmoInvoiceItem>.CreateClean(item);
+            var context = DiodeContext<InvoiceItemId, DmoInvoiceItem>.CreateClean(item);
             _invoiceItems.Add(context);
             context.StateHasChanged += OnInvoiceItemChanged;
         }
     }
 
-    public IDataResult UpdateInvoice(FluxMutationDelegate<InvoiceId, DmoInvoice> mutation, object? sender = null)
+    public DiodeResult UpdateInvoice(DiodeMutationDelegate<InvoiceId, DmoInvoice> mutation, object? sender = null)
     {
         var result = _invoice.Update(mutation, sender);
         return result;
@@ -60,11 +60,11 @@ public record InvoiceComposite
     public DmoInvoiceItem GetNewInvoiceItem()
         => new() { InvoiceItemId = new(Guid.NewGuid()), InvoiceId = _invoice.Id };
 
-    public FluxState GetInvoiceItemState(InvoiceItemId uid)
+    public DiodeState GetInvoiceItemState(InvoiceItemId uid)
     {
         var context = _invoiceItems.FirstOrDefault(item => item.Id == uid);
         if (context is null)
-            return FluxState.Clean;
+            return DiodeState.Clean;
 
         return context.State;
     }
@@ -77,7 +77,7 @@ public record InvoiceComposite
         if (invoiceItem.InvoiceId != _invoice.Id)
             invoiceItem = invoiceItem with { InvoiceId = _invoice.Id };
 
-        var context = FluxContext<InvoiceItemId, DmoInvoiceItem>.CreateNew(invoiceItem);
+        var context = DiodeContext<InvoiceItemId, DmoInvoiceItem>.CreateNew(invoiceItem);
         _invoiceItems.Add(context);
         context.StateHasChanged += OnInvoiceItemChanged;
 
@@ -87,11 +87,11 @@ public record InvoiceComposite
         return true;
     }
 
-    public IDataResult UpdateInvoiceItem(InvoiceItemId id, FluxMutationDelegate<InvoiceItemId, DmoInvoiceItem> mutation, object? sender = null)
+    public DiodeResult UpdateInvoiceItem(InvoiceItemId id, DiodeMutationDelegate<InvoiceItemId, DmoInvoiceItem> mutation, object? sender = null)
     {
         var context = _invoiceItems.FirstOrDefault(item => item.Id == id);
         if (context is null)
-            return DataResult.Failure($"No Section found with ID: {id.Value} to apply mutation to.");
+            return DiodeResult.Failure($"No Section found with ID: {id.Value} to apply mutation to.");
 
         var result = context.Update(mutation, sender);
         return result;
@@ -112,11 +112,11 @@ public record InvoiceComposite
     {
         _invoice.Persisted(this);
 
-        var deletes = new List<FluxContext<InvoiceItemId, DmoInvoiceItem>>();
+        var deletes = new List<DiodeContext<InvoiceItemId, DmoInvoiceItem>>();
 
         foreach (var item in _invoiceItems)
         {
-            if (item.State == FluxState.Deleted)
+            if (item.State == DiodeState.Deleted)
             {
                 deletes.Add(item);
                 continue;
@@ -129,7 +129,7 @@ public record InvoiceComposite
             _invoiceItems.Remove(item);
     }
 
-    private void OnInvoiceChanged(object? sender, FluxEventArgs e)
+    private void OnInvoiceChanged(object? sender, DiodeEventArgs e)
     {
         if (!this.Equals(sender))
             this.UpdateInvoice(ApplyInvoiceRules, this);
@@ -137,13 +137,13 @@ public record InvoiceComposite
         this.StateHasChanged?.Invoke(sender, EventArgs.Empty);
     }
 
-    private void OnInvoiceItemChanged(object? sender, FluxEventArgs e)
+    private void OnInvoiceItemChanged(object? sender, DiodeEventArgs e)
     {
         if (!this.Equals(sender))
             this.UpdateInvoice(ApplyInvoiceRules, this);
     }
 
-    private FluxMutationResult<DmoInvoice> ApplyInvoiceRules(FluxContext<InvoiceId, DmoInvoice> context)
+    private DiodeMutationResult<DmoInvoice> ApplyInvoiceRules(DiodeContext<InvoiceId, DmoInvoice> context)
     {
         decimal amount = 0;
 
@@ -152,6 +152,6 @@ public record InvoiceComposite
 
         var mutation = context.Item with { TotalAmount = amount };
 
-        return FluxMutationResult<DmoInvoice>.Success(mutation);
+        return DiodeMutationResult<DmoInvoice>.Success(mutation);
     }
 }

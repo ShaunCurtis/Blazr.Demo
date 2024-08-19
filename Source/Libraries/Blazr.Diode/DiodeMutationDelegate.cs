@@ -3,10 +3,7 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-namespace Blazr.OneWayStreet.Flux;
+namespace Blazr.Diode;
 
-public interface IFluxRecord<TIdentity>
-{
-    TIdentity Id { get; }
-}
-
+public delegate DiodeMutationResult<TRecord> DiodeMutationDelegate<TIdentity, TRecord>(DiodeContext<TIdentity, TRecord> item)
+    where TRecord : class, IDiodeRecord<TIdentity>, new();

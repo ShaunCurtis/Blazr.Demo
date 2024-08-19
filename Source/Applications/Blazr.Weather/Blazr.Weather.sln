@@ -88,6 +88,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.Presentation.Flue
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.App.Presentation.Mud", "App\Blazr.App.Presentation.Mud\Blazr.App.Presentation.Mud.csproj", "{F57C7E3B-F44D-48E3-AD85-25D86AB2947B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazr.Diode", "..\..\Libraries\Blazr.Diode\Blazr.Diode.csproj", "{0CC3F0BA-4D68-4C94-B0AE-AC52C3B4CC4A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -210,6 +212,10 @@ Global
 		{F57C7E3B-F44D-48E3-AD85-25D86AB2947B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F57C7E3B-F44D-48E3-AD85-25D86AB2947B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F57C7E3B-F44D-48E3-AD85-25D86AB2947B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CC3F0BA-4D68-4C94-B0AE-AC52C3B4CC4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CC3F0BA-4D68-4C94-B0AE-AC52C3B4CC4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CC3F0BA-4D68-4C94-B0AE-AC52C3B4CC4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CC3F0BA-4D68-4C94-B0AE-AC52C3B4CC4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -251,6 +257,7 @@ Global
 		{1BF88C43-1772-4E6B-87DA-035CCFCA8C9D} = {5BD42DD4-7575-4C63-9B93-78B77376CAAC}
 		{39DD2229-B75F-4959-9326-72BE892FC4FF} = {8586352C-E909-4DAF-BFE3-67F19258D1DA}
 		{F57C7E3B-F44D-48E3-AD85-25D86AB2947B} = {8586352C-E909-4DAF-BFE3-67F19258D1DA}
+		{0CC3F0BA-4D68-4C94-B0AE-AC52C3B4CC4A} = {5BD42DD4-7575-4C63-9B93-78B77376CAAC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4BFC383C-CBF4-49EE-BBD6-4E95F57CF086}

@@ -28,9 +28,9 @@ public class DmoInvoiceEditContext
     }
     public bool IsDirty => _baseRecord != this.AsRecord;
 
-    public FluxMutationResult<DmoInvoice> Mutate(FluxContext<InvoiceId, DmoInvoice> item)
+    public DiodeMutationResult<DmoInvoice> Mutate(DiodeContext<InvoiceId, DmoInvoice> item)
     {
-        return FluxMutationResult<DmoInvoice>.Success(GetMutation(item.Item));
+        return DiodeMutationResult<DmoInvoice>.Success(GetMutation(item.Item));
     }
 
     private DmoInvoice GetMutation(DmoInvoice item)

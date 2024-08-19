@@ -31,12 +31,12 @@ public class CustomerEditContext
         this.CustomerName = record.CustomerName;
     }
 
-    public FluxMutationResult<DmoCustomer> Mutate(FluxContext<CustomerId, DmoCustomer> item)
+    public DiodeMutationResult<DmoCustomer> Mutate(DiodeContext<CustomerId, DmoCustomer> item)
     {
         var record = item.Item with
         {
             CustomerName = this.CustomerName
         };
-        return FluxMutationResult<DmoCustomer>.Success(record);
+        return DiodeMutationResult<DmoCustomer>.Success(record);
     }
 }

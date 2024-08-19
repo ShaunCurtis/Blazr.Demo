@@ -13,7 +13,7 @@ public class InvoiceEditPresenter
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
     public EditContext EditContext { get; private set; }
     public DmoInvoiceEditContext RecordEditContext { get; private set; }
-    public bool IsNew => _composite.State == OneWayStreet.Flux.FluxState.New;
+    public bool IsNew => _composite.State == DiodeState.New;
 
     public InvoiceEditPresenter(InvoiceComposite composite, IToastService toastService)
     {
@@ -33,7 +33,7 @@ public class InvoiceEditPresenter
             return Task.FromResult(this.LastDataResult);
         }
 
-        this.LastDataResult = _composite.UpdateInvoice(this.RecordEditContext.Mutate);
+        this.LastDataResult = _composite.UpdateInvoice(this.RecordEditContext.Mutate).AsDataResult();
 
         if (this.LastDataResult.Successful)
             _toastService.ShowSuccess("The invoice data was updated.");

@@ -28,13 +28,13 @@ public sealed class InvoiceCompositeCommandHandler<TDbContext>
         var rootState = composite.State; 
 
         // Update the root item based on its state
-        if (rootState == FluxState.New)
+        if (rootState == DiodeState.New)
             dbContext.Add<DboInvoice>(dboRoot);
 
-        else if (rootState == FluxState.Deleted)
+        else if (rootState == DiodeState.Deleted)
             dbContext.Remove<DboInvoice>(dboRoot);
 
-        else if (rootState == FluxState.Modified)
+        else if (rootState == DiodeState.Modified)
             dbContext.Update<DboInvoice>(dboRoot);
 
         // Update all the existing items based on their state
@@ -44,16 +44,16 @@ public sealed class InvoiceCompositeCommandHandler<TDbContext>
 
             // If the root state is delete then we delete everything regardless of item state
             var itemState = rootState;
-            if (rootState != FluxState.Deleted)
+            if (rootState != DiodeState.Deleted)
                 itemState = composite.GetInvoiceItemState(item.Id);
 
-            if (itemState == FluxState.New)
+            if (itemState == DiodeState.New)
                 dbContext.Add<DboInvoiceItem>(dboItem);
 
-            else if (itemState == FluxState.Deleted)
+            else if (itemState == DiodeState.Deleted)
                 dbContext.Remove<DboInvoiceItem>(dboItem);
 
-            else if (itemState == FluxState.Modified)
+            else if (itemState == DiodeState.Modified)
                 dbContext.Update<DboInvoiceItem>(dboItem);
         }
 

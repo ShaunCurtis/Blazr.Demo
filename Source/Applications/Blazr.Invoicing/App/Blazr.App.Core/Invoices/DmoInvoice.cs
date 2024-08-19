@@ -13,7 +13,7 @@ public sealed record InvoiceId : IEntityKey
         => new(Guid.Empty);
 }
 
-public record DmoInvoice : IFluxRecord<InvoiceId>, IKeyedEntity
+public record DmoInvoice : IDiodeRecord<InvoiceId>, IKeyedEntity
 {
     public InvoiceId InvoiceId { get; init; } = new(Guid.Empty);
     public CustomerId CustomerId { get; init; } = new(Guid.Empty);

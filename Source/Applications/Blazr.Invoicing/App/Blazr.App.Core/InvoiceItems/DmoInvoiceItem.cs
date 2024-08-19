@@ -18,7 +18,7 @@ public sealed record InvoiceItemId : IEntityKey
         => new(Guid.Empty);
 }
 
-public record DmoInvoiceItem : IKeyedEntity, IFluxRecord<InvoiceItemId>
+public record DmoInvoiceItem : IKeyedEntity, IDiodeRecord<InvoiceItemId>
 {
     public InvoiceItemId InvoiceItemId { get; init; } = new(Guid.Empty);
     public InvoiceId InvoiceId { get; init; } = new(Guid.Empty);

@@ -3,10 +3,10 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-namespace Blazr.OneWayStreet.Flux;
+namespace Blazr.Diode;
 
-public class FluxContext<TIdentity, TRecord>
-    where TRecord : class, IFluxRecord<TIdentity>, new()
+public class DiodeContext<TIdentity, TRecord>
+    where TRecord : class, IDiodeRecord<TIdentity>, new()
 {
     private TRecord _immutableItem;
     private int _stateChanges = 0;
@@ -14,47 +14,47 @@ public class FluxContext<TIdentity, TRecord>
     public TIdentity Id => _immutableItem.Id;
     public TRecord Item => _immutableItem;
     public int StateChanges => _stateChanges;
-    public FluxState State { get; private set; }
+    public DiodeState State { get; private set; }
 
     /// <summary>
     /// Event raised when a context mutates
     /// </summary>
-    public event EventHandler<FluxEventArgs>? StateHasChanged;
+    public event EventHandler<DiodeEventArgs>? StateHasChanged;
 
-    internal FluxContext(TRecord item, FluxState? state = null)
+    internal DiodeContext(TRecord item, DiodeState? state = null)
     {
         _immutableItem = item;
-        this.State = state ?? FluxState.Clean;
+        this.State = state ?? DiodeState.Clean;
     }
 
-    public IDataResult Update(FluxMutationDelegate<TIdentity, TRecord> mutation, object? sender = null)
+    public DiodeResult Update(DiodeMutationDelegate<TIdentity, TRecord> mutation, object? sender = null)
     {
         var mutationResult = mutation.Invoke(this);
 
         if (mutationResult.Item == _immutableItem)
-            return DataResult.Failure("No changes to apply.");
+            return DiodeResult.Failure("No changes to apply.");
 
         _stateChanges++;
         _immutableItem = mutationResult.Item;
 
-        if (this.State == FluxState.Clean)
-            this.State = FluxState.Modified;
+        if (this.State == DiodeState.Clean)
+            this.State = DiodeState.Modified;
 
         this.NotifyStateHasChanged(sender);
 
-        return DataResult.Success();
+        return DiodeResult.Success();
     }
 
-    public IDataResult Delete(object? sender = null)
+    public DiodeResult Delete(object? sender = null)
     {
-        this.State = FluxState.Deleted;
+        this.State = DiodeState.Deleted;
         this.NotifyStateHasChanged(sender);
-        return DataResult.Success();
+        return DiodeResult.Success();
     }
 
     public void Persisted(object? sender = null)
     {
-        this.State = FluxState.Clean;
+        this.State = DiodeState.Clean;
         _stateChanges = 0;
         this.NotifyStateHasChanged(sender);
     }
@@ -64,13 +64,13 @@ public class FluxContext<TIdentity, TRecord>
         this.StateHasChanged?.Invoke(sender, new(_immutableItem, State));
     }
 
-    public static FluxContext<TIdentity, TRecord> CreateNew(TRecord item)
+    public static DiodeContext<TIdentity, TRecord> CreateNew(TRecord item)
     {
-        return new(item, FluxState.New);
+        return new(item, DiodeState.New);
     }
 
-    public static FluxContext<TIdentity, TRecord> CreateClean(TRecord item)
+    public static DiodeContext<TIdentity, TRecord> CreateClean(TRecord item)
     {
-        return new(item, FluxState.Clean);
+        return new(item, DiodeState.Clean);
     }
 }

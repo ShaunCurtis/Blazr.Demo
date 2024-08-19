@@ -1,0 +1,1 @@
+global using Blazr.Diode;
