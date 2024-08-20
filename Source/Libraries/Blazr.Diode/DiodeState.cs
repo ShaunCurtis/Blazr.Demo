@@ -6,7 +6,7 @@
 
 namespace Blazr.Diode;
 
-public record DiodeState
+public readonly struct DiodeState
 {
     public int Index { get; private init; }
     public string Value { get; private init; }
@@ -14,7 +14,7 @@ public record DiodeState
     internal DiodeState(int index, string value)
     {
         Index = index;
-        Value = value;
+        Value = value; 
     }
 
     public static DiodeState Clean = new DiodeState(0, "Clean");
