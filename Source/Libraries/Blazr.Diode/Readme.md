@@ -1,14 +1,14 @@
 # Blazr.Diode
 
-Diode is a coding pattern for dealing with complex domain entities in C#.  It was inspired by the Flux/Redux pattern.
+Blazr.Diode is a small library that impements a set of coding patterns for dealing with complex domain entities in C#.  It was inspired by the Flux/Redux pattern.
 
 It provides:
 
- - a wrapper - the `DiodeContext` for managed mutation of an object. 
- - state management [`DiodeState`] for any managed object.
- - notification when a mutation takes place.
+ - the `DiodeContext` wrapper - for managed mutation of an object. 
+ - the `DiodeState` of any managed object.
+ - A `StateChanged` `event` raised when a mutation has taken place.
 
-It doesn't provide a store or single point dispatcher.  The store and dispatcher functionality should be provided by the root domain entity container.
+What it doesn't provide is a store or single point dispatcher.  These should be implemented by the root domain entity container.
 
 ## Class vs Record
 

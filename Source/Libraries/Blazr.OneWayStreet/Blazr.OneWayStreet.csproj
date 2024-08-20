@@ -25,6 +25,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Blazr.Diode\Blazr.Diode.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="license.txt">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>

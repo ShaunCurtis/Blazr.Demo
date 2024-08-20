@@ -37,6 +37,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aspire", "Aspire", "{5665E6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{84D04988-28FC-4ECF-A012-79D08F5AC84F}"
 	ProjectSection(SolutionItems) = preProject
+		..\..\..\Notes\Entities\Aggregates.md = ..\..\..\Notes\Entities\Aggregates.md
 		error.txt = error.txt
 	EndProjectSection
 EndProject

@@ -81,7 +81,7 @@ public class InvoiceItemEditPresenter
             return Task.FromResult(this.LastDataResult);
         }
 
-        this.LastDataResult = _composite.UpdateInvoiceItem(_invoiceItemId, this.RecordEditContext.Mutate).AsDataResult();
+        this.LastDataResult = _composite.UpdateInvoiceItem(_invoiceItemId, this.RecordEditContext.Mutate).ToDataResult();
 
         if (this.LastDataResult.Successful)
             _toastService.ShowSuccess("The invoice item was added/updated.");

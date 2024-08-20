@@ -3,14 +3,15 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
+using Blazr.Diode;
 
-namespace Blazr.App.Core;
+namespace Blazr.OneWayStreet.Core;
 
 public static class DiodeExtensions
 {
-    public static IDataResult AsDataResult(this DiodeResult result)
+    public static IDataResult ToDataResult(this DiodeResult result)
         => result.Successful ? DataResult.Success() : DataResult.Failure(result.Message ?? "No Error Message Posted.");
 
-    public static CommandState AsCommandState(this DiodeState state)
+    public static CommandState ToCommandState(this DiodeState state)
         => CommandState.GetState(state.Index);
 }

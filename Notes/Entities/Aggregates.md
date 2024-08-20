@@ -8,9 +8,9 @@ An invoice consists of an invoice object and a collection of invoice item object
 
 In the database you may store these in separate tables, but in your application design they should be considered a single entity.
 
-The standard way of dealing with this is to make the invoice the *AggregateRoot* and build an aggregate object around the invoice.
+The *Aggregate Pattern* is a standard way of dealing with these complex objects.  The invoice the *AggregateRoot* and invoice items are a collection within the aggregate object.  All mutations are defined as aggregate root methods.
 
-I prefer to abstract further: I've called my objects *Composites* rather than *Aggregates* to avoid confusion.
+I prefer to abstract further: I've named my objects *Composites* rather than *Aggregates* to avoid confusion.
 
 The key atributes of a composite are:
 1. It exposes readonly objects that represent the composite data.
@@ -21,10 +21,10 @@ Some implemented technologies:
 
 1. Records.  Everything is a `record` unless it specifically needs to mutate.  All data objects are defined as records.
 
-1. The data pipeline is implemented in the `Blazr.OneWayStreet` library.  This includes a *Flux* based mutation implemenntation for objects and lists of objects.  See the *OneWayStreet Flux* note for more details.
+1. The data pipeline is implemented using the `Blazr.OneWayStreet` library.  
+2. Mutation is managed by *Blazr.Diode* library.
 
-If you defined an interface for the Invoice composite, it would look like this:
-
+A wireframe definition of the Invoice composite looks like this:
 
 ```csharp
 public interface IInvoiceComposite
@@ -33,19 +33,19 @@ public interface IInvoiceComposite
     IEnumerable<DmoInvoiceItem> InvoiceItems { get; }
 
     bool IsNew { get; }
-    FluxState State { get; }
+    DiodeState State { get; }
 
     event EventHandler? StateHasChanged;
 
     bool DeleteInvoice();
-    IDataResult UpdateInvoice(FluxMutationDelegate<InvoiceId, DmoInvoice> mutation, object? sender = null);
+    IDataResult UpdateInvoice(DiodeMutationDelegate<InvoiceId, DmoInvoice> mutation, object? sender = null);
 
     DmoInvoiceItem? GetInvoiceItem(InvoiceItemId uid);
-    FluxState GetInvoiceItemState(InvoiceItemId uid);
+    DiodeState GetInvoiceItemState(InvoiceItemId uid);
 
     bool AddInvoiceItem(DmoInvoiceItem invoiceItem);
     bool DeleteinvoiceItem(InvoiceItemId uid);
-    IDataResult UpdateInvoiceItem(InvoiceItemId id, FluxMutationDelegate<InvoiceItemId, DmoInvoiceItem> mutation, object? sender = null);
+    IDataResult UpdateInvoiceItem(InvoiceItemId id, DiodeMutationDelegate<InvoiceItemId, DmoInvoiceItem> mutation, object? sender = null);
 
     DmoInvoiceItem GetNewInvoiceItem();
 
@@ -53,7 +53,7 @@ public interface IInvoiceComposite
 }
 ```
 
-With the class the Invoice and items are defined as:
+Within the class the Invoice and items are defined as:
 
 ```csharp
     private FluxContext<InvoiceId, DmoInvoice> _invoice;
@@ -65,11 +65,7 @@ And the external readonly properties:
 ```csharp
     public DmoInvoice Invoice => _invoice.Item;
     public IEnumerable<DmoInvoiceItem> InvoiceItems => _invoiceItems.Select(item => item.Item).AsEnumerable();
-```
 
-Flux state.  `IsNew` is a shortcut property used in Edit forms in the UI.
-
-```csharp
     public FluxState State => _invoice.State;
     public bool IsNew => _invoice.State == FluxState.New;
 ```

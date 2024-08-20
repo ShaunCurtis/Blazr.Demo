@@ -137,7 +137,7 @@
     private async Task SaveAsync()
     {
         // Build the command request and execute it
-        var state = this.Presenter.Composite.State.AsCommandState();
+        var state = this.Presenter.Composite.State.ToCommandState();
         CommandRequest<InvoiceComposite> command = new() { Item = this.Presenter.Composite, State = state };
         var result = await this.DataBroker.ExecuteCommandAsync(command);
 

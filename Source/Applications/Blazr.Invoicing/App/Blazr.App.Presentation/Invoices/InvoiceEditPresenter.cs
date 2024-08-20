@@ -33,7 +33,7 @@ public class InvoiceEditPresenter
             return Task.FromResult(this.LastDataResult);
         }
 
-        this.LastDataResult = _composite.UpdateInvoice(this.RecordEditContext.Mutate).AsDataResult();
+        this.LastDataResult = _composite.UpdateInvoice(this.RecordEditContext.Mutate).ToDataResult();
 
         if (this.LastDataResult.Successful)
             _toastService.ShowSuccess("The invoice data was updated.");
