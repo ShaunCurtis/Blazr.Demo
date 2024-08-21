@@ -1,22 +1,22 @@
 # Blazr.Diode
 
-Blazr.Diode is a small library that impements a set of coding patterns for dealing with complex domain entities in C#.  It was inspired by the Flux/Redux pattern.
+Blazr.Diode is a pattern and library for managing state in domain entities in C#.  It was inspired by the Flux/Redux patterns.
 
 It provides:
 
- - the `DiodeContext` wrapper - for managed mutation of an object. 
- - the `DiodeState` of any managed object.
+ - A `DiodeContext` wrapper - for managed mutation of an object. 
+ - A `DiodeState` of any managed object.
  - A `StateChanged` `event` raised when a mutation has taken place.
 
-What it doesn't provide is a store or single point dispatcher.  These should be implemented by the root domain entity container.
+What it doesn't provide is a store or single point dispatcher.  These should be implemented by the domain entity container.
 
 ## Class vs Record
 
-Diode relies on the managed object being a readonly object.  In modern C# a record, but it could be a simple class with `init` constructors.  The advantage of using a record is that cloning and equality checking are simple.  Diode ius designed to plug into a readonly data pipeline - in my case my `OneWayStreet` library.   
+Diode manages readonly objects with unique keys.  In modern C# a record, but it could be a plain class with `init` constructors.  A record has advantages: cloning and equality checking are simple.  Diode is designed to plug into a readonly data pipeline - I use my `OneWayStreet` library.   
 
 ### DiodeState
 
-Diode state is implemented as a readonly struct with an internal constructor.  Obtain a State object through static readonly properties.
+Diode state is implemented as a readonly struct with an internal constructor.  State objects are created through static readonly properties.
 
 ```csharp
 public readonly struct DiodeState : IEquatable<DiodeState>
@@ -41,14 +41,14 @@ public readonly struct DiodeState : IEquatable<DiodeState>
 
 ### DiodeContext
 
-The `DiodeContext` is the management wrapper.  A `DiodeContext` is defined with the `TRecord` that is being managed and a unique  `TIdentity` key. 
+The `DiodeContext` is the management wrapper.  It defines two generics: `TRecord` is the managed object and `TIdentity` it's unique key type. 
 
 ```csharp
 public class DiodeContext<TIdentity, TRecord>
     where TRecord : class, IDiodeRecord<TIdentity>, new()
 ```
 
-The public properties are all readonly.  Note that `Item` will point to the current copy of the managed object.  Either don't keep a local reference to it, or refresh the local reference whwn you use it.  `StateChanges` is an incrementing counter tracking the number of mutations that have been applied. 
+The public properties are all readonly.  Note that `Item` points to the current copy of the managed object.  Ensure you always get the current reference in your code: don't keep a local reference, or refresh your local reference whwn you use it.  `StateChanges` is an incrementing counter tracking the number of applied mutations. 
 
 ```csharp
     public TIdentity Id {get;}
@@ -63,8 +63,7 @@ There are three actions you can apply.
 
  - `Update` applies the provided `DiodeMutationDelegate` to the managed object.  It will replace the managed object with the new mutated copy and update the state.
  - `Delete` updates the state.
- - `Persisted` resets the state.  Call `Persisted` when the objct had been saved to it's permenant store.
-
+ - `Persisted` resets the state to the current value.  Call `Persisted` when the objct is saved to it's permenant store.
 
 ```csharp
     public DiodeResult Update(DiodeMutationDelegate<TIdentity, TRecord> mutation, object? sender = null) { }
@@ -73,7 +72,7 @@ There are three actions you can apply.
 }
 ```
 
-The constructor is internal, so `DiodeContext` can only be constructed using two static constructors.  They ensure the correct initial state. 
+The constructor is internal, a `DiodeContext` can only be constructed using two static constructors.  They ensure the correct initial state. 
 
 ```csharp
 internal DiodeContext(TRecord item, DiodeState? state = null)  { }
@@ -158,6 +157,3 @@ Diode record mutations are defined by a `DiodeMutationDelegate`:
 public delegate DiodeMutationResult<TRecord> DiodeMutationDelegate<TIdentity, TRecord>(DiodeContext<TIdentity, TRecord> item)
     where TRecord : class, IDiodeRecord<TIdentity>, new();
 ```
-
-
-
