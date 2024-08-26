@@ -36,6 +36,8 @@
 <ModalControl Options="_modalOptions" @bind-Show="_showModal" />
 
 @code {
+    [Parameter] public Guid FormUid { get; set; } = Guid.Empty;
+
     private PaginationState _pagination = new PaginationState { ItemsPerPage = 10 };
     private ModalOptions _modalOptions = new();
     private bool _showModal;
