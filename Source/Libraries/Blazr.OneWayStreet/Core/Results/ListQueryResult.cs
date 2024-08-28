@@ -5,7 +5,7 @@
 /// ============================================================
 namespace Blazr.OneWayStreet.Core;
 
-public sealed record ListQueryResult<TRecord> : IDataResult
+public record class ListQueryResult<TRecord> : IDataResult
 {
     public IEnumerable<TRecord> Items { get; init;} = Enumerable.Empty<TRecord>();  
     public bool Successful { get; init; }
