@@ -19,7 +19,7 @@
 </FluentDataGrid>
 
 @code {
-    [CascadingParameter] private InvoiceComposite Composite { get; set; } = default!;
+    [CascadingParameter] private InvoiceAggregate Composite { get; set; } = default!;
 
     private IQueryable<DmoInvoiceItem> _invoiceItems => this.Composite.InvoiceItems.AsQueryable();
     private GridSort<Guid> _rankSort = GridSort<Guid>

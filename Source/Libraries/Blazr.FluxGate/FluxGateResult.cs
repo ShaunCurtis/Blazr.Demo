@@ -4,6 +4,6 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 
-namespace Blazr.App.Presentation;
+namespace Blazr.FluxGate;
 
-public record InvoiceItemEditData(InvoiceItemId invoiceItemId, InvoiceAggregate composite);
+public readonly record struct FluxGateResult<TFluxGateItem>(bool Success, TFluxGateItem Item, FluxGateState State, string? Message = null );

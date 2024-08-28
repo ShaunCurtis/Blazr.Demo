@@ -5,7 +5,7 @@
 /// ============================================================
 namespace Blazr.App.Core;
 
-public sealed record InvoiceItemId : IEntityKey
+public readonly record struct InvoiceItemId : IEntityKey
 {
     public Guid Value { get; init; }
 

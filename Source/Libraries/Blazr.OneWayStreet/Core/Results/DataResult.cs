@@ -17,6 +17,9 @@ public sealed record DataResult : IDataResult
 
     public static DataResult Failure(string message)
         => new DataResult { Message = message};
+
+    public static DataResult Create(bool success, string? message = null)
+        => new DataResult { Successful = success, Message = message };
 }
 
 public sealed record DataResult<TData> : IDataResult

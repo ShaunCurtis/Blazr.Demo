@@ -8,7 +8,7 @@ namespace Blazr.App.Presentation;
 public class InvoiceItemEditPresenter
 {
     private readonly IToastService _toastService;
-    private readonly InvoiceComposite _composite;
+    private readonly InvoiceAggregate _composite;
     private InvoiceItemId _invoiceItemId = new(Guid.Empty);
 
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
@@ -16,7 +16,7 @@ public class InvoiceItemEditPresenter
     public DmoInvoiceItemEditContext RecordEditContext { get; private set; }
     public bool IsNew { get; private set; }
 
-    public InvoiceItemEditPresenter(InvoiceComposite composite, IToastService toastService)
+    public InvoiceItemEditPresenter(InvoiceAggregate composite, IToastService toastService)
     {
         _composite = composite;
         _toastService = toastService;
@@ -29,13 +29,9 @@ public class InvoiceItemEditPresenter
         this.LastDataResult = DataResult.Success();
         this.IsNew = false;
 
-        var item = _composite.GetInvoiceItem(id);
-
-        if (id.Value == Guid.Empty)
-        {
-            item = _composite.GetNewInvoiceItem();
-            this.IsNew = true;
-        }
+        var item = id.Value == Guid.Empty
+            ? _composite.GetInvoiceItem(id).Item
+            : _composite.GetNewInvoiceItem();
 
         if (item is null)
         {
@@ -65,7 +61,7 @@ public class InvoiceItemEditPresenter
         {
             var success = _composite.AddInvoiceItem(this.RecordEditContext.AsRecord);
 
-            if (success)
+            if (success.Successful)
             {
                 var message = "The Invoice Item was added to the invoice.";
                 _toastService.ShowSuccess(message);
@@ -81,10 +77,10 @@ public class InvoiceItemEditPresenter
             return Task.FromResult(this.LastDataResult);
         }
 
-        this.LastDataResult = _composite.UpdateInvoiceItem(_invoiceItemId, this.RecordEditContext.Mutate).ToDataResult();
+        this.LastDataResult = _composite.DispatchInvoiceItemAction(this.RecordEditContext.Id, new UpdateInvoiceItemAction(this.RecordEditContext.AsRecord));
 
         if (this.LastDataResult.Successful)
-            _toastService.ShowSuccess("The invoice item was added/updated.");
+            _toastService.ShowSuccess("The invoice item was updated.");
         else
             _toastService.ShowError(this.LastDataResult.Message ?? "The Invoice Item could not be added to the invoice.");
 

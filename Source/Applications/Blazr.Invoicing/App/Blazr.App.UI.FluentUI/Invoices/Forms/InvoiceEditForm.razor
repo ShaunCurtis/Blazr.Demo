@@ -1,5 +1,5 @@
 ﻿@namespace Blazr.App.UI.FluentUI
-@implements IDialogContentComponent<InvoiceComposite>
+@implements IDialogContentComponent<InvoiceAggregate>
 @inject IToastService ToastService
 @inject IGuidLookUpPresenter<CustomerLookUpItem> CustomerLookupPresenter
 @inject NavigationManager NavManager
@@ -84,7 +84,7 @@
 
 @code {
     [CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
-    [Parameter] public InvoiceComposite Content { get; set; } = default!;
+    [Parameter] public InvoiceAggregate Content { get; set; } = default!;
 
     private InvoiceEditPresenter Presenter = default!;
 
@@ -103,7 +103,7 @@
     protected async override Task OnInitializedAsync()
     {
         await this.CustomerLookupPresenter.LoadAsync();
-        if (this.Content.State == DiodeState.New)
+        if (this.Content.State.IsNew)
             this.Presenter.EditContext.Validate();
     }
 

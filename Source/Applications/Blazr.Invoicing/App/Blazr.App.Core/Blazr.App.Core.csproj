@@ -13,6 +13,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\..\Libraries\Blazr.Diode\Blazr.Diode.csproj" />
 	  <ProjectReference Include="..\..\..\..\Libraries\Blazr.EditStateTracker\Blazr.EditStateTracker.csproj" />
+	  <ProjectReference Include="..\..\..\..\Libraries\Blazr.FluxGate\Blazr.FluxGate.csproj" />
 	  <ProjectReference Include="..\..\..\..\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj" />
 	</ItemGroup>
 

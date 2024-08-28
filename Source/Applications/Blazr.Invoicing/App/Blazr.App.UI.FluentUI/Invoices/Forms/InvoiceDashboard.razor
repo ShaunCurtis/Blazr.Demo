@@ -77,7 +77,7 @@
 
     private bool _loading = true;
     //private InvoiceComposite _item = new InvoiceComposite(new(), Enumerable.Empty<DmoInvoiceItem>(), true);
-    private bool _isDirty => this.Presenter.Composite.State != DiodeState.Clean;
+    private bool _isDirty => this.Presenter.Composite.State.IsModified;
     private bool _isError = false;
     private string _message => _isError ? this.Presenter.LastDataResult.Message ?? "Unspecified Error" : "Invoice changes are not currently saved to the data store!";
     private MessageIntent _messageIntent => _isError ? MessageIntent.Error : MessageIntent.Warning;
@@ -91,7 +91,7 @@
         this.Presenter.Composite.StateHasChanged += this.OnCompositeStateChanged;
         _loading = false;
 
-        if (this.Presenter.Composite.State == DiodeState.New)
+        if (this.Presenter.Composite.State.IsNew)
             _editor = EditAsync();
     }
 
@@ -117,7 +117,7 @@
         // Pop up the Editor dialog
         var dialog = await DialogService.ShowDialogAsync<InvoiceEditForm>(this.Presenter.Composite, new DialogParameters()
             {
-                Title = this.Presenter.Composite.IsNew ? "Add Invoice" : "Edit Invoice",
+                Title = this.Presenter.Composite.State.IsNew ? "Add Invoice" : "Edit Invoice",
                 PreventDismissOnOverlayClick = true,
                 PreventScroll = true,
             });
@@ -126,7 +126,7 @@
         var result = await dialog.Result;
 
         // If we have a cancelled new invoice we need to exit back to the invoices page
-        if (result.Cancelled && this.Presenter.Composite.State == DiodeState.New)
+        if (result.Cancelled && this.Presenter.Composite.State.IsNew)
         {
             this.ToastService.ShowEvent("You exited creating the new invoice.");
             this.Presenter.Composite.Persisted();
@@ -138,7 +138,7 @@
     {
         // Build the command request and execute it
         var state = this.Presenter.Composite.State.ToCommandState();
-        CommandRequest<InvoiceComposite> command = new() { Item = this.Presenter.Composite, State = state };
+        CommandRequest<InvoiceAggregate> command = new() { Item = this.Presenter.Composite, State = state };
         var result = await this.DataBroker.ExecuteCommandAsync(command);
 
         // On Success we need to update the composite state so we can exit to the invoices page

@@ -6,7 +6,7 @@
 namespace Blazr.App.Infrastructure;
 
 public sealed class InvoiceCompositeCommandHandler<TDbContext>
-    : ICommandHandler<InvoiceComposite>
+    : ICommandHandler<InvoiceAggregate>
     where TDbContext : DbContext
 {
     private readonly IDbContextFactory<TDbContext> _factory;
@@ -18,7 +18,7 @@ public sealed class InvoiceCompositeCommandHandler<TDbContext>
         _logger = logger;
     }
 
-    public async ValueTask<CommandResult> ExecuteAsync(CommandRequest<InvoiceComposite> request)
+    public async ValueTask<CommandResult> ExecuteAsync(CommandRequest<InvoiceAggregate> request)
     {
         using var dbContext = _factory.CreateDbContext();
 
@@ -28,32 +28,33 @@ public sealed class InvoiceCompositeCommandHandler<TDbContext>
         var rootState = composite.State; 
 
         // Update the root item based on its state
-        if (rootState == DiodeState.New)
+        if (rootState.IsNew)
             dbContext.Add<DboInvoice>(dboRoot);
 
-        else if (rootState == DiodeState.Deleted)
+        else if (rootState.IsDeleted)
             dbContext.Remove<DboInvoice>(dboRoot);
 
-        else if (rootState == DiodeState.Modified)
+        else if (rootState.IsModified)
             dbContext.Update<DboInvoice>(dboRoot);
 
         // Update all the existing items based on their state
         foreach (var item in composite.InvoiceItems)
         {
             var dboItem = DboInvoiceItemMap.Map(item);
+            var result = composite.GetInvoiceItemState(item.Id);
+            var itemState = result.Item;
 
             // If the root state is delete then we delete everything regardless of item state
-            var itemState = rootState;
-            if (rootState != DiodeState.Deleted)
-                itemState = composite.GetInvoiceItemState(item.Id);
-
-            if (itemState == DiodeState.New)
-                dbContext.Add<DboInvoiceItem>(dboItem);
-
-            else if (itemState == DiodeState.Deleted)
+            if (rootState.IsDeleted)
                 dbContext.Remove<DboInvoiceItem>(dboItem);
 
-            else if (itemState == DiodeState.Modified)
+            else if(itemState.IsNew)
+                dbContext.Add<DboInvoiceItem>(dboItem);
+
+            else if (itemState.IsDeleted)
+                dbContext.Remove<DboInvoiceItem>(dboItem);
+
+            else if (itemState.IsModified)
                 dbContext.Update<DboInvoiceItem>(dboItem);
         }
 

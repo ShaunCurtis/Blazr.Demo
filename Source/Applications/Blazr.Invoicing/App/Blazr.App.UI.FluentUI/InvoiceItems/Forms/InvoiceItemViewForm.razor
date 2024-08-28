@@ -43,7 +43,7 @@
 @code {
     [CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
     [Parameter] public InvoiceItemId Content { get; set; } = default!;
-    [CascadingParameter] private InvoiceComposite Composite { get; set; } = default!;
+    [CascadingParameter] private InvoiceAggregate Composite { get; set; } = default!;
 
     private bool _isDialog => this.Dialog is not null;
     private DmoInvoiceItem _item = default!;
@@ -53,7 +53,7 @@
         DmoInvoiceItem? item = null;
 
         if (this.Composite is not null)
-            item = this.Composite.GetInvoiceItem(this.Content);
+            item = this.Composite.GetInvoiceItem(this.Content).Item ?? null;
 
         if (item is null)
         {

@@ -11,17 +11,19 @@ namespace Blazr.App.Infrastructure;
 /// </summary>
 /// <typeparam name="TDbContext"></typeparam>
 public sealed class InvoiceCompositeItemRequestHandler<TDbContext>
-    : IItemRequestHandler<InvoiceComposite, InvoiceId>
+    : IItemRequestHandler<InvoiceAggregate, InvoiceId>
     where TDbContext : DbContext
 {
     private readonly IDbContextFactory<TDbContext> _factory;
+    private readonly IServiceProvider _serviceProvider;
 
-    public InvoiceCompositeItemRequestHandler(IDbContextFactory<TDbContext> factory)
+    public InvoiceCompositeItemRequestHandler(IDbContextFactory<TDbContext> factory, IServiceProvider serviceProvider)
     {
         _factory = factory;
+        _serviceProvider = serviceProvider;
     }
 
-    public async ValueTask<ItemQueryResult<InvoiceComposite>> ExecuteAsync(ItemQueryRequest<InvoiceId> request)
+    public async ValueTask<ItemQueryResult<InvoiceAggregate>> ExecuteAsync(ItemQueryRequest<InvoiceId> request)
     {
         // Get a DbContext scoped to the method and turn off change tracking 
         using var dbContext = _factory.CreateDbContext();
@@ -32,9 +34,9 @@ public sealed class InvoiceCompositeItemRequestHandler<TDbContext>
         var dboRoot = await dbContext.Set<DvoInvoice>()
             .SingleOrDefaultAsync(item => item.InvoiceID == invoiceid, request.Cancellation);
 
-        // If we don't get anything return faiure
+        // If we don't get anything return failure
         if (dboRoot is null)
-            return ItemQueryResult<InvoiceComposite>.Failure("No record retrieved");
+            return ItemQueryResult<InvoiceAggregate>.Failure("No record retrieved");
 
         // Map the data store object to the domain entity
         var root = DvoInvoiceMap.Map(dboRoot);
@@ -46,9 +48,9 @@ public sealed class InvoiceCompositeItemRequestHandler<TDbContext>
             .ToListAsync();
 
         // create the composite with the data store retrieved items
-        var composite = new InvoiceComposite(root, items);
+        var composite = new InvoiceAggregate(_serviceProvider, root, items);
 
         // Return success
-        return ItemQueryResult<InvoiceComposite>.Success(composite);
+        return ItemQueryResult<InvoiceAggregate>.Success(composite);
     }
 }

@@ -10,21 +10,23 @@ public class InvoiceCompositePresenter
     private readonly IDataBroker _dataBroker;
     private readonly IToastService _toastService;
     private readonly INewRecordProvider<DmoInvoice> _recordProvider;
+    private readonly IServiceProvider _serviceProvider;
 
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
 
-    public InvoiceComposite Composite { get; private set; }
+    public InvoiceAggregate Composite { get; private set; }
 
     public IQueryable<DmoInvoiceItem> InvoiceItems => this.Composite.InvoiceItems.AsQueryable();
 
-    public InvoiceCompositePresenter(IToastService toastService, IDataBroker dataBroker, INewRecordProvider<DmoInvoice> recordProvider)
+    public InvoiceCompositePresenter(IServiceProvider serviceProvider, IToastService toastService, IDataBroker dataBroker, INewRecordProvider<DmoInvoice> recordProvider)
     {
         _toastService = toastService;
         _dataBroker = dataBroker;
         _recordProvider = recordProvider;
+        _serviceProvider = serviceProvider;
 
         // Build a new context
-        this.Composite = new InvoiceComposite(_recordProvider.NewRecord(), Enumerable.Empty<DmoInvoiceItem>(), true);
+        this.Composite = new InvoiceAggregate(_serviceProvider, _recordProvider.NewRecord(), Enumerable.Empty<DmoInvoiceItem>(), true);
     }
 
     public async Task LoadAsync(InvoiceId id)
@@ -35,7 +37,7 @@ public class InvoiceCompositePresenter
         if (id.Value != Guid.Empty)
         {
             var request = ItemQueryRequest<InvoiceId>.Create(id);
-            var result = await _dataBroker.ExecuteQueryAsync<InvoiceComposite, InvoiceId>(request);
+            var result = await _dataBroker.ExecuteQueryAsync<InvoiceAggregate, InvoiceId>(request);
             LastDataResult = result;
             if (this.LastDataResult.Successful)
             {
@@ -44,28 +46,4 @@ public class InvoiceCompositePresenter
             return;
         }
     }
-
-    //TODO - I don;t think this is needed anymore
-    //public async Task<IDataResult> SaveItemAsync()
-    //{
-
-    //    if (!this.RecordEditContext.IsDirty)
-    //    {
-    //        this.LastDataResult = DataResult.Failure("The record has not changed and therefore has not been updated.");
-    //        _toastService.ShowWarning("The record has not changed and therefore has not been updated.");
-    //        return this.LastDataResult;
-    //    }
-
-    //    var record = RecordEditContext.AsRecord;
-    //    var command = new CommandRequest<DmoCustomer>(record, this.IsNew ? CommandState.Add : CommandState.Update);
-    //    var result = await _commandHandler.ExecuteAsync(command);
-
-    //    if (result.Successful)
-    //        _toastService.ShowSuccess("The Customer was saved.");
-    //    else
-    //        _toastService.ShowError(result.Message ?? "The Customer could not be saved.");
-
-    //    this.LastDataResult = result;
-    //    return result;
-    //}
 }

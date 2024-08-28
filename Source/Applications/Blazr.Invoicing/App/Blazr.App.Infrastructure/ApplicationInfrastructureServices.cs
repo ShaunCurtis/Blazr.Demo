@@ -57,8 +57,8 @@ public static class ApplicationInfrastructureServices
         services.AddScoped<IListRequestHandler<DmoInvoiceItem>, MappedListRequestServerHandler<InMemoryTestDbContext, DmoInvoiceItem, DboInvoiceItem>>();
         services.AddScoped<IItemRequestHandler<DmoInvoiceItem, InvoiceItemId>, MappedItemRequestServerHandler<InMemoryTestDbContext, DmoInvoiceItem, DboInvoiceItem, InvoiceItemId>>();
 
-        services.AddScoped<ICommandHandler<InvoiceComposite>, InvoiceCompositeCommandHandler<InMemoryTestDbContext>>();
-        services.AddScoped<IItemRequestHandler<InvoiceComposite, InvoiceId>, InvoiceCompositeItemRequestHandler<InMemoryTestDbContext>>();
+        services.AddScoped<ICommandHandler<InvoiceAggregate>, InvoiceCompositeCommandHandler<InMemoryTestDbContext>>();
+        services.AddScoped<IItemRequestHandler<InvoiceAggregate, InvoiceId>, InvoiceCompositeItemRequestHandler<InMemoryTestDbContext>>();
 
         services.AddTransient<IRecordFilterHandler<DvoInvoice>, InvoiceFilterHandler>();
         services.AddTransient<IRecordSortHandler<DvoInvoice>, InvoiceSortHandler>();
@@ -68,5 +68,8 @@ public static class ApplicationInfrastructureServices
 
         services.AddScoped<INewRecordProvider<DmoInvoice>, NewInvoiceProvider>();
         //services.AddTransient<InvoiceComposite>();
+
+        services.AddSingleton<FluxGateDispatcher<DmoInvoice>, InvoiceDispatcher>();
+        services.AddSingleton<FluxGateDispatcher<DmoInvoiceItem>, InvoiceItemDispatcher>();
     }
 }

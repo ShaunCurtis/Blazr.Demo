@@ -11,7 +11,7 @@
 	  <Description>A sets of objects to implement the basic Flux Pattern.</Description>
 	  <Copyright>Use and Donate</Copyright>
 	  <PackageReadmeFile>Package.md</PackageReadmeFile>
-	  <RepositoryUrl>https://github.com/ShaunCurtis/Blazr.EditStateTracker</RepositoryUrl>
+	  <RepositoryUrl>https://github.com/ShaunCurtis/Blazr.EdiTFluxGateItemTracker</RepositoryUrl>
 	  <PackageReleaseNotes>Release 1.0.0</PackageReleaseNotes>
 	  <PackageLicenseFile>license.txt</PackageLicenseFile>
 	  <AssemblyVersion>1.0.0</AssemblyVersion>
