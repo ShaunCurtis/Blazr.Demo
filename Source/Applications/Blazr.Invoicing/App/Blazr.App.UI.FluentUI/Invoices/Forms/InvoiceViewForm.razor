@@ -38,7 +38,7 @@
 @code
 {
     [CascadingParameter] private FluentDialog Dialog { get; set; } = default!;
-    [CascadingParameter] private InvoiceAggregate Composite { get; set; } = default!;
+    [CascadingParameter] private InvoiceComposite Composite { get; set; } = default!;
     [Parameter] public InvoiceId Content { get; set; } = new(Guid.Empty);
 
     private bool _isDialog => this.Dialog is not null;

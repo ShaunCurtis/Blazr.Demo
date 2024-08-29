@@ -11,7 +11,7 @@ namespace Blazr.App.Infrastructure;
 /// </summary>
 /// <typeparam name="TDbContext"></typeparam>
 public sealed class InvoiceCompositeItemRequestHandler<TDbContext>
-    : IItemRequestHandler<InvoiceAggregate, InvoiceId>
+    : IItemRequestHandler<InvoiceComposite, InvoiceId>
     where TDbContext : DbContext
 {
     private readonly IDbContextFactory<TDbContext> _factory;
@@ -23,7 +23,7 @@ public sealed class InvoiceCompositeItemRequestHandler<TDbContext>
         _serviceProvider = serviceProvider;
     }
 
-    public async ValueTask<ItemQueryResult<InvoiceAggregate>> ExecuteAsync(ItemQueryRequest<InvoiceId> request)
+    public async ValueTask<ItemQueryResult<InvoiceComposite>> ExecuteAsync(ItemQueryRequest<InvoiceId> request)
     {
         // Get a DbContext scoped to the method and turn off change tracking 
         using var dbContext = _factory.CreateDbContext();
@@ -36,7 +36,7 @@ public sealed class InvoiceCompositeItemRequestHandler<TDbContext>
 
         // If we don't get anything return failure
         if (dboRoot is null)
-            return ItemQueryResult<InvoiceAggregate>.Failure("No record retrieved");
+            return ItemQueryResult<InvoiceComposite>.Failure("No record retrieved");
 
         // Map the data store object to the domain entity
         var root = DvoInvoiceMap.Map(dboRoot);
@@ -48,9 +48,9 @@ public sealed class InvoiceCompositeItemRequestHandler<TDbContext>
             .ToListAsync();
 
         // create the composite with the data store retrieved items
-        var composite = new InvoiceAggregate(_serviceProvider, root, items);
+        var composite = new InvoiceComposite(_serviceProvider, root, items);
 
         // Return success
-        return ItemQueryResult<InvoiceAggregate>.Success(composite);
+        return ItemQueryResult<InvoiceComposite>.Success(composite);
     }
 }

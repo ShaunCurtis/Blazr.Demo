@@ -1,5 +1,5 @@
 ﻿@namespace Blazr.App.UI.FluentUI
-@implements IDialogContentComponent<InvoiceAggregate>
+@implements IDialogContentComponent<InvoiceComposite>
 @inject IToastService ToastService
 @inject IGuidLookUpPresenter<CustomerLookUpItem> CustomerLookupPresenter
 @inject NavigationManager NavManager
@@ -84,7 +84,7 @@
 
 @code {
     [CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
-    [Parameter] public InvoiceAggregate Content { get; set; } = default!;
+    [Parameter] public InvoiceComposite Content { get; set; } = default!;
 
     private InvoiceEditPresenter Presenter = default!;
 

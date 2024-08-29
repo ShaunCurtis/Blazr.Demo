@@ -30,13 +30,4 @@ public class CustomerEditContext
     {
         this.CustomerName = record.CustomerName;
     }
-
-    public DiodeMutationResult<DmoCustomer> Mutate(DiodeContext<CustomerId, DmoCustomer> item)
-    {
-        var record = item.Item with
-        {
-            CustomerName = this.CustomerName
-        };
-        return DiodeMutationResult<DmoCustomer>.Success(record);
-    }
 }

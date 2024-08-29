@@ -6,4 +6,4 @@
 
 namespace Blazr.App.Presentation;
 
-public record InvoiceItemEditData(InvoiceItemId invoiceItemId, InvoiceAggregate composite);
+public record InvoiceItemEditData(InvoiceItemId invoiceItemId, InvoiceComposite composite);

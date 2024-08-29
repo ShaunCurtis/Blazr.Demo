@@ -6,7 +6,7 @@
 namespace Blazr.App.Infrastructure;
 
 public sealed class InvoiceCompositeCommandHandler<TDbContext>
-    : ICommandHandler<InvoiceAggregate>
+    : ICommandHandler<InvoiceComposite>
     where TDbContext : DbContext
 {
     private readonly IDbContextFactory<TDbContext> _factory;
@@ -18,7 +18,7 @@ public sealed class InvoiceCompositeCommandHandler<TDbContext>
         _logger = logger;
     }
 
-    public async ValueTask<CommandResult> ExecuteAsync(CommandRequest<InvoiceAggregate> request)
+    public async ValueTask<CommandResult> ExecuteAsync(CommandRequest<InvoiceComposite> request)
     {
         using var dbContext = _factory.CreateDbContext();
 

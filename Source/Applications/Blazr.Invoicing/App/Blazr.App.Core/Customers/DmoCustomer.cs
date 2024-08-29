@@ -18,7 +18,7 @@ public sealed record CustomerId : IEntityKey
         => new(Guid.Empty);
 }
 
-public record DmoCustomer : ICommandEntity, IDiodeRecord<CustomerId>
+public record DmoCustomer : ICommandEntity
 {
     public CustomerId CustomerId { get; init; } = new(Guid.Empty);
     public string CustomerName { get; init; } = string.Empty;

@@ -138,7 +138,7 @@
     {
         // Build the command request and execute it
         var state = this.Presenter.Composite.State.ToCommandState();
-        CommandRequest<InvoiceAggregate> command = new() { Item = this.Presenter.Composite, State = state };
+        CommandRequest<InvoiceComposite> command = new() { Item = this.Presenter.Composite, State = state };
         var result = await this.DataBroker.ExecuteCommandAsync(command);
 
         // On Success we need to update the composite state so we can exit to the invoices page

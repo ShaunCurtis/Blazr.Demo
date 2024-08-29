@@ -14,7 +14,7 @@ public class InvoiceCompositePresenter
 
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
 
-    public InvoiceAggregate Composite { get; private set; }
+    public InvoiceComposite Composite { get; private set; }
 
     public IQueryable<DmoInvoiceItem> InvoiceItems => this.Composite.InvoiceItems.AsQueryable();
 
@@ -26,7 +26,7 @@ public class InvoiceCompositePresenter
         _serviceProvider = serviceProvider;
 
         // Build a new context
-        this.Composite = new InvoiceAggregate(_serviceProvider, _recordProvider.NewRecord(), Enumerable.Empty<DmoInvoiceItem>(), true);
+        this.Composite = new InvoiceComposite(_serviceProvider, _recordProvider.NewRecord(), Enumerable.Empty<DmoInvoiceItem>(), true);
     }
 
     public async Task LoadAsync(InvoiceId id)
@@ -37,7 +37,7 @@ public class InvoiceCompositePresenter
         if (id.Value != Guid.Empty)
         {
             var request = ItemQueryRequest<InvoiceId>.Create(id);
-            var result = await _dataBroker.ExecuteQueryAsync<InvoiceAggregate, InvoiceId>(request);
+            var result = await _dataBroker.ExecuteQueryAsync<InvoiceComposite, InvoiceId>(request);
             LastDataResult = result;
             if (this.LastDataResult.Successful)
             {

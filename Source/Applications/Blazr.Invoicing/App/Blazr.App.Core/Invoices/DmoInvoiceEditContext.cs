@@ -28,11 +28,6 @@ public class DmoInvoiceEditContext
     }
     public bool IsDirty => _baseRecord != this.AsRecord;
 
-    public DiodeMutationResult<DmoInvoice> Mutate(DiodeContext<InvoiceId, DmoInvoice> item)
-    {
-        return DiodeMutationResult<DmoInvoice>.Success(GetMutation(item.Item));
-    }
-
     private DmoInvoice GetMutation(DmoInvoice item)
     {
         return item with

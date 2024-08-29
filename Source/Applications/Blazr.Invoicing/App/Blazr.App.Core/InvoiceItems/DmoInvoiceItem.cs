@@ -18,7 +18,7 @@ public readonly record struct InvoiceItemId : IEntityKey
         => new(Guid.Empty);
 }
 
-public record DmoInvoiceItem : IKeyedEntity, IDiodeRecord<InvoiceItemId>
+public record DmoInvoiceItem : IKeyedEntity
 {
     public InvoiceItemId InvoiceItemId { get; init; } = new(Guid.Empty);
     public InvoiceId InvoiceId { get; init; } = new(Guid.Empty);

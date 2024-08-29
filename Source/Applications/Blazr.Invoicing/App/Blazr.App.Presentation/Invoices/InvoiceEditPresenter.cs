@@ -8,14 +8,14 @@ namespace Blazr.App.Presentation;
 public class InvoiceEditPresenter
 {
     private readonly IToastService _toastService;
-    private readonly InvoiceAggregate _composite;
+    private readonly InvoiceComposite _composite;
 
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
     public EditContext EditContext { get; private set; }
     public DmoInvoiceEditContext RecordEditContext { get; private set; }
     public bool IsNew => _composite.State.IsNew;
 
-    public InvoiceEditPresenter(InvoiceAggregate composite, IToastService toastService)
+    public InvoiceEditPresenter(InvoiceComposite composite, IToastService toastService)
     {
         _composite = composite;
         _toastService = toastService;

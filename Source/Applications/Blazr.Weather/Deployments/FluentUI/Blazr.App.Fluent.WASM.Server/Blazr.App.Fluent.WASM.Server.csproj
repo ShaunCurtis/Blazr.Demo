@@ -18,7 +18,7 @@
 		<ProjectReference Include="..\Blazr.App.Fluent.WASM.Client\Blazr.App.Fluent.WASM.Client.csproj" />
 		<PackageReference Include="Blazr.RenderState.Server" Version="1.0.0" />
 
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.6" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.9.3" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.*-* " />
 	</ItemGroup>

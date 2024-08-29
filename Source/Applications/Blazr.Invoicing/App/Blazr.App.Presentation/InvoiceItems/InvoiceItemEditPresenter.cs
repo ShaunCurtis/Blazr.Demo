@@ -8,7 +8,7 @@ namespace Blazr.App.Presentation;
 public class InvoiceItemEditPresenter
 {
     private readonly IToastService _toastService;
-    private readonly InvoiceAggregate _composite;
+    private readonly InvoiceComposite _composite;
     private InvoiceItemId _invoiceItemId = new(Guid.Empty);
 
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
@@ -16,7 +16,7 @@ public class InvoiceItemEditPresenter
     public DmoInvoiceItemEditContext RecordEditContext { get; private set; }
     public bool IsNew { get; private set; }
 
-    public InvoiceItemEditPresenter(InvoiceAggregate composite, IToastService toastService)
+    public InvoiceItemEditPresenter(InvoiceComposite composite, IToastService toastService)
     {
         _composite = composite;
         _toastService = toastService;
@@ -27,7 +27,7 @@ public class InvoiceItemEditPresenter
     public Task LoadAsync(InvoiceItemId id)
     {
         this.LastDataResult = DataResult.Success();
-        this.IsNew = false;
+        this.IsNew = id.Value == Guid.Empty;
 
         var item = id.Value != Guid.Empty
             ? _composite.GetInvoiceItem(id).Item
@@ -59,7 +59,7 @@ public class InvoiceItemEditPresenter
 
         if (IsNew)
         {
-            var success = _composite.AddInvoiceItem(this.RecordEditContext.AsRecord);
+            var success = _composite.DispatchInvoiceItemAction(this.RecordEditContext.Id, new AddInvoiceItemAction(this, this.RecordEditContext.AsRecord));
 
             if (success.Successful)
             {
@@ -85,6 +85,5 @@ public class InvoiceItemEditPresenter
             _toastService.ShowError(this.LastDataResult.Message ?? "The Invoice Item could not be added to the invoice.");
 
         return Task.FromResult(this.LastDataResult);
-
     }
 }

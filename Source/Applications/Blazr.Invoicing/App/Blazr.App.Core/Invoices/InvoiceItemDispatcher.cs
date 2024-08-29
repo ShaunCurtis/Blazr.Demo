@@ -7,6 +7,7 @@ using Blazr.FluxGate;
 
 namespace Blazr.App.Core;
 
+public readonly record struct AddInvoiceItemAction(object Sender, DmoInvoiceItem Item) : IFluxGateAction;
 public readonly record struct UpdateInvoiceItemAction(object Sender, DmoInvoiceItem Item) : IFluxGateAction;
 public readonly record struct DeleteInvoiceItemAction(object Sender) : IFluxGateAction;
 public readonly record struct SetInvoiceItemAsPersistedAction(object Sender) : IFluxGateAction;
