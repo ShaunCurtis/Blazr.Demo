@@ -28,5 +28,4 @@ public record DmoInvoiceItem : IKeyedEntity
     public InvoiceItemId Id => this.InvoiceItemId;
 
     public object KeyValue => InvoiceItemId.Value;
-
 }
