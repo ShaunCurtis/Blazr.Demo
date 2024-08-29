@@ -6,4 +6,7 @@
 
 namespace Blazr.FluxGate;
 
-public interface IFluxGateAction { }
+public interface IFluxGateAction 
+{
+    public object Sender { get; }
+}

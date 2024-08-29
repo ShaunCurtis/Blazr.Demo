@@ -33,7 +33,7 @@ public class InvoiceEditPresenter
             return Task.FromResult(this.LastDataResult);
         }
 
-        this.LastDataResult = _composite.DispatchInvoiceAction(new UpdateInvoiceAction(this.RecordEditContext.AsRecord));
+        this.LastDataResult = _composite.DispatchInvoiceAction(new UpdateInvoiceAction(this, this.RecordEditContext.AsRecord));
 
         if (this.LastDataResult.Successful)
             _toastService.ShowSuccess("The invoice data was updated.");

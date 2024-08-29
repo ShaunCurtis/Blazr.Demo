@@ -1,6 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-
-/// ============================================================
+﻿/// ============================================================
 /// Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
@@ -44,7 +42,7 @@ public class FluxGateStore<TFluxGateItem>
             this.Item = result.Item;
             this.State = result.State;
 
-            this.StateChanged?.Invoke(action, new FluxGateEventArgs() { State = this.Item });
+            this.StateChanged?.Invoke(action.Sender, new FluxGateEventArgs() { State = this.Item });
         }
         return result;
     }

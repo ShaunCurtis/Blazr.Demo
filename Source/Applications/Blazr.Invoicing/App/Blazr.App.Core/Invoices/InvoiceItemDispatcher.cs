@@ -7,9 +7,9 @@ using Blazr.FluxGate;
 
 namespace Blazr.App.Core;
 
-public readonly record struct UpdateInvoiceItemAction(DmoInvoiceItem Item) : IFluxGateAction;
-public readonly record struct DeleteInvoiceItemAction() : IFluxGateAction;
-public readonly record struct SetInvoiceItemAsPersistedAction() : IFluxGateAction;
+public readonly record struct UpdateInvoiceItemAction(object Sender, DmoInvoiceItem Item) : IFluxGateAction;
+public readonly record struct DeleteInvoiceItemAction(object Sender) : IFluxGateAction;
+public readonly record struct SetInvoiceItemAsPersistedAction(object Sender) : IFluxGateAction;
 
 public class InvoiceItemDispatcher : FluxGateDispatcher<DmoInvoiceItem>
 {

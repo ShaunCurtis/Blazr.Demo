@@ -7,10 +7,10 @@ using Blazr.FluxGate;
 
 namespace Blazr.App.Core;
 
-public readonly record struct UpdateInvoiceAction(DmoInvoice Item) : IFluxGateAction;
-public readonly record struct DeleteInvoiceAction() : IFluxGateAction;
-public readonly record struct SetInvoiceAsPersistedAction() : IFluxGateAction;
-public readonly record struct UpdateInvoicePriceAction(decimal TotalAmount) : IFluxGateAction;
+public readonly record struct UpdateInvoiceAction(object Sender, DmoInvoice Item) : IFluxGateAction;
+public readonly record struct DeleteInvoiceAction(object Sender) : IFluxGateAction;
+public readonly record struct SetInvoiceAsPersistedAction(object Sender) : IFluxGateAction;
+public readonly record struct UpdateInvoicePriceAction(object Sender, decimal TotalAmount) : IFluxGateAction;
 
 public class InvoiceDispatcher : FluxGateDispatcher<DmoInvoice>
 {

@@ -29,7 +29,7 @@ public class InvoiceItemEditPresenter
         this.LastDataResult = DataResult.Success();
         this.IsNew = false;
 
-        var item = id.Value == Guid.Empty
+        var item = id.Value != Guid.Empty
             ? _composite.GetInvoiceItem(id).Item
             : _composite.GetNewInvoiceItem();
 
@@ -77,7 +77,7 @@ public class InvoiceItemEditPresenter
             return Task.FromResult(this.LastDataResult);
         }
 
-        this.LastDataResult = _composite.DispatchInvoiceItemAction(this.RecordEditContext.Id, new UpdateInvoiceItemAction(this.RecordEditContext.AsRecord));
+        this.LastDataResult = _composite.DispatchInvoiceItemAction(this.RecordEditContext.Id, new UpdateInvoiceItemAction(this, this.RecordEditContext.AsRecord));
 
         if (this.LastDataResult.Successful)
             _toastService.ShowSuccess("The invoice item was updated.");

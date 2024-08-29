@@ -130,7 +130,7 @@ public class InvoiceAggregate
         foreach (var item in this.InvoiceItems)
             amount = amount + item.Amount;
 
-        _invoice.Dispatch(new UpdateInvoicePriceAction(amount));
+        _invoice.Dispatch(new UpdateInvoicePriceAction(this, amount));
 
         this.StateHasChanged?.Invoke(this, EventArgs.Empty);
     }
