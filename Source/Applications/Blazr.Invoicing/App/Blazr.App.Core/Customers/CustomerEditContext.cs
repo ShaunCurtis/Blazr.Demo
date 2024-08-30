@@ -34,6 +34,7 @@ public class CustomerEditContext : IRecordEditContext<DmoCustomer>
 
     public void Load(DmoCustomer record)
     {
+        _baseRecord = record;
         this.CustomerName = record.CustomerName;
     }
 }
