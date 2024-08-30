@@ -10,7 +10,7 @@ public class InvoiceCompositePresenter
     private readonly IDataBroker _dataBroker;
     private readonly IToastService _toastService;
     private readonly INewRecordProvider<DmoInvoice> _recordProvider;
-    private readonly IServiceProvider _serviceProvider;
+    private readonly InvoiceCompositeFactory _factory;
 
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
 
@@ -18,18 +18,18 @@ public class InvoiceCompositePresenter
 
     public IQueryable<DmoInvoiceItem> InvoiceItems => this.Composite.InvoiceItems.AsQueryable();
 
-    public InvoiceCompositePresenter(IServiceProvider serviceProvider, IToastService toastService, IDataBroker dataBroker, INewRecordProvider<DmoInvoice> recordProvider)
+    internal InvoiceCompositePresenter(InvoiceCompositeFactory invoiceCompositeFactory, IToastService toastService, IDataBroker dataBroker, INewRecordProvider<DmoInvoice> recordProvider)
     {
         _toastService = toastService;
         _dataBroker = dataBroker;
         _recordProvider = recordProvider;
-        _serviceProvider = serviceProvider;
+        _factory = invoiceCompositeFactory;
 
         // Build a new context
-        this.Composite = new InvoiceComposite(_serviceProvider, _recordProvider.NewRecord(), Enumerable.Empty<DmoInvoiceItem>(), true);
+        this.Composite = _factory.GetInstance(_recordProvider.NewRecord(), Enumerable.Empty<DmoInvoiceItem>(), true);
     }
 
-    public async Task LoadAsync(InvoiceId id)
+    internal async Task LoadAsync(InvoiceId id)
     {
         this.LastDataResult = DataResult.Success();
 

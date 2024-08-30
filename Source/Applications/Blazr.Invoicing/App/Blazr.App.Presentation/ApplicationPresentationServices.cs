@@ -29,7 +29,8 @@ public static class ApplicationPresentationServices
     {
         services.AddTransient<IListPresenter<DmoInvoice>, ListPresenter<DmoInvoice>>();
         services.AddTransient<IViewPresenter<DmoInvoice, InvoiceId>, ViewPresenter<DmoInvoice, InvoiceId>>();
-        services.AddTransient<InvoiceCompositePresenter>();
+        //services.AddTransient<InvoiceCompositePresenter>();
+        services.AddScoped<InvoiceCompositePresenterFactory>();
     }
 
     private static void AddInvoiceItemServices(IServiceCollection services)

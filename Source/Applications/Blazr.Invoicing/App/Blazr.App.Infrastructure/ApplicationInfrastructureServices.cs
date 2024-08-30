@@ -69,6 +69,7 @@ public static class ApplicationInfrastructureServices
         services.AddScoped<INewRecordProvider<DmoInvoice>, NewInvoiceProvider>();
         //services.AddTransient<InvoiceComposite>();
 
+        services.AddSingleton<InvoiceCompositeFactory>();
         services.AddSingleton<FluxGateDispatcher<DmoInvoice>, InvoiceDispatcher>();
         services.AddSingleton<FluxGateDispatcher<DmoInvoiceItem>, InvoiceItemDispatcher>();
     }

@@ -13,19 +13,11 @@ public class InvoiceComposite
     private FluxGateStore<DmoInvoice> _invoice;
     private KeyedFluxGateStore<DmoInvoiceItem, InvoiceItemId> _invoiceItems;
     private readonly IServiceProvider _serviceProvider;
-    private bool _isLoaded;
     public DmoInvoice Invoice => _invoice.Item;
     public IEnumerable<DmoInvoiceItem> InvoiceItems => _invoiceItems.Items;
     public FluxGateState State => _invoice.State;
 
     public event EventHandler? StateHasChanged;
-
-    public InvoiceComposite(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-        _invoice = (FluxGateStore<DmoInvoice>)ActivatorUtilities.CreateInstance(_serviceProvider, typeof(FluxGateStore<DmoInvoice>));
-        _invoiceItems = (KeyedFluxGateStore<DmoInvoiceItem, InvoiceItemId>)ActivatorUtilities.CreateInstance(_serviceProvider, typeof(KeyedFluxGateStore<DmoInvoiceItem, InvoiceItemId>));
-    }
 
     public InvoiceComposite(IServiceProvider serviceProvider, DmoInvoice invoice, IEnumerable<DmoInvoiceItem> invoiceItems, bool isNew = false)
     {
@@ -40,9 +32,6 @@ public class InvoiceComposite
 
     public IDataResult Load(DmoInvoice invoice, IEnumerable<DmoInvoiceItem> invoiceItems, bool isNew = false)
     {
-        if (_isLoaded)
-            return DataResult.Failure("The Invoice is already loaded");
-
         _invoice = (FluxGateStore<DmoInvoice>)ActivatorUtilities.CreateInstance(_serviceProvider, typeof(FluxGateStore<DmoInvoice>), new object[] { invoice, isNew });
 
         _invoice.StateChanged += this.OnInvoiceChanged;
@@ -54,8 +43,6 @@ public class InvoiceComposite
             var store = _invoiceItems.GetOrCreateStore(item.InvoiceItemId, item);
             store.StateChanged += this.OnInvoiceItemChanged;
         }
-
-        _isLoaded = true;
 
         return DataResult.Success();
     }

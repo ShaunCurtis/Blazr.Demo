@@ -3,7 +3,7 @@
 @inject IDataBroker DataBroker
 @inject IToastService ToastService
 @inject IDialogService DialogService
-@inject InvoiceCompositePresenter Presenter
+@inject InvoiceCompositePresenterFactory PresenterFactory
 @implements IDisposable
 
 <FluentOverlay @bind-Visible="_loading"
@@ -75,24 +75,19 @@
 @code {
     [Parameter, EditorRequired] public InvoiceId InvoiceId { get; set; } = new(Guid.Empty);
 
+    private InvoiceCompositePresenter Presenter = default!;
     private bool _loading = true;
-    //private InvoiceComposite _item = new InvoiceComposite(new(), Enumerable.Empty<DmoInvoiceItem>(), true);
     private bool _isDirty => this.Presenter.Composite.State.IsModified;
     private bool _isError = false;
     private string _message => _isError ? this.Presenter.LastDataResult.Message ?? "Unspecified Error" : "Invoice changes are not currently saved to the data store!";
     private MessageIntent _messageIntent => _isError ? MessageIntent.Error : MessageIntent.Warning;
-    private Task? _editor;
 
     protected async override Task OnInitializedAsync()
     {
-        await Task.Delay(500);
-
-        await this.Presenter.LoadAsync(this.InvoiceId);
+        // Get a InvoiceCompositePresenter instance
+        this.Presenter = await this.PresenterFactory.CreateInstanceAsync(this.InvoiceId);
         this.Presenter.Composite.StateHasChanged += this.OnCompositeStateChanged;
         _loading = false;
-
-        if (this.Presenter.Composite.State.IsNew)
-            _editor = EditAsync();
     }
 
     private Task OnLocationChanging(LocationChangingContext context)
