@@ -97,7 +97,7 @@
     {
         ArgumentNullException.ThrowIfNull(this.Content);
 
-        this.Presenter = new(this.Content, this.ToastService);
+        this.Presenter = InvoiceEditPresenter.CreateInstance(this.Content, this.ToastService);
     }
 
     protected async override Task OnInitializedAsync()

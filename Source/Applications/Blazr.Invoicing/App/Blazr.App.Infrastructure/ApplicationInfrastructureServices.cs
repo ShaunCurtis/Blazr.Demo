@@ -67,6 +67,7 @@ public static class ApplicationInfrastructureServices
         services.AddTransient<IRecordSortHandler<DboInvoiceItem>, InvoiceItemSortHandler>();
 
         services.AddScoped<INewRecordProvider<DmoInvoice>, NewInvoiceProvider>();
+        services.AddScoped<INewRecordProvider<DmoInvoiceItem>, NewInvoiceItemProvider>();
         //services.AddTransient<InvoiceComposite>();
 
         services.AddSingleton<InvoiceCompositeFactory>();

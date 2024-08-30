@@ -5,7 +5,7 @@
 /// ============================================================
 namespace Blazr.App.Core;
 
-public class CustomerEditContext
+public class CustomerEditContext : IRecordEditContext<DmoCustomer>
 {
     private DmoCustomer _baseRecord;
     public CustomerId Id => _baseRecord.CustomerId;
@@ -18,6 +18,12 @@ public class CustomerEditContext
             CustomerName = this.CustomerName
         };
 
+    public CustomerEditContext()
+    {
+        _baseRecord = new();
+        this.Load(_baseRecord);
+    }
+
     public CustomerEditContext(DmoCustomer record)
     {
         _baseRecord = record;
@@ -26,7 +32,7 @@ public class CustomerEditContext
 
     public bool IsDirty => _baseRecord != this.AsRecord;
 
-    protected void Load(DmoCustomer record)
+    public void Load(DmoCustomer record)
     {
         this.CustomerName = record.CustomerName;
     }

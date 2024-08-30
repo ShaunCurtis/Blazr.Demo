@@ -90,7 +90,7 @@
     {
         ArgumentNullException.ThrowIfNull(this.Content);
 
-        this.Presenter = new(this.Content.composite, this.ToastService);
+        this.Presenter = InvoiceItemEditPresenter.CreateInstance(this.Content.composite, this.ToastService);
         await this.Presenter.LoadAsync(this.Content.invoiceItemId);
     }
 

@@ -16,7 +16,7 @@ public class InvoiceItemEditPresenter
     public DmoInvoiceItemEditContext RecordEditContext { get; private set; }
     public bool IsNew { get; private set; }
 
-    public InvoiceItemEditPresenter(InvoiceComposite composite, IToastService toastService)
+    private InvoiceItemEditPresenter(InvoiceComposite composite, IToastService toastService)
     {
         _composite = composite;
         _toastService = toastService;
@@ -86,4 +86,8 @@ public class InvoiceItemEditPresenter
 
         return Task.FromResult(this.LastDataResult);
     }
+
+    public static InvoiceItemEditPresenter CreateInstance(InvoiceComposite composite, IToastService toastService)
+        => new InvoiceItemEditPresenter(composite, toastService);
+
 }

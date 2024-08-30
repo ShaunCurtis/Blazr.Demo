@@ -20,7 +20,8 @@ public static class ApplicationPresentationServices
     {
         services.AddTransient<IListPresenter<DmoCustomer>, ListPresenter<DmoCustomer>>();
         services.AddTransient<IViewPresenter<DmoCustomer, CustomerId>, ViewPresenter<DmoCustomer, CustomerId>>();
-        services.AddTransient<CustomerEditPresenter>();
+        services.AddTransient<IEditPresenter<DmoCustomer, CustomerId, CustomerEditContext>, EditPresenter<DmoCustomer, CustomerId, CustomerEditContext>>();
+        //services.AddTransient<CustomerEditPresenter>();
 
         services.AddScoped<IGuidLookUpPresenter<CustomerLookUpItem>, GuidLookUpPresenter<CustomerLookUpItem>>();
     }

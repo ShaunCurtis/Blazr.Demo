@@ -1,8 +1,9 @@
 ﻿@namespace Blazr.App.UI.FluentUI
 @implements IDialogContentComponent<CustomerId>
 @implements IDisposable
-@inject CustomerEditPresenter Presenter
-@inject IToastService ToastService
+ @inject IEditPresenter<DmoCustomer, CustomerId, CustomerEditContext> Presenter  
+@* @inject CustomerEditPresenter Presenter  *@
+ @inject IToastService ToastService
 
 <!-- Header -->
 <FluentDialogHeader ShowDismiss="_isClean">
@@ -81,7 +82,9 @@
 
     protected async override Task OnInitializedAsync()
     {
-        await this.Presenter.LoadAsync(this.Content);
+        var isNew = this.Content.Value == Guid.Empty;
+
+        await this.Presenter.LoadAsync(this.Content,isNew);
     }
 
     protected override void OnParametersSet()
