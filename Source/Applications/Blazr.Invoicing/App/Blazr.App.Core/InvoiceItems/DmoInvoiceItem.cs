@@ -14,18 +14,13 @@ public readonly record struct InvoiceItemId : IEntityKey
     public InvoiceItemId(Guid value)
         => this.Value = value;
 
-    public static InvoiceItemId NewEntity
-        => new(Guid.Empty);
+    public static InvoiceItemId NewEntity => new(Guid.Empty);
 }
 
-public record DmoInvoiceItem : IKeyedEntity
+public record DmoInvoiceItem
 {
-    public InvoiceItemId InvoiceItemId { get; init; } = new(Guid.Empty);
-    public InvoiceId InvoiceId { get; init; } = new(Guid.Empty);
+    public InvoiceItemId InvoiceItemId { get; init; } = InvoiceItemId.NewEntity;
+    public InvoiceId InvoiceId { get; init; } = InvoiceId.NewEntity;
     public string Description { get; init; } = string.Empty;
     public decimal Amount { get; init; }
-
-    public InvoiceItemId Id => this.InvoiceItemId;
-
-    public object KeyValue => InvoiceItemId.Value;
 }

@@ -41,7 +41,7 @@ public sealed class InvoiceCompositeCommandHandler<TDbContext>
         foreach (var item in composite.InvoiceItems)
         {
             var dboItem = DboInvoiceItemMap.Map(item);
-            var result = composite.GetInvoiceItemState(item.Id);
+            var result = composite.GetInvoiceItemState(item.InvoiceItemId);
             var itemState = result.Item;
 
             // If the root state is delete then we delete everything regardless of item state

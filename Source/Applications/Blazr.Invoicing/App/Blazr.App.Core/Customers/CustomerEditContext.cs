@@ -12,11 +12,10 @@ public class CustomerEditContext : IRecordEditContext<DmoCustomer>
 
     [TrackState] public string CustomerName { get; set; } = string.Empty;
 
-    public DmoCustomer AsRecord =>
-        _baseRecord with
-        {
-            CustomerName = this.CustomerName
-        };
+    public DmoCustomer AsRecord => _baseRecord with
+    {
+        CustomerName = this.CustomerName
+    };
 
     public CustomerEditContext()
     {
@@ -32,9 +31,15 @@ public class CustomerEditContext : IRecordEditContext<DmoCustomer>
 
     public bool IsDirty => _baseRecord != this.AsRecord;
 
-    public void Load(DmoCustomer record)
+    public IDataResult Load(DmoCustomer record)
     {
+        var alreadyLoaded = _baseRecord.CustomerId != CustomerId.NewEntity;
+
+        if (alreadyLoaded)
+            return DataResult.Failure("A record has already been loaded.  You can overload it.");
+ 
         _baseRecord = record;
         this.CustomerName = record.CustomerName;
+        return DataResult.Success();
     }
 }

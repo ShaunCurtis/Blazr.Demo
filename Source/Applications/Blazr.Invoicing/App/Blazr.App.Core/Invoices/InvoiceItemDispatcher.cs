@@ -27,7 +27,7 @@ public class InvoiceItemDispatcher : FluxGateDispatcher<DmoInvoiceItem>
 
     private static FluxGateResult<DmoInvoiceItem> Mutate(FluxGateStore<DmoInvoiceItem> store, UpdateInvoiceItemAction action)
     {
-        if (action.Item.Id != store.Item.Id)
+        if (action.Item.InvoiceItemId != store.Item.InvoiceItemId)
             return new FluxGateResult<DmoInvoiceItem>(false, store.Item, store.State, "Invoice Item Id's don't match.");
 
         var state = store.State.Modified();

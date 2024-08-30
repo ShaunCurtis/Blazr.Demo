@@ -55,14 +55,14 @@ public class InvoiceComposite
         // get all the deleted items and remove them from the store
         foreach (var item in _invoiceItems.Items)
         {
-            var store = _invoiceItems.GetStore(item.Id);
+            var store = _invoiceItems.GetStore(item.InvoiceItemId);
             if (store?.State.IsDeleted ?? false)
-                _invoiceItems.RemoveStore(item.Id);
+                _invoiceItems.RemoveStore(item.InvoiceItemId);
         }
 
         // Set the rest as persisted
         foreach (var item in _invoiceItems.Items)
-            _invoiceItems.Dispatch(item.Id, new SetInvoiceItemAsPersistedAction(this));
+            _invoiceItems.Dispatch(item.InvoiceItemId, new SetInvoiceItemAsPersistedAction(this));
     }
 
     public IDataResult DispatchInvoiceAction(IFluxGateAction action)
@@ -77,11 +77,11 @@ public class InvoiceComposite
     }
 
     public DmoInvoiceItem GetNewInvoiceItem()
-        => new() { InvoiceItemId = new(Guid.NewGuid()), InvoiceId = _invoice.Item.Id };
+        => new() { InvoiceItemId = InvoiceItemId.NewEntity, InvoiceId = _invoice.Item.InvoiceId };
 
     public DataResult<DmoInvoiceItem> GetInvoiceItem(InvoiceItemId uid)
     {
-        var item = _invoiceItems.Items.FirstOrDefault(item => item.Id == uid);
+        var item = _invoiceItems.Items.FirstOrDefault(item => item.InvoiceItemId == uid);
         return item is null ? DataResult<DmoInvoiceItem>.Failure("Item does not exist in store") : DataResult<DmoInvoiceItem>.Success(item);
     }
 
@@ -94,8 +94,8 @@ public class InvoiceComposite
 
     private IDataResult AddInvoiceItem(DmoInvoiceItem item)
     {
-        if (_invoiceItems.GetStore(item.Id) is not null)
-            return DataResult.Failure($"An item already exists with Id: {item.Id}.");
+        if (_invoiceItems.GetStore(item.InvoiceItemId) is not null)
+            return DataResult.Failure($"An item already exists with Id: {item.InvoiceItemId}.");
 
         var store = _invoiceItems.GetOrCreateStore(item.InvoiceItemId, item, true);
         store.StateChanged += this.OnInvoiceItemChanged;

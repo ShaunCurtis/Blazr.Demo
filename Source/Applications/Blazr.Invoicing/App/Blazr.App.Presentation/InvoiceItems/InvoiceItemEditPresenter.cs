@@ -9,22 +9,25 @@ public class InvoiceItemEditPresenter
 {
     private readonly IToastService _toastService;
     private readonly InvoiceComposite _composite;
-    private InvoiceItemId _invoiceItemId = new(Guid.Empty);
+    private InvoiceItemId _invoiceItemId = InvoiceItemId.NewEntity;
 
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
     public EditContext EditContext { get; private set; }
     public DmoInvoiceItemEditContext RecordEditContext { get; private set; }
     public bool IsNew { get; private set; }
 
-    private InvoiceItemEditPresenter(InvoiceComposite composite, IToastService toastService)
+    internal InvoiceItemEditPresenter(InvoiceComposite composite, IToastService toastService, InvoiceItemId id)
     {
         _composite = composite;
         _toastService = toastService;
-        this.RecordEditContext = new(new());
+        var item = this.Load(id);
+
+        RecordEditContext = new(item);
         this.EditContext = new(this.RecordEditContext);
+        _invoiceItemId = this.RecordEditContext.Id;
     }
 
-    public Task LoadAsync(InvoiceItemId id)
+    private DmoInvoiceItem Load(InvoiceItemId id)
     {
         this.LastDataResult = DataResult.Success();
         this.IsNew = id.Value == Guid.Empty;
@@ -37,14 +40,10 @@ public class InvoiceItemEditPresenter
         {
             this.LastDataResult = DataResult.Failure("The record does not exist.");
             _toastService.ShowError("The record does not exist.");
-            return Task.CompletedTask;
+            return new();
         }
 
-        RecordEditContext = new(item);
-        this.EditContext = new(this.RecordEditContext);
-        _invoiceItemId = this.RecordEditContext.Id;
-
-        return Task.CompletedTask;
+        return item;
     }
 
     public Task<IDataResult> SaveItemAsync()
@@ -87,7 +86,28 @@ public class InvoiceItemEditPresenter
         return Task.FromResult(this.LastDataResult);
     }
 
-    public static InvoiceItemEditPresenter CreateInstance(InvoiceComposite composite, IToastService toastService)
-        => new InvoiceItemEditPresenter(composite, toastService);
+    public static InvoiceItemEditPresenter CreateInstance(InvoiceComposite composite, IToastService toastService, InvoiceItemId id)
+    {
+        var presenter = new InvoiceItemEditPresenter(composite, toastService, id);
+
+        return presenter;
+    }
+}
+
+public class InvoiceItemEditPresenterFactory
+{
+    private readonly IToastService _toastService;
+
+    public InvoiceItemEditPresenterFactory(IToastService toastService)
+    {
+        _toastService = toastService;
+    }
+
+    public InvoiceItemEditPresenter CreateInstance(InvoiceComposite composite, InvoiceItemId id)
+    {
+        var presenter = new InvoiceItemEditPresenter(composite, _toastService, id);
+
+        return presenter;
+    }
 
 }

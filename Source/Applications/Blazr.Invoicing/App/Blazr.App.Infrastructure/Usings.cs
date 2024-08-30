@@ -5,4 +5,5 @@ global using Blazr.OneWayStreet.Infrastructure;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Logging;
 global using System.ComponentModel.DataAnnotations;
+global using Microsoft.Extensions.DependencyInjection;
 

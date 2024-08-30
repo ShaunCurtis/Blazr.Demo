@@ -12,5 +12,5 @@ public interface IRecordEditContext<TRecord>
 
     public bool IsDirty { get; }
 
-    public void Load(TRecord record);
+    public IDataResult Load(TRecord record);
 }

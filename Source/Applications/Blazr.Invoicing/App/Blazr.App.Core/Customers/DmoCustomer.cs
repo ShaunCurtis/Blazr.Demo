@@ -14,14 +14,11 @@ public sealed record CustomerId : IEntityKey
     public CustomerId(Guid value)
         => this.Value = value;
 
-    public static CustomerId NewEntity
-        => new(Guid.Empty);
+    public static CustomerId NewEntity => new(Guid.Empty);
 }
 
 public record DmoCustomer : ICommandEntity
 {
-    public CustomerId CustomerId { get; init; } = new(Guid.Empty);
+    public CustomerId CustomerId { get; init; } = CustomerId.NewEntity;
     public string CustomerName { get; init; } = string.Empty;
-
-    public CustomerId Id =>this.CustomerId;
 }
