@@ -20,7 +20,7 @@ public class EditPresenter<TRecord, TIdentity, TEditContext> : IEditPresenter<TR
     public TEditContext RecordEditContext { get; private set; }
     public bool IsNew { get; private set; }
 
-    public EditPresenter(IDataBroker dataBroker, INewRecordProvider<TRecord> newRecordProvider, 
+    internal EditPresenter(IDataBroker dataBroker, INewRecordProvider<TRecord> newRecordProvider, 
         IToastService toastService)
     {
         _dataBroker = dataBroker;
@@ -31,7 +31,7 @@ public class EditPresenter<TRecord, TIdentity, TEditContext> : IEditPresenter<TR
         _recordName = typeof(TRecord).Name;
     }
 
-    public async Task LoadAsync(TIdentity id, bool isNew)
+    internal async Task LoadAsync(TIdentity id, bool isNew)
     {
         this.LastDataResult = DataResult.Success();
         this.IsNew = false;

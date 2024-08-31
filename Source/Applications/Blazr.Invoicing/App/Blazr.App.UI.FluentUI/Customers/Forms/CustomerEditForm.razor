@@ -1,7 +1,7 @@
 ﻿@namespace Blazr.App.UI.FluentUI
 @implements IDialogContentComponent<CustomerId>
 @implements IDisposable
-@inject EditPresenterFactory PresenterFactory
+@inject PresenterFactory PresenterFactory
  @inject IToastService ToastService
 
 <!-- Header -->
@@ -74,21 +74,33 @@
     [CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
     [Parameter] public CustomerId Content { get; set; } = default!;
 
-    private IEditPresenter<DmoCustomer, CustomerId, CustomerEditContext> Presenter;
+    // Set to default as initialized in SetParameterProperties before the first Render
+    private IEditPresenter<DmoCustomer, CustomerId, CustomerEditContext> Presenter = default!;
 
     private bool _isDirty;
     private bool _isClean => !_isDirty;
     private bool _stateStoreAttached;
+    private bool _isNotInitialized = true;
     private BlazrEditStateStore? _store;
 
-    protected async override Task OnInitializedAsync()
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
-        var isNew = this.Content.Value == Guid.Empty;
-        this.Presenter = await this.PresenterFactory.CreateAsync<DmoCustomer, CustomerId, CustomerEditContext>(this.Content, isNew);
+        parameters.SetParameterProperties(this);
+
+        // Get the presenter
+        if(_isNotInitialized)
+        {
+            var isNew = this.Content.Value == Guid.Empty;
+            this.Presenter = await this.PresenterFactory.CreateEditPresenterAsync<DmoCustomer, CustomerId, CustomerEditContext>(this.Content, isNew);
+            _isNotInitialized = false;
+        }
+
+        await base.SetParametersAsync(ParameterView.Empty);
     }
 
     protected override void OnParametersSet()
     {
+        // Get the edit state on each render request
         _isDirty = this.Presenter.EditContext.GetEditState();
     }
 
@@ -133,7 +145,6 @@
 
     protected void OnValidationStateMayHaveChanged(object? sender, ValidationStateChangedEventArgs e)
     {
-        //_isDirty = this.Presenter.EditContext.GetEditState();
         this.StateHasChanged();
     }
 

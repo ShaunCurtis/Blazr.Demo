@@ -12,7 +12,6 @@ public static class CustomerPresentationServices
     public static void AddCustomerPresentationServices(this IServiceCollection services)
     {
         services.AddTransient<IListPresenter<DmoCustomer>, ListPresenter<DmoCustomer>>();
-        services.AddTransient<IViewPresenter<DmoCustomer, CustomerId>, ViewPresenter<DmoCustomer, CustomerId>>();
 
         services.AddScoped<IGuidLookUpPresenter<CustomerLookUpItem>, GuidLookUpPresenter<CustomerLookUpItem>>();
     }

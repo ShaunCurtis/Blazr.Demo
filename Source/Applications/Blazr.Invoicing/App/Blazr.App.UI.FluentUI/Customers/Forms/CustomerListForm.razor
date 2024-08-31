@@ -1,5 +1,5 @@
 ﻿@namespace Blazr.App.UI.FluentUI
-@inject IListPresenter<DmoCustomer> Presenter
+@inject PresenterFactory PresenterFactory
 @inject IDialogService DialogService
 
 <PageTitle>Customers</PageTitle>
@@ -22,8 +22,24 @@
 </FluentDataGrid>
 
 @code {
-    private GridSort<Guid> _rankSort = GridSort<Guid>
-        .ByDescending(x => x);
+    private IListPresenter<DmoCustomer> Presenter = default!;
+    private bool _isNotInitialized = true;
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        parameters.SetParameterProperties(this);
+
+        // Get the presenter
+        if (_isNotInitialized)
+        {
+            this.Presenter = await this.PresenterFactory.CreateListPresenterAsync<DmoCustomer>();
+            _isNotInitialized = false;
+        }
+
+        await base.SetParametersAsync(ParameterView.Empty);
+    }
+
+    private GridSort<Guid> _rankSort = GridSort<Guid>.ByDescending(x => x);
 
     private async Task OnEditAsync(CustomerId id)
     {
@@ -61,5 +77,4 @@
 
         var result = await dialog.Result;
     }
-
 }

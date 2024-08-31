@@ -14,7 +14,5 @@ public interface IEditPresenter<TRecord, TIdentity, TEditContext>
     public TEditContext RecordEditContext { get; }
     public bool IsNew { get; }
 
-    public Task LoadAsync(TIdentity id, bool isNew);
-
     public Task<IDataResult> SaveItemAsync();
 }

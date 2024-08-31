@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Components.Forms
 @namespace Blazr.App.UI.FluentUI
 @implements IDialogContentComponent<CustomerId>
-@inject IViewPresenter<DmoCustomer, CustomerId> Presenter
+@inject PresenterFactory PresenterFactory
 
 <!-- Header -->
 <FluentDialogHeader ShowDismiss="true">
@@ -42,18 +42,24 @@
 
 @code
 {
-    private EditContext _editContext = default!;
+    [CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
+    [Parameter] public CustomerId Content { get; set; } = default!;
 
-    [CascadingParameter]
-    public FluentDialog Dialog { get; set; } = default!;
+    private IViewPresenter<DmoCustomer, CustomerId> Presenter = default!;
+    private bool _isNotInitialized = true;
 
-    [Parameter]
-    public CustomerId Content { get; set; } = default!;
-
-    protected async override Task OnInitializedAsync()
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
-        await this.Presenter.LoadAsync(this.Content);
-        _editContext = new EditContext(Content);
+        parameters.SetParameterProperties(this);
+
+        // Get the presenter
+        if (_isNotInitialized)
+        {
+            this.Presenter = await this.PresenterFactory.CreateViewPresenterAsync<DmoCustomer, CustomerId>(this.Content);
+            _isNotInitialized = false;
+        }
+
+        await base.SetParametersAsync(ParameterView.Empty);
     }
 
     private async Task ExitAsync()

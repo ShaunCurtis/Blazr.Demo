@@ -11,6 +11,4 @@ public interface IViewPresenter<TRecord, TKey>
 {
     public IDataResult LastDataResult { get; }
     public TRecord Item { get; }
-
-    public ValueTask LoadAsync(TKey id);
 }

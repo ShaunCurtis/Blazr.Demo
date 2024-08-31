@@ -13,7 +13,7 @@ public class ListPresenter<TRecord> : IListPresenter<TRecord>
     public int DefaultPageSize { get; set; } = 20;
     public List<FilterDefinition>? Filters { get; set; }
 
-    public ListPresenter(IDataBroker dataBroker)
+    internal ListPresenter(IDataBroker dataBroker)
     {
         _dataBroker = dataBroker;
     }
