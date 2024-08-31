@@ -10,8 +10,7 @@ public class EditPresenter<TRecord, TIdentity, TEditContext> : IEditPresenter<TR
     where TIdentity : IEntityKey
     where TEditContext : IRecordEditContext<TRecord>, new()
 {
-    private readonly IItemRequestHandler<TRecord, TIdentity> _itemRequestHandler;
-    private readonly ICommandHandler<TRecord> _commandHandler;
+    private readonly IDataBroker _dataBroker;
     private readonly IToastService _toastService;
     private readonly INewRecordProvider<TRecord> _newRecordProvider;
     private readonly string _recordName;
@@ -21,11 +20,10 @@ public class EditPresenter<TRecord, TIdentity, TEditContext> : IEditPresenter<TR
     public TEditContext RecordEditContext { get; private set; }
     public bool IsNew { get; private set; }
 
-    public EditPresenter(IItemRequestHandler<TRecord, TIdentity> itemRequestHandler, ICommandHandler<TRecord> commandHandler,
-        IToastService toastService, INewRecordProvider<TRecord> newRecordProvider)
+    public EditPresenter(IDataBroker dataBroker, INewRecordProvider<TRecord> newRecordProvider, 
+        IToastService toastService)
     {
-        _itemRequestHandler = itemRequestHandler;
-        _commandHandler = commandHandler;
+        _dataBroker = dataBroker;
         _toastService = toastService;
         _newRecordProvider = newRecordProvider;
         this.RecordEditContext = new();
@@ -51,7 +49,7 @@ public class EditPresenter<TRecord, TIdentity, TEditContext> : IEditPresenter<TR
 
         // The Update Path.  Get the requested record if it exists
         var request = ItemQueryRequest<TIdentity>.Create(id);
-        var result = await _itemRequestHandler.ExecuteAsync(request);
+        var result = await _dataBroker.ExecuteQueryAsync<TRecord, TIdentity>(request);
         LastDataResult = result;
         if (this.LastDataResult.Successful)
         {
@@ -73,7 +71,7 @@ public class EditPresenter<TRecord, TIdentity, TEditContext> : IEditPresenter<TR
 
         var record = RecordEditContext.AsRecord;
         var command = new CommandRequest<TRecord>(record, this.IsNew ? CommandState.Add : CommandState.Update);
-        var result = await _commandHandler.ExecuteAsync(command);
+        var result = await _dataBroker.ExecuteCommandAsync(command);
 
         if (result.Successful)
             _toastService.ShowSuccess($"The {_recordName} was saved.");

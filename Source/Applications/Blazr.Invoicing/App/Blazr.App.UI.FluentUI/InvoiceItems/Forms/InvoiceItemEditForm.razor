@@ -1,6 +1,7 @@
 ﻿@namespace Blazr.App.UI.FluentUI
 @implements IDialogContentComponent<InvoiceItemEditData>
 @inject IToastService ToastService
+@inject InvoiceItemEditPresenterFactory PresenterFactory
 @implements IDisposable
 
 <!-- Header -->
@@ -86,12 +87,11 @@
     private bool _stateStoreAttached;
     private BlazrEditStateStore? _store;
 
-    protected async override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         ArgumentNullException.ThrowIfNull(this.Content);
 
-        this.Presenter = InvoiceItemEditPresenter.CreateInstance(this.Content.composite, this.ToastService);
-        await this.Presenter.LoadAsync(this.Content.invoiceItemId);
+        this.Presenter = this.PresenterFactory.CreateInstance(this.Content.composite, this.Content.invoiceItemId);
     }
 
     protected override void OnParametersSet()

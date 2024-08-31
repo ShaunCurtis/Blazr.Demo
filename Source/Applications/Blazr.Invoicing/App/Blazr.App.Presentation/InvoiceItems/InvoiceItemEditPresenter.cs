@@ -30,7 +30,7 @@ public class InvoiceItemEditPresenter
     private DmoInvoiceItem Load(InvoiceItemId id)
     {
         this.LastDataResult = DataResult.Success();
-        this.IsNew = id.Value == Guid.Empty;
+        this.IsNew = id == InvoiceItemId.NewEntity;
 
         var item = id.Value != Guid.Empty
             ? _composite.GetInvoiceItem(id).Item
@@ -92,22 +92,4 @@ public class InvoiceItemEditPresenter
 
         return presenter;
     }
-}
-
-public class InvoiceItemEditPresenterFactory
-{
-    private readonly IToastService _toastService;
-
-    public InvoiceItemEditPresenterFactory(IToastService toastService)
-    {
-        _toastService = toastService;
-    }
-
-    public InvoiceItemEditPresenter CreateInstance(InvoiceComposite composite, InvoiceItemId id)
-    {
-        var presenter = new InvoiceItemEditPresenter(composite, _toastService, id);
-
-        return presenter;
-    }
-
 }

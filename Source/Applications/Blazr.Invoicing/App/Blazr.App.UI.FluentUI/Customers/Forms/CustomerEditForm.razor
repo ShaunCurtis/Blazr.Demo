@@ -1,8 +1,7 @@
 ﻿@namespace Blazr.App.UI.FluentUI
 @implements IDialogContentComponent<CustomerId>
 @implements IDisposable
- @inject IEditPresenter<DmoCustomer, CustomerId, CustomerEditContext> Presenter  
-@* @inject CustomerEditPresenter Presenter  *@
+@inject EditPresenterFactory PresenterFactory
  @inject IToastService ToastService
 
 <!-- Header -->
@@ -75,6 +74,8 @@
     [CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
     [Parameter] public CustomerId Content { get; set; } = default!;
 
+    private IEditPresenter<DmoCustomer, CustomerId, CustomerEditContext> Presenter;
+
     private bool _isDirty;
     private bool _isClean => !_isDirty;
     private bool _stateStoreAttached;
@@ -83,8 +84,7 @@
     protected async override Task OnInitializedAsync()
     {
         var isNew = this.Content.Value == Guid.Empty;
-
-        await this.Presenter.LoadAsync(this.Content,isNew);
+        this.Presenter = await this.PresenterFactory.CreateAsync<DmoCustomer, CustomerId, CustomerEditContext>(this.Content, isNew);
     }
 
     protected override void OnParametersSet()

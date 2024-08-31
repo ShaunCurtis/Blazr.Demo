@@ -9,6 +9,8 @@ public static class ApplicationPresentationServices
 {
     public static void AddAppServerPresentationServices(this IServiceCollection services)
     {
+        services.AddScoped<EditPresenterFactory>();
+
         services.AddCustomerPresentationServices();
         services.AddInvoicePresentationServices();
         services.AddInvoiceItemPresentationServices();
