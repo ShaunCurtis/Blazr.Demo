@@ -3,7 +3,7 @@
 @inject IDataBroker DataBroker
 @inject IToastService ToastService
 @inject IDialogService DialogService
-@inject InvoiceCompositePresenterFactory PresenterFactory
+@inject InvoicePresenterFactory PresenterFactory
 @implements IDisposable
 
 <FluentOverlay @bind-Visible="_loading"
@@ -85,7 +85,7 @@
     protected async override Task OnInitializedAsync()
     {
         // Get a InvoiceCompositePresenter instance
-        this.Presenter = await this.PresenterFactory.CreateInstanceAsync(this.InvoiceId);
+        this.Presenter = await this.PresenterFactory.CreateCompositeInstanceAsync(this.InvoiceId);
         this.Presenter.Composite.StateHasChanged += this.OnCompositeStateChanged;
         _loading = false;
     }

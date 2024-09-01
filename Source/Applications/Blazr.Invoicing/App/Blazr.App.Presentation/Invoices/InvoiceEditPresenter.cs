@@ -43,7 +43,7 @@ public class InvoiceEditPresenter
         return Task.FromResult(this.LastDataResult);
     }
 
-    public static  InvoiceEditPresenter CreateInstance (InvoiceComposite composite, IToastService toastService)
+    public static InvoiceEditPresenter CreateInstance (InvoiceComposite composite, IToastService toastService)
         => new InvoiceEditPresenter(composite, toastService);
 
 }

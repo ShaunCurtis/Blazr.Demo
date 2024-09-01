@@ -1,7 +1,8 @@
 ﻿@namespace Blazr.App.UI.FluentUI
 @implements IDialogContentComponent<InvoiceComposite>
 @inject IToastService ToastService
-@inject IGuidLookUpPresenter<CustomerLookUpItem> CustomerLookupPresenter
+@inject PresenterFactory PresenterFactory
+@inject InvoicePresenterFactory InvoicePresenterFactory
 @inject NavigationManager NavManager
 
 <!-- Header -->
@@ -87,22 +88,19 @@
     [Parameter] public InvoiceComposite Content { get; set; } = default!;
 
     private InvoiceEditPresenter Presenter = default!;
+    private IGuidLookUpPresenter<CustomerLookUpItem> CustomerLookupPresenter = default!;
 
     private bool _isDirty;
     private bool _isClean => !_isDirty;
     private bool _stateStoreAttached;
     private BlazrEditStateStore? _store;
 
-    protected override void OnInitialized()
-    {
-        ArgumentNullException.ThrowIfNull(this.Content);
-
-        this.Presenter = InvoiceEditPresenter.CreateInstance(this.Content, this.ToastService);
-    }
-
     protected async override Task OnInitializedAsync()
     {
-        await this.CustomerLookupPresenter.LoadAsync();
+        ArgumentNullException.ThrowIfNull(this.Content);
+        this.CustomerLookupPresenter = await this.PresenterFactory.CreateGuidLookupPresenterAsync<CustomerLookUpItem>();
+        this.Presenter = await this.InvoicePresenterFactory.CreateInvoiceEditInstanceAsync(this.Content);
+ 
         if (this.Content.State.IsNew)
             this.Presenter.EditContext.Validate();
     }

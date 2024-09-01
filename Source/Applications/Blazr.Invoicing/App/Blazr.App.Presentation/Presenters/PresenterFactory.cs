@@ -15,9 +15,9 @@ public class PresenterFactory
     }
 
     public async ValueTask<IEditPresenter<TRecord, TIdentity, TEditContext>> CreateEditPresenterAsync<TRecord, TIdentity, TEditContext>(TIdentity id, bool isNew)
-    where TRecord : class, new()
-    where TIdentity : IEntityKey
-    where TEditContext : IRecordEditContext<TRecord>, new()
+        where TRecord : class, new()
+        where TIdentity : IEntityKey
+        where TEditContext : IRecordEditContext<TRecord>, new()
     {
         IDataBroker dataBroker = _serviceProvider.GetRequiredService<IDataBroker>();
         ICommandHandler<TRecord> commandHandler = _serviceProvider.GetRequiredService<ICommandHandler<TRecord>>();
@@ -31,7 +31,7 @@ public class PresenterFactory
     }
 
     public ValueTask<IListPresenter<TRecord>> CreateListPresenterAsync<TRecord>()
-    where TRecord : class, new()
+        where TRecord : class, new()
     {
         IDataBroker dataBroker = _serviceProvider.GetRequiredService<IDataBroker>();
 
@@ -41,8 +41,8 @@ public class PresenterFactory
     }
 
     public async ValueTask<IViewPresenter<TRecord, TIdentity>> CreateViewPresenterAsync<TRecord, TIdentity>(TIdentity id)
-    where TRecord : class, new()
-    where TIdentity : IEntityKey
+        where TRecord : class, new()
+        where TIdentity : IEntityKey
     {
         IDataBroker dataBroker = _serviceProvider.GetRequiredService<IDataBroker>();
         IToastService toastService = _serviceProvider.GetRequiredService<IToastService>();
@@ -53,5 +53,14 @@ public class PresenterFactory
         return presenter;
     }
 
+    public async ValueTask<GuidLookUpPresenter<TLookupItem>> CreateGuidLookupPresenterAsync<TLookupItem>()
+        where TLookupItem : class, IGuidLookUpItem, new()
+    {
+        IDataBroker dataBroker = _serviceProvider.GetRequiredService<IDataBroker>();
 
+        var presenter = new GuidLookUpPresenter<TLookupItem>(dataBroker);
+        await presenter.LoadAsync();
+
+        return presenter;
+    }
 }

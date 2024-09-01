@@ -9,6 +9,6 @@ public static class InvoicePresentationServices
 {
     public static void AddInvoicePresentationServices(this IServiceCollection services)
     {
-        services.AddScoped<InvoiceCompositePresenterFactory>();
+        services.AddScoped<InvoicePresenterFactory>();
     }
 }

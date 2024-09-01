@@ -1,40 +1,48 @@
 ﻿@namespace Blazr.App.UI.FluentUI
-
+@implements IDisposable
 <FluentGrid Style="padding:1em;" Spacing="1" AdaptiveRendering="true">
     <FluentGridItem sm="12" md="6">
         <FluentTextField Style="width: 100%;"
-                         Value="@_item.InvoiceId.Value.ToString()"
+                         Value="@this.Composite.Invoice.InvoiceId.Value.ToString()"
                          Label="Full Id"
                          ReadOnly />
     </FluentGridItem>
     <FluentGridItem sm="12" md="6">
         <FluentTextField Style="width: 100%;"
-                         Value="@_item.CustomerName"
+                         Value="@this.Composite.Invoice.CustomerName"
                          Label="Customer Name"
                          ReadOnly />
     </FluentGridItem>
     <FluentGridItem sm="12" md="6">
         <FluentTextField Style="width: 100%;"
-                         Value="@_item.Date.ToString()"
+                         Value="@this.Composite.Invoice.Date.ToString()"
                          Label="Invoice Date"
                          ReadOnly />
     </FluentGridItem>
     <FluentGridItem sm="12" md="6">
         <FluentTextField Style="width: 100%;"
-                         Value="@_item.TotalAmount.ToString()"
+                         Value="@this.Composite.Invoice.TotalAmount.ToString()"
                          Label="Invoice Amount"
                          ReadOnly />
     </FluentGridItem>
 </FluentGrid>
 
 @code {
-    [CascadingParameter] private InvoiceComposite? Composite { get; set; }
-    [Parameter] public DmoInvoice? Item { get; set; }
-    private DmoInvoice _item { get; set; } = default!;
+    [CascadingParameter] private InvoiceComposite Composite { get; set; } = default!;
 
     protected override void OnInitialized()
     {
-        _item = this.Item ?? this.Composite?.Invoice ?? default!;
-        ArgumentNullException.ThrowIfNull(_item);
+        ArgumentNullException.ThrowIfNull(this.Composite);
+        this.Composite.StateHasChanged += this.OnCompositeStateChanged;
+    }
+
+    private void OnCompositeStateChanged(object? sender, EventArgs e)
+    {
+        this.StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        this.Composite.StateHasChanged -= this.OnCompositeStateChanged;
     }
 }

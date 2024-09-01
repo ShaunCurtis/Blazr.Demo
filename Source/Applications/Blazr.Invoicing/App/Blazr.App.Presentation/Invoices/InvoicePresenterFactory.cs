@@ -5,7 +5,7 @@
 /// ============================================================
 namespace Blazr.App.Presentation;
 
-public class InvoiceCompositePresenterFactory
+public class InvoicePresenterFactory
 {
     private readonly IDataBroker _dataBroker;
     private readonly IToastService _toastService;
@@ -13,7 +13,7 @@ public class InvoiceCompositePresenterFactory
     private readonly INewRecordProvider<DmoInvoiceItem> _newInvoiceItemProvider;
     private readonly InvoiceCompositeFactory _factory;
 
-    public InvoiceCompositePresenterFactory(InvoiceCompositeFactory invoiceCompositeFactory, IToastService toastService,
+    public InvoicePresenterFactory(InvoiceCompositeFactory invoiceCompositeFactory, IToastService toastService,
         IDataBroker dataBroker, INewRecordProvider<DmoInvoice> newInvoiceProvider, INewRecordProvider<DmoInvoiceItem> newInvoiceItemProvider)
     {
         _factory = invoiceCompositeFactory;
@@ -23,7 +23,7 @@ public class InvoiceCompositePresenterFactory
         _newInvoiceItemProvider = newInvoiceItemProvider;
     }
 
-    public async ValueTask<InvoiceCompositePresenter> CreateInstanceAsync(InvoiceId id)
+    public async ValueTask<InvoiceCompositePresenter> CreateCompositeInstanceAsync(InvoiceId id)
     {
         var presenter = new InvoiceCompositePresenter(_factory, _toastService, _dataBroker, _newInvoiceProvider);
         await presenter.LoadAsync(id);
@@ -33,5 +33,12 @@ public class InvoiceCompositePresenterFactory
             provider.SetInvoiceContext(id);
 
         return presenter;
+    }
+
+    public ValueTask<InvoiceEditPresenter> CreateInvoiceEditInstanceAsync(InvoiceComposite composite)
+    {
+        var presenter = InvoiceEditPresenter.CreateInstance(composite, _toastService);
+
+        return ValueTask.FromResult(presenter);
     }
 }
