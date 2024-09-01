@@ -2,9 +2,8 @@
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Components.Forms
 @implements IDialogContentComponent<InvoiceId>
-@inject IViewPresenter<DmoInvoice, InvoiceId> Presenter
 @inject IToastService ToastService
-
+@inject PresenterFactory PresenterFactory
 @if (_isDialog)
 {
     <FluentDialogHeader Visible="false" />
@@ -17,7 +16,7 @@
             </FluentLabel>
         </FluentStack>
 
-        <InvoiceViewer Item="_item" />
+        <InvoiceViewer Item="this.Presenter.Item" />
 
         <FluentStack VerticalAlignment="VerticalAlignment.Center" HorizontalAlignment="HorizontalAlignment.Right">
             <FluentButton Appearance="Appearance.Neutral"
@@ -33,7 +32,7 @@
     return;
 }
 
-<InvoiceViewer Item="_item" />
+<InvoiceViewer Item="this.Presenter.Item" />
 
 @code
 {
@@ -41,39 +40,39 @@
     [CascadingParameter] private InvoiceComposite Composite { get; set; } = default!;
     [Parameter] public InvoiceId Content { get; set; } = new(Guid.Empty);
 
+    private IViewPresenter<DmoInvoice, InvoiceId> Presenter = default!;
     private bool _isDialog => this.Dialog is not null;
-    private DmoInvoice _item = default!;
 
-    protected async override Task OnInitializedAsync()
+    private bool _isNotInitialized = true;
+
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
-        if (this.Composite is not null)
-            this.Composite.StateHasChanged += this.OnCompositeStateChanged;
+        parameters.SetParameterProperties(this);
 
-        await LoadAsync();
-    }
-
-    protected async Task LoadAsync()
-    {
-        DmoInvoice? item = null;
-
-        if (this.Composite is not null)
-            item = this.Composite.Invoice;
-
-        if (item is null)
+        // Get the presenter
+        if (_isNotInitialized)
         {
-            await this.Presenter.LoadAsync(this.Content);
-            item = this.Presenter.Item;
+            this.Presenter = await PresenterFactory.CreateViewPresenterAsync<DmoInvoice, InvoiceId>(this.Content);
+            _isNotInitialized = false;
         }
 
-        _item = item;
+        await base.SetParametersAsync(ParameterView.Empty);
+    }
 
+    protected override void OnParametersSet()
+    {
+        this.CheckForToasts();
+    }
+
+    private void CheckForToasts()
+    {
         if (!this.Presenter.LastDataResult.Successful)
             this.ToastService.ShowError(this.Presenter.LastDataResult.Message ?? "An Error occured retriving the record.");
     }
 
-    private async void OnCompositeStateChanged(object? sender, EventArgs e)
+    private void OnCompositeStateChanged(object? sender, EventArgs e)
     {
-        await this.LoadAsync();
+        this.CheckForToasts();
         this.StateHasChanged();
     }
 

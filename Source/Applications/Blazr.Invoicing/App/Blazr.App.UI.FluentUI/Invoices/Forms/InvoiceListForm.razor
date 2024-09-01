@@ -1,5 +1,5 @@
 ﻿@namespace Blazr.App.UI.FluentUI
-@inject IListPresenter<DmoInvoice> Presenter
+@inject PresenterFactory PresenterFactory
 @inject IDialogService DialogService
 @inject NavigationManager NavManager
 <PageTitle>Invoices</PageTitle>
@@ -34,6 +34,23 @@
 </FluentDataGrid>
 
 @code {
+    private IListPresenter<DmoInvoice> Presenter = default!;
+    private bool _isNotInitialized = true;
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        parameters.SetParameterProperties(this);
+
+        // Get the presenter
+        if (_isNotInitialized)
+        {
+            this.Presenter = await this.PresenterFactory.CreateListPresenterAsync<DmoInvoice>();
+            _isNotInitialized = false;
+        }
+
+        await base.SetParametersAsync(ParameterView.Empty);
+    }
+
     private GridSort<Guid> _rankSort = GridSort<Guid>
         .ByDescending(x => x);
 
@@ -63,17 +80,5 @@
 
         this.NavManager.NavigateTo($"/invoice/{id.Value}");
         return Task.CompletedTask;
-
-
-        // var dialog = await DialogService.ShowDialogAsync<InvoiceEditForm>(id, new DialogParameters()
-        //     {
-        //         Title = $"New Invoice",
-        //         Width ="80%",
-        //         PreventDismissOnOverlayClick = true,
-        //         PreventScroll = true,
-        //     });
-
-        // var result = await dialog.Result;
     }
-
 }

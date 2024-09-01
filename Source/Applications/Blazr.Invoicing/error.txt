@@ -1,0 +1,22 @@
+System.AggregateException
+  HResult=0x80131500
+  Message=Some services are not able to be constructed (Error while validating the service descriptor 'ServiceType: Blazr.App.Presentation.IListPresenter`1[Blazr.App.Core.DmoInvoice] Lifetime: Transient ImplementationType: Blazr.App.Presentation.ListPresenter`1[Blazr.App.Core.DmoInvoice]': A suitable constructor for type 'Blazr.App.Presentation.ListPresenter`1[Blazr.App.Core.DmoInvoice]' could not be located. Ensure the type is concrete and services are registered for all parameters of a public constructor.) (Error while validating the service descriptor 'ServiceType: Blazr.App.Presentation.IListPresenter`1[Blazr.App.Core.DmoInvoiceItem] Lifetime: Transient ImplementationType: Blazr.App.Presentation.ListPresenter`1[Blazr.App.Core.DmoInvoiceItem]': A suitable constructor for type 'Blazr.App.Presentation.ListPresenter`1[Blazr.App.Core.DmoInvoiceItem]' could not be located. Ensure the type is concrete and services are registered for all parameters of a public constructor.)
+  Source=Microsoft.Extensions.DependencyInjection
+  StackTrace:
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider..ctor(ICollection`1 serviceDescriptors, ServiceProviderOptions options)
+   at Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider(IServiceCollection services, ServiceProviderOptions options)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.<Main>$(String[] args) in C:\Users\shaun\Documents\GitHub\Blazr Demo\Blazr.Demo\Source\Applications\Blazr.Invoicing\Deployments\Blazr.App.Fluent.Server\Program.cs:line 19
+
+  This exception was originally thrown at this call stack:
+    Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(Microsoft.Extensions.DependencyInjection.ServiceLookup.ResultCache, Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceIdentifier, System.Type, Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteChain)
+    Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.TryCreateExact(Microsoft.Extensions.DependencyInjection.ServiceDescriptor, Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceIdentifier, Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteChain, int)
+    Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(Microsoft.Extensions.DependencyInjection.ServiceDescriptor, Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteChain)
+    Microsoft.Extensions.DependencyInjection.ServiceProvider.ValidateService(Microsoft.Extensions.DependencyInjection.ServiceDescriptor)
+
+Inner Exception 1:
+InvalidOperationException: Error while validating the service descriptor 'ServiceType: Blazr.App.Presentation.IListPresenter`1[Blazr.App.Core.DmoInvoice] Lifetime: Transient ImplementationType: Blazr.App.Presentation.ListPresenter`1[Blazr.App.Core.DmoInvoice]': A suitable constructor for type 'Blazr.App.Presentation.ListPresenter`1[Blazr.App.Core.DmoInvoice]' could not be located. Ensure the type is concrete and services are registered for all parameters of a public constructor.
+
+Inner Exception 2:
+InvalidOperationException: A suitable constructor for type 'Blazr.App.Presentation.ListPresenter`1[Blazr.App.Core.DmoInvoice]' could not be located. Ensure the type is concrete and services are registered for all parameters of a public constructor.

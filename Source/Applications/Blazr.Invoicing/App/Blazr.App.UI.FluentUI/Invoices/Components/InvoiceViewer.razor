@@ -3,35 +3,38 @@
 <FluentGrid Style="padding:1em;" Spacing="1" AdaptiveRendering="true">
     <FluentGridItem sm="12" md="6">
         <FluentTextField Style="width: 100%;"
-                         Value="@this.Item.InvoiceId.Value.ToString()"
+                         Value="@_item.InvoiceId.Value.ToString()"
                          Label="Full Id"
                          ReadOnly />
     </FluentGridItem>
     <FluentGridItem sm="12" md="6">
         <FluentTextField Style="width: 100%;"
-                         Value="@this.Item.CustomerName"
+                         Value="@_item.CustomerName"
                          Label="Customer Name"
                          ReadOnly />
     </FluentGridItem>
     <FluentGridItem sm="12" md="6">
         <FluentTextField Style="width: 100%;"
-                         Value="@this.Item.Date.ToString()"
+                         Value="@_item.Date.ToString()"
                          Label="Invoice Date"
                          ReadOnly />
     </FluentGridItem>
     <FluentGridItem sm="12" md="6">
         <FluentTextField Style="width: 100%;"
-                         Value="@this.Item.TotalAmount.ToString()"
+                         Value="@_item.TotalAmount.ToString()"
                          Label="Invoice Amount"
                          ReadOnly />
     </FluentGridItem>
 </FluentGrid>
 
 @code {
-    [Parameter, EditorRequired] public DmoInvoice Item { get; set; } = default!;
+    [CascadingParameter] private InvoiceComposite? Composite { get; set; }
+    [Parameter] public DmoInvoice? Item { get; set; }
+    private DmoInvoice _item { get; set; } = default!;
 
     protected override void OnInitialized()
     {
-        ArgumentNullException.ThrowIfNull(Item);
+        _item = this.Item ?? this.Composite?.Invoice ?? default!;
+        ArgumentNullException.ThrowIfNull(_item);
     }
 }

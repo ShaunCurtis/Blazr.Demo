@@ -2,7 +2,7 @@
 @implements IDialogContentComponent<InvoiceItemId>
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Components.Forms
-@inject IViewPresenter<DmoInvoiceItem, InvoiceItemId> Presenter
+@inject PresenterFactory PresenterFactory
 @inject IToastService ToastService
 
 @if (_isDialog)
@@ -11,12 +11,12 @@
 
     <FluentDialogBody>
 
-    <FluentStack VerticalAlignment="VerticalAlignment.Center">
-        <FluentIcon Value="@(new Icons.Regular.Size24.DocumentBorder())" />
-        <FluentLabel Typo="Typography.PaneHeader">
-            Invoice Item View
-        </FluentLabel>
-    </FluentStack>
+        <FluentStack VerticalAlignment="VerticalAlignment.Center">
+            <FluentIcon Value="@(new Icons.Regular.Size24.DocumentBorder())" />
+            <FluentLabel Typo="Typography.PaneHeader">
+                Invoice Item View
+            </FluentLabel>
+        </FluentStack>
 
         <InvoiceItemViewer Item="_item" />
 
@@ -36,15 +36,12 @@
 
 <InvoiceItemViewer Item="_item" />
 
-@if (_isDialog)
-{
-}
-
 @code {
     [CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
     [Parameter] public InvoiceItemId Content { get; set; } = default!;
     [CascadingParameter] private InvoiceComposite Composite { get; set; } = default!;
 
+    private IViewPresenter<DmoInvoiceItem, InvoiceItemId> Presenter = default!;
     private bool _isDialog => this.Dialog is not null;
     private DmoInvoiceItem _item = default!;
 
@@ -57,7 +54,7 @@
 
         if (item is null)
         {
-            await this.Presenter.LoadAsync(this.Content);
+            this.Presenter = await this.PresenterFactory.CreateViewPresenterAsync<DmoInvoiceItem, InvoiceItemId>(this.Content);
             item = this.Presenter.Item;
         }
 

@@ -9,7 +9,6 @@ public static class InvoiceItemPresentationServices
 {
     public static void AddInvoiceItemPresentationServices(this IServiceCollection services)
     {
-        services.AddTransient<IListPresenter<DmoInvoiceItem>, ListPresenter<DmoInvoiceItem>>();
-        services.AddTransient<IViewPresenter<DmoInvoiceItem, InvoiceItemId>, ViewPresenter<DmoInvoiceItem, InvoiceItemId>>();
+        //services.AddTransient<IListPresenter<DmoInvoiceItem>, ListPresenter<DmoInvoiceItem>>();
     }
 }
