@@ -17,7 +17,7 @@
 		<ProjectReference Include="..\..\..\App\Blazr.App.Infrastructure\Blazr.App.Infrastructure.csproj" />
 		<ProjectReference Include="..\..\..\App\Blazr.App.Presentation\Blazr.App.Presentation.csproj" />
 		<ProjectReference Include="..\..\..\App\Blazr.App.UI.Vanilla\Blazr.App.UI.Vanilla.csproj" />
-		<ProjectReference Include="..\..\..\Blazr.Weather.ServiceDefaults\Blazr.Weather.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\..\..\Aspire\Blazr.Weather.Aspire.ServiceDefaults\Blazr.Weather.Aspire.ServiceDefaults.csproj" />
 	</ItemGroup>
 
 </Project>

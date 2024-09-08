@@ -5,9 +5,9 @@
 /// ============================================================
 namespace Blazr.OneWayStreet.Core;
 
-public record struct CommandRequest<TRecord>(TRecord Item, CommandState State, CancellationToken Cancellation = new());
+public readonly record struct CommandRequest<TRecord>(TRecord Item, CommandState State, CancellationToken Cancellation = new());
 
-public record struct CommandAPIRequest<TRecord>
+public readonly record struct CommandAPIRequest<TRecord>
 {
     public TRecord? Item { get; init; }
     public int CommandIndex { get; init; }
@@ -30,7 +30,7 @@ public record struct CommandAPIRequest<TRecord>
         };
 }
 
-public record CommandState
+public readonly record struct CommandState
 {
     public int Index { get; private init; } = 0;
     public string Value { get; private init; } = "None";

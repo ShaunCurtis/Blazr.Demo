@@ -39,19 +39,19 @@
         <EditForm EditContext="Presenter.EditContext">
 
             <BlazrEditStateTracker LockNavigation="true" />
-            
-            <BlazrValidator TRecord="WeatherForecastEditContext" 
-                TValidator="WeatherForecastEditContextValidator" />
+
+            <BlazrValidator TRecord="WeatherForecastEditContext"
+                            TValidator="WeatherForecastEditContextValidator" />
 
             <FluentGrid Spacing="1" AdaptiveRendering="true">
 
                 <FluentGridItem sm="12" md="6">
-                    <FluentNumberField Style="width: 100%;"
+                    <FluentInputNumber style="width: 100%;"
+                                       Label="Temperature &deg; C"
                                        @bind-Value="@this.Presenter.RecordEditContext.Temperature"
-                                       Placeholder="Enter the Temperature in Deg Celcius"
-                                       ParsingErrorMessage="Shite"
-                                       Label="Temperature &deg; C" />
+                                       Placeholder="Enter the Temperature in Deg Celcius" />
                 </FluentGridItem>
+
                 <FluentGridItem sm="12" md="6">
 
                     <FluentDatePicker @bind-Value="@this.Presenter.RecordEditContext.Date"
@@ -64,8 +64,8 @@
             <FluentGrid Spacing="1" AdaptiveRendering="true">
 
                 <FluentGridItem sm="12" md="6">
-                    <FluentSelect Items="SummaryOptions.Summaries" 
-                                  OptionText="i => i" OptionValue="i => i" 
+                    <FluentSelect Items="SummaryOptions.Summaries"
+                                  OptionText="i => i" OptionValue="i => i"
                                   @bind-Value="this.Presenter.RecordEditContext.Summary"
                                   @bind-Value:after="this.OnAfterSummaryChanged"
                                   Label="Summary" />
@@ -73,12 +73,12 @@
 
             </FluentGrid>
 
-            @if(this.Presenter.IsInvalid)
+            @if (this.Presenter.IsInvalid)
             {
                 <FluentMessageBar Title="Validation Errors"
                                   Style="margin: 1rem;  border: 1px solid var(--error);color: var(--error);"
-                                  Intent="MessageIntent.Error" 
-                                  AllowDismiss="false" >
+                                  Intent="MessageIntent.Error"
+                                  AllowDismiss="false">
 
                     <FluentValidationSummary />
 

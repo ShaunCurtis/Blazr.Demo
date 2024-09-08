@@ -26,7 +26,7 @@ public class FluentUIToastService : IAppToastService
     public void ShowError(string message, TimeSpan? timeout = null)
     {
         var timespan = timeout ?? TimeSpan.FromSeconds(_defaultTimeOut);
-        _toastService.ShowError(message, timespan.Seconds);
+        _toastService.ShowError(message, timespan.Microseconds);
     }
 
     public void ShowSuccess(string message, TimeSpan? timeout = null)

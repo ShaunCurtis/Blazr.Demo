@@ -1,21 +1,21 @@
 # Commands
 
-Generically we can define a command like this:
+A command can be defined like this:
 
 ```csharp
 CommandResult CommandAsync(CommandRequest command);
 ```
 
-Commands can implement one of three actions: 
+Commands have one of three actions: 
 
 1. Update - overwrite the record in the data store.
 2. Delete - delete the record from the data store.
 3. Add - Add the record to the data store.
  
-These three actions are defined in a record class.  They are not defined in an enum because the action state crosses domain boundaries and API interfaces.
+These are defined in a `CommandState` struct.  An enum is not used because the action state crosses domain boundaries and API interfaces.
 
 ```csharp
-public record CommandState
+public readonly record struct CommandState
 {
     public int Index { get; private init; } = 0;
     public string Value { get; private init; } = "None";
@@ -49,12 +49,12 @@ public record CommandState
 we can define a generic command request object:
 
 ```
-public record struct CommandRequest<TRecord>(TRecord Item, CommandState State, CancellationToken Cancellation = new());
+public readonly record struct CommandRequest<TRecord>(TRecord Item, CommandState State, CancellationToken Cancellation = new());
 ```
 
-It's an immutable struct because it doesn't need to be anything more.  Almost all data pipelines are now async and implement cancellation, so our request defines a `CancellationToken` to allow cancellation of aborted commands.
+Most data pipelines are now async and implement cancellation, so our request object defines a `CancellationToken`.
 
-The API version removes the cancellation token and needs a parsmeterless constructor:
+However, this presents a problem for API requests, so we define an API version with mapping methods.
 
 ```csharp
 public record struct CommandAPIRequest<TRecord>
@@ -83,9 +83,9 @@ public record struct CommandAPIRequest<TRecord>
 
 ## The Result
 
-All commands only return status information.  We should never return a `null` without explaining why!
+All commands only return status information.  It's bad practice to  return a `null` without explaining why!
 
-We can define an interface so we handle the status information regardless of the type of data: we may want to display or log errors.
+First a very general interface to handle status information regardless of the type of data.
 
 ```csharp
 public interface IDataResult
@@ -95,7 +95,45 @@ public interface IDataResult
 }
 ```
 
-And then the result using generics.
+And two objects:
+
+```csharp
+public sealed record DataResult : IDataResult
+{ 
+    public bool Successful { get; init; }
+    public string? Message { get; init; }
+
+    internal DataResult() { }
+
+    public static DataResult Success(string? message = null)
+        => new DataResult { Successful = true, Message= message };
+
+    public static DataResult Failure(string message)
+        => new DataResult { Message = message};
+
+    public static DataResult Create(bool success, string? message = null)
+        => new DataResult { Successful = success, Message = message };
+}
+```
+
+```csharp
+public sealed record DataResult<TData> : IDataResult
+{
+    public TData? Item { get; init; }
+    public bool Successful { get; init; }
+    public string? Message { get; init; }
+
+    internal DataResult() { }
+
+    public static DataResult<TData> Success(TData Item, string? message = null)
+        => new DataResult<TData> { Successful = true, Item = Item, Message = message };
+
+    public static DataResult<TData> Failure(string message)
+        => new DataResult<TData> { Message = message };
+}
+```
+
+We can now define `CommandResult`.
 
 ```csharp
 public sealed record CommandResult : IDataResult

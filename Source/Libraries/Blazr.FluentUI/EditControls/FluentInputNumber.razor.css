@@ -1,0 +1,29 @@
+.fluent-control {
+    appearance: none;
+    color: inherit;
+    background: transparent;
+    border: 0px;
+    height: calc(100% - 4px);
+    margin-top: auto;
+    margin-bottom: auto;
+    padding: 0 calc(var(--design-unit) * 2px + 1px);
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    width: 100%;
+    outline: none;
+    box-sizing: border-box;
+    position: relative;
+    color: inherit;
+    border: calc(var(--stroke-width) * 1px) solid transparent;
+    border-radius: calc(var(--control-corner-radius) * 1px);
+    height: calc((var(--base-height-multiplier) + var(--density)) * var(--design-unit) * 1px);
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    background: padding-box linear-gradient(var(--neutral-fill-input-rest),var(--neutral-fill-input-rest)),border-box var(--neutral-stroke-input-rest);
+}
+
+.invalid {
+    border: 1px solid var(--error);
+}

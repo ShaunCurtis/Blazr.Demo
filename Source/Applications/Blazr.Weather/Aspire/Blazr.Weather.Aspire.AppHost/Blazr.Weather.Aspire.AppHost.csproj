@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>e8c75dec-4895-4c99-9b06-cb993f5f9638</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Deployments\FluentUI\Blazr.App.Fluent.Server\Blazr.App.Fluent.Server.csproj" />
+    <ProjectReference Include="..\..\Deployments\FluentUI\Blazr.App.Fluent.WASM.Server\Blazr.App.Fluent.WASM.Server.csproj" />
+    <ProjectReference Include="..\..\Deployments\MudBlazor\Blazr.App.MudBlazor.Server\Blazr.App.MudBlazor.Server.csproj" />
+    <ProjectReference Include="..\..\Deployments\MudBlazor\Blazr.App.MudBlazor.WASM.Server\Blazr.App.MudBlazor.WASM.Server.csproj" />
+    <ProjectReference Include="..\..\Deployments\Vanilla\Blazr.App.Vanilla.Server\Blazr.App.Vanilla.Server.csproj" />
+    <ProjectReference Include="..\..\Deployments\Vanilla\Blazr.App.Vanilla.WASM.Server\Blazr.App.Vanilla.WASM.Server.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -7,14 +7,12 @@ namespace Blazr.App.Core;
 
 public sealed class WeatherForecastEditContext
 {
-    public DmoWeatherForecast BaseRecord { get; }
+    public DmoWeatherForecast BaseRecord { get; private set; }
+    public bool IsDirty => this.BaseRecord != this.AsRecord;
 
     [TrackState] public string? Summary { get; set; }
     [TrackState] public decimal Temperature { get; set; }
     [TrackState] public DateTime? Date { get; set; }
-
-    public WeatherForecastId Id => this.BaseRecord.WeatherForecastId;
-    public bool IsDirty => this.BaseRecord != this.AsRecord;
 
     public DmoWeatherForecast AsRecord =>
         this.BaseRecord with
@@ -24,19 +22,29 @@ public sealed class WeatherForecastEditContext
             Temperature = new(this.Temperature)
         };
 
+    public WeatherForecastEditContext()
+    {
+        this.BaseRecord = new DmoWeatherForecast();
+        this.Load(this.BaseRecord);
+    }
+
     public WeatherForecastEditContext(DmoWeatherForecast record)
     {
         this.BaseRecord = record;
         this.Load(record);
     }
 
-    public void Load(DmoWeatherForecast record)
+    public IDataResult Load(DmoWeatherForecast record)
     {
+        var alreadyLoaded = this.BaseRecord.WeatherForecastId != WeatherForecastId.NewEntity;
+
+        if (alreadyLoaded)
+            return DataResult.Failure("A record has already been loaded.  You can't overload it.");
+
+        this.BaseRecord = record;
         this.Summary = record.Summary;
         this.Temperature = record.Temperature.TemperatureC;
         this.Date = record.Date.ToDateTime(TimeOnly.MinValue);
+        return DataResult.Success();
     }
-
-    public void Reset()
-        => this.Load(this.BaseRecord);
 }

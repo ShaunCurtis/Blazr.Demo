@@ -1,0 +1,69 @@
+﻿@*
+/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================
+*@
+
+@typeparam TValue
+@namespace Blazr.FluentUI
+@inherits InputNumber<TValue>
+
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.FluentUI.AspNetCore.Components
+
+
+ @if (_hasLabel)
+{
+    <label class="fluent-input-label" style="margin-bottom: calc(var(--design-unit) * 1px);">@this.Label</label>
+}
+@if (UpdateOnInput)
+{
+    <input class="@_inputCssClass"
+           placeholder="@this.Placeholder"
+           type="number"
+           value="@this.CurrentValueAsString"
+           step="@_stepAttributeValue"
+           @oninput="(value) => CurrentValueAsString = value?.Value?.ToString() ?? null"
+           @attributes=this.AdditionalAttributes
+           @ref=this.Element />
+}
+else
+{
+    <input class="@_inputCssClass"
+           type="number"
+           placeholder="@this.Placeholder"
+           value="@this.CurrentValueAsString"
+           step="@_stepAttributeValue"
+           @onchange="(value) => CurrentValueAsString = value?.Value?.ToString() ?? null"
+           @attributes=this.AdditionalAttributes
+           @ref=this.Element />
+}
+
+@code {
+    [Parameter] public bool UpdateOnInput { get; set; }
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? Placeholder { get; set; }
+
+    private bool _hasLabel => !string.IsNullOrWhiteSpace(this.Label);
+    private string _inputCssClass => $"fluent-control {this.CssClass}".Trim();
+    private static readonly string _stepAttributeValue = GetStepAttributeValue();
+
+    private static string GetStepAttributeValue()
+    {
+        var targetType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+        var isValidType = targetType == typeof(int) ||
+            targetType == typeof(long) ||
+            targetType == typeof(short) ||
+            targetType == typeof(float) ||
+            targetType == typeof(double) ||
+            targetType == typeof(decimal);
+
+        if (!isValidType)
+            throw new InvalidOperationException($"The type '{targetType}' is not a supported numeric type.");
+
+        return "any";
+    }
+}
