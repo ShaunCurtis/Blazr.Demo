@@ -3,7 +3,7 @@
 
 @implements IDialogContentComponent<WeatherForecastId>
 @implements IDisposable
-@inject WeatherForecastEditPresenter Presenter
+@inject FluentUIPresenterFactory PresenterFactory
 @inject IAppToastService ToastService
 
 <!-- Header -->
@@ -111,15 +111,26 @@
     [CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
     [Parameter] public WeatherForecastId Content { get; set; } = default!;
 
+    private IEditPresenter<DmoWeatherForecast, WeatherForecastId, WeatherForecastEditContext> Presenter = default!;
+
     private bool _isDirty;
     private bool _isClean => !_isDirty;
     private bool _stateStoreAttached;
     private BlazrEditStateStore? _store;
     public readonly Guid ComponentId = Guid.NewGuid();
 
-    protected async override Task OnInitializedAsync()
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
-        await this.Presenter.LoadAsync(this.Content);
+        parameters.SetParameterProperties(this);
+
+        if (this.Presenter is null)
+        {
+            var isNew = Content.Value == Guid.Empty;
+
+            this.Presenter = await this.PresenterFactory.CreateEditPresenterAsync<DmoWeatherForecast, WeatherForecastId, WeatherForecastEditContext>(this.Content, isNew);
+        }
+
+        await base.SetParametersAsync(ParameterView.Empty);
     }
 
     protected override void OnParametersSet()

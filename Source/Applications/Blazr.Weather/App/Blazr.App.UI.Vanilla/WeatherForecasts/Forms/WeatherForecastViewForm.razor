@@ -2,7 +2,7 @@
 
 @using Blazr.App.Presentation
 
-@inject IViewPresenter<DmoWeatherForecast, WeatherForecastId> Presenter
+@inject IPresenterFactory PresenterFactory
 
 <div class="container">
     <div class="row mb-2">
@@ -57,10 +57,20 @@
 
     public readonly Guid ComponentId = Guid.NewGuid();
 
-    protected async override Task OnInitializedAsync()
+    private IViewPresenter<DmoWeatherForecast, WeatherForecastId> Presenter = default!;
+
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
-        ArgumentNullException.ThrowIfNull(Close);
-        await this.Presenter.LoadAsync(this.WeatherForecastId);
+        parameters.SetParameterProperties(this);
+
+        if (this.Presenter is null)
+        {
+            ArgumentNullException.ThrowIfNull(WeatherForecastId);
+            ArgumentNullException.ThrowIfNull(Close);
+            this.Presenter = await this.PresenterFactory.CreateViewPresenterAsync<DmoWeatherForecast, WeatherForecastId>(this.WeatherForecastId);
+        }
+
+        await base.SetParametersAsync(ParameterView.Empty);
     }
 
     private void OnExit()

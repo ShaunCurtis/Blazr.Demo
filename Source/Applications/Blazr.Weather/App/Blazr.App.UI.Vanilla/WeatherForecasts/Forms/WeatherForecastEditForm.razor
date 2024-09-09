@@ -1,12 +1,10 @@
 ﻿@namespace Blazr.App.UI.Vanilla
 @implements IDisposable
-@inject WeatherForecastEditPresenter Presenter
+@inject IPresenterFactory PresenterFactory
 @inject IAppToastService ToastService
 
 @using Blazr.App.Presentation
 @using Blazr.Presentation.Toasts
-
-@inject WeatherForecastEditPresenter Presenter
 
 <div class="container">
     <div class="row mb-2">
@@ -80,9 +78,21 @@
     public readonly Guid ComponentId = Guid.NewGuid();
     private WeatherForecastEditContext _record => this.Presenter.RecordEditContext;
 
-    protected async override Task OnInitializedAsync()
+    private IEditPresenter<DmoWeatherForecast, WeatherForecastId, WeatherForecastEditContext> Presenter = default!;
+
+ 
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
-        await this.Presenter.LoadAsync(this.WeatherForecastId);
+        parameters.SetParameterProperties(this);
+
+        if (this.Presenter is null)
+        {
+            var isNew = this.WeatherForecastId.Value != Guid.Empty;
+
+            this.Presenter = await this.PresenterFactory.CreateEditPresenterAsync<DmoWeatherForecast, WeatherForecastId, WeatherForecastEditContext>(this.WeatherForecastId, isNew);
+        }
+
+        await base.SetParametersAsync(ParameterView.Empty);
     }
 
     protected override void OnParametersSet()

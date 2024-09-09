@@ -12,13 +12,15 @@ public static class ApplicationPresentationServices
 {
     public static void AddAppFluentUIPresentationServices(this IServiceCollection services)
     {
-        AddWeatherForecastFluentUIServices(services);
+        services.AddScoped<IPresenterFactory, PresenterFactory>();
+        services.AddScoped<FluentUIPresenterFactory>();
+
+        //AddWeatherForecastFluentUIServices(services);
     }
 
     private static void AddWeatherForecastFluentUIServices(IServiceCollection services)
     {
-        services.AddTransient<IFluentGridPresenter<DmoWeatherForecast>, FluentGridPresenter<DmoWeatherForecast>>();
-        services.AddTransient<IViewPresenter<DmoWeatherForecast, WeatherForecastId>, ViewPresenter<DmoWeatherForecast, WeatherForecastId>>();
-        services.AddTransient<WeatherForecastEditPresenter>();
+        //services.AddTransient<IViewPresenter<DmoWeatherForecast, WeatherForecastId>, ViewPresenter<DmoWeatherForecast, WeatherForecastId>>();
+        //services.AddTransient<WeatherForecastEditPresenter>();
     }
 }

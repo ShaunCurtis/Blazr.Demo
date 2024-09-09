@@ -13,12 +13,12 @@ public class ViewPresenter<TRecord, TKey> : IViewPresenter<TRecord, TKey>
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
     public TRecord Item { get; private set; } = new();
 
-    public ViewPresenter(IDataBroker dataBroker)
+    internal ViewPresenter(IDataBroker dataBroker)
     {
         _dataBroker = dataBroker;
     }
 
-    public async Task LoadAsync(TKey id)
+    internal async Task LoadAsync(TKey id)
     {
         var request = ItemQueryRequest<TKey>.Create(id);
         var result = await _dataBroker.ExecuteQueryAsync<TRecord, TKey>(request);

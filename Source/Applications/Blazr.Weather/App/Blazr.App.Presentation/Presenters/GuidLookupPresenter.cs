@@ -12,9 +12,8 @@ public interface IGuidLookUpPresenter<TItem>
 
     public IEnumerable<TItem> Items { get; }
 
-    public Task<bool> LoadAsync();
+    public void OnUpdate(object? sender, EventArgs e);
 }
-
 
 public class GuidLookUpPresenter<TItem>
     : IGuidLookUpPresenter<TItem>
@@ -26,13 +25,13 @@ public class GuidLookUpPresenter<TItem>
 
     public IEnumerable<TItem> Items { get; protected set; } = Enumerable.Empty<TItem>();
 
-    public GuidLookUpPresenter(IDataBroker dataBroker)
+    internal GuidLookUpPresenter(IDataBroker dataBroker)
     {
         DataBroker = dataBroker;
         LoadTask = LoadAsync();
     }
 
-    public async Task<bool> LoadAsync()
+    internal async Task<bool> LoadAsync()
     {
         var result = await this.DataBroker.ExecuteQueryAsync<TItem>(new ListQueryRequest());
         this.Items = result.Items;

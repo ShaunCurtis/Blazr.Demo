@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Components.Forms
 @namespace Blazr.App.UI.Mud
-@inject IViewPresenter<DmoWeatherForecast, WeatherForecastId> Presenter
+@inject IPresenterFactory PresenterFactory
 
 <MudDialog>
     <DialogContent>
@@ -53,10 +53,19 @@
     [CascadingParameter] MudDialogInstance? MudDialog { get; set; }
     [Parameter] public WeatherForecastId WeatherForecastId { get; set; } = default!;
 
-    protected async override Task OnInitializedAsync()
+    private IViewPresenter<DmoWeatherForecast, WeatherForecastId> Presenter = default!;
+
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
-        ArgumentNullException.ThrowIfNull(WeatherForecastId);
-        await this.Presenter.LoadAsync(this.WeatherForecastId);
+        parameters.SetParameterProperties(this);
+
+        if (this.Presenter is null)
+        {
+            ArgumentNullException.ThrowIfNull(WeatherForecastId);
+            this.Presenter = await this.PresenterFactory.CreateViewPresenterAsync<DmoWeatherForecast, WeatherForecastId>(this.WeatherForecastId);
+        }
+
+        await base.SetParametersAsync(ParameterView.Empty);
     }
 
     private void Close()

@@ -5,7 +5,7 @@
 /// ============================================================
 namespace Blazr.App.Core;
 
-public sealed class WeatherForecastEditContext
+public sealed class WeatherForecastEditContext : IRecordEditContext<DmoWeatherForecast>
 {
     public DmoWeatherForecast BaseRecord { get; private set; }
     public bool IsDirty => this.BaseRecord != this.AsRecord;

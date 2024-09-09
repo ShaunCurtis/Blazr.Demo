@@ -4,16 +4,16 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 namespace Blazr.App.Presentation;
-
-/// <summary>
-/// Defines the interface for all View Presenters
-/// </summary>
-/// <typeparam name="TRecord">Record to display</typeparam>
-/// <typeparam name="TKey">The record entity key type</typeparam>
-public interface IViewPresenter<TRecord, TKey>
+public interface IEditPresenter<TRecord, TIdentity, TEditContext>
     where TRecord : class, new()
-    where TKey : IEntityKey
+    where TIdentity : IEntityKey
+    where TEditContext : IRecordEditContext<TRecord>, new()
 {
     public IDataResult LastDataResult { get; }
-    public TRecord Item { get; }
+    public EditContext EditContext { get; }
+    public TEditContext RecordEditContext { get; }
+    public bool IsNew { get; }
+    public bool IsInvalid { get; }
+
+    public Task<IDataResult> SaveItemAsync();
 }

@@ -1,6 +1,6 @@
 ﻿@namespace Blazr.App.UI.FluentUI
 @implements IDialogContentComponent<WeatherForecastId>
-@inject IViewPresenter<DmoWeatherForecast, WeatherForecastId> Presenter
+@inject FluentUIPresenterFactory PresenterFactory
 
 <!-- Header -->
 <FluentDialogHeader ShowDismiss="true">
@@ -63,16 +63,22 @@
 {
     public readonly Guid ComponentId = Guid.NewGuid();
 
-    [CascadingParameter]
-    public FluentDialog Dialog { get; set; } = default!;
+    [CascadingParameter] public FluentDialog Dialog { get; set; } = default!;
 
-    [Parameter]
-    public WeatherForecastId Content { get; set; } = default!;
+    [Parameter] public WeatherForecastId Content { get; set; } = default!;
 
-    protected async override Task OnInitializedAsync()
+    private IViewPresenter<DmoWeatherForecast, WeatherForecastId> Presenter = default!;
+
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
-        Console.WriteLine($"{this.ComponentId.ToString().Substring(0,8)} - {this.GetType().Name} - OnInitializedAsync ");
-        await this.Presenter.LoadAsync(this.Content);
+        parameters.SetParameterProperties(this);
+    
+        if(this.Presenter is null)
+        {
+            this.Presenter = await this.PresenterFactory.CreateViewPresenterAsync<DmoWeatherForecast, WeatherForecastId>(this.Content);    
+        }
+
+        await base.SetParametersAsync(ParameterView.Empty);
     }
 
     private async Task ExitAsync()

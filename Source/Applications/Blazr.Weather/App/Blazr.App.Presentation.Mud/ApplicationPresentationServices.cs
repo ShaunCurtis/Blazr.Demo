@@ -12,7 +12,7 @@ public static class ApplicationPresentationServices
 {
     public static void AddAppMudBlazorPresentationServices(this IServiceCollection services)
     {
-        AddWeatherForecastMudBlazorServices(services);
+        //AddWeatherForecastMudBlazorServices(services);
     }
 
     private static void AddWeatherForecastMudBlazorServices(IServiceCollection services)

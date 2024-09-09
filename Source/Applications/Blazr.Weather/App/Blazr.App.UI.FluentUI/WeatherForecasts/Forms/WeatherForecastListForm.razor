@@ -1,5 +1,5 @@
 ﻿@namespace Blazr.App.UI.FluentUI
-@inject IFluentGridPresenter<DmoWeatherForecast> Presenter
+@inject FluentUIPresenterFactory PresenterFactory
 @inject IDialogService DialogService
 
 <PageTitle>Weather Forecasts</PageTitle>
@@ -13,10 +13,10 @@
     </FluentButton>
 </FluentHeader>
 
-<FluentDataGrid Id="weathergrid" 
-    ItemsProvider="this.Presenter.GetItemsAsync<DmoWeatherForecast>" 
-        Pagination="_pagination"
-        TGridItem=DmoWeatherForecast>
+<FluentDataGrid Id="weathergrid"
+                ItemsProvider="this.Presenter.GetItemsAsync<DmoWeatherForecast>"
+                Pagination="_pagination"
+                TGridItem=DmoWeatherForecast>
     <PropertyColumn Title="Id" Property="@(c => c!.WeatherForecastId.Value.ToDisplayId())" Align=Align.Start />
     <PropertyColumn Title="Date" Property="@(c => c!.Date)" Format="dd-MMM-yy" Sortable="true" IsDefaultSortColumn InitialSortDirection="SortDirection.Ascending" Align=Align.Start />
     <PropertyColumn Title="Temp &deg; C" Sortable="true" Format="N0" Property="@(c => c!.Temperature.TemperatureC)" Align=Align.End />
@@ -32,15 +32,32 @@
 
 @code {
     [Parameter] public int PageSize { get; set; } = 10;
+
+    IFluentGridPresenter Presenter = default!;
+
     private PaginationState _pagination = new PaginationState { ItemsPerPage = 10 };
     private GridSort<DmoWeatherForecast> sortByName = GridSort<DmoWeatherForecast>
-    .ByAscending(p => p.Temperature.TemperatureC);
+        .ByAscending(p => p.Temperature.TemperatureC);
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        parameters.SetParameterProperties(this);
+        if (this.Presenter is null)
+        {
+            this.Presenter = await this.PresenterFactory.CreateDataGridPresenterAsync();
+        }
+
+        await base.SetParametersAsync(ParameterView.Empty);
+    }
 
     protected override void OnParametersSet()
     {
         if (this.PageSize != _pagination.ItemsPerPage)
             _pagination.ItemsPerPage = this.PageSize;
     }
+
+    public ValueTask<GridItemsProviderResult<DmoWeatherForecast>> GetItemsAsync(GridItemsProviderRequest<DmoWeatherForecast> request)
+        => this.Presenter.GetItemsAsync<DmoWeatherForecast>(request);
 
     private async Task OnEditAsync(WeatherForecastId id)
     {

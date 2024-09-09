@@ -20,14 +20,7 @@ public class WeatherForecastEditPresenter
 
     public bool IsInvalid => this.EditContext?.GetValidationMessages().Any() ?? false;
 
-    //public WeatherForecastEditPresenter(IDataBroker dataBroker, INewRecordProvider<DmoWeatherForecast> newProvider)
-    //{
-    //    _dataBroker = dataBroker;
-    //    this.RecordEditContext = new(new());
-    //    _newProvider = newProvider;
-    //}
-
-    public WeatherForecastEditPresenter(IDataBroker dataBroker, IAppToastService toastService, INewRecordProvider<DmoWeatherForecast> newProvider)
+    internal WeatherForecastEditPresenter(IDataBroker dataBroker, IAppToastService toastService, INewRecordProvider<DmoWeatherForecast> newProvider)
     {
         _dataBroker = dataBroker;
         this.RecordEditContext = new(new());
@@ -35,7 +28,7 @@ public class WeatherForecastEditPresenter
         _newProvider = newProvider;
     }
 
-    public async Task LoadAsync(WeatherForecastId id)
+    internal async Task LoadAsync(WeatherForecastId id)
     {
         this.LastDataResult = DataResult.Success();
         this.IsNew = false;
