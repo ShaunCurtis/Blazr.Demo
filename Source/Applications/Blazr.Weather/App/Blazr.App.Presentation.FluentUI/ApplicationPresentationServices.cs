@@ -14,13 +14,5 @@ public static class ApplicationPresentationServices
     {
         services.AddScoped<IPresenterFactory, PresenterFactory>();
         services.AddScoped<FluentUIPresenterFactory>();
-
-        //AddWeatherForecastFluentUIServices(services);
-    }
-
-    private static void AddWeatherForecastFluentUIServices(IServiceCollection services)
-    {
-        //services.AddTransient<IViewPresenter<DmoWeatherForecast, WeatherForecastId>, ViewPresenter<DmoWeatherForecast, WeatherForecastId>>();
-        //services.AddTransient<WeatherForecastEditPresenter>();
     }
 }
