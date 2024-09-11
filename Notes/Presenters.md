@@ -1,10 +1,12 @@
 # Presenters
 
-Presenters are the front end interfaces into the Core domain.  They provide and manage data for components and form components.
+UI components and forms should only contain UI logic.  *Presenters* are the *Presentation* layer objects of the *Core* domain that hold and manage the data.
 
-As a demonstration a generic View/Display presenter can be defined in a `IViewPresenter` like this.
+A generic View/Display presenter can be defined in a `IViewPresenter` interface like this.
 
-`TKey` defined the identity key to make querying the data source simpler.
+1. `TKey` defines the identity key: it makes querying the data source simpler.
+2. `Item` is the item to display.
+3. `LastDataResult` is the data result returned when the `Item` was retrieved from the data pipeline.
 
 ```csharp
 public interface IViewPresenter<TRecord, TKey>
@@ -16,7 +18,7 @@ public interface IViewPresenter<TRecord, TKey>
 }
 ```
 
-And the implementation:
+The implementation uses the registered `IDataBroker` to get the data from the data pipeline.
 
 ```csharp
 public class ViewPresenter<TRecord, TKey> : IViewPresenter<TRecord, TKey>
@@ -42,38 +44,53 @@ public class ViewPresenter<TRecord, TKey> : IViewPresenter<TRecord, TKey>
 }
 ```
 
-Notice that the constructor and load methods are internal.
+Constructing a populated `ViewPresenter` is a two step process:
+1. Newing up a object instance
+2. Getting the data object
 
-Initializing objects where populating the object data is asynchronous is a coding conundrum without a perfect solution.  This is further 
+That makes defining an `IViewPresenter` in DI messy.  The object instnce you get back isn't usable until you've called `LoadAsync`.
 
-Using a *Fsctory* and restricting access to the constructor and load methods is one solution.
+The solution is to use a DI defined *Factory*.
+
+Note the constructor and load methods are internal.  They can only be called by the factory class defined within the assembly.
 
 In the solution `PresenterFactory` is the single factory for all generic presenters.  This is the `CreateViewPresenterAsync`:  
 
 ```csharp
-    public async ValueTask<IViewPresenter<TRecord, TIdentity>> CreateViewPresenterAsync<TRecord, TIdentity>(TIdentity id)
-        where TRecord : class, new()
-        where TIdentity : IEntityKey
-    {
-        IDataBroker dataBroker = _serviceProvider.GetRequiredService<IDataBroker>();
-        IToastService toastService = _serviceProvider.GetRequiredService<IToastService>();
+public async ValueTask<IViewPresenter<TRecord, TIdentity>> CreateViewPresenterAsync<TRecord, TIdentity>(TIdentity id)
+    where TRecord : class, new()
+    where TIdentity : IEntityKey
+{
+    IDataBroker dataBroker = _serviceProvider.GetRequiredService<IDataBroker>();
 
-        var presenter = new ViewPresenter<TRecord, TIdentity>(dataBroker);
-        await presenter.LoadAsync(id);
+    var presenter = new ViewPresenter<TRecord, TIdentity>(dataBroker);
+    await presenter.LoadAsync(id);
 
-        return presenter;
-    }
+    return presenter;
+}
 ```
+The factory is a *Scoped* Service and defines the `IServiceProvider` in it's constructor.  Each factory method:
+
+1. Gets the services it needs using `GetRequiredService<T>` and creates an instance of the presenter.
+2. Calls `LoadAsync` to populate the data.
 
 ## Implementation
 
-So, the `CustomerViewForm` injects the factory from DI:  
+The only service you need to define in DI is:
+
+```csharp
+services.AddScoped<IPresenterFactory, PresenterFactory>();
+```
+
+The `CustomerViewForm` injects the factory from DI:  
 
 ```csharp
 @inject PresenterFactory PresenterFactory
 ```
 
-And then use the factory to get an instance of `IViewPresenter`.
+And then uses the factory to get an instance of `IViewPresenter` in `SetParametersAsync`.  This ensures the `IViewPresenter` is fully loaded before any rendering takes place.
+
+You can run the code in `OnInitializedAsync`.  If you do you will need to handle a `null` reference for `IViewPresenter` in the first render.
 
 ```csharp
 private IViewPresenter<DmoCustomer, CustomerId> Presenter = default!;
@@ -94,5 +111,3 @@ public override async Task SetParametersAsync(ParameterView parameters)
     await base.SetParametersAsync(ParameterView.Empty);
 }
 ```
-
-Note the `SetParametersAsync` pattern.  Code in `SetParametersAsync` [before the base call] will complete before the first render.

@@ -1,8 +1,8 @@
 # The Async Service Conundrum
 
-Coding an object that requires and async constructor has alrady been a challenge.  There are solutions, but none have a warm cosy feeling.
+Coding an object that requires and async constructor has always been a challenge.  There are solutions, but none have a warm cosy feeling.
 
-Let's consider thre use case for a Blazor presentation object.  It's purpose is to hold and manage a data object required by a component.
+Let's consider the use case for a Blazor presentation object.  It's purpose is to hold and manage a data object required by a component.
 
 To keep it simple consider the View/Display Presenter.
 
@@ -18,7 +18,7 @@ public interface IViewPresenter<TRecord, TKey>
 }
 ```
 
-The implementation requires the configured `IDataBroker` which it normally gets though DI.
+The implementation requires the configured `IDataBroker` obtained though DI.
 
 ```csharp
 public class ViewPresenter<TRecord, TKey> : IViewPresenter<TRecord, TKey>
@@ -44,16 +44,16 @@ public class ViewPresenter<TRecord, TKey> : IViewPresenter<TRecord, TKey>
 }
 ```
 
-It's a two step process to getting a usable object:
+Getting a usable object is a two step process:
 
 1. Get the object from `Dependancy Injection`.
 2. Call `LoadAsync` passing in the Id.
 
 A smelly object: far from ideal.
 
-My solution is to use a Factory.
+One solution is to use a Factory.
 
-First, set the constructor and `LoadAsync` to `internal`.  They can only be accessed by objects within the same namespace.  The presenter can't be used in DI or constructed in a component.
+First, set the constructor and `LoadAsync` to `internal`, restricting access to objects within the same namespace.  The presenter now can't be used in DI or constructed in a component.
 
 ```csharp
 public class ViewPresenter<TRecord, TKey> : IViewPresenter<TRecord, TKey>
@@ -79,7 +79,7 @@ public class ViewPresenter<TRecord, TKey> : IViewPresenter<TRecord, TKey>
 }
 ```
 
-We can then build a factory class.
+Define a factory class to get `IViewPresenter` instances.
 
 ```csharp
 public class PresenterFactory
@@ -96,7 +96,6 @@ public class PresenterFactory
         where TIdentity : IEntityKey
     {
         IDataBroker dataBroker = _serviceProvider.GetRequiredService<IDataBroker>();
-        IToastService toastService = _serviceProvider.GetRequiredService<IToastService>();
 
         var presenter = new ViewPresenter<TRecord, TIdentity>(dataBroker);
         await presenter.LoadAsync(id);
@@ -105,7 +104,7 @@ public class PresenterFactory
     }
 }
 ```
-When we use this as a service it get the `IServiceProvider` instance.  Once we have this we can get any services defined in DI.
+This gets the `IServiceProvider` instance which can then be used tp get any services defined in DI.
 
 There are two principle methods we use:
 
@@ -116,19 +115,4 @@ There are two principle methods we use:
 
 There are also the keyed service versions that are implemented in the same way.
 
-All of these methods return service objects managed by the service container.  But what if you want an object created outside the DI context, but initialized within the DI context.
-
-This is where `ActivatorUtilities` and it's `GetService` method comes in.
-
-We can modify In the code above like this:
-
-```csharp
-        IToastService toastService = _serviceProvider.GetRequiredService<IToastService>();
-
-        var presenter = ActivatorUtilities.CreateInstance<ViewPresenter<TRecord, TIdentity>>(_serviceProvider);
-        await presenter.LoadAsync(id);
-
-        return presenter;
-```
-
-`CreateInstance` now news up `ViewPresenter` with the `IDataBroker` service defined in DI.
+All of these methods return service objects managed by the service container.
