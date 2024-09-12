@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazr.BaseComponents" Version="1.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.8" />
 	  <PackageReference Include="Blazr.RenderState" Version="1.0.0" />

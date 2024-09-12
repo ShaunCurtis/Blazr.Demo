@@ -1,0 +1,51 @@
+﻿@inherits Blazr.BaseComponents.BlazrControlBase
+@typeparam TRecord where TRecord : class, new()
+@typeparam TKey where TKey : IEntityKey
+@namespace Blazr.App.UI.Vanilla
+
+@using Blazr.App.Presentation
+@using Blazr.OneWayStreet.Core
+
+@inject IPresenterFactory PresenterFactory
+
+@code {
+    protected override RenderFragment Frame => __builder =>
+    {
+        <div class="container">
+            <div class="row mb-2">
+                <div class="col h2">@this.Title</div>
+            </div>
+            @this.Body
+            <div class="row mb-2">
+                <div class="col-12 text-end">
+                    <button class="btn btn-dark" @onclick="this.OnExit">Exit</button>
+                </div>
+            </div>
+        </div>
+    };
+}
+
+@code {
+    [CascadingParameter] private Action? Close { get; set; }
+    [Parameter] public TKey Id { get; set; } = default!;
+    [Parameter] public string Title { get; set; } = "Viewer";
+
+    public readonly Guid ComponentId = Guid.NewGuid();
+
+    private IViewPresenter<TRecord, TKey> Presenter = default!;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (this.Presenter is null)
+        {
+            ArgumentNullException.ThrowIfNull(this.Id);
+            ArgumentNullException.ThrowIfNull(Close);
+            this.Presenter = await this.PresenterFactory.CreateViewPresenterAsync<TRecord, TKey>(this.Id);
+        }
+    }
+
+    private void OnExit()
+    {
+        this.Close?.Invoke();
+    }
+}
