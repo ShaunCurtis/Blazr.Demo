@@ -20,7 +20,6 @@ public sealed class ItemRequestServerHandler<TDbContext>
 
     public async ValueTask<ItemQueryResult<TRecord>> ExecuteAsync<TRecord, TKey>(ItemQueryRequest<TKey> request)
         where TRecord : class
-        where TKey : IEntityKey
     {
         // Try and get a registered custom handler
         var _customHandler = _serviceProvider.GetService<IItemRequestHandler<TRecord, TKey>>();
@@ -35,13 +34,22 @@ public sealed class ItemRequestServerHandler<TDbContext>
 
     private async ValueTask<ItemQueryResult<TRecord>> GetItemAsync<TRecord, TKey>(ItemQueryRequest<TKey> request)
         where TRecord : class
-        where TKey : IEntityKey
     {
         using var dbContext = _factory.CreateDbContext();
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
+
+        if (request.Key is null)
+            return ItemQueryResult<TRecord>.Failure($"No Key provided");
+
+        // Check if we're dealing with an entity key, if so get it's value
+
+        object key = request.Key;
+        if (key is IEntityKey entityKey)
+            key = entityKey.KeyValue;
+
         var record = await dbContext.Set<TRecord>()
-            .FindAsync(request.Key.KeyValue, request.Cancellation)
+            .FindAsync(key, request.Cancellation)
             .ConfigureAwait(false);
 
        // var record = await dbContext.Set<TRecord>().SingleOrDefaultAsync(item => item.EntityUid == request.Uid, request.Cancellation);

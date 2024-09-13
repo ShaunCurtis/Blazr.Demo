@@ -8,8 +8,7 @@ namespace Blazr.OneWayStreet.Core;
 public interface IItemRequestHandler
 {
     public ValueTask<ItemQueryResult<TRecord>> ExecuteAsync<TRecord, TKey>(ItemQueryRequest<TKey> request)
-        where TRecord : class
-        where TKey: IEntityKey;
+        where TRecord : class;
 }
 
 public interface IItemRequestHandler<TRecord>
@@ -20,7 +19,6 @@ public interface IItemRequestHandler<TRecord>
 
 public interface IItemRequestHandler<TRecord, IKey>
     where TRecord : class
-    where IKey : IEntityKey
 {
     public ValueTask<ItemQueryResult<TRecord>> ExecuteAsync(ItemQueryRequest<IKey> request);
 }

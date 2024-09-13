@@ -29,7 +29,6 @@ public sealed class ItemRequestAPIHandler
     /// <returns></returns>
     public async ValueTask<ItemQueryResult<TRecord>> ExecuteAsync<TRecord, TKey>(ItemQueryRequest<TKey> request)
         where TRecord : class
-        where TKey : IEntityKey
     {
         IItemRequestHandler<TRecord, TKey>? _customHandler = null;
 
@@ -44,7 +43,6 @@ public sealed class ItemRequestAPIHandler
 
     private async ValueTask<ItemQueryResult<TRecord>> GetAsync<TRecord, TKey>(ItemQueryRequest<TKey> request)
         where TRecord : class
-        where TKey : IEntityKey
     {
         var attribute = Attribute.GetCustomAttribute(typeof(TRecord), typeof(APIInfo));
 
@@ -53,7 +51,9 @@ public sealed class ItemRequestAPIHandler
 
         using var http = _httpClientFactory.CreateClient(apiInfo.ClientName);
 
-        var postValue = request.Key.KeyValue.ToString();
+        var postValue = request.Key?.ToString() ?? "No Data";
+        if (request.Key is IEntityKey entityKey)
+            postValue = entityKey.KeyValue.ToString();
 
         if (postValue is null)
             throw new DataPipelineException($"Can't convert the suppleid key value to a string for {typeof(TRecord).Name}");

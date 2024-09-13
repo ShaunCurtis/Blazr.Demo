@@ -20,7 +20,6 @@ public readonly record struct ItemQueryRequest
 }
 
 public readonly record struct ItemQueryRequest<TKey>
-    where TKey : IEntityKey
 {
     public TKey Key { get; init; }
     public CancellationToken Cancellation { get; init; }

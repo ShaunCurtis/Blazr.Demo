@@ -76,7 +76,7 @@ public static class ApplicationInfrastructureServices
     }
 
     /// <summary>
-    /// Adds the Server side Mapped Handlers
+    /// Adds the Server side Mapped Handlers for WeatherForecasts
     /// </summary>
     /// <param name="services"></param>
     public static void AddMappedWeatherForecastServerInfrastructureServices(this IServiceCollection services)

@@ -10,9 +10,8 @@ public interface IDataBroker
     public ValueTask<ListQueryResult<TRecord>> ExecuteQueryAsync<TRecord>(ListQueryRequest request) 
         where TRecord : class;
 
-    public ValueTask<ItemQueryResult<TRecord>> ExecuteQueryAsync<TRecord, TKey>(ItemQueryRequest<TKey> request) 
-        where TRecord : class
-        where TKey: IEntityKey;
+    public ValueTask<ItemQueryResult<TRecord>> ExecuteQueryAsync<TRecord, TKey>(ItemQueryRequest<TKey> request)
+        where TRecord : class;
 
     public ValueTask<CommandResult> ExecuteCommandAsync<TRecord>(CommandRequest<TRecord> request) 
         where TRecord : class;

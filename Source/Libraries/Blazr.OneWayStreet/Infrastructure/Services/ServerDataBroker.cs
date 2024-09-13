@@ -6,13 +6,13 @@
 
 namespace Blazr.OneWayStreet.Infrastructure;
 
-public sealed class DataBroker : IDataBroker
+public sealed class ServerDataBroker : IDataBroker
 {
     private readonly IListRequestHandler _listRequestHandler;
     private readonly IItemRequestHandler _itemRequestHandler;
     private readonly ICommandHandler _commandHandler;
 
-    public DataBroker(
+    public ServerDataBroker(
         IListRequestHandler listRequestHandler,
         IItemRequestHandler itemRequestHandler,
         ICommandHandler commandHandler)
@@ -22,15 +22,15 @@ public sealed class DataBroker : IDataBroker
         _commandHandler = commandHandler;
     }
 
-    public ValueTask<ItemQueryResult<TRecord>> ExecuteQueryAsync<TRecord, TKey>(ItemQueryRequest<TKey> request) 
-            where TRecord : class
+    public ValueTask<ItemQueryResult<TRecord>> ExecuteQueryAsync<TRecord, TKey>(ItemQueryRequest<TKey> request)
+        where TRecord : class
         => _itemRequestHandler.ExecuteAsync<TRecord, TKey>(request);
 
-    public ValueTask<ListQueryResult<TRecord>> ExecuteQueryAsync<TRecord>(ListQueryRequest request)
-            where TRecord : class
+    public ValueTask<ListQueryResult<TRecord>> ExecuteQueryAsync<TRecord>(ListQueryRequest request) 
+        where TRecord : class
         => _listRequestHandler.ExecuteAsync<TRecord>(request);
 
     public ValueTask<CommandResult> ExecuteCommandAsync<TRecord>(CommandRequest<TRecord> request) 
-            where TRecord : class
+        where TRecord : class
         => _commandHandler.ExecuteAsync<TRecord>(request);
 }
