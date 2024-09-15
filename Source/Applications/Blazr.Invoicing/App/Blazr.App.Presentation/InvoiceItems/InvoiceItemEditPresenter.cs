@@ -20,6 +20,10 @@ public class InvoiceItemEditPresenter
     {
         _composite = composite;
         _toastService = toastService;
+
+        // Detect if we have a new item request.
+        this.IsNew = id == InvoiceItemId.NewEntity;
+        
         var item = this.Load(id);
 
         RecordEditContext = new(item);
@@ -30,11 +34,10 @@ public class InvoiceItemEditPresenter
     private DmoInvoiceItem Load(InvoiceItemId id)
     {
         this.LastDataResult = DataResult.Success();
-        this.IsNew = id == InvoiceItemId.NewEntity;
 
-        var item = id.Value != Guid.Empty
-            ? _composite.GetInvoiceItem(id).Item
-            : _composite.GetNewInvoiceItem();
+        var item = IsNew
+            ? _composite.GetNewInvoiceItem()
+            : _composite.GetInvoiceItem(id).Item;
 
         if (item is null)
         {

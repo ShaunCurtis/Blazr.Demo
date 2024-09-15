@@ -77,7 +77,7 @@ public class InvoiceComposite
     }
 
     public DmoInvoiceItem GetNewInvoiceItem()
-        => new() { InvoiceItemId = InvoiceItemId.NewEntity, InvoiceId = _invoice.Item.InvoiceId };
+        => new() { InvoiceItemId = new(UUIDProvider.GetGuid()), InvoiceId = _invoice.Item.InvoiceId };
 
     public DataResult<DmoInvoiceItem> GetInvoiceItem(InvoiceItemId uid)
     {

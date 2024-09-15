@@ -7,10 +7,10 @@
 /// ============================================================
 namespace Blazr.App.Core;
 
-public class NewInvoiceProvider : INewRecordProvider<DmoInvoice>
+public static class UUIDProvider
 {
-    public DmoInvoice NewRecord()
+    public static Guid GetGuid()
     {
-        return new DmoInvoice() { InvoiceId = new(UUIDProvider.GetGuid()), Date = DateOnly.FromDateTime(DateTime.Now) };
+        return Uuid7.Guid();
     }
 }
