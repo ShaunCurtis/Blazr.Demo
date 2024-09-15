@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace Blazr.App.Core;
 
-public record Temperature
+public readonly record struct Temperature
 {
     public decimal TemperatureC { get; init; }
     [JsonIgnore] public decimal TemperatureF => 32 + (this.TemperatureC / 0.5556m);
@@ -18,8 +18,8 @@ public record Temperature
     /// temperature should be provided in degrees Celcius
     /// </summary>
     /// <param name="temperature"></param>
-    public Temperature(decimal temperature)
+    public Temperature(decimal temperatureAsDegCelcius)
     {
-        this.TemperatureC = temperature;
+        this.TemperatureC = temperatureAsDegCelcius;
     }
 }
