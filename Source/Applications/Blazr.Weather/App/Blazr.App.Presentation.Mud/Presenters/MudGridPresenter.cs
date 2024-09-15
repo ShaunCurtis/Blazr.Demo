@@ -7,8 +7,7 @@ using MudBlazor;
 
 namespace Blazr.App.Presentation.Mud;
 
-public class MudGridPresenter<TRecord> : IMudGridListPresenter<TRecord>
-    where TRecord : class, new()
+public class MudGridPresenter : IMudGridPresenter
 {
     private readonly IDataBroker _dataBroker;
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
@@ -20,7 +19,8 @@ public class MudGridPresenter<TRecord> : IMudGridListPresenter<TRecord>
         _dataBroker = dataBroker;
     }
 
-    public async Task<GridData<TRecord>> GetItemsAsync(GridState<TRecord> request)
+    public async Task<GridData<TRecord>> GetItemsAsync<TRecord>(GridState<TRecord> request)
+        where TRecord : class, new()
     {
         // Get the defined sorters
         List<SortDefinition>? sorters = null;

@@ -90,7 +90,7 @@
         // Get the presenter
         if(_isNotInitialized)
         {
-            var isNew = this.Content.Value == Guid.Empty;
+            var isNew = this.Content == CustomerId.NewEntity;
             this.Presenter = await this.PresenterFactory.CreateEditPresenterAsync<DmoCustomer, CustomerId, CustomerEditContext>(this.Content, isNew);
             _isNotInitialized = false;
         }

@@ -80,14 +80,14 @@
 
     private IEditPresenter<DmoWeatherForecast, WeatherForecastId, WeatherForecastEditContext> Presenter = default!;
 
- 
+
     public override async Task SetParametersAsync(ParameterView parameters)
     {
         parameters.SetParameterProperties(this);
 
         if (this.Presenter is null)
         {
-            var isNew = this.WeatherForecastId.Value != Guid.Empty;
+            var isNew = this.WeatherForecastId == WeatherForecastId.NewEntity;
 
             this.Presenter = await this.PresenterFactory.CreateEditPresenterAsync<DmoWeatherForecast, WeatherForecastId, WeatherForecastEditContext>(this.WeatherForecastId, isNew);
         }
@@ -150,5 +150,4 @@
         if (_store is not null)
             _store.StoreUpdated -= OnEditStateMayHaveChanged;
     }
-
 }

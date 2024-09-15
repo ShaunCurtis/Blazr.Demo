@@ -1,7 +1,7 @@
 ﻿@namespace Blazr.App.UI.Vanilla
 @using Blazr.App.Presentation
 
-@inject IDataGridPresenter Presenter
+@inject IPresenterFactory PresenterFactory
 
 
 <div class="container">
@@ -42,6 +42,19 @@
     private PaginationState _pagination = new PaginationState { ItemsPerPage = 10 };
     private ModalOptions _modalOptions = new();
     private bool _showModal;
+    private IDataGridPresenter Presenter = default!;
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        parameters.SetParameterProperties(this);
+        if (this.Presenter is null)
+        {
+            this.Presenter = await this.PresenterFactory.CreateDataGridPresenterAsync();
+        }
+
+        await base.SetParametersAsync(ParameterView.Empty);
+    }
+
 
     private Task OnEditAsync(WeatherForecastId id)
     {

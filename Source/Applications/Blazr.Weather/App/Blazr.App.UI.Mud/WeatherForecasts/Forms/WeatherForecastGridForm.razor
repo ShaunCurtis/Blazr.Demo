@@ -1,6 +1,6 @@
 ﻿@namespace Blazr.App.UI.Mud
 
-@inject IMudGridListPresenter<DmoWeatherForecast> Presenter
+@inject MudPresenterFactory PresenterFactory
 @inject IDialogService DialogService
 
 <MudDataGrid T="DmoWeatherForecast" Context="record" ServerData="this.Presenter.GetItemsAsync" @ref="_grid">
@@ -33,6 +33,18 @@
 @code {
     // Grid is set in the markup so can't be null
     private MudDataGrid<DmoWeatherForecast> _grid = default!;
+    private IMudGridPresenter Presenter = default!;
+
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        parameters.SetParameterProperties(this);
+
+        if (this.Presenter is null)
+            this.Presenter = await this.PresenterFactory.CreateDataGridPresenterAsync();
+
+        await base.SetParametersAsync(ParameterView.Empty);
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

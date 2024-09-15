@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Components.Forms
 @namespace Blazr.App.UI.Mud
 @implements IDisposable
-@inject IPresenterFactory PresenterFactory
+@inject MudPresenterFactory PresenterFactory
 @inject IAppToastService ToastService
 
 <MudDialog>
@@ -102,8 +102,7 @@
 
         if (this.Presenter is null)
         {
-            var isNew = this.WeatherForecastId.Value != Guid.Empty;
-
+            var isNew = this.WeatherForecastId == WeatherForecastId.NewEntity;
             this.Presenter = await this.PresenterFactory.CreateEditPresenterAsync<DmoWeatherForecast, WeatherForecastId, WeatherForecastEditContext>(this.WeatherForecastId, isNew);
         }
 

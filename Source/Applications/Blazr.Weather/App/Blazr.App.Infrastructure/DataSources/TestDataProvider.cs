@@ -1,7 +1,4 @@
-﻿
-using UuidExtensions;
-
-/// ============================================================
+﻿/// ============================================================
 /// Author: Shaun Curtis, Cold Elm Coders
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
@@ -25,7 +22,7 @@ public sealed class TestDataProvider
         var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
         _weatherForecasts = Enumerable.Range(1, 50).Select(index => new DboWeatherForecast
         {
-            WeatherForecastID = Uuid7.Guid(),
+            WeatherForecastID = UUIDProvider.GetGuid(),
             Date = startDate.AddDays(index),
             Temperature = new(Random.Shared.Next(-20, 55)),
             Summary = summaries[Random.Shared.Next(summaries.Length)]

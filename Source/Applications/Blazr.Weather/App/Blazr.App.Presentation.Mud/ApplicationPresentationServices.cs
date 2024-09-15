@@ -13,5 +13,6 @@ public static class ApplicationPresentationServices
     public static void AddAppMudBlazorPresentationServices(this IServiceCollection services)
     {
         services.AddScoped<IPresenterFactory, PresenterFactory>();
+        services.AddScoped<MudPresenterFactory>();
     }
 }

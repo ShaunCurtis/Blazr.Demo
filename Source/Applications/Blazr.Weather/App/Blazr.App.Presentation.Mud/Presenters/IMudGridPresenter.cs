@@ -7,12 +7,13 @@ using MudBlazor;
 
 namespace Blazr.App.Presentation.Mud;
 
-public interface IMudGridListPresenter<TRecord>
-    where TRecord : class, new()
+public interface IMudGridPresenter
 {
     public IDataResult LastDataResult { get; }
     public int DefaultPageSize { get; set; }
     public List<FilterDefinition>? Filters { get; set; }
 
-    public Task<GridData<TRecord>> GetItemsAsync(GridState<TRecord> request);
+    public Task<GridData<TRecord>> GetItemsAsync<TRecord>(GridState<TRecord> request)
+            where TRecord : class, new();
+
 }
