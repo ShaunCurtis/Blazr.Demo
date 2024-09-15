@@ -20,7 +20,6 @@ public class PresenterFactory : IPresenterFactory
         where TEditContext : IRecordEditContext<TRecord>, new()
     {
         IDataBroker dataBroker = _serviceProvider.GetRequiredService<IDataBroker>();
-        ICommandHandler<TRecord> commandHandler = _serviceProvider.GetRequiredService<ICommandHandler<TRecord>>();
         INewRecordProvider<TRecord> newRecordProvider = _serviceProvider.GetRequiredService<INewRecordProvider<TRecord>>();
         IAppToastService toastService = _serviceProvider.GetRequiredService<IAppToastService>();
 
