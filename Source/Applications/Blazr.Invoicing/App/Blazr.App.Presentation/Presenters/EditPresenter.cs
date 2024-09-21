@@ -14,18 +14,20 @@ public class EditPresenter<TRecord, TIdentity, TEditContext> : IEditPresenter<TR
     private readonly IToastService _toastService;
     private readonly INewRecordProvider<TRecord> _newRecordProvider;
     private readonly string _recordName;
+    private readonly ILogger<EditPresenter<TRecord, TIdentity, TEditContext>> _logger;
 
     public IDataResult LastDataResult { get; private set; } = DataResult.Success();
     public EditContext EditContext { get; private set; }
     public TEditContext RecordEditContext { get; private set; }
     public bool IsNew { get; private set; }
 
-    internal EditPresenter(IDataBroker dataBroker, INewRecordProvider<TRecord> newRecordProvider, 
-        IToastService toastService)
+    internal EditPresenter(IDataBroker dataBroker, INewRecordProvider<TRecord> newRecordProvider,
+        IToastService toastService, ILogger<EditPresenter<TRecord, TIdentity, TEditContext>> logger)
     {
         _dataBroker = dataBroker;
         _toastService = toastService;
         _newRecordProvider = newRecordProvider;
+        _logger = logger;
         this.EditContext = default!;
         this.RecordEditContext = default!;
         _recordName = typeof(TRecord).Name;
@@ -46,6 +48,10 @@ public class EditPresenter<TRecord, TIdentity, TEditContext> : IEditPresenter<TR
             var request = ItemQueryRequest<TIdentity>.Create(id);
             var result = await _dataBroker.ExecuteQueryAsync<TRecord, TIdentity>(request);
             LastDataResult = result;
+
+            if (!this.LastDataResult.Successful)
+                _logger.LogError(result.Message ?? $"The {_recordName} could not be loaded.");
+
             if (this.LastDataResult.Successful)
             {
                 item = result.Item;
@@ -70,8 +76,11 @@ public class EditPresenter<TRecord, TIdentity, TEditContext> : IEditPresenter<TR
     {
         if (!this.RecordEditContext.IsDirty)
         {
-            this.LastDataResult = DataResult.Failure($"The {_recordName} has not changed and therefore has not been updated.");
-            _toastService.ShowWarning($"The {_recordName} has not changed and therefore has not been updated.");
+            var message = $"The {_recordName} has not changed and therefore has not been updated.";
+
+            _logger.LogWarning(message);
+            this.LastDataResult = DataResult.Failure(message);
+            _toastService.ShowWarning(message);
             return this.LastDataResult;
         }
 
@@ -80,9 +89,17 @@ public class EditPresenter<TRecord, TIdentity, TEditContext> : IEditPresenter<TR
         var result = await _dataBroker.ExecuteCommandAsync(command);
 
         if (result.Successful)
+        {
+            var message = $"The {_recordName} was saved.";
+            _logger.LogInformation(message);
             _toastService.ShowSuccess($"The {_recordName} was saved.");
+        }
         else
+        {
+            var message = result.Message ?? $"The {_recordName} could not be saved.";
+            _logger.LogError(message);
             _toastService.ShowError(result.Message ?? $"The {_recordName} could not be saved.");
+        }
 
         this.LastDataResult = result;
         return result;
