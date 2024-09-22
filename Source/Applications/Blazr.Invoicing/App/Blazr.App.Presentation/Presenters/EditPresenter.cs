@@ -50,7 +50,10 @@ public class EditPresenter<TRecord, TIdentity, TEditContext> : IEditPresenter<TR
             LastDataResult = result;
 
             if (!this.LastDataResult.Successful)
-                _logger.LogError(result.Message ?? $"The {_recordName} could not be loaded.");
+            {
+                var message = result.Message ?? $"The {_recordName} could not be loaded.";
+                _logger.LogError(message);
+            }
 
             if (this.LastDataResult.Successful)
             {
@@ -92,13 +95,13 @@ public class EditPresenter<TRecord, TIdentity, TEditContext> : IEditPresenter<TR
         {
             var message = $"The {_recordName} was saved.";
             _logger.LogInformation(message);
-            _toastService.ShowSuccess($"The {_recordName} was saved.");
+            _toastService.ShowSuccess(message);
         }
         else
         {
             var message = result.Message ?? $"The {_recordName} could not be saved.";
             _logger.LogError(message);
-            _toastService.ShowError(result.Message ?? $"The {_recordName} could not be saved.");
+            _toastService.ShowError(message);
         }
 
         this.LastDataResult = result;

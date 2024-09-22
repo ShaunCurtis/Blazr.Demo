@@ -5,12 +5,12 @@
 /// ============================================================
 namespace Blazr.OneWayStreet.Core;
 
-public record DataResult : IDataResult
+public readonly record struct DataResult : IDataResult
 { 
     public bool Successful { get; init; }
     public string? Message { get; init; }
 
-    internal DataResult() { }
+    public DataResult() { }
 
     public static DataResult Success(string? message = null)
         => new DataResult { Successful = true, Message= message };
@@ -19,13 +19,13 @@ public record DataResult : IDataResult
         => new DataResult { Message = message};
 }
 
-public sealed record DataResult<TData> : IDataResult
+public readonly record struct DataResult<TData> : IDataResult
 {
     public TData? Item { get; init; }
     public bool Successful { get; init; }
     public string? Message { get; init; }
 
-    internal DataResult() { }
+    public DataResult() { }
 
     public static DataResult<TData> Success(TData Item, string? message = null)
         => new DataResult<TData> { Successful = true, Item = Item, Message = message };

@@ -12,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddLogging(builder => builder.AddConsole());
+
 builder.Services.AddFluentUIComponents();
 builder.Services.AddAppServerMappedInfrastructureServices();
 builder.Services.AddAppServerPresentationServices();

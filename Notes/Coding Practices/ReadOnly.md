@@ -4,7 +4,7 @@ One of the most common sources of bugs in code is silent mutation: inadvertantly
 
 The most obvious way to tame this mutation beast is to consider the purpose of each object when you create it.  If there's no reason for mutation, make it readonly.  For many the default setting is `class`, they never consider anything else.
 
-Don't fall into that trap.  My default is a record.  And then the the struct or a class decision.  I use `readonly record struct` a lot since it's introduction.
+Don't fall into that trap.  My default is a record.  And then the struct or class decision.  I use `readonly record struct` a lot since it's introduction.
 
 Consider the data pipeline Command request object.
 
@@ -38,11 +38,9 @@ public readonly record struct CommandRequest
 It's an immutable stack based value object with record semantics.
 Note that `TRecord` and `CommandState` are also immutable objects.
 
-The advantages of mskeing this switch are:
+The advantages are:
 
 1. Quicker - structs are stack based objects.
 2. Easier to copy - use `with`.
 3. Easier to compare - value based equality semantics.
-
-
 
