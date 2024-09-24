@@ -1,0 +1,122 @@
+# Entities
+
+The collective wisdom is that you can split objects up into Entities and Value Objects.
+
+People are entities - there is only one of me.  Family names are value objects.  The key difference between the two is:
+
+ - When you compare two records of me, you use my identity to check equality.  Are these my medical record objects?  
+ - When you check two family names, you compare the values of each family name obect.
+
+This raises a fundimental question.  How do you represent me as something tangible.  When I present my passport is it really me?  We've moved from simple bits of paper to biometrics to be more precis, but there could be fake passports of me around.   And what about cloning?
+
+Consider an address.  Is it an entity or a value object?  The answer is not a simple yes or no.
+
+In a membership database you may choose to store addresses in a separate table: you may have family members with the same address.  At this point an address becomes an entity: it has a uniue identifier.
+
+On the other hand in an invoice database you may choose to crystalise out the address into separate fields in the customer record.  At this point it's just a collection of fields you can bring together in your domain object as an address.
+
+The point I'm making here is you can get tied up in knots with trying to apply a set of Entity/Value object prescription solutions.
+
+Business concepts become entities or value objects based on what you want to do with them in your application.
+
+Let's look at simple Invoicing application.
+
+ - We have customers that we want to be able to edit and add.  The business rules that apply are editing all fields except the account number.
+
+ - We have invoices that have invoice items.  We can add and edit invoices.  We can add, edit and delete invoice items. More detail.....
+
+It looks like we have two entities:
+
+1. A Customer Entity
+2. An Invoice Entity
+
+The Customer entity has the following actions:
+ - Create
+ - Edit
+
+The Invoice entity has the following actions:
+ - Create a invoice
+ - Edit specific fields
+ - Create an invoice item
+ - Edit an invoice item
+ - Delete an invoice item
+ - Discard an invoice [before it's saved]
+
+In the real world we would add detail and rules to each action: date constraints on a new invoice.
+
+## Unique Ids
+
+Unique Ids present some programming challenges.  We could just use a Guid.  It simplifies passing Ids between domains, but it's a big *Primitive Obsession* smell, and the cause of many bugs.  
+
+How do you differentiate an `InvoiceId` from an `InvoiceItemId` from a Guid generated for another reason.  It's all too easy to pass the wrong Guid into a method.  There's no compiler errors, and tracking down the error can take a lot of time.
+
+On the other hand, there are issues on identifying and casting the ID in the infrastructure layer using a generic data pipeline.
+
+Here's the compromise.   
+
+```csharp
+public readonly record struct CustomerId : IEntityKey
+{
+    public Guid Value { get; init; }
+
+    public object KeyValue => this.Value;
+
+    public CustomerId(Guid value)
+        => this.Value = value;
+
+    public static CustomerId NewEntity => new(Guid.Empty);
+}
+```
+
+The `IEntityKey` provides the mechanism to get the key value.
+
+```csharp
+public interface IEntityKey 
+{ 
+    public object KeyValue { get; }
+}
+```
+
+Also note the NewEntity static method that returns an empty Guid.  A record with an empty Id is the `default`.  It provide a mechanism for differentiating a `default` object from one created as part of a `Create` action, such as *Create a New Customer*.
+
+For reference a new customer is created using the `NewCustomerProvider`.
+
+```csharp
+public class NewCustomerProvider : INewRecordProvider<DmoCustomer>
+{
+    public DmoCustomer NewRecord()
+    {
+        return new DmoCustomer() { CustomerId = new(UUIDProvider.GetGuid()) };
+    }
+}
+```
+
+It uses the `UUIDProvider` to get a UUID7 unique identifier.  This is a simple static class to abstract the UUID7 implementation.  Net9 will have UID7 creation built in, but in Net8 we need to use an external library.
+
+We use UID7 Guids to aid data store index optimization.  Yet another small code smell [the tail wagging the dog] where Infrastructure concerns creep into Core domain design!
+
+
+## Customer Entity
+
+It needs a a unique Id.  We create a value object based on a UUID7 unique identifier.
+
+```csharp
+public readonly record struct CustomerId : IEntityKey
+{
+    public Guid Value { get; init; }
+
+    public object KeyValue => this.Value;
+
+    public CustomerId(Guid value)
+        => this.Value = value;
+
+    public static CustomerId NewEntity => new(Guid.Empty);
+}
+```
+
+```csharp
+public interface IEntityKey 
+{ 
+    public object KeyValue { get; }
+}
+```

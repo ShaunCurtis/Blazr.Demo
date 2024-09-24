@@ -17,8 +17,8 @@ public class InvoiceFilterByCustomerSpecification : PredicateSpecification<DvoIn
 
     public InvoiceFilterByCustomerSpecification(FilterDefinition filter)
     {
-        filter.TryFromJson<CustomerId>(out CustomerId? _id);
-        _customerId = _id ?? new(Guid.Empty);
+        filter.TryFromJson<CustomerId>(out CustomerId _id);
+        _customerId = _id;
     }
 
     public override Expression<Func<DvoInvoice, bool>> Expression
