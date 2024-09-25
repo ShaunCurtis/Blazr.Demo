@@ -18,7 +18,7 @@
 {
     <label class="fluent-input-label" style="margin-bottom: calc(var(--design-unit) * 1px);">@this.Label</label>
 }
-@if (UpdateOnInput)
+@if (Immediate)
 {
     <input class="@_inputCssClass"
            placeholder="@this.Placeholder"
@@ -42,7 +42,7 @@ else
 }
 
 @code {
-    [Parameter] public bool UpdateOnInput { get; set; }
+    [Parameter] public bool Immediate { get; set; }
     [Parameter] public string? Label { get; set; }
     [Parameter] public string? Placeholder { get; set; }
 

@@ -3,9 +3,6 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-using Blazr.FluxGate;
-using Microsoft.Extensions.DependencyInjection;
-
 namespace Blazr.App.Core;
 
 public class InvoiceComposite
@@ -14,7 +11,8 @@ public class InvoiceComposite
     private KeyedFluxGateStore<DmoInvoiceItem, InvoiceItemId> _invoiceItems;
     private readonly IServiceProvider _serviceProvider;
     public DmoInvoice Invoice => _invoice.Item;
-    public IEnumerable<DmoInvoiceItem> InvoiceItems => _invoiceItems.Items;
+    public IEnumerable<DmoInvoiceItem> AllInvoiceItems => _invoiceItems.Items;
+    public IEnumerable<DmoInvoiceItem> InvoiceItems => _invoiceItems.Stores.Where(item => !item.State.IsDeleted).Select(item => item.Item).AsEnumerable();
     public FluxGateState State => _invoice.State;
 
     public event EventHandler? StateHasChanged;

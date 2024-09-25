@@ -38,7 +38,7 @@ public sealed class InvoiceCompositeCommandHandler<TDbContext>
             dbContext.Update<DboInvoice>(dboRoot);
 
         // Update all the existing items based on their state
-        foreach (var item in composite.InvoiceItems)
+        foreach (var item in composite.AllInvoiceItems)
         {
             var dboItem = DboInvoiceItemMap.Map(item);
             var result = composite.GetInvoiceItemState(item.InvoiceItemId);
