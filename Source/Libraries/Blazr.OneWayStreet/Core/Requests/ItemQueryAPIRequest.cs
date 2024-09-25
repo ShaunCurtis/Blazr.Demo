@@ -5,17 +5,30 @@
 /// ============================================================
 namespace Blazr.OneWayStreet.Core;
 
-public readonly record struct ItemQueryAPIRequest<IKey>
+public readonly record struct ItemQueryAPIRequest<TKey>
 {
-    public IKey KeyValue { get; init; }
+    public TKey KeyValue { get; init; }
 
     public ItemQueryAPIRequest()
     {
         this.KeyValue = default!;
     }
 
-    public ItemQueryAPIRequest(IKey keyValue)
+    public ItemQueryAPIRequest(TKey keyValue)
     {
         this.KeyValue = keyValue;
     }
+
+    public static ItemQueryAPIRequest<TKey> FromRequest(ItemQueryRequest<TKey> query)
+        => new()
+        {
+            KeyValue = query.Key
+        };
+
+    public ItemQueryRequest<TKey> ToRequest(CancellationToken? cancellation = null)
+        => new()
+        {
+            Key = this.KeyValue ?? default!,
+            Cancellation = cancellation ?? CancellationToken.None
+        };
 }

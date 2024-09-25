@@ -5,10 +5,13 @@
 /// ============================================================
 namespace Blazr.App.Core;
 
-public readonly record struct WeatherForecastId : IEntityKey
+public readonly record struct WeatherForecastId : IRecordId
 {
     public Guid Value { get; init; }
-    public object KeyValue => this.Value;
+    public object GetValueObject() => this.Value;
+
+    public WeatherForecastId()
+    => this.Value = Guid.Empty;
 
     public WeatherForecastId(Guid value)
         => this.Value = value;

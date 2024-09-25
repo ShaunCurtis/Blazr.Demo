@@ -21,9 +21,9 @@ public static class AppAPIServices
             return Results.Ok(result);
         });
 
-        app.MapPost(AppDictionary.WeatherForecast.WeatherForecastItemAPIUrl, async ([FromBody] ItemQueryAPIRequest<Guid> apiRequest, IItemRequestHandler<DmoWeatherForecast, WeatherForecastId> handler, CancellationToken cancellationToken) =>
+        app.MapPost(AppDictionary.WeatherForecast.WeatherForecastItemAPIUrl, async ([FromBody] ItemQueryAPIRequest<WeatherForecastId> apiRequest, IItemRequestHandler<DmoWeatherForecast, WeatherForecastId> handler, CancellationToken cancellationToken) =>
         {
-            var request = new ItemQueryRequest<WeatherForecastId>(new(apiRequest.KeyValue), cancellationToken);
+            var request = new ItemQueryRequest<WeatherForecastId>((apiRequest.KeyValue), cancellationToken);
             var result = await handler.ExecuteAsync(request);
             return Results.Ok(result);
         });
@@ -51,13 +51,11 @@ public static class AppAPIServices
             return Results.Ok(result);
         });
 
-        app.MapPost(AppDictionary.WeatherForecast.WeatherForecastItemAPIUrl, async ([FromBody] string apiRequest, IItemRequestHandler<DmoWeatherForecast, WeatherForecastId> handler, CancellationToken cancellationToken) =>
+        app.MapPost(AppDictionary.WeatherForecast.WeatherForecastItemAPIUrl, async ([FromBody] ItemQueryAPIRequest<WeatherForecastId> apiRequest, IItemRequestHandler<DmoWeatherForecast, WeatherForecastId> handler, CancellationToken cancellationToken) =>
         {
-            if (!Guid.TryParse(apiRequest, out var id))
-                return Results.NoContent();
-
-            var request = new ItemQueryRequest<WeatherForecastId>(new(id), cancellationToken);
+            var request = apiRequest.ToRequest(cancellationToken);
             var result = await handler.ExecuteAsync(request);
+
             return Results.Ok(result);
         });
 
