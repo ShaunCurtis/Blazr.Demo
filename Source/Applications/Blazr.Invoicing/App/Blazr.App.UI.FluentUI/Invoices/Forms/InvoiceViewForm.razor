@@ -4,6 +4,7 @@
 @implements IDialogContentComponent<InvoiceId>
 @inject IToastService ToastService
 @inject PresenterFactory PresenterFactory
+
 @if (_isDialog)
 {
     <FluentDialogHeader Visible="false" />
@@ -16,7 +17,7 @@
             </FluentLabel>
         </FluentStack>
 
-        <InvoiceViewer Item="this.Presenter.Item" />
+        <InvoiceViewer Invoice="this.Presenter.Item"/>
 
         <FluentStack VerticalAlignment="VerticalAlignment.Center" HorizontalAlignment="HorizontalAlignment.Right">
             <FluentButton Appearance="Appearance.Neutral"
@@ -32,7 +33,7 @@
     return;
 }
 
-<InvoiceViewer Item="this.Presenter.Item" />
+<InvoiceViewer Invoice="this.Presenter.Item" />
 
 @code
 {
@@ -53,6 +54,10 @@
         if (_isNotInitialized)
         {
             this.Presenter = await PresenterFactory.CreateViewPresenterAsync<DmoInvoice, InvoiceId>(this.Content);
+
+            if (this.Composite is not null)
+                this.Composite.StateHasChanged += this.OnCompositeStateChanged;
+
             _isNotInitialized = false;
         }
 
@@ -67,7 +72,7 @@
     private void CheckForToasts()
     {
         if (!this.Presenter.LastDataResult.Successful)
-            this.ToastService.ShowError(this.Presenter.LastDataResult.Message ?? "An Error occured retriving the record.");
+            this.ToastService.ShowError(this.Presenter.LastDataResult.Message ?? "An Error occured retrieving the record.");
     }
 
     private void OnCompositeStateChanged(object? sender, EventArgs e)

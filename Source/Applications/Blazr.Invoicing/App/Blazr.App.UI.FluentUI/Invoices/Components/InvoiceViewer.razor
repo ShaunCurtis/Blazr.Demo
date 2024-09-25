@@ -3,46 +3,66 @@
 <FluentGrid Style="padding:1em;" Spacing="1" AdaptiveRendering="true">
     <FluentGridItem sm="12" md="6">
         <FluentTextField Style="width: 100%;"
-                         Value="@this.Composite.Invoice.InvoiceId.Value.ToString()"
+                         Value="@_invoice.InvoiceId.Value.ToString()"
                          Label="Full Id"
                          ReadOnly />
     </FluentGridItem>
     <FluentGridItem sm="12" md="6">
         <FluentTextField Style="width: 100%;"
-                         Value="@this.Composite.Invoice.CustomerName"
+                         Value="@_invoice.CustomerName"
                          Label="Customer Name"
                          ReadOnly />
     </FluentGridItem>
     <FluentGridItem sm="12" md="6">
         <FluentTextField Style="width: 100%;"
-                         Value="@this.Composite.Invoice.Date.ToString()"
+                         Value="@_invoice.Date.ToString()"
                          Label="Invoice Date"
                          ReadOnly />
     </FluentGridItem>
     <FluentGridItem sm="12" md="6">
         <FluentTextField Style="width: 100%;"
-                         Value="@this.Composite.Invoice.TotalAmount.ToString()"
+                         Value="@_invoice.TotalAmount.ToString()"
                          Label="Invoice Amount"
                          ReadOnly />
     </FluentGridItem>
 </FluentGrid>
 
 @code {
-    [CascadingParameter] private InvoiceComposite Composite { get; set; } = default!;
+    [CascadingParameter] private InvoiceComposite? Composite { get; set; }
+    [Parameter] public DmoInvoice? Invoice { get; set; }
+
+    private DmoInvoice _invoice = default!;
 
     protected override void OnInitialized()
     {
-        ArgumentNullException.ThrowIfNull(this.Composite);
-        this.Composite.StateHasChanged += this.OnCompositeStateChanged;
+        if (this.Composite is null && this.Invoice is null)
+            ArgumentNullException.ThrowIfNull(this.Composite);
+
+        _invoice = this.Composite is not null
+            ? this.Composite.Invoice
+            : this.Invoice!;
+
+        if (this.Composite is not null)
+        {
+            this.Composite.StateHasChanged += this.OnCompositeStateChanged;
+            _invoice = this.Composite.Invoice;
+            return;
+        }
+
+        _invoice = this.Invoice!;
+
     }
 
     private void OnCompositeStateChanged(object? sender, EventArgs e)
     {
+        // We need to reload the invoice from the composite
+        _invoice = this.Composite!.Invoice;
         this.StateHasChanged();
     }
 
     public void Dispose()
     {
-        this.Composite.StateHasChanged -= this.OnCompositeStateChanged;
+        if (this.Composite is not null)
+            this.Composite.StateHasChanged -= this.OnCompositeStateChanged;
     }
 }

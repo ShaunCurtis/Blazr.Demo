@@ -7,11 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.9.3" />
-    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.9.3" />
+	<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.10.0" />
+    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.10.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Libraries\Blazr.FluentUI\Blazr.FluentUI.csproj" />
     <ProjectReference Include="..\..\..\..\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj" />
     <ProjectReference Include="..\..\App\Blazr.App.Core\Blazr.App.Core.csproj" />
     <ProjectReference Include="..\..\App\Blazr.App.Infrastructure\Blazr.App.Infrastructure.csproj" />

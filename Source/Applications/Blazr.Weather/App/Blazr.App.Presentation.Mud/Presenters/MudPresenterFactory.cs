@@ -31,14 +31,12 @@ public class MudPresenterFactory
 
     public ValueTask<IViewPresenter<TRecord, TIdentity>> CreateViewPresenterAsync<TRecord, TIdentity>(TIdentity id)
         where TRecord : class, new()
-        where TIdentity : IEntityKey
     {
         return _presenterFactory.CreateViewPresenterAsync<TRecord, TIdentity>(id);
     }
 
     public ValueTask<IEditPresenter<TRecord, TIdentity, TEditContext>> CreateEditPresenterAsync<TRecord, TIdentity, TEditContext>(TIdentity id, bool isNew)
         where TRecord : class, new()
-        where TIdentity : IEntityKey
         where TEditContext : IRecordEditContext<TRecord>, new()
     {
         return _presenterFactory.CreateEditPresenterAsync<TRecord, TIdentity, TEditContext>(id, isNew);

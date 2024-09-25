@@ -51,7 +51,9 @@ public sealed class ItemRequestAPIHandler
 
         using var http = _httpClientFactory.CreateClient(apiInfo.ClientName);
 
-        var httpResult = await http.PostAsJsonAsync<TKey>($"/API/{apiInfo.PathName}/GetItem", request.Key, request.Cancellation)
+        var apiRequest = ItemQueryAPIRequest<TKey>.FromRequest(request);
+
+        var httpResult = await http.PostAsJsonAsync<ItemQueryAPIRequest<TKey>>($"/API/{apiInfo.PathName}/GetItem", apiRequest, request.Cancellation)
             .ConfigureAwait(ConfigureAwaitOptions.None); 
 
         if (!httpResult.IsSuccessStatusCode)

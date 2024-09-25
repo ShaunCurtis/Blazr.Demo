@@ -89,6 +89,27 @@ public class InvoiceItemEditPresenter
         return Task.FromResult(this.LastDataResult);
     }
 
+    public Task<IDataResult> DeleteItemAsync()
+    {
+        if (IsNew)
+        {
+            var message = "You cn't delete an item that you haven't created.";
+            _toastService.ShowError(message);
+            this.LastDataResult = DataResult.Failure(message);
+
+            return Task.FromResult(this.LastDataResult);
+        }
+
+        this.LastDataResult = _composite.DispatchInvoiceItemAction(this.RecordEditContext.Id, new DeleteInvoiceItemAction(this));
+
+        if (this.LastDataResult.Successful)
+            _toastService.ShowSuccess("The invoice item was deleted.");
+        else
+            _toastService.ShowError(this.LastDataResult.Message ?? "The Invoice Item could not be deleted from the invoice.");
+
+        return Task.FromResult(this.LastDataResult);
+    }
+
     public static InvoiceItemEditPresenter CreateInstance(InvoiceComposite composite, IToastService toastService, InvoiceItemId id)
     {
         var presenter = new InvoiceItemEditPresenter(composite, toastService, id);

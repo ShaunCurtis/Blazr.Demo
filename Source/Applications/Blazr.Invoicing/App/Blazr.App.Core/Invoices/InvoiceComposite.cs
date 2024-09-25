@@ -3,9 +3,6 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-using Blazr.FluxGate;
-using Microsoft.Extensions.DependencyInjection;
-
 namespace Blazr.App.Core;
 
 public class InvoiceComposite
@@ -14,7 +11,8 @@ public class InvoiceComposite
     private KeyedFluxGateStore<DmoInvoiceItem, InvoiceItemId> _invoiceItems;
     private readonly IServiceProvider _serviceProvider;
     public DmoInvoice Invoice => _invoice.Item;
-    public IEnumerable<DmoInvoiceItem> InvoiceItems => _invoiceItems.Items;
+    public IEnumerable<DmoInvoiceItem> AllInvoiceItems => _invoiceItems.Items;
+    public IEnumerable<DmoInvoiceItem> InvoiceItems => _invoiceItems.Stores.Where(item => !item.State.IsDeleted).Select(item => item.Item).AsEnumerable();
     public FluxGateState State => _invoice.State;
 
     public event EventHandler? StateHasChanged;
@@ -23,15 +21,6 @@ public class InvoiceComposite
     {
         _serviceProvider = serviceProvider;
 
-        // both set in Load
-        _invoice = default!;
-        _invoiceItems = default!;
-
-        this.Load(invoice, invoiceItems, isNew);
-    }
-
-    public IDataResult Load(DmoInvoice invoice, IEnumerable<DmoInvoiceItem> invoiceItems, bool isNew = false)
-    {
         _invoice = (FluxGateStore<DmoInvoice>)ActivatorUtilities.CreateInstance(_serviceProvider, typeof(FluxGateStore<DmoInvoice>), new object[] { invoice, isNew });
 
         _invoice.StateChanged += this.OnInvoiceChanged;
@@ -43,7 +32,42 @@ public class InvoiceComposite
             var store = _invoiceItems.GetOrCreateStore(item.InvoiceItemId, item);
             store.StateChanged += this.OnInvoiceItemChanged;
         }
+    }
 
+    public DataResult<DmoInvoiceItem> GetInvoiceItem(InvoiceItemId uid)
+    {
+        var item = _invoiceItems.Items.FirstOrDefault(item => item.InvoiceItemId == uid);
+        return item is null ? DataResult<DmoInvoiceItem>.Failure("Item does not exist in store") : DataResult<DmoInvoiceItem>.Success(item);
+    }
+
+    public DataResult<FluxGateState> GetInvoiceItemState(InvoiceItemId uid)
+    {
+        var store = _invoiceItems.GetStore(uid);
+        return store is null ? DataResult<FluxGateState>.Failure("Item does not exist in store") : DataResult<FluxGateState>.Success(store.State);
+    }
+
+    public DmoInvoiceItem GetNewInvoiceItem()
+        => new() { InvoiceItemId = new(UUIDProvider.GetGuid()), InvoiceId = _invoice.Item.InvoiceId };
+
+    public IDataResult DispatchInvoiceAction(IFluxGateAction action)
+        => _invoice.Dispatch(action).ToDataResult();
+
+    public IDataResult DispatchInvoiceItemAction(InvoiceItemId id, IFluxGateAction action)
+    {
+        if (action is AddInvoiceItemAction addAction)
+            return this.AddInvoiceItem(addAction.Item);
+
+        return _invoiceItems.Dispatch(id, action).ToDataResult();
+    }
+
+    private IDataResult AddInvoiceItem(DmoInvoiceItem item)
+    {
+        if (_invoiceItems.GetStore(item.InvoiceItemId) is not null)
+            return DataResult.Failure($"An item already exists with Id: {item.InvoiceItemId}.");
+
+        var store = _invoiceItems.GetOrCreateStore(item.InvoiceItemId, item, true);
+        store.StateChanged += this.OnInvoiceItemChanged;
+        this.OnInvoiceChanged(null, new FluxGateEventArgs());
         return DataResult.Success();
     }
 
@@ -63,44 +87,6 @@ public class InvoiceComposite
         // Set the rest as persisted
         foreach (var item in _invoiceItems.Items)
             _invoiceItems.Dispatch(item.InvoiceItemId, new SetInvoiceItemAsPersistedAction(this));
-    }
-
-    public IDataResult DispatchInvoiceAction(IFluxGateAction action)
-        => _invoice.Dispatch(action).ToDataResult();
-
-    public IDataResult DispatchInvoiceItemAction(InvoiceItemId id, IFluxGateAction action)
-    {
-        if (action is AddInvoiceItemAction addAction)
-            return this.AddInvoiceItem(addAction.Item);
-
-        return _invoiceItems.Dispatch(id, action).ToDataResult();
-    }
-
-    public DmoInvoiceItem GetNewInvoiceItem()
-        => new() { InvoiceItemId = new(UUIDProvider.GetGuid()), InvoiceId = _invoice.Item.InvoiceId };
-
-    public DataResult<DmoInvoiceItem> GetInvoiceItem(InvoiceItemId uid)
-    {
-        var item = _invoiceItems.Items.FirstOrDefault(item => item.InvoiceItemId == uid);
-        return item is null ? DataResult<DmoInvoiceItem>.Failure("Item does not exist in store") : DataResult<DmoInvoiceItem>.Success(item);
-    }
-
-    public DataResult<FluxGateState> GetInvoiceItemState(InvoiceItemId uid)
-    {
-        var store = _invoiceItems.GetStore(uid);
-
-        return store is null ? DataResult<FluxGateState>.Failure("Item does not exist in store") : DataResult<FluxGateState>.Success(store.State);
-    }
-
-    private IDataResult AddInvoiceItem(DmoInvoiceItem item)
-    {
-        if (_invoiceItems.GetStore(item.InvoiceItemId) is not null)
-            return DataResult.Failure($"An item already exists with Id: {item.InvoiceItemId}.");
-
-        var store = _invoiceItems.GetOrCreateStore(item.InvoiceItemId, item, true);
-        store.StateChanged += this.OnInvoiceItemChanged;
-        this.OnInvoiceChanged(null, new FluxGateEventArgs());
-        return DataResult.Success();
     }
 
     private void OnInvoiceChanged(object? sender, FluxGateEventArgs e)

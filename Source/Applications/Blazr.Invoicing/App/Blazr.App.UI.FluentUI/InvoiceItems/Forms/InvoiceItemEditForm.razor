@@ -34,7 +34,7 @@
 
     @if (this.Presenter.EditContext is not null)
     {
-         <EditForm EditContext="Presenter.EditContext">
+        <EditForm EditContext="Presenter.EditContext">
             <BlazrEditStateTracker LockNavigation="true" />
             <BlazrFluentValidator TRecord="DmoInvoiceItemEditContext" TValidator="DmoInvoiceItemEditContextValidator" />
             <FluentGridItem sm="12">
@@ -45,22 +45,27 @@
                                  Label="Description" />
             </FluentGridItem>
             <FluentGridItem sm="12">
-                <FluentNumberField Style="width: 100%;"
-                                 @bind-Value="this.Presenter.RecordEditContext.Amount"
-                                 Placeholder="Enter the line description"
-                                 Immediate
-                                 Label="Amount" />
+                <FluentInputNumber style="width: 100%;"
+                                   @bind-Value="this.Presenter.RecordEditContext.Amount"
+                                   Label="Amount"
+                                   Immediate
+                                   Placeholder="Enter the line description" />
+
             </FluentGridItem>
             <div style="color: var(--error);">
                 <FluentValidationSummary />
             </div>
         </EditForm>
-}
+    }
 
 </FluentDialogBody>
 
 <!-- Footer -->
 <FluentDialogFooter>
+
+    <FluentButton Appearance="Appearance.Neutral" hidden="@this.Presenter.IsNew" OnClick="@OnDeleteAsync" style="color: var(--error);">
+        Delete
+    </FluentButton>
 
     <FluentButton Appearance=" _isDirty ? Appearance.Accent : Appearance.Neutral" Disabled="_isClean" OnClick="@OnSaveAsync">
         @(this.Presenter.IsNew ? "Add" : "Save")
@@ -122,6 +127,14 @@
         }
 
         await this.Presenter.SaveItemAsync();
+
+        if (this.Presenter.LastDataResult.Successful)
+            await Dialog.CloseAsync(Content);
+    }
+
+    private async Task OnDeleteAsync()
+    {
+        await this.Presenter.DeleteItemAsync();
 
         if (this.Presenter.LastDataResult.Successful)
             await Dialog.CloseAsync(Content);

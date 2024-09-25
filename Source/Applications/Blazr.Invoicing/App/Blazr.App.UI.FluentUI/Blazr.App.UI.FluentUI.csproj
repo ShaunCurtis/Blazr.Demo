@@ -21,13 +21,14 @@
 	<ItemGroup>
 		<PackageReference Include="Blazr.FluentValidation" Version="1.0.1" />
 		<PackageReference Include="Markdig" Version="0.37.0" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.9.3" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.9.3" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.10.0" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.10.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\Libraries\Blazr.Components\Blazr.Components.csproj" />
 		<ProjectReference Include="..\..\..\..\Libraries\Blazr.EditStateTracker\Blazr.EditStateTracker.csproj" />
+		<ProjectReference Include="..\..\..\..\Libraries\Blazr.FluentUI\Blazr.FluentUI.csproj" />
 		<ProjectReference Include="..\..\..\..\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj" />
 		<ProjectReference Include="..\Blazr.App.Core\Blazr.App.Core.csproj" />
 		<ProjectReference Include="..\Blazr.App.Presentation\Blazr.App.Presentation.csproj" />
