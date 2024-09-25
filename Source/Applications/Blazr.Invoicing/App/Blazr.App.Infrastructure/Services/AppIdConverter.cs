@@ -19,7 +19,7 @@ public class AppIdConverter : IIdConverter
     {
         if (inValue is IRecordId id)
         {
-            outValue = id.ValueObject;
+            outValue = id.GetValueObject();
             return true;
         }
 

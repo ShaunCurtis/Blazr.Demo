@@ -29,6 +29,8 @@ The documentation is a work-in-progress.
 
 Take and use what you wish.
 
+You can see *Blazr.Invoicing* in action here at the [Blazr.Invoicing Azure Demo Site](https://blazr-invoicing-fluentui-server.azurewebsites.net/)
+
 **Please**:  
 
 > If you're using it in a commercial setting, get your organisation to make a donation to a charity for it's usage.

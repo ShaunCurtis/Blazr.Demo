@@ -7,5 +7,5 @@ namespace Blazr.App.Core;
 
 public interface IRecordId
 {
-    public object ValueObject { get;}
+    public object GetValueObject();
 }

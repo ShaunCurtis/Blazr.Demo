@@ -3,7 +3,7 @@
 public readonly record struct InvoiceId : IRecordId
 {
     public Guid Value { get; init; }
-    public object ValueObject => this.Value;
+    public object GetValueObject() => this.Value;
 
     public InvoiceId()
         => this.Value = Guid.Empty;
