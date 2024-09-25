@@ -7,7 +7,6 @@ namespace Blazr.App.Presentation;
 
 public class EditPresenter<TRecord, TIdentity, TEditContext> : IEditPresenter<TRecord, TIdentity, TEditContext>
     where TRecord : class, new()
-    where TIdentity : IEntityKey
     where TEditContext : IRecordEditContext<TRecord>, new()
 {
     private readonly IDataBroker _dataBroker;

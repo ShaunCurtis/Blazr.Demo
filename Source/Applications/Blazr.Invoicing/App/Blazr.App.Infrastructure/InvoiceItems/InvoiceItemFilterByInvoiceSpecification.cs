@@ -17,8 +17,8 @@ public class InvoiceItemFilterByInvoiceSpecification : PredicateSpecification<Db
 
     public InvoiceItemFilterByInvoiceSpecification(FilterDefinition filter)
     {
-        filter.TryFromJson<InvoiceId>(out InvoiceId? _id);
-        _invoiceId = _id ?? new(Guid.Empty);
+        filter.TryFromJson<InvoiceId>(out InvoiceId _id);
+        _invoiceId = _id;
     }
 
     public override Expression<Func<DboInvoiceItem, bool>> Expression

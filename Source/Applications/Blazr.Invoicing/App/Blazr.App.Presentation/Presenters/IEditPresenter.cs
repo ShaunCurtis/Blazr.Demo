@@ -6,7 +6,6 @@
 namespace Blazr.App.Presentation;
 public interface IEditPresenter<TRecord, TIdentity, TEditContext>
     where TRecord : class, new()
-    where TIdentity : IEntityKey
     where TEditContext : IRecordEditContext<TRecord>, new()
 {
     public IDataResult LastDataResult { get; }

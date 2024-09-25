@@ -5,11 +5,11 @@
 /// ============================================================
 namespace Blazr.App.Core;
 
-public readonly record struct CustomerId : IEntityKey
+public readonly record struct CustomerId : IRecordId
 {
     public Guid Value { get; init; }
 
-    public object KeyValue => this.Value;
+    public object ValueObject => this.Value;
 
     public CustomerId()
         => this.Value = Guid.Empty;

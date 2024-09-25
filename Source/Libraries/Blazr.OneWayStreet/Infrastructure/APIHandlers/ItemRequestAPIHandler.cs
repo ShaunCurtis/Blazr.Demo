@@ -51,14 +51,7 @@ public sealed class ItemRequestAPIHandler
 
         using var http = _httpClientFactory.CreateClient(apiInfo.ClientName);
 
-        var postValue = request.Key?.ToString() ?? "No Data";
-        if (request.Key is IEntityKey entityKey)
-            postValue = entityKey.KeyValue.ToString();
-
-        if (postValue is null)
-            throw new DataPipelineException($"Can't convert the suppleid key value to a string for {typeof(TRecord).Name}");
-
-        var httpResult = await http.PostAsJsonAsync<string>($"/API/{apiInfo.PathName}/GetItem", postValue, request.Cancellation)
+        var httpResult = await http.PostAsJsonAsync<TKey>($"/API/{apiInfo.PathName}/GetItem", request.Key, request.Cancellation)
             .ConfigureAwait(ConfigureAwaitOptions.None); 
 
         if (!httpResult.IsSuccessStatusCode)

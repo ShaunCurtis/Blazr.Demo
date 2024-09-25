@@ -11,11 +11,13 @@ public sealed class ItemRequestServerHandler<TDbContext>
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly IDbContextFactory<TDbContext> _factory;
+    private readonly IIdConverter _idConverter;
 
-    public ItemRequestServerHandler(IServiceProvider serviceProvider, IDbContextFactory<TDbContext> factory)
+    public ItemRequestServerHandler(IServiceProvider serviceProvider, IDbContextFactory<TDbContext> factory, IIdConverter idConverter)
     {
         _serviceProvider = serviceProvider;
         _factory = factory;
+        _idConverter = idConverter;
     }
 
     public async ValueTask<ItemQueryResult<TRecord>> ExecuteAsync<TRecord, TKey>(ItemQueryRequest<TKey> request)
@@ -42,17 +44,14 @@ public sealed class ItemRequestServerHandler<TDbContext>
         if (request.Key is null)
             return ItemQueryResult<TRecord>.Failure($"No Key provided");
 
-        // Check if we're dealing with an entity key, if so get it's value
+       object? key = null;
 
-        object key = request.Key;
-        if (key is IEntityKey entityKey)
-            key = entityKey.KeyValue;
+        if (!_idConverter.TryConvert(request.Key, out key))
+            return ItemQueryResult<TRecord>.Failure($"Could not convert provided value to an Id of {request.Key?.ToString()}");
 
         var record = await dbContext.Set<TRecord>()
             .FindAsync(key, request.Cancellation)
             .ConfigureAwait(false);
-
-       // var record = await dbContext.Set<TRecord>().SingleOrDefaultAsync(item => item.EntityUid == request.Uid, request.Cancellation);
 
         if (record is null)
             return ItemQueryResult<TRecord>.Failure($"No record retrieved with the Key provided");

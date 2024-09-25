@@ -20,7 +20,6 @@ public class PresenterFactory
 
     public async ValueTask<IEditPresenter<TRecord, TIdentity, TEditContext>> CreateEditPresenterAsync<TRecord, TIdentity, TEditContext>(TIdentity id, bool isNew)
         where TRecord : class, new()
-        where TIdentity : IEntityKey
         where TEditContext : IRecordEditContext<TRecord>, new()
     {
         IDataBroker dataBroker = _serviceProvider.GetRequiredService<IDataBroker>();
@@ -45,7 +44,6 @@ public class PresenterFactory
 
     public async ValueTask<IViewPresenter<TRecord, TIdentity>> CreateViewPresenterAsync<TRecord, TIdentity>(TIdentity id)
         where TRecord : class, new()
-        where TIdentity : IEntityKey
     {
         IDataBroker dataBroker = _serviceProvider.GetRequiredService<IDataBroker>();
         IToastService toastService = _serviceProvider.GetRequiredService<IToastService>();

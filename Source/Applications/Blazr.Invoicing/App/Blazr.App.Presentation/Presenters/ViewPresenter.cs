@@ -7,7 +7,6 @@ namespace Blazr.App.Presentation;
 
 public class ViewPresenter<TRecord, TKey> : IViewPresenter<TRecord, TKey>
     where TRecord : class, new()
-    where TKey : IEntityKey
 {
     private readonly IDataBroker _dataBroker;
     private readonly ILogger<ViewPresenter<TRecord, TKey>> _logger;

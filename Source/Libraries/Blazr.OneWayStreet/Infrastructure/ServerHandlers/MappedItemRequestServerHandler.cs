@@ -19,21 +19,22 @@ public sealed class MappedItemRequestServerHandler<TDbContext, TDomainRecord, TD
     where TDbContext : DbContext
     where TDatabaseRecord : class
     where TDomainRecord : class
-    where TKey : IEntityKey
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly IDbContextFactory<TDbContext> _factory;
+    private readonly IIdConverter _idConverter;
 
-    public MappedItemRequestServerHandler(IServiceProvider serviceProvider, IDbContextFactory<TDbContext> factory)
+    public MappedItemRequestServerHandler(IServiceProvider serviceProvider, IDbContextFactory<TDbContext> factory, IIdConverter idConverter)
     {
         _serviceProvider = serviceProvider;
         _factory = factory;
+        _idConverter = idConverter;
     }
 
-    public async ValueTask<ItemQueryResult<TDomainRecord>> ExecuteAsync(ItemQueryRequest<TKey> request) 
-    
+    public async ValueTask<ItemQueryResult<TDomainRecord>> ExecuteAsync(ItemQueryRequest<TKey> request)
+
     {
-        return  await this.GetItemAsync(request);
+        return await this.GetItemAsync(request);
     }
 
     private async ValueTask<ItemQueryResult<TDomainRecord>> GetItemAsync(ItemQueryRequest<TKey> request)
@@ -49,12 +50,20 @@ public sealed class MappedItemRequestServerHandler<TDbContext, TDomainRecord, TD
         using var dbContext = _factory.CreateDbContext();
         dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
+        if (request.Key is null)
+            return ItemQueryResult<TDomainRecord>.Failure($"No request key was provided.");
+
+        object? idValue = null;
+
+        if (!_idConverter.TryConvert(request.Key, out idValue))
+            return ItemQueryResult<TDomainRecord>.Failure($"Could not convert provided value to an Id of {request.Key?.ToString()}");
+
         var inRecord = await dbContext.Set<TDatabaseRecord>()
-            .FindAsync(request.Key.KeyValue, request.Cancellation)
+            .FindAsync(idValue, request.Cancellation)
             .ConfigureAwait(false);
 
         if (inRecord is null)
-            return ItemQueryResult<TDomainRecord>.Failure($"No record retrieved with a Uid of {request.Key.KeyValue?.ToString()}");
+            return ItemQueryResult<TDomainRecord>.Failure($"No record retrieved with Key of {request.Key?.ToString()}");
 
         var outRecord = mapper.MapTo(inRecord);
 

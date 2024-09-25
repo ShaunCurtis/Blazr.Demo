@@ -19,6 +19,9 @@ public static class ApplicationInfrastructureServices
         services.AddScoped<IItemRequestHandler, ItemRequestServerHandler<InMemoryTestDbContext>>();
         services.AddScoped<ICommandHandler, CommandServerHandler<InMemoryTestDbContext>>();
 
+        // Specific Id converter for the application
+        services.AddSingleton<IIdConverter, AppIdConverter>();
+
         // Add any individual entity services
         services.AddMappedCustomerServerInfrastructureServices();
         services.AddMappedInvoiceServerInfrastructureServices();

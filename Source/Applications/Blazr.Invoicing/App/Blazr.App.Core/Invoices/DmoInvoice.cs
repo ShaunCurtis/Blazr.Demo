@@ -1,10 +1,12 @@
 ﻿namespace Blazr.App.Core;
 
-public sealed record InvoiceId : IEntityKey
+public readonly record struct InvoiceId : IRecordId
 {
     public Guid Value { get; init; }
+    public object ValueObject => this.Value;
 
-    public object KeyValue => this.Value;
+    public InvoiceId()
+        => this.Value = Guid.Empty;
 
     public InvoiceId(Guid value)
         => this.Value = value;

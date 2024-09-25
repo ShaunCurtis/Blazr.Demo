@@ -1,6 +1,6 @@
 # Entities
 
-The collective wisdom is that you can split objects up into Entities and Value Objects.
+The collective wisdom is that you can split objects into Entities and Value Objects.
 
 People are entities - there is only one of me.  Family names are value objects.  The key difference between the two is:
 
@@ -55,11 +55,14 @@ On the other hand, there are issues on identifying and casting the ID in the inf
 Here's the compromise.   
 
 ```csharp
-public readonly record struct CustomerId : IEntityKey
+public readonly record struct CustomerId : IRecordId
 {
     public Guid Value { get; init; }
 
-    public object KeyValue => this.Value;
+    public object ValueObject => this.Value;
+
+    public CustomerId()
+        => this.Value = Guid.Empty;
 
     public CustomerId(Guid value)
         => this.Value = value;
@@ -68,12 +71,12 @@ public readonly record struct CustomerId : IEntityKey
 }
 ```
 
-The `IEntityKey` provides the mechanism to get the key value.
+The `IRecordId` provides the mechanism to get the key value.
 
 ```csharp
-public interface IEntityKey 
-{ 
-    public object KeyValue { get; }
+public interface IRecordId
+{
+    public object ValueObject { get;}
 }
 ```
 
@@ -98,25 +101,11 @@ We use UID7 Guids to aid data store index optimization.  Yet another small code 
 
 ## Customer Entity
 
-It needs a a unique Id.  We create a value object based on a UUID7 unique identifier.
+The Customer entity is simple.  It can be presented by a record.
 
-```csharp
-public readonly record struct CustomerId : IEntityKey
-{
-    public Guid Value { get; init; }
+It's Create/Update actions are handled by the `CustomerEditContext` class.
 
-    public object KeyValue => this.Value;
+## Invoice Entity
 
-    public CustomerId(Guid value)
-        => this.Value = value;
+The Invoice entity is a complex object.  It's managed through an `InvoiceComposite` aggregate object.
 
-    public static CustomerId NewEntity => new(Guid.Empty);
-}
-```
-
-```csharp
-public interface IEntityKey 
-{ 
-    public object KeyValue { get; }
-}
-```
