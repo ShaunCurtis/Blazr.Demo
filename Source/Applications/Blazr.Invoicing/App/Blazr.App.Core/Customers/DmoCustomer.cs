@@ -11,8 +11,8 @@ public readonly record struct CustomerId : IRecordId
 
     public object ValueObject => this.Value;
 
-    public CustomerId()
-        => this.Value = Guid.Empty;
+    //public CustomerId()
+    //    => this.Value = Guid.Empty;
 
     public CustomerId(Guid value)
         => this.Value = value;
