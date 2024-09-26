@@ -25,7 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Source\Applications\Blazr.Weather\App\Blazr.App.Core\Blazr.App.Core.csproj" />
     <ProjectReference Include="..\..\Source\Applications\Blazr.Weather\App\Blazr.App.Infrastructure\Blazr.App.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Source\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj" />
+    <ProjectReference Include="..\..\Source\Libraries\Blazr.Diode\Blazr.Diode.csproj" />
   </ItemGroup>
 
 </Project>

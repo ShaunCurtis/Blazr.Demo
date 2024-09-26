@@ -12,7 +12,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\..\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj" />
 		<ProjectReference Include="..\..\..\App\Blazr.App.Core\Blazr.App.Core.csproj" />
 		<ProjectReference Include="..\..\..\App\Blazr.App.Infrastructure\Blazr.App.Infrastructure.csproj" />
 		<ProjectReference Include="..\..\..\App\Blazr.App.Presentation\Blazr.App.Presentation.csproj" />

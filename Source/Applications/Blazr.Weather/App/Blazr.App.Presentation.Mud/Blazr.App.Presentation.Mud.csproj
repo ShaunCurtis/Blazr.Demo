@@ -11,6 +11,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\Libraries\Blazr.Diode\Blazr.Diode.csproj" />
 		<ProjectReference Include="..\..\..\..\Libraries\Blazr\Blazr.csproj" />
 		<ProjectReference Include="..\Blazr.App.Core\Blazr.App.Core.csproj" />
 		<ProjectReference Include="..\Blazr.App.Presentation.FluentUI\Blazr.App.Presentation.FluentUI.csproj" />

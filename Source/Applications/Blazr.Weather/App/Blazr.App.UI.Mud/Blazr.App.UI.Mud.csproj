@@ -20,7 +20,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\Libraries\Blazr.EditStateTracker\Blazr.EditStateTracker.csproj" />
 		<ProjectReference Include="..\..\..\..\Libraries\Blazr.Mud\Blazr.Mud.csproj" />
-		<ProjectReference Include="..\..\..\..\Libraries\Blazr.OneWayStreet\Blazr.OneWayStreet.csproj" />
 		<ProjectReference Include="..\..\..\..\Libraries\Blazr.Validation\Blazr.Validation.csproj" />
 		<ProjectReference Include="..\Blazr.App.Core\Blazr.App.Core.csproj" />
 		<ProjectReference Include="..\Blazr.App.Presentation.Mud\Blazr.App.Presentation.Mud.csproj" />

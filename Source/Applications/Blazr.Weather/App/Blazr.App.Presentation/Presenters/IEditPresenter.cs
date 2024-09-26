@@ -4,7 +4,7 @@
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
 namespace Blazr.App.Presentation;
-public interface IEditPresenter<TRecord, TIdentity, TEditContext>
+public interface IEditPresenter<TRecord, TKey, TEditContext>
     where TRecord : class, new()
     where TEditContext : IRecordEditContext<TRecord>, new()
 {

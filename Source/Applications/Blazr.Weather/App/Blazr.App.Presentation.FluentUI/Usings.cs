@@ -1,2 +1,2 @@
 ﻿global using Blazr.App.Core;
-global using Blazr.OneWayStreet.Core;
+global using Blazr.Diode.Core;
