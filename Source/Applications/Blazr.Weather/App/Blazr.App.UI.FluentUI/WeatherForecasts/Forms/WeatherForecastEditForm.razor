@@ -130,7 +130,7 @@
 
             this.Presenter = await this.PresenterFactory.CreateEditPresenterAsync<DmoWeatherForecast, WeatherForecastId, WeatherForecastEditContext>(this.Content, isNew);
         }
-
+ 
         await base.SetParametersAsync(ParameterView.Empty);
     }
 
@@ -152,6 +152,11 @@
             _stateStoreAttached = true;
         }
     }
+
+    // private void OnFieldChanged(object? sender, FieldChangedEventArgs e)
+    // {
+    //     Console.WriteLine("Field Changed");
+    // }
 
     private async Task OnSaveAsync()
     {

@@ -14,6 +14,7 @@
 </FluentHeader>
 
 <FluentDataGrid Id="weathergrid"
+                @ref="_fluentDataGrid"
                 ItemsProvider="this.Presenter.GetItemsAsync<DmoWeatherForecast>"
                 Pagination="_pagination"
                 TGridItem=DmoWeatherForecast>
@@ -35,6 +36,7 @@
 
     IFluentGridPresenter Presenter = default!;
 
+    private FluentDataGrid<DmoWeatherForecast>? _fluentDataGrid;
     private PaginationState _pagination = new PaginationState { ItemsPerPage = 10 };
     private GridSort<DmoWeatherForecast> sortByName = GridSort<DmoWeatherForecast>
         .ByAscending(p => p.Temperature.TemperatureC);
@@ -69,6 +71,9 @@
             });
 
         var result = await dialog.Result;
+
+        if (!result.Cancelled && _fluentDataGrid is not null)
+            await _fluentDataGrid.RefreshDataAsync();
     }
 
     private async Task OnViewAsync(WeatherForecastId id)
@@ -94,5 +99,8 @@
             });
 
         var result = await dialog.Result;
+
+        if (!result.Cancelled && _fluentDataGrid is not null)
+            await _fluentDataGrid.RefreshDataAsync();
     }
 }

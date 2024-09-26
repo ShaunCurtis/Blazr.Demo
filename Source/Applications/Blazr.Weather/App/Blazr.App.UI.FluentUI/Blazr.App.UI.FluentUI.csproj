@@ -7,20 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Components\Markdown\**" />
-    <Content Remove="Components\Markdown\**" />
-    <EmbeddedResource Remove="Components\Markdown\**" />
-    <None Remove="Components\Markdown\**" />
-  </ItemGroup>
-
-
-  <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Blazr.RenderState" Version="1.0.0" />
-		<PackageReference Include="Markdig" Version="0.37.0" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.10.0" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.*-* " />
 	</ItemGroup>
