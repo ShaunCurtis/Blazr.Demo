@@ -1,4 +1,4 @@
-﻿global using Blazr.EditStateTracker.Core;
+﻿global using Blazr.EditStateTracker;
 global using Blazr.OneWayStreet.Core;
 global using FluentValidation;
 global using Blazr.FluxGate;

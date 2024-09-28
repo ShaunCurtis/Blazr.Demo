@@ -8,7 +8,7 @@ namespace Blazr.App.Core;
 public readonly record struct WeatherForecastId : IRecordId
 {
     public Guid Value { get; init; }
-    public object GetValueObject() => this.Value;
+    public object GetKeyObject() => this.Value;
 
     public WeatherForecastId()
     => this.Value = Guid.Empty;

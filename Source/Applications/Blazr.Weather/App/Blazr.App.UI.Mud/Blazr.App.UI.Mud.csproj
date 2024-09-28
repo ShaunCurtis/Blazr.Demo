@@ -12,15 +12,15 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Blazr.EditStateTracker" Version="1.3.1" />
+		<PackageReference Include="Blazr.FluentValidation" Version="1.0.1" />
 		<PackageReference Include="MudBlazor" Version="7.8.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.8" />
 		<PackageReference Include="Blazr.RenderState" Version="1.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\Libraries\Blazr.EditStateTracker\Blazr.EditStateTracker.csproj" />
 		<ProjectReference Include="..\..\..\..\Libraries\Blazr.Mud\Blazr.Mud.csproj" />
-		<ProjectReference Include="..\..\..\..\Libraries\Blazr.Validation\Blazr.Validation.csproj" />
 		<ProjectReference Include="..\Blazr.App.Core\Blazr.App.Core.csproj" />
 		<ProjectReference Include="..\Blazr.App.Presentation.Mud\Blazr.App.Presentation.Mud.csproj" />
 		<ProjectReference Include="..\Blazr.App.Presentation\Blazr.App.Presentation.csproj" />

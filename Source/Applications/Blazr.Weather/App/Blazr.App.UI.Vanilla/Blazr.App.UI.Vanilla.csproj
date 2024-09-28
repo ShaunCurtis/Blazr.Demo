@@ -12,6 +12,8 @@
 
   <ItemGroup>
     <PackageReference Include="Blazr.BaseComponents" Version="1.0.1" />
+    <PackageReference Include="Blazr.EditStateTracker" Version="1.3.1" />
+    <PackageReference Include="Blazr.FluentValidation" Version="1.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.8" />
 	  <PackageReference Include="Blazr.RenderState" Version="1.0.0" />
@@ -19,10 +21,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\Libraries\Blazr.Bootstrap\Blazr.Bootstrap.csproj" />
-		<ProjectReference Include="..\..\..\..\Libraries\Blazr.Diode\Blazr.Diode.csproj" />
-		<ProjectReference Include="..\..\..\..\Libraries\Blazr.EditStateTracker\Blazr.EditStateTracker.csproj" />
-		<ProjectReference Include="..\..\..\..\Libraries\Blazr.FluxGate\Blazr.FluxGate.csproj" />
-		<ProjectReference Include="..\..\..\..\Libraries\Blazr.Validation\Blazr.Validation.csproj" />
 		<ProjectReference Include="..\Blazr.App.Core\Blazr.App.Core.csproj" />
 		<ProjectReference Include="..\Blazr.App.Presentation\Blazr.App.Presentation.csproj" />
 	</ItemGroup>

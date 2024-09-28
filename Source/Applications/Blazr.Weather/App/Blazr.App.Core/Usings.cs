@@ -1,3 +1,3 @@
-﻿global using Blazr.EditStateTracker.Core;
-global using Blazr.Diode.Core;
+﻿global using Blazr.EditStateTracker;
+global using Blazr.OneWayStreet.Core;
 global using FluentValidation;

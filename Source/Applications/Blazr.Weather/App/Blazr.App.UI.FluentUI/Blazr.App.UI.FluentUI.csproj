@@ -11,16 +11,15 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Blazr.EditStateTracker" Version="1.3.1" />
+		<PackageReference Include="Blazr.FluentValidation" Version="1.0.1" />
 		<PackageReference Include="Blazr.RenderState" Version="1.0.0" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.10.0" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.10.1" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.*-* " />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\Libraries\Blazr.Diode\Blazr.Diode.csproj" />
-		<ProjectReference Include="..\..\..\..\Libraries\Blazr.EditStateTracker\Blazr.EditStateTracker.csproj" />
 		<ProjectReference Include="..\..\..\..\Libraries\Blazr.FluentUI\Blazr.FluentUI.csproj" />
-		<ProjectReference Include="..\..\..\..\Libraries\Blazr.Validation\Blazr.Validation.csproj" />
 		<ProjectReference Include="..\Blazr.App.Core\Blazr.App.Core.csproj" />
 		<ProjectReference Include="..\Blazr.App.Presentation.FluentUI\Blazr.App.Presentation.FluentUI.csproj" />
 		<ProjectReference Include="..\Blazr.App.Presentation\Blazr.App.Presentation.csproj" />

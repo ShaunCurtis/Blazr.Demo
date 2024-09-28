@@ -1,5 +1,5 @@
 ﻿using Blazr.App.Core;
-using Blazr.Diode.Core;
+using Blazr.OneWayStreet.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;

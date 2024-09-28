@@ -27,7 +27,7 @@ public static class ApplicationInfrastructureServices
         services.AddScoped<ICommandHandler, CommandServerHandler<InMemoryTestDbContext>>();
 
         // Specific Id converter for the application
-        services.AddSingleton<IIdConverter, AppIdConverter>();
+        services.AddSingleton<IIdConverter, IdConverter>();
 
         // Add any individual entity services
         services.AddMappedWeatherForecastServerInfrastructureServices();

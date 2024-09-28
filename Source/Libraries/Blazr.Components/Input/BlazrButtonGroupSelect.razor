@@ -48,9 +48,9 @@
     {
         if (_editContext is not null && ComponentHelper.TryGetFieldIdentifier(this.ValueExpression, out FieldIdentifier? fieldIdentifier))
         {
-            return _editContext.IsFieldValid(fieldIdentifier)
-                ? string.Empty
-                : "invalid";
+                return _editContext.IsValid(fieldIdentifier ?? new())
+                    ? string.Empty
+                    : "invalid";
         }
         return string.Empty;
     }

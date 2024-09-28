@@ -5,6 +5,7 @@
 
 @using Blazr.App.Presentation
 @using Blazr.Presentation.Toasts
+@using Blazr.FluentValidation
 
 <div class="container">
     <div class="row mb-2">
@@ -16,8 +17,8 @@
 
             <BlazrEditStateTracker LockNavigation="true" />
 
-            <BlazrValidator TRecord="WeatherForecastEditContext"
-                            TValidator="WeatherForecastEditContextValidator" />
+            <BlazrFluentValidator TRecord="WeatherForecastEditContext"
+                                  TValidator="WeatherForecastEditContextValidator" />
 
             <div class="row mb-2">
 

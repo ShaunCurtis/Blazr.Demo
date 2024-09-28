@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   	<ItemGroup>
+		<PackageReference Include="Blazr.OneWayStreet" Version="2.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="8.0.8" />
 	</ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\..\..\..\Libraries\Blazr.Diode\Blazr.Diode.csproj" />
     <ProjectReference Include="..\..\..\..\Libraries\Blazr\Blazr.csproj" />
     <ProjectReference Include="..\Blazr.App.Core\Blazr.App.Core.csproj" />
   </ItemGroup>
