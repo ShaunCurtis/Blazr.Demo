@@ -20,6 +20,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Blazr.FluentValidation" Version="1.0.1" />
+		<PackageReference Include="Blazr.OneWayStreet" Version="2.0.0" />
 		<PackageReference Include="Markdig" Version="0.37.0" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.10.0" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.10.0" />
@@ -27,7 +28,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\Libraries\Blazr.Components\Blazr.Components.csproj" />
-		<ProjectReference Include="..\..\..\..\Libraries\Blazr.Diode\Blazr.Diode.csproj" />
 		<ProjectReference Include="..\..\..\..\Libraries\Blazr.EditStateTracker\Blazr.EditStateTracker.csproj" />
 		<ProjectReference Include="..\..\..\..\Libraries\Blazr.FluentUI\Blazr.FluentUI.csproj" />
 		<ProjectReference Include="..\Blazr.App.Core\Blazr.App.Core.csproj" />

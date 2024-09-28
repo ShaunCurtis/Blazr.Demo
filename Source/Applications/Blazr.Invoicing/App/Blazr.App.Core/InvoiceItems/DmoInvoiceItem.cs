@@ -8,7 +8,7 @@ namespace Blazr.App.Core;
 public readonly record struct InvoiceItemId : IRecordId
 {
     public Guid Value { get; init; }
-    public object GetValueObject() => this.Value;
+    public object GetKeyObject() => this.Value;
 
     public InvoiceItemId()
         => this.Value = Guid.Empty;
