@@ -7,7 +7,7 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Blazr.OneWayStreet" Version="2.0.0" />
+		<PackageReference Include="Blazr.OneWayStreet" Version="2.0.2" />
 		<PackageReference Include="MudBlazor" Version="7.8.0" />
 	</ItemGroup>
 

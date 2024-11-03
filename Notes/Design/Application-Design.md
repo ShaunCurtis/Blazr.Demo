@@ -3,6 +3,7 @@
 There is normally a gulf between the academic theoretical best design and the implemented design for a project.
 
 That gap exists for two reasons:
+
 1. Knowledge constraints.
 2. Time constraints.
 

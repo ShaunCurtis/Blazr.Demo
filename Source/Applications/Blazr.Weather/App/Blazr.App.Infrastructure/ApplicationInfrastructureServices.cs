@@ -26,9 +26,6 @@ public static class ApplicationInfrastructureServices
         services.AddScoped<IItemRequestHandler, ItemRequestServerHandler<InMemoryTestDbContext>>();
         services.AddScoped<ICommandHandler, CommandServerHandler<InMemoryTestDbContext>>();
 
-        // Specific Id converter for the application
-        services.AddSingleton<IIdConverter, IdConverter>();
-
         // Add any individual entity services
         services.AddMappedWeatherForecastServerInfrastructureServices();
     }
@@ -89,10 +86,11 @@ public static class ApplicationInfrastructureServices
         services.AddScoped<IItemRequestHandler<DmoWeatherForecast, WeatherForecastId>, MappedItemRequestServerHandler<InMemoryTestDbContext, DmoWeatherForecast, DboWeatherForecast, WeatherForecastId>>();
         services.AddScoped<ICommandHandler<DmoWeatherForecast>, MappedCommandServerHandler<InMemoryTestDbContext, DmoWeatherForecast, DboWeatherForecast>>();
 
+        services.AddTransient<IKeyProvider<WeatherForecastId>, WeatherForecastKeyProvider>();
+
         services.AddTransient<IRecordFilterHandler<DboWeatherForecast>, WeatherForecastFilterHandler>();
         services.AddTransient<IRecordSortHandler<DboWeatherForecast>, WeatherForecastSortHandler>();
 
         services.AddScoped<INewRecordProvider<DmoWeatherForecast>, NewWeatherForecastProvider>();
     }
-
 }

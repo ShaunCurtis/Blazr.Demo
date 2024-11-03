@@ -18,8 +18,8 @@
         <TemplateColumn CellClass="d-flex justify-end">
             <CellTemplate>
                 <MudStack Row>
-                    <MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.TableView" @onclick="() => this.OnView(context.Item.WeatherForecastId)"></MudIconButton>
-                    <MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.Edit" @onclick="() => this.OnEdit(context.Item.WeatherForecastId)"></MudIconButton>
+                    <MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.TableView" @onclick="() => this.OnViewAsync(context.Item.WeatherForecastId)"></MudIconButton>
+                    <MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.Edit" @onclick="() => this.OnEditAsync(context.Item.WeatherForecastId)"></MudIconButton>
                 </MudStack>
             </CellTemplate>
         </TemplateColumn>
@@ -31,30 +31,36 @@
 </MudDataGrid>
 
 @code {
-    // Grid is set in the markup so can't be null
+    // Grid is set in the markup so will never be null once the component is rendered
     private MudDataGrid<DmoWeatherForecast> _grid = default!;
     private IMudGridPresenter Presenter = default!;
 
-
+    // We do async stuff in here we want to be complete before we do our first render
     public override async Task SetParametersAsync(ParameterView parameters)
     {
         parameters.SetParameterProperties(this);
 
+        // In this case it's get the Grid Presenter from the factory
         if (this.Presenter is null)
+        {
             this.Presenter = await this.PresenterFactory.CreateDataGridPresenterAsync();
+            ArgumentNullException.ThrowIfNull(this.Presenter);
+        }
 
         await base.SetParametersAsync(ParameterView.Empty);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        // We need to wait till the component is rendered and we have a _grid reference
+        // before we can set the default sorting
         if (firstRender && _grid is not null)
             await _grid.SetSortAsync("Date", SortDirection.Ascending, x => x.Date);
     }
 
-    private async Task OnView(WeatherForecastId id)
+    private async Task OnViewAsync(WeatherForecastId id)
     {
-        // Build out the parameters
+        // Build out the Dialog parameters and options
         var parameters = new DialogParameters() { { "WeatherForecastId", id } };
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true };
 
@@ -62,7 +68,7 @@
         _ = await DialogService.ShowAsync<WeatherForecastViewForm>("View Weather Forecast", parameters, options);
     }
 
-    private async Task OnEdit(WeatherForecastId id)
+    private async Task OnEditAsync(WeatherForecastId id)
     {
         // Build out the parameters and options locking the backdrop
         var parameters = new DialogParameters() { { "WeatherForecastId", id } };
@@ -72,7 +78,7 @@
         var dialog = await DialogService.ShowAsync<WeatherForecastEditForm>("Edit Weather Forecast", parameters, options);
         var result = await dialog.Result;
 
-        // If not cancelled then reload the grid as the record will have mutated
+        // If not cancelled then reload the grid as the record may have mutated
         if (!result?.Canceled ?? false)
             await _grid.ReloadServerData();
     }
@@ -80,7 +86,7 @@
     private async Task OnAddAsync()
     {
         // Create a "New" id
-        var id = WeatherForecastId.NewEntity;
+        var id = default(WeatherForecastId);
 
         // Build out the parameters and options locking the backdrop
         var parameters = new DialogParameters() { { "WeatherForecastId", id } };
@@ -90,7 +96,7 @@
         var dialog = await DialogService.ShowAsync<WeatherForecastEditForm>("Add Weather Forecast", parameters, options);
         var result = await dialog.Result;
 
-        // If not cancelled then reload the grid as the list will have mutated
+        // If not cancelled then reload the grid as the list may have mutated
         if (!result?.Canceled ?? false)
             await _grid.ReloadServerData();
     }
