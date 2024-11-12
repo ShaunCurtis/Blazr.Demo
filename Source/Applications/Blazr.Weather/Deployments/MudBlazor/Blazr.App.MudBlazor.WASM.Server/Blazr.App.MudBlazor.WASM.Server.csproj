@@ -8,8 +8,8 @@
 
   
   <ItemGroup>
-    <PackageReference Include="MudBlazor" Version="7.8.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8" />
+    <PackageReference Include="MudBlazor" Version="7.15.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.10" />
 	  <PackageReference Include="Blazr.RenderState.Server" Version="1.0.0" />
   </ItemGroup>
 

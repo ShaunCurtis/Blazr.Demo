@@ -15,7 +15,7 @@
     <PackageReference Include="Blazr.OneWayStreet" Version="2.0.2" />
     <PackageReference Include="Blazr.OneWayStreet.API" Version="2.0.2" />
     <PackageReference Include="Blazr.OneWayStreet.EntityFramework" Version="2.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.10" />
   </ItemGroup>
 
   <ItemGroup>

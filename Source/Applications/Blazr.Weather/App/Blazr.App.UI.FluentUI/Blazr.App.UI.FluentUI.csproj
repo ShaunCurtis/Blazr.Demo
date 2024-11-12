@@ -14,7 +14,7 @@
 		<PackageReference Include="Blazr.EditStateTracker" Version="1.3.1" />
 		<PackageReference Include="Blazr.FluentValidation" Version="1.0.1" />
 		<PackageReference Include="Blazr.RenderState" Version="1.0.0" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.10.1" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.10.3" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.*-* " />
 	</ItemGroup>
 

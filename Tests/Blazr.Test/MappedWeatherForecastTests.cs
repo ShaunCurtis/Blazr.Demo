@@ -6,7 +6,7 @@
 
 using Blazr.App.Core;
 using Blazr.App.Infrastructure;
-using Blazr.Diode.Core;
+using Blazr.OneWayStreet.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
