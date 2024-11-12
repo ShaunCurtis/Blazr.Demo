@@ -4,6 +4,7 @@
 @implements IDisposable
 @inject MudPresenterFactory PresenterFactory
 @inject IAppToastService ToastService
+@using Blazr.FluentValidation.Components
 
 <MudDialog>
     <DialogContent>
@@ -102,7 +103,7 @@
 
         if (this.Presenter is null)
         {
-            var isNew = this.WeatherForecastId == WeatherForecastId.NewEntity;
+            var isNew = this.WeatherForecastId == default;
             this.Presenter = await this.PresenterFactory.CreateEditPresenterAsync<DmoWeatherForecast, WeatherForecastId, WeatherForecastEditContext>(this.WeatherForecastId, isNew);
         }
 

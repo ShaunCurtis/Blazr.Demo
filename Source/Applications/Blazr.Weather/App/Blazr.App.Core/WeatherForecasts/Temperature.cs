@@ -9,7 +9,7 @@ namespace Blazr.App.Core;
 
 public readonly record struct Temperature
 {
-    public decimal TemperatureC { get; init; }
+    public decimal TemperatureC { get; init; } = -273;
     [JsonIgnore] public decimal TemperatureF => 32 + (this.TemperatureC / 0.5556m);
 
     public Temperature() { }

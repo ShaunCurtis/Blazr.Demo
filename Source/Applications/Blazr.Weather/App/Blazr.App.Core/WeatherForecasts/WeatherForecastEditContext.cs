@@ -18,7 +18,7 @@ public sealed class WeatherForecastEditContext : IRecordEditContext<DmoWeatherFo
         this.BaseRecord with
         {
             Date = DateOnly.FromDateTime(this.Date ?? DateTime.Now),
-            Summary = this.Summary,
+            Summary = this.Summary?? "Not Set",
             Temperature = new(this.Temperature)
         };
 
