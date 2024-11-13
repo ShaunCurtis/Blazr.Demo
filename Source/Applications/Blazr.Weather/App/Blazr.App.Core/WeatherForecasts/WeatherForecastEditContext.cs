@@ -17,7 +17,7 @@ public sealed class WeatherForecastEditContext : IRecordEditContext<DmoWeatherFo
     public DmoWeatherForecast AsRecord =>
         this.BaseRecord with
         {
-            Date = DateOnly.FromDateTime(this.Date ?? DateTime.Now),
+            Date = new(this.Date ?? DateTime.Now),
             Summary = this.Summary?? "Not Set",
             Temperature = new(this.Temperature)
         };
@@ -36,7 +36,7 @@ public sealed class WeatherForecastEditContext : IRecordEditContext<DmoWeatherFo
 
     public IDataResult Load(DmoWeatherForecast record)
     {
-        var alreadyLoaded = this.BaseRecord.WeatherForecastId != default;
+        var alreadyLoaded = this.BaseRecord.Id != default;
 
         if (alreadyLoaded)
             return DataResult.Failure("A record has already been loaded.  You can't overload it.");
@@ -44,7 +44,7 @@ public sealed class WeatherForecastEditContext : IRecordEditContext<DmoWeatherFo
         this.BaseRecord = record;
         this.Summary = record.Summary;
         this.Temperature = record.Temperature.TemperatureC;
-        this.Date = record.Date.ToDateTime(TimeOnly.MinValue);
+        this.Date = record.Date.Value.ToDateTime(TimeOnly.MinValue);
 
         return DataResult.Success();
     }

@@ -16,17 +16,17 @@ public sealed class DboWeatherForecastMap : IDboEntityMap<DboWeatherForecast, Dm
     public static DmoWeatherForecast Map(DboWeatherForecast item)
         => new()
         {
-            WeatherForecastId = new(item.WeatherForecastID),
-            Date = DateOnly.FromDateTime(item.Date),
+      Id = new(item.WeatherForecastID),
+            Date = new(item.Date),
             Temperature = new(item.Temperature),
-            Summary = item.Summary
+            Summary = item.Summary ?? "Not Set"
         };
 
     public static DboWeatherForecast Map(DmoWeatherForecast item)
         => new()
         {
-            WeatherForecastID = item.WeatherForecastId.Value,
-            Date = item.Date.ToDateTime(TimeOnly.MinValue),
+            WeatherForecastID = item.Id.Value,
+            Date = item.Date.Value.ToDateTime(TimeOnly.MinValue),
             Temperature = item.Temperature.TemperatureC,
             Summary = item.Summary
         };
