@@ -10,16 +10,16 @@
         <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Default" @onclick="this.OnAddAsync" />
     </ToolBarContent>
     <Columns>
-        <PropertyColumn Sortable="false" Property="x => x.WeatherForecastId.Value.ToDisplayId()" Title="Id" />
-        <PropertyColumn Sortable="true" Property="x => x.Date" Format="dd-MMM-yy" Title="Date" />
+        <PropertyColumn Sortable="false" Property="x => x.Id.Value.ToDisplayId()" Title="Id" />
+        <PropertyColumn Sortable="true" Property="x => x.Date.Value" Format="dd-MMM-yy" Title="Date" />
         <PropertyColumn Property="x => x.Temperature.TemperatureC" Format="N0" Title="Temperature C" />
         <PropertyColumn Property="x => x.Temperature.TemperatureF" Format="N0" Title="Temperature F" />
         <PropertyColumn Sortable="true" Property="x => x.Summary" Title="Summary" />
         <TemplateColumn CellClass="d-flex justify-end">
             <CellTemplate>
                 <MudStack Row>
-                    <MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.TableView" @onclick="() => this.OnViewAsync(context.Item.WeatherForecastId)"></MudIconButton>
-                    <MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.Edit" @onclick="() => this.OnEditAsync(context.Item.WeatherForecastId)"></MudIconButton>
+                    <MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.TableView" @onclick="() => this.OnViewAsync(context.Item.Id)"></MudIconButton>
+                    <MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.Edit" @onclick="() => this.OnEditAsync(context.Item.Id)"></MudIconButton>
                 </MudStack>
             </CellTemplate>
         </TemplateColumn>

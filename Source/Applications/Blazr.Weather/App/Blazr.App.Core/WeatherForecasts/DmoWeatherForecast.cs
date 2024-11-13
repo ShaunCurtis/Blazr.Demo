@@ -12,6 +12,6 @@ public sealed record DmoWeatherForecast : ICommandEntity
 {
     public WeatherForecastId Id { get; init; } = new(Guid.Empty);
     public Date Date { get; init; }
-    public Temperature Temperature { get; set; } = new(0);
-    public string Summary { get; set; } = "Not Set";
+    public Temperature Temperature { get; set; }
+    public string Summary { get; set; } = "Not Defined";
 }

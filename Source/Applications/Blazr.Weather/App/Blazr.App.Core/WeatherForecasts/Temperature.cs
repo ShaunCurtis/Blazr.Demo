@@ -10,7 +10,7 @@ namespace Blazr.App.Core;
 public readonly record struct Temperature
 {
     public decimal TemperatureC { get; init; } = -273;
-    public bool Valid { get; init; }
+    public bool IsValid { get; init; }
     [JsonIgnore] public decimal TemperatureF => 32 + (this.TemperatureC / 0.5556m);
 
     public Temperature() { }
@@ -23,6 +23,11 @@ public readonly record struct Temperature
     {
         this.TemperatureC = temperatureAsDegCelcius;
         if (temperatureAsDegCelcius > -273)
-            Valid = true;
+            IsValid = true;
+    }
+
+    public override string ToString()
+    {
+        return this.IsValid ? TemperatureC.ToString() : "Not Valid";
     }
 }

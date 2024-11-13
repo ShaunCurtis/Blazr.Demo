@@ -18,14 +18,14 @@
     <div class="col-12">
         <div class="grid" tabindex="-1">
             <QuickGrid TGridItem="DmoWeatherForecast" ItemsProvider="this.Presenter.GetItemsAsync<DmoWeatherForecast>" Pagination="_pagination">
-                <PropertyColumn Title="Id" Property="@(c => c!.WeatherForecastId.Value.ToDisplayId())" Align=Align.Start />
-                <PropertyColumn Title="Date" Property="@(c => c!.Date)" Format="dd-MMM-yy" Sortable="true" IsDefaultSortColumn InitialSortDirection="SortDirection.Ascending" Align=Align.Start />
+                <PropertyColumn Title="Id" Property="@(c => c!.Id.Value.ToDisplayId())" Align=Align.Start />
+                <PropertyColumn Title="Date" Property="@(c => c!.Date.Value)" Format="dd-MMM-yy" Sortable="true" IsDefaultSortColumn InitialSortDirection="SortDirection.Ascending" Align=Align.Start />
                 <PropertyColumn Title="Temp &deg; C" Sortable="true" Format="N0" Property="@(c => c!.Temperature.TemperatureC)" Align=Align.End />
                 <PropertyColumn Title="Temp &deg; F" Sortable="true" Format="N0" Property="@(c => c!.Temperature.TemperatureF)" Align=Align.End />
                 <PropertyColumn Title="Summary" Sortable="true" Property="@(c => c!.Summary)" Align=Align.Center />
                 <TemplateColumn Title="Actions" Align="@Align.End">
-                    <button class="btn btn-sm btn-dark" @onclick="() => OnViewAsync(context.WeatherForecastId)">View</button>
-                    <button class="btn btn-sm btn-primary" @onclick="() => OnEditAsync(context.WeatherForecastId)">Edit</button>
+                    <button class="btn btn-sm btn-dark" @onclick="() => OnViewAsync(context.Id)">View</button>
+                    <button class="btn btn-sm btn-primary" @onclick="() => OnEditAsync(context.Id)">Edit</button>
                 </TemplateColumn>
             </QuickGrid>
         </div>

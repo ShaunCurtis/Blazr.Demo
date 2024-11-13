@@ -56,9 +56,9 @@ public class MappedWeatherForecastTests
         // Construct the Domain object - the Test data provider deals in dbo objects
         var testItem = new DmoWeatherForecast
         {
-            WeatherForecastId = testId,
-            Date = DateOnly.FromDateTime(testDboItem.Date),
-            Summary = testDboItem.Summary,
+            Id = testId,
+            Date = new(testDboItem.Date),
+            Summary = testDboItem.Summary ?? "Not Defined",
             Temperature = new(testDboItem.Temperature)
         };
 

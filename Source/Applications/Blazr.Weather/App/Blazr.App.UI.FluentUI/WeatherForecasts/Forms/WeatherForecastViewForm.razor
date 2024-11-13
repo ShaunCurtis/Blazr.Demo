@@ -17,7 +17,7 @@
     <FluentGrid Spacing="1" AdaptiveRendering="true" >
         <FluentGridItem sm="12" md="6">
             <FluentTextField Style="width: 100%;"
-                             Value="@this.Presenter.Item.Date.ToString("dd-MMM-yy")"
+                             Value="@this.Presenter.Item.Date.ToString()"
                              Label="Date"
                              ReadOnly />
         </FluentGridItem>
@@ -45,7 +45,7 @@
     <FluentGrid Spacing="1" AdaptiveRendering="true">
         <FluentGridItem sm="12" md="6">
             <FluentTextField Style="width: 100%;"
-                             Value="@this.Presenter.Item.WeatherForecastId.Value.ToString()"
+                             Value="@this.Presenter.Item.Id.Value.ToString()"
                              Label="Full Id"
                              ReadOnly />
         </FluentGridItem>

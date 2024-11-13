@@ -9,7 +9,7 @@ namespace Blazr.App.Core;
 public readonly record struct Date
 {
     public DateOnly Value { get; init; }
-    public bool Valid { get; init; }
+    public bool IsValid { get; init; }
 
     public Date() { }
 
@@ -17,20 +17,25 @@ public readonly record struct Date
     {
         this.Value = date;
         if (date > DateOnly.MinValue)
-            this.Valid = true;
+            this.IsValid = true;
     }
 
     public Date(DateTime date)
     {
         this.Value = DateOnly.FromDateTime(date);
         if (date > DateTime.MinValue)
-            this.Valid = true;
+            this.IsValid = true;
     }
 
     public Date(DateTimeOffset date)
     {
         this.Value = DateOnly.FromDateTime(date.DateTime);
         if (date > DateTime.MinValue)
-            this.Valid = true;
+            this.IsValid = true;
+    }
+
+    public override string ToString()
+    {
+        return this.IsValid ? this.Value.ToString("dd-MMM-yy")  : "Not Valid";
     }
 }

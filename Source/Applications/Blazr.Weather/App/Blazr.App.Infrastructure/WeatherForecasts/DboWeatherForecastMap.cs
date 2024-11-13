@@ -19,7 +19,7 @@ public sealed class DboWeatherForecastMap : IDboEntityMap<DboWeatherForecast, Dm
       Id = new(item.WeatherForecastID),
             Date = new(item.Date),
             Temperature = new(item.Temperature),
-            Summary = item.Summary ?? "Not Set"
+            Summary = item.Summary ?? "Not Defined"
         };
 
     public static DboWeatherForecast Map(DmoWeatherForecast item)

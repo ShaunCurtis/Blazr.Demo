@@ -8,7 +8,7 @@
         <MudGrid>
             <MudItem xs="12" sm="6">
                 <MudField Class="mb-2" Label="Date" Variant="Variant.Filled">
-                    @this.Presenter.Item.Date.ToString("dd-MMM-yy")
+                    @this.Presenter.Item.Date.ToString()
                 </MudField>
             </MudItem>
             <MudItem xs="12" sm="6">
@@ -34,7 +34,7 @@
         <MudGrid>
             <MudItem xs="12" lg="8">
                 <MudField Class="mb-2" Label="Full Id" Variant="Variant.Filled">
-                    @this.Presenter.Item.WeatherForecastId.Value.ToString()
+                    @this.Presenter.Item.Id.Value.ToString()
                 </MudField>
             </MudItem>
         </MudGrid>

@@ -11,7 +11,7 @@
     <div class="row mb-2">
         <div class="col-12 col-sm-6 ">
             <div class="form-floating mb-3">
-                <input type="text" class="form-control" readonly value="@this.Presenter.Item.Date.ToString("dd-MMM-yy")">
+                <input type="text" class="form-control" readonly value="@this.Presenter.Item.Date.ToString()">
                 <label for="floatingInput">Date</label>
             </div>
         </div>
@@ -39,7 +39,7 @@
     <div class="row mb-2">
         <div class="col-12 col-md-8">
             <div class="form-floating mb-3">
-                <input type="text" class="form-control" readonly value="@this.Presenter.Item.WeatherForecastId.Value">
+                <input type="text" class="form-control" readonly value="@this.Presenter.Item.Id.Value">
                 <label for="floatingInput">Full Id</label>
             </div>
         </div>

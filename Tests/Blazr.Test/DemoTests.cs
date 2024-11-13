@@ -232,13 +232,13 @@ public class DemoTests
         var broker = provider.GetService<IDataBroker>()!;
 
         var newItemGuid = Guid.NewGuid();
-        var newItem = new DmoWeatherForecast { WeatherForecastId = new(newItemGuid), Date = DateOnly.FromDateTime(DateTime.Now), Summary = "Testing", Temperature = new(30) };
+        var newItem = new DmoWeatherForecast { Id = new(newItemGuid), Date = new(DateTime.Now), Summary = "Testing", Temperature = new(30) };
 
         var command = new CommandRequest<DmoWeatherForecast>(newItem, CommandState.Add);
         var commandResult = await broker.ExecuteCommandAsync<DmoWeatherForecast>(command);
         Assert.True(commandResult.Successful);
 
-        var request = ItemQueryRequest<WeatherForecastId>.Create(newItem.WeatherForecastId);
+        var request = ItemQueryRequest<WeatherForecastId>.Create(newItem.Id);
         var loadResult = await broker.ExecuteQueryAsync<DmoWeatherForecast, WeatherForecastId>(request);
         Assert.True(loadResult.Successful);
 
