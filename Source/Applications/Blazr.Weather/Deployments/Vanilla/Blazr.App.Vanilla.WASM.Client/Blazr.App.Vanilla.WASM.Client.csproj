@@ -1,5 +1,5 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
-
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+	
 	<Target Name="AllowUsingAspNetCoreInBlazorWasm" AfterTargets="ProcessFrameworkReferences">
 		<ItemGroup>
 			<UnavailableRuntimePack Remove="Microsoft.AspNetCore.App" />
@@ -17,6 +17,7 @@
 	<ItemGroup>
 		<PackageReference Include="Blazr.RenderState.WASM" Version="1.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.0" />
+		<PackageReference Include="System.Private.Uri" Version="4.3.2" />
 	</ItemGroup>
 
 	<ItemGroup>
