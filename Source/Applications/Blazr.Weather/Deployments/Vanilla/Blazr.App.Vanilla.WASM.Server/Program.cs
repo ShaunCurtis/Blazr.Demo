@@ -44,9 +44,10 @@ else
 
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();
+//app.UseStaticFiles();
 app.UseAntiforgery();
 
+app.MapStaticAssets();
 app.MapRazorComponents<Blazr.App.Vanilla.WASM.Server.App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies([typeof(Blazr.App.UI.Vanilla._Imports).Assembly]);

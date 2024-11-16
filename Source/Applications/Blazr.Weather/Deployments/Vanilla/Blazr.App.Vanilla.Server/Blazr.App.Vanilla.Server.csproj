@@ -9,6 +9,7 @@
 	<ItemGroup>
 		<PackageReference Include="Blazr.RenderState" Version="1.0.0" />
 		<PackageReference Include="Blazr.RenderState.Server" Version="1.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
